@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#488AFF</color>
+    <color name="primaryDark">#1f6bf2</color>
+    <color name="accent">#FF4081</color>
+
+    <!--主页-->
+    <color name="navigationBgColor">#d9d9d9</color>
+    <color name="navigationInActiveColor">#898989</color>
+</resources>

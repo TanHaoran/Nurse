@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--公共-->
+    <dimen name="titleBarHeight">50dp</dimen>
+
+    <!--科室-->
+    <dimen name="pluginLineHeight">60dp</dimen>
+</resources>
