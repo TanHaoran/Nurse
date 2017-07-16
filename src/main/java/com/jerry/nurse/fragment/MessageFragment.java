@@ -3,41 +3,38 @@ package com.jerry.nurse.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.adapter.BannerAdapter;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.view.ViewPagerScroller;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import me.relex.circleindicator.CircleIndicator;
+
+import static com.jerry.nurse.R.id.ci_banner;
+import static com.jerry.nurse.R.id.vp_banner;
 
 /**
  * Created by Jerry on 2017/7/15.
  */
 
-public class MessageFragment extends Fragment {
+public class MessageFragment extends BaseFragment {
 
     // Banner停留时间
     private static final int BANNER_DELAYED = 5000;
     // Banner滚动持续时间
     private static final int SCROLLER_DURATION = 1000;
 
-    @Bind(R.id.vp_banner)
+    @Bind(vp_banner)
     ViewPager mViewPager;
 
-    @Bind(R.id.ci_banner)
+    @Bind(ci_banner)
     CircleIndicator mIndicator;
 
     List<View> mBanners;
@@ -57,24 +54,24 @@ public class MessageFragment extends Fragment {
         }
     };
 
+    /**
+     * 实例化方法
+     *
+     * @return
+     */
     public static MessageFragment newInstance() {
 
         MessageFragment fragment = new MessageFragment();
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        L.i("初始化消息页面");
-        View view = inflater.inflate(R.layout.fragment_message,
-                container, false);
-        ButterKnife.bind(this, view);
-        initView();
-        return view;
+    public int getLayoutResId() {
+        return R.layout.fragment_message;
     }
 
-    private void initView() {
+    @Override
+    public void init(Bundle savedInstanceState) {
         mBanners = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             ImageView banner = new ImageView(getActivity());
@@ -108,4 +105,6 @@ public class MessageFragment extends Fragment {
         super.onDestroy();
         mHandler.removeCallbacks(mBannerRunnable);
     }
+
+
 }

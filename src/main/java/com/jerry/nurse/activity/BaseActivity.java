@@ -9,31 +9,68 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import com.jerry.nurse.R;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.PermissionListener;
+import com.jerry.nurse.util.ScreenUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by Jerry on 2017/7/15.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_RESULT = 1;
 
     private static PermissionListener mListener;
 
+    /**
+     * 获取当前页面的布局
+     *
+     * @return
+     */
+    public abstract int getContentViewResId();
+
+    /**
+     * 初始化页面
+     *
+     * @param savedInstanceState
+     */
+    public abstract void init(Bundle savedInstanceState);
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
+        setContentView(getContentViewResId());
+        ScreenUtil.setWindowStatusBarColor(this, R.color.primary);
+        ButterKnife.bind(this);
+        init(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 注册友盟统计分析
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ButterKnife.unbind(this);
         ActivityCollector.removeActivity(this);
     }
 

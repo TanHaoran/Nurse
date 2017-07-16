@@ -12,20 +12,143 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/pluginLineHeight"
-        android:showDividers="beginning"
-        android:orientation="horizontal">
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
 
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/pluginLinePaddingLeft"
+        android:paddingRight="@dimen/pluginLinePaddingLeft">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_event_report"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_weight="1"
+
+            android:text="@string/event_report"
+            android:textColor="@color/pluginTitleTextColor"
+            android:textSize="@dimen/pluginTitleTextSize"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_arrow_enter"/>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/plugin_line_divider"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/pluginLineHeight"
-        android:showDividers="beginning"
-        android:orientation="horizontal">
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/pluginLinePaddingLeft"
+        android:paddingRight="@dimen/pluginLinePaddingLeft">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_nurse_class"/>
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_weight="1"
+            android:text="@string/nurse_class"
+            android:textColor="@color/pluginTitleTextColor"
+            android:textSize="@dimen/pluginTitleTextSize"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_arrow_enter"/>
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/plugin_line_divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pluginLineHeight"
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/pluginLinePaddingLeft"
+        android:paddingRight="@dimen/pluginLinePaddingLeft">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_credit_check"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_weight="1"
+            android:text="@string/credit_check"
+            android:textColor="@color/pluginTitleTextColor"
+            android:textSize="@dimen/pluginTitleTextSize"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_arrow_enter"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/plugin_line_divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pluginLineHeight"
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/pluginLinePaddingLeft"
+        android:paddingRight="@dimen/pluginLinePaddingLeft">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_schedule_check"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_weight="1"
+            android:text="@string/schedule_check"
+            android:textColor="@color/pluginTitleTextColor"
+            android:textSize="@dimen/pluginTitleTextSize"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_arrow_enter"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/plugin_line_divider"/>
 
 </LinearLayout>

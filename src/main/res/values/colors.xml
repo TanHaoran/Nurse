@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--公共-->
     <color name="primary">#488AFF</color>
-    <color name="primaryDark">#1f6bf2</color>
+    <color name="primaryDark">#1F6BF2</color>
+    <color name="primaryDarker">#054ac4</color>
     <color name="accent">#FF4081</color>
 
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#AAAAAA</color>
+
     <!--主页-->
-    <color name="navigationBgColor">#d9d9d9</color>
+    <color name="navigationBgColor">#D9D9D9</color>
     <color name="navigationInActiveColor">#898989</color>
+
+    <!--科室-->
+    <color name="pluginLineDivider">#EEEEEE</color>
+    <color name="pluginTitleTextColor">#333333</color>
+    <color name="pluginLineNormalColor">#FFFFFF</color>
+
 </resources>

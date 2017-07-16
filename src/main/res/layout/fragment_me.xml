@@ -6,6 +6,6 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleBarHeight"
-        app:titleText="@string/mine"/>
+        app:titleText="@string/me"/>
 
 </LinearLayout>

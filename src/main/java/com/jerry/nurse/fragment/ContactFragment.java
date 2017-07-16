@@ -6,15 +6,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.adapter.ContactAdapter;
 import com.jerry.nurse.util.L;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+import static com.jerry.nurse.R.id.lv_contact;
 
 /**
  * Created by Jerry on 2017/7/15.
  */
 
 public class ContactFragment extends Fragment {
+
+    @Bind(lv_contact)
+    ListView mContactListView;
 
     public static ContactFragment newInstance() {
 
@@ -26,6 +36,13 @@ public class ContactFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         L.i("初始化联系人页面");
-        return inflater.inflate(R.layout.fragment_contact, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact, container, false);
+        ButterKnife.bind(this, view);
+        initView();
+        return view;
+    }
+
+    private void initView() {
+        mContactListView.setAdapter(new ContactAdapter());
     }
 }

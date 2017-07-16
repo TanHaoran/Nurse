@@ -9,40 +9,35 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.jerry.nurse.R;
 import com.jerry.nurse.fragment.ContactFragment;
 import com.jerry.nurse.fragment.MessageFragment;
-import com.jerry.nurse.fragment.MineFragment;
+import com.jerry.nurse.fragment.MeFragment;
 import com.jerry.nurse.fragment.OfficeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
+
+import static com.jerry.nurse.R.id.bnb_main;
 
 public class MainActivity extends BaseActivity
         implements BottomNavigationBar.OnTabSelectedListener {
 
-    @Bind(R.id.bnb_main)
+    @Bind(bnb_main)
     BottomNavigationBar mNavigationBar;
 
     private List<Fragment> mFragments;
     private MessageFragment mMessageFragment;
     private OfficeFragment mOfficeFragment;
     private ContactFragment mContactFragment;
-    private MineFragment mMineFragment;
+    private MeFragment mMeFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
-        initView();
+    public int getContentViewResId() {
+        return R.layout.activity_main;
     }
 
-    /**
-     * 初始化
-     */
-    private void initView() {
+    @Override
+    public void init(Bundle savedInstanceState) {
         // 设置导航栏模式
         mNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         mNavigationBar.setBackgroundStyle(BottomNavigationBar
@@ -63,8 +58,8 @@ public class MainActivity extends BaseActivity
         BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
                 .ic_action_contact, R.string.contact);
 
-        BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_mine, R
-                .string.mine);
+        BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
+                .string.me);
 
         // 添加元素并显示
         mNavigationBar.addItem(messageItem)
@@ -91,12 +86,12 @@ public class MainActivity extends BaseActivity
         mMessageFragment = MessageFragment.newInstance();
         mOfficeFragment = OfficeFragment.newInstance();
         mContactFragment = ContactFragment.newInstance();
-        mMineFragment = MineFragment.newInstance();
+        mMeFragment = MeFragment.newInstance();
 
         mFragments.add(mMessageFragment);
         mFragments.add(mOfficeFragment);
         mFragments.add(mContactFragment);
-        mFragments.add(mMineFragment);
+        mFragments.add(mMeFragment);
     }
 
     /**
@@ -143,4 +138,5 @@ public class MainActivity extends BaseActivity
     @Override
     public void onTabReselected(int position) {
     }
+
 }

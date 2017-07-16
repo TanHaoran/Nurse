@@ -9,4 +9,10 @@
         android:layout_height="@dimen/titleBarHeight"
         app:titleText="@string/contact"/>
 
+    <ListView
+        android:id="@+id/lv_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
+
 </LinearLayout>
