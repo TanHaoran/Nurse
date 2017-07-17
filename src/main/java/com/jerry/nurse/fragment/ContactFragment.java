@@ -15,15 +15,13 @@ import com.jerry.nurse.util.L;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.jerry.nurse.R.id.lv_contact;
-
 /**
  * Created by Jerry on 2017/7/15.
  */
 
 public class ContactFragment extends Fragment {
 
-    @Bind(lv_contact)
+    @Bind(R.id.lv_contact)
     ListView mContactListView;
 
     public static ContactFragment newInstance() {

@@ -8,8 +8,8 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.jerry.nurse.R;
 import com.jerry.nurse.fragment.ContactFragment;
-import com.jerry.nurse.fragment.MessageFragment;
 import com.jerry.nurse.fragment.MeFragment;
+import com.jerry.nurse.fragment.MessageFragment;
 import com.jerry.nurse.fragment.OfficeFragment;
 
 import java.util.ArrayList;
@@ -17,12 +17,10 @@ import java.util.List;
 
 import butterknife.Bind;
 
-import static com.jerry.nurse.R.id.bnb_main;
-
 public class MainActivity extends BaseActivity
         implements BottomNavigationBar.OnTabSelectedListener {
 
-    @Bind(bnb_main)
+    @Bind(R.id.bnb_main)
     BottomNavigationBar mNavigationBar;
 
     private List<Fragment> mFragments;
@@ -38,15 +36,6 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void init(Bundle savedInstanceState) {
-        // 设置导航栏模式
-        mNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
-        mNavigationBar.setBackgroundStyle(BottomNavigationBar
-                .BACKGROUND_STYLE_STATIC);
-
-        // 设置激活和未激活的颜色
-        mNavigationBar.setActiveColor(R.color.primary).setInActiveColor(R.color
-                .navigationInActiveColor);
-
         // 设置导航栏按钮数据
         BottomNavigationItem messageItem = new BottomNavigationItem(
                 R.drawable.ic_action_message,

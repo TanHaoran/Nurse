@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.SettingActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/titleBarHeight"
+        app:titleText="@string/setting"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginTop="@dimen/settingSpaceHeight"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_cellphone"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/cellphone"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_weixin"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/weixin"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_qq"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/qq"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_microblog"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/microblog"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginTop="@dimen/settingSpaceHeight"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_change_password"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/changePassword"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginTop="@dimen/settingSpaceHeight"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_help"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/help"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+            <RelativeLayout
+                android:id="@+id/rl_feedback"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/feedback"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+            <RelativeLayout
+                android:id="@+id/rl_check_update"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/checkUpdate"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+            <RelativeLayout
+                android:id="@+id/rl_about"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/about"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

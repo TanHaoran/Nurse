@@ -7,8 +7,10 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:paddingLeft="@dimen/loginPaddingLeft"
         android:paddingRight="@dimen/loginPaddingLeft"
@@ -33,9 +35,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/cellphone"
-                android:textSize="@dimen/loginEditTextSize"
+                android:inputType="number"
                 android:textColor="@color/white"
-                android:inputType="number"/>
+                android:textSize="@dimen/loginEditTextSize"/>
         </android.support.design.widget.TextInputLayout>
 
 
@@ -55,17 +57,17 @@
                     android:id="@+id/et_verification_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/verification_code"
-                    android:textSize="@dimen/loginEditTextSize"
+                    android:hint="@string/verificationCode"
+                    android:inputType="textEmailAddress"
                     android:textColor="@color/white"
-                    android:inputType="textEmailAddress"/>
+                    android:textSize="@dimen/loginEditTextSize"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_get_verification_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/get_verification_code"
+                android:text="@string/getVerificationCode"
                 android:textColor="@color/white"/>
         </LinearLayout>
 
@@ -82,9 +84,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
-                android:textSize="@dimen/loginEditTextSize"
+                android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:inputType="textPassword"/>
+                android:textSize="@dimen/loginEditTextSize"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
@@ -92,7 +94,6 @@
             android:id="@+id/btn_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/loginButtonMarginTop"
             android:layout_marginTop="@dimen/loginButtonMarginTop"
             android:text="@string/signup"
             android:textColor="@color/white"
@@ -100,10 +101,13 @@
 
         <TextView
             android:id="@+id/tv_login"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
+            android:layout_marginTop="@dimen/loginSignupTextMarginTop"
             android:gravity="center"
+            android:padding="@dimen/loginSignupTextPadding"
             android:text="@string/login"
             android:textColor="@color/iron"
             android:textSize="@dimen/loginSignupTextSize"/>

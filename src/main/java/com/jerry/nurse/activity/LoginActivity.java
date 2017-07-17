@@ -14,7 +14,6 @@ import com.jerry.nurse.bean.User;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
-import com.umeng.analytics.MobclickAgent;
 
 import org.litepal.crud.DataSupport;
 
@@ -22,31 +21,26 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
 
-import static com.jerry.nurse.R.id.btn_login;
-import static com.jerry.nurse.R.id.et_cellphone;
-import static com.jerry.nurse.R.id.et_password;
-import static com.jerry.nurse.R.id.tv_signup;
-
 public class LoginActivity extends BaseActivity {
 
     // 注册请求码
     private static final int REQUEST_SIGNUP_CODE = 0;
 
-    @Bind(et_cellphone)
+    @Bind(R.id.et_cellphone)
     EditText mCellphoneEditText;
 
-    @Bind(et_password)
+    @Bind(R.id.et_password)
     EditText mPasswordEditText;
 
-    @Bind(btn_login)
+    @Bind(R.id.btn_login)
     AppCompatButton mLoginButton;
 
 
-    @BindString(R.string.cellphone_invalid)
-    String mCellphoneInvalid;
+    @BindString(R.string.cellphoneInvalid)
+    String mStringCellphoneInvalid;
 
-    @BindString(R.string.password_length_invalid)
-    String mPasswordInvalid;
+    @BindString(R.string.passwordLengthInvalid)
+    String mStringPasswordInvalid;
 
 
     @Override
@@ -56,11 +50,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        // 禁止默认的页面统计方式
-        MobclickAgent.openActivityDurationTrack(false);
     }
 
-    @OnClick(btn_login)
+    @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
         L.i("登陆");
 
@@ -108,7 +100,7 @@ public class LoginActivity extends BaseActivity {
         String password = mPasswordEditText.getText().toString();
 
         if (cellphone.isEmpty()) {
-            mCellphoneEditText.setError(mCellphoneInvalid);
+            mCellphoneEditText.setError(mStringCellphoneInvalid);
             valid = false;
         } else {
             mCellphoneEditText.setError(null);
@@ -117,7 +109,7 @@ public class LoginActivity extends BaseActivity {
         // 密码的长度要介于4和10之间
         if (password.isEmpty() || password.length() < 4 || password
                 .length() > 10) {
-            mPasswordEditText.setError(mPasswordInvalid);
+            mPasswordEditText.setError(mStringPasswordInvalid);
             valid = false;
         } else {
             mPasswordEditText.setError(null);
@@ -150,7 +142,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginFailed() {
-        T.showShort(this, R.string.login_failed);
+        T.showShort(this, R.string.loginFailed);
     }
 
 
@@ -164,7 +156,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    @OnClick(tv_signup)
+    @OnClick(R.id.tv_signup)
     void onSignup(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivityForResult(intent, REQUEST_SIGNUP_CODE);

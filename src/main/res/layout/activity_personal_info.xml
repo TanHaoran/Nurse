@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.PersonalInfoActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/titleBarHeight"
+        app:titleText="@string/personalInfo"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_avatar"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/avatar"/>
+
+                <com.jerry.nurse.view.CircleImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_avatar_default"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_nickname"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/nickname"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_sex"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/sex"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_birthday"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/birthday"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_nurse_certificate"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/nurseCertificate"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_nurse_practising_certificate"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/nursePractisingCertificate"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_nursing_age"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/nursingAge"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_hospital"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/hospital"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_office"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/office"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_job_number"
+                style="@style/personalInfoLineStyle"
+                android:layout_height="@dimen/personalInfoLineHeight">
+
+                <TextView
+                    style="@style/personalInfoLineLeftTextStyle"
+                    android:text="@string/jobNumber"/>
+
+                <ImageView
+                    style="@style/arrowEnterStyle"
+                    android:src="@drawable/ic_action_arrow_enter"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/dividerBorderStyle"
+                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+

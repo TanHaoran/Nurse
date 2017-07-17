@@ -1,11 +1,151 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleBarHeight"
         app:titleText="@string/me"/>
+
+    <RelativeLayout
+        android:id="@+id/ll_personal_info"
+        style="@style/businessLineStyle"
+        android:layout_height="@dimen/personalInfoHeight">
+
+        <com.jerry.nurse.view.CircleImageView
+            android:id="@+id/civ_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/icon_avatar_default"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@id/civ_avatar"
+            android:textColor="@color/monsoon"
+            android:textSize="17sp"
+            tools:text="张馨月"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:layout_toRightOf="@id/civ_avatar"
+            android:textColor="@color/monsoon"
+            android:textSize="14sp"
+            tools:text="月光"/>
+
+        <ImageView
+            android:id="@+id/iv_arrow_enter"
+            style="@style/arrowEnterStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/iv_arrow_enter"
+            tools:text="已认证"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"
+        android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_credit"
+        style="@style/businessLineStyle">
+
+        <TextView
+            style="@style/personalInfoLineLeftTextStyle"
+            android:text="@string/credit"/>
+
+        <ImageView
+            style="@style/arrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_collection"
+        style="@style/businessLineStyle">
+
+        <TextView
+            style="@style/personalInfoLineLeftTextStyle"
+            android:text="@string/collection"/>
+
+        <ImageView
+            style="@style/arrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_schedule"
+        style="@style/businessLineStyle">
+
+        <TextView
+            style="@style/personalInfoLineLeftTextStyle"
+            android:text="@string/schedule"/>
+
+        <ImageView
+            style="@style/arrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_exam"
+        style="@style/businessLineStyle">
+
+        <TextView
+            style="@style/personalInfoLineLeftTextStyle"
+            android:text="@string/exam"/>
+
+        <ImageView
+            style="@style/arrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"
+        android:layout_marginBottom="@dimen/blockMarginBottom"/>
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_setting"
+        style="@style/businessLineStyle">
+
+        <TextView
+            style="@style/personalInfoLineLeftTextStyle"
+            android:text="@string/setting"/>
+
+        <ImageView
+            style="@style/arrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/dividerBorderStyle"/>
+
 
 </LinearLayout>

@@ -9,17 +9,31 @@
     <dimen name="loginPaddingTop">20dp</dimen>
     <dimen name="loginLogoWidth">160dp</dimen>
     <dimen name="loginLogoHeight">140dp</dimen>
-    <dimen name="loginLogoMarginBottom">24dp</dimen>
+    <dimen name="loginLogoMarginBottom">10dp</dimen>
     <dimen name="loginInputMarginTop">10dp</dimen>
     <dimen name="loginButtonMarginTop">24dp</dimen>
     <dimen name="loginButtonTextSize">16sp</dimen>
     <dimen name="loginSignupTextSize">15sp</dimen>
+    <dimen name="loginSignupTextMarginTop">5dp</dimen>
+    <dimen name="loginSignupTextPadding">10dp</dimen>
     <dimen name="loginEditTextSize">16sp</dimen>
-
 
     <!--科室-->
     <dimen name="pluginLineHeight">60dp</dimen>
     <dimen name="pluginLinePaddingLeft">10dp</dimen>
     <dimen name="pluginLineTextMarginLeft">20dp</dimen>
     <dimen name="pluginTitleTextSize">16sp</dimen>
+
+    <!--联系人-->
+
+    <!--我的-->
+    <dimen name="personalInfoHeight">75dp</dimen>
+    <dimen name="businessInfoHeight">45dp</dimen>
+    <dimen name="blockMarginBottom">20dp</dimen>
+    <dimen name="personalInfoLineHeight">45dp</dimen>
+    <dimen name="personalInfoLinePaddingLeft">20dp</dimen>
+    <dimen name="personalInfoLineTextSize">15sp</dimen>
+
+    <dimen name="settingSpaceHeight">10dp</dimen>
+
 </resources>

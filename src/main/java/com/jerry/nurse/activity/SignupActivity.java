@@ -16,38 +16,32 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
 
-import static com.jerry.nurse.R.id.btn_signup;
-import static com.jerry.nurse.R.id.et_cellphone;
-import static com.jerry.nurse.R.id.et_password;
-import static com.jerry.nurse.R.id.et_verification_code;
-import static com.jerry.nurse.R.id.tv_login;
-
 /**
  * Created by Jerry on 2017/7/16.
  */
 
 public class SignupActivity extends BaseActivity {
 
-    @Bind(et_cellphone)
+    @Bind(R.id.et_cellphone)
     EditText mCellphoneEditText;
 
-    @Bind(et_verification_code)
+    @Bind(R.id.et_verification_code)
     EditText mVerificationCodeEditText;
 
-    @Bind(et_password)
+    @Bind(R.id.et_password)
     EditText mPasswordEditText;
 
-    @Bind(btn_signup)
+    @Bind(R.id.btn_signup)
     Button mSignupButton;
 
-    @BindString(R.string.cellphone_invalid)
-    String mCellphoneInvalid;
+    @BindString(R.string.cellphoneInvalid)
+    String mStringCellphoneInvalid;
 
-    @BindString(R.string.verification_code_invalid)
-    String mVerificationCodeInvalid;
+    @BindString(R.string.verificationCodeInvalid)
+    String mStringVerificationCodeInvalid;
 
-    @BindString(R.string.password_length_invalid)
-    String mPasswordInvalid;
+    @BindString(R.string.passwordLengthInvalid)
+    String mStringPasswordInvalid;
 
     @Override
     public int getContentViewResId() {
@@ -59,7 +53,16 @@ public class SignupActivity extends BaseActivity {
 
     }
 
-    @OnClick(btn_signup)
+    /**
+     * 获取验证码按钮
+     *
+     * @param v
+     */
+    @OnClick(R.id.btn_get_verification_code)
+    void onGetVerificationCode(View v) {
+    }
+
+    @OnClick(R.id.btn_signup)
     void onSignup(View view) {
         L.i("注册");
 
@@ -109,7 +112,7 @@ public class SignupActivity extends BaseActivity {
 
         // 本地验证手机号
         if (cellphone.isEmpty()) {
-            mCellphoneEditText.setError(mCellphoneInvalid);
+            mCellphoneEditText.setError(mStringCellphoneInvalid);
             valid = false;
         } else {
             mCellphoneEditText.setError(null);
@@ -117,7 +120,7 @@ public class SignupActivity extends BaseActivity {
 
         // 本地验证验证码
         if (verificationCode.length() != 4) {
-            mVerificationCodeEditText.setError(mVerificationCodeInvalid);
+            mVerificationCodeEditText.setError(mStringVerificationCodeInvalid);
             valid = false;
         } else {
             mVerificationCodeEditText.setError(null);
@@ -126,7 +129,7 @@ public class SignupActivity extends BaseActivity {
         // 本地验证密码
         if (password.isEmpty() || password.length() < 4 || password
                 .length() > 10) {
-            mPasswordEditText.setError(mPasswordInvalid);
+            mPasswordEditText.setError(mStringPasswordInvalid);
             valid = false;
         } else {
             mPasswordEditText.setError(null);
@@ -147,10 +150,10 @@ public class SignupActivity extends BaseActivity {
      * 注册失败
      */
     private void onSignupFailed() {
-        T.showShort(this, R.string.signup_failed);
+        T.showShort(this, R.string.signupFailed);
     }
 
-    @OnClick(tv_login)
+    @OnClick(R.id.tv_login)
     void onLogin(View view) {
         finish();
     }

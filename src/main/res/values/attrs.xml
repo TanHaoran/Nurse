@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--标题栏-->
     <declare-styleable name="TitleBar">
         <attr name="leftText" format="string"/>
         <attr name="rightText" format="string"/>
@@ -11,5 +12,13 @@
 
         <attr name="textColor" format="color"/>
         <attr name="bgColor" format="color"/>
+    </declare-styleable>
+
+    <!--圆形ImageView-->
+    <declare-styleable name="CircleImageView">
+        <attr name="borderWidth" format="dimension"/>
+        <attr name="borderColor" format="color"/>
+        <attr name="borderOverlay" format="boolean"/>
+        <attr name="fillColor" format="color"/>
     </declare-styleable>
 </resources>

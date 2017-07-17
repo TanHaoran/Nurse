@@ -17,9 +17,6 @@ import java.util.List;
 import butterknife.Bind;
 import me.relex.circleindicator.CircleIndicator;
 
-import static com.jerry.nurse.R.id.ci_banner;
-import static com.jerry.nurse.R.id.vp_banner;
-
 /**
  * Created by Jerry on 2017/7/15.
  */
@@ -31,10 +28,10 @@ public class MessageFragment extends BaseFragment {
     // Banner滚动持续时间
     private static final int SCROLLER_DURATION = 1000;
 
-    @Bind(vp_banner)
+    @Bind(R.id.vp_banner)
     ViewPager mViewPager;
 
-    @Bind(ci_banner)
+    @Bind(R.id.ci_banner)
     CircleIndicator mIndicator;
 
     List<View> mBanners;

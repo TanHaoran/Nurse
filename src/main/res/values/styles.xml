@@ -13,10 +13,76 @@
         <item name="colorButtonNormal">@color/primaryDark</item>
     </style>
 
+    <!--加载框-->
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/white</item>
         <item name="android:textColorPrimary">@color/iron</item>
         <item name="android:background">@color/primary</item>
     </style>
+
+    <!--个人中心行-->
+    <style name="personalInfoLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/personalInfoLineHeight</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/plugin_line_selector</item>
+        <item name="android:paddingLeft">@dimen/personalInfoLinePaddingLeft</item>
+        <item name="android:paddingRight">@dimen/personalInfoLinePaddingLeft</item>
+    </style>
+
+    <!--个人中心行左侧文字-->
+    <style name="personalInfoLineLeftTextStyle">
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/monsoon</item>
+        <item name="android:textSize">@dimen/personalInfoLineTextSize</item>
+    </style>
+
+    <!--分割线-->
+    <style name="dividerLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/pluginLineDivider</item>
+    </style>
+
+    <!--边框线-->
+    <style name="dividerBorderStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/iron</item>
+    </style>
+
+    <!--插件功能行-->
+    <style name="pluginLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/pluginLineHeight</item>
+        <item name="android:background">@drawable/plugin_line_selector</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingLeft">@dimen/pluginLinePaddingLeft</item>
+        <item name="android:paddingRight">@dimen/pluginLinePaddingLeft</item>
+    </style>
+
+    <!--个人业务行-->
+    <style name="businessLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/businessInfoHeight</item>
+        <item name="android:background">@drawable/plugin_line_selector</item>
+        <item name="android:clickable">true</item>
+        <item name="android:paddingLeft">@dimen/personalInfoLinePaddingLeft</item>
+        <item name="android:paddingRight">@dimen/personalInfoLinePaddingLeft</item>
+    </style>
+
+    <!--进入箭头样式-->
+    <style name="arrowEnterStyle">
+        <item name="android:src">@drawable/ic_action_arrow_enter</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
 
 </resources>
