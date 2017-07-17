@@ -77,10 +77,10 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0);
 
-        mBorderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_borderWidth, DEFAULT_BORDER_WIDTH);
-        mBorderColor = a.getColor(R.styleable.CircleImageView_borderColor, DEFAULT_BORDER_COLOR);
-        mBorderOverlay = a.getBoolean(R.styleable.CircleImageView_borderOverlay, DEFAULT_BORDER_OVERLAY);
-        mFillColor = a.getColor(R.styleable.CircleImageView_fillColor, DEFAULT_FILL_COLOR);
+        mBorderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_border_width, DEFAULT_BORDER_WIDTH);
+        mBorderColor = a.getColor(R.styleable.CircleImageView_border_color, DEFAULT_BORDER_COLOR);
+        mBorderOverlay = a.getBoolean(R.styleable.CircleImageView_border_overlay, DEFAULT_BORDER_OVERLAY);
+        mFillColor = a.getColor(R.styleable.CircleImageView_fill_color, DEFAULT_FILL_COLOR);
 
         a.recycle();
 

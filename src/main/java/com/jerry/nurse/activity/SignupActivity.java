@@ -34,13 +34,13 @@ public class SignupActivity extends BaseActivity {
     @Bind(R.id.btn_signup)
     Button mSignupButton;
 
-    @BindString(R.string.cellphoneInvalid)
+    @BindString(R.string.cellphone_invalid)
     String mStringCellphoneInvalid;
 
-    @BindString(R.string.verificationCodeInvalid)
+    @BindString(R.string.verification_code_invalid)
     String mStringVerificationCodeInvalid;
 
-    @BindString(R.string.passwordLengthInvalid)
+    @BindString(R.string.password_length_invalid)
     String mStringPasswordInvalid;
 
     @Override
@@ -150,7 +150,7 @@ public class SignupActivity extends BaseActivity {
      * 注册失败
      */
     private void onSignupFailed() {
-        T.showShort(this, R.string.signupFailed);
+        T.showShort(this, R.string.signup_failed);
     }
 
     @OnClick(R.id.tv_login)

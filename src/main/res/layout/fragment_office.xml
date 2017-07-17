@@ -6,12 +6,12 @@
 
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titleBarHeight"
-        app:titleText="@string/office"/>
+        android:layout_height="@dimen/title_bar_height"
+        app:title_text="@string/office"/>
 
     <LinearLayout
         android:id="@+id/ll_event_report"
-        style="@style/pluginLineStyle">
+        style="@style/PluginLineStyle">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -21,11 +21,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_marginLeft="@dimen/plugin_line_text_marginLeft"
             android:layout_weight="1"
-            android:text="@string/eventReport"
-            android:textColor="@color/pluginTitleTextColor"
-            android:textSize="@dimen/pluginTitleTextSize"/>
+            android:text="@string/event_report"
+            android:textColor="@color/plugin_title_text_color"
+            android:textSize="@dimen/plugin_title_textSize"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -34,11 +34,11 @@
     </LinearLayout>
 
     <View
-        style="@style/dividerLineStyle"/>
+        style="@style/DividerLineStyle"/>
 
     <LinearLayout
         android:id="@+id/ll_nurse_class"
-        style="@style/pluginLineStyle">
+        style="@style/PluginLineStyle">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -48,11 +48,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_marginLeft="@dimen/plugin_line_text_marginLeft"
             android:layout_weight="1"
-            android:text="@string/nurseClass"
-            android:textColor="@color/pluginTitleTextColor"
-            android:textSize="@dimen/pluginTitleTextSize"/>
+            android:text="@string/nurse_class"
+            android:textColor="@color/plugin_title_text_color"
+            android:textSize="@dimen/plugin_title_textSize"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -61,11 +61,11 @@
     </LinearLayout>
 
     <View
-        style="@style/dividerLineStyle"/>
+        style="@style/DividerLineStyle"/>
 
     <LinearLayout
         android:id="@+id/ll_credit_check"
-        style="@style/pluginLineStyle">
+        style="@style/PluginLineStyle">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -75,11 +75,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_marginLeft="@dimen/plugin_line_text_marginLeft"
             android:layout_weight="1"
-            android:text="@string/creditCheck"
-            android:textColor="@color/pluginTitleTextColor"
-            android:textSize="@dimen/pluginTitleTextSize"/>
+            android:text="@string/credit_check"
+            android:textColor="@color/plugin_title_text_color"
+            android:textSize="@dimen/plugin_title_textSize"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -88,11 +88,11 @@
     </LinearLayout>
 
     <View
-        style="@style/dividerLineStyle"/>
+        style="@style/DividerLineStyle"/>
 
     <LinearLayout
         android:id="@+id/ll_schedule_check"
-        style="@style/pluginLineStyle">
+        style="@style/PluginLineStyle">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -102,11 +102,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/pluginLineTextMarginLeft"
+            android:layout_marginLeft="@dimen/plugin_line_text_marginLeft"
             android:layout_weight="1"
-            android:text="@string/scheduleCheck"
-            android:textColor="@color/pluginTitleTextColor"
-            android:textSize="@dimen/pluginTitleTextSize"/>
+            android:text="@string/schedule_check"
+            android:textColor="@color/plugin_title_text_color"
+            android:textSize="@dimen/plugin_title_textSize"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -115,6 +115,6 @@
     </LinearLayout>
 
     <View
-        style="@style/dividerLineStyle"/>
+        style="@style/DividerLineStyle"/>
 
 </LinearLayout>

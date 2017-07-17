@@ -2,8 +2,8 @@
 <resources>
     <!--公共-->
     <color name="primary">#488AFF</color>
-    <color name="primaryDark">#1F6BF2</color>
-    <color name="primaryDarker">#054ac4</color>
+    <color name="primary_dark">#1F6BF2</color>
+    <color name="primary_darker">#054ac4</color>
     <color name="accent">#FF4081</color>
 
     <color name="black">#000000</color>
@@ -18,12 +18,12 @@
     <color name="grey">#AAAAAA</color>
 
     <!--主页-->
-    <color name="navigationBgColor">#D9D9D9</color>
-    <color name="navigationInActiveColor">#898989</color>
+    <color name="navigation_bg_color">#D9D9D9</color>
+    <color name="navigation_in_active_color">#898989</color>
 
     <!--科室-->
-    <color name="pluginLineDivider">#EEEEEE</color>
-    <color name="pluginTitleTextColor">#333333</color>
-    <color name="pluginLineNormalColor">#FFFFFF</color>
+    <color name="plugin_line_divider">#EEEEEE</color>
+    <color name="plugin_title_text_color">#333333</color>
+    <color name="plugin_line_normal_color">#FFFFFF</color>
 
 </resources>

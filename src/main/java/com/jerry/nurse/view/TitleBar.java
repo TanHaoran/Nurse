@@ -56,20 +56,20 @@ public class TitleBar extends RelativeLayout {
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TitleBar);
 
-        mLeftText = ta.getString(R.styleable.TitleBar_leftText);
-        mRightText = ta.getString(R.styleable.TitleBar_rightText);
-        mTitleText = ta.getString(R.styleable.TitleBar_titleText);
+        mLeftText = ta.getString(R.styleable.TitleBar_left_text);
+        mRightText = ta.getString(R.styleable.TitleBar_right_text);
+        mTitleText = ta.getString(R.styleable.TitleBar_title_text);
 
         mButtonTextSize = ta.getDimension(R.styleable
-                .TitleBar_buttonTextSize, DensityUtil.sp2px(context,
+                .TitleBar_button_textSize, DensityUtil.sp2px(context,
                 DEFAULT_BUTTON_TEXT_SIZE));
         mTitleTextSize = ta.getDimension(R.styleable
-                .TitleBar_titleTextSize, DensityUtil.sp2px(context,
+                .TitleBar_title_textSize, DensityUtil.sp2px(context,
                 DEFAULT_TITLE_TEXT_SIZE));
 
-        mTextColor = ta.getColor(R.styleable.TitleBar_textColor,
+        mTextColor = ta.getColor(R.styleable.TitleBar_text_color,
                 DEFAULT_TEXT_COLOR);
-        mBgColor = ta.getColor(R.styleable.TitleBar_bgColor,
+        mBgColor = ta.getColor(R.styleable.TitleBar_bg_color,
                 DEFAULT_BG_COLOR);
 
         // 初始化界面

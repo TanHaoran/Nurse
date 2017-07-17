@@ -3,22 +3,22 @@
 
     <!--标题栏-->
     <declare-styleable name="TitleBar">
-        <attr name="leftText" format="string"/>
-        <attr name="rightText" format="string"/>
-        <attr name="titleText" format="string"/>
+        <attr name="left_text" format="string"/>
+        <attr name="right_text" format="string"/>
+        <attr name="title_text" format="string"/>
 
-        <attr name="buttonTextSize" format="dimension"/>
-        <attr name="titleTextSize" format="dimension"/>
+        <attr name="button_textSize" format="dimension"/>
+        <attr name="title_textSize" format="dimension"/>
 
-        <attr name="textColor" format="color"/>
-        <attr name="bgColor" format="color"/>
+        <attr name="text_color" format="color"/>
+        <attr name="bg_color" format="color"/>
     </declare-styleable>
 
     <!--圆形ImageView-->
     <declare-styleable name="CircleImageView">
-        <attr name="borderWidth" format="dimension"/>
-        <attr name="borderColor" format="color"/>
-        <attr name="borderOverlay" format="boolean"/>
-        <attr name="fillColor" format="color"/>
+        <attr name="border_width" format="dimension"/>
+        <attr name="border_color" format="color"/>
+        <attr name="border_overlay" format="boolean"/>
+        <attr name="fill_color" format="color"/>
     </declare-styleable>
 </resources>

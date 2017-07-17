@@ -36,10 +36,10 @@ public class LoginActivity extends BaseActivity {
     AppCompatButton mLoginButton;
 
 
-    @BindString(R.string.cellphoneInvalid)
+    @BindString(R.string.cellphone_invalid)
     String mStringCellphoneInvalid;
 
-    @BindString(R.string.passwordLengthInvalid)
+    @BindString(R.string.password_length_invalid)
     String mStringPasswordInvalid;
 
 
@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginFailed() {
-        T.showShort(this, R.string.loginFailed);
+        T.showShort(this, R.string.login_failed);
     }
 
 

@@ -10,8 +10,8 @@
 
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titleBarHeight"
-        app:titleText="@string/nickname"/>
+        android:layout_height="@dimen/title_bar_height"
+        app:title_text="@string/nickname"/>
 
 
     <com.jerry.nurse.view.ClearEditText

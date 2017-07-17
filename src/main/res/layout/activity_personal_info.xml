@@ -10,8 +10,8 @@
 
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titleBarHeight"
-        app:titleText="@string/personalInfo"/>
+        android:layout_height="@dimen/title_bar_height"
+        app:title_text="@string/personal_info"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,204 +24,205 @@
 
             <RelativeLayout
                 android:id="@+id/rl_avatar"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/avatar"/>
 
                 <com.jerry.nurse.view.CircleImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/civ_avatar"
+                    android:layout_width="@dimen/personal_Info_avatar_width"
+                    android:layout_height="@dimen/personal_Info_avatar_width"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/icon_avatar_default"/>
+                    android:background="@drawable/icon_avatar_default"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"
-                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+                style="@style/DividerBorderStyle"
+                android:layout_marginBottom="@dimen/block_marginBottom"/>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nickname"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/nickname"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
 
             <RelativeLayout
                 android:id="@+id/rl_sex"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/sex"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
 
             <RelativeLayout
                 android:id="@+id/rl_birthday"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/birthday"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"
-                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+                style="@style/DividerBorderStyle"
+                android:layout_marginBottom="@dimen/block_marginBottom"/>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
 
             <RelativeLayout
                 android:id="@+id/rl_nurse_certificate"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
-                    android:text="@string/nurseCertificate"/>
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/nurse_certificate"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nurse_practising_certificate"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
-                    android:text="@string/nursePractisingCertificate"/>
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/nurse_practising_certificate"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nursing_age"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
-                    android:text="@string/nursingAge"/>
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/nursing_age"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"
-                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+                style="@style/DividerBorderStyle"
+                android:layout_marginBottom="@dimen/block_marginBottom"/>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_hospital"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/hospital"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
 
             <RelativeLayout
                 android:id="@+id/rl_office"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
+                    style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/office"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"/>
+                style="@style/DividerBorderStyle"/>
 
 
             <RelativeLayout
                 android:id="@+id/rl_job_number"
-                style="@style/personalInfoLineStyle"
-                android:layout_height="@dimen/personalInfoLineHeight">
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
-                    style="@style/personalInfoLineLeftTextStyle"
-                    android:text="@string/jobNumber"/>
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/job_number"/>
 
                 <ImageView
-                    style="@style/arrowEnterStyle"
+                    style="@style/ArrowEnterStyle"
                     android:src="@drawable/ic_action_arrow_enter"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/dividerBorderStyle"
-                android:layout_marginBottom="@dimen/blockMarginBottom"/>
+                style="@style/DividerBorderStyle"
+                android:layout_marginBottom="@dimen/block_marginBottom"/>
 
 
         </LinearLayout>

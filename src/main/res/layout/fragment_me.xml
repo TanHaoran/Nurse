@@ -7,21 +7,21 @@
 
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titleBarHeight"
-        app:titleText="@string/me"/>
+        android:layout_height="@dimen/title_bar_height"
+        app:title_text="@string/me"/>
 
     <RelativeLayout
         android:id="@+id/ll_personal_info"
-        style="@style/businessLineStyle"
-        android:layout_height="@dimen/personalInfoHeight">
+        style="@style/BusinessLineStyle"
+        android:layout_height="@dimen/personal_info_height">
 
         <com.jerry.nurse.view.CircleImageView
             android:id="@+id/civ_avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/personal_Info_avatar_width"
+            android:layout_height="@dimen/personal_Info_avatar_width"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
-            android:src="@drawable/icon_avatar_default"/>
+            android:background="@drawable/icon_avatar_default"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
 
         <ImageView
             android:id="@+id/iv_arrow_enter"
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,96 +56,96 @@
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"
-        android:layout_marginBottom="@dimen/blockMarginBottom"/>
+        style="@style/DividerBorderStyle"
+        android:layout_marginBottom="@dimen/block_marginBottom"/>
 
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_credit"
-        style="@style/businessLineStyle">
+        style="@style/BusinessLineStyle">
 
         <TextView
-            style="@style/personalInfoLineLeftTextStyle"
+            style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/credit"/>
 
         <ImageView
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_collection"
-        style="@style/businessLineStyle">
+        style="@style/BusinessLineStyle">
 
         <TextView
-            style="@style/personalInfoLineLeftTextStyle"
+            style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/collection"/>
 
         <ImageView
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_schedule"
-        style="@style/businessLineStyle">
+        style="@style/BusinessLineStyle">
 
         <TextView
-            style="@style/personalInfoLineLeftTextStyle"
+            style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/schedule"/>
 
         <ImageView
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_exam"
-        style="@style/businessLineStyle">
+        style="@style/BusinessLineStyle">
 
         <TextView
-            style="@style/personalInfoLineLeftTextStyle"
+            style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/exam"/>
 
         <ImageView
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"
-        android:layout_marginBottom="@dimen/blockMarginBottom"/>
+        style="@style/DividerBorderStyle"
+        android:layout_marginBottom="@dimen/block_marginBottom"/>
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_setting"
-        style="@style/businessLineStyle">
+        style="@style/BusinessLineStyle">
 
         <TextView
-            style="@style/personalInfoLineLeftTextStyle"
+            style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/setting"/>
 
         <ImageView
-            style="@style/arrowEnterStyle"/>
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
     <View
-        style="@style/dividerBorderStyle"/>
+        style="@style/DividerBorderStyle"/>
 
 
 </LinearLayout>

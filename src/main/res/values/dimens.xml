@@ -2,38 +2,39 @@
 <resources>
 
     <!--公共-->
-    <dimen name="titleBarHeight">50dp</dimen>
+    <dimen name="title_bar_height">50dp</dimen>
 
     <!--登陆-->
-    <dimen name="loginPaddingLeft">24dp</dimen>
-    <dimen name="loginPaddingTop">20dp</dimen>
-    <dimen name="loginLogoWidth">160dp</dimen>
+    <dimen name="login_paddingLeft">24dp</dimen>
+    <dimen name="login_paddingTop">20dp</dimen>
+    <dimen name="login_logo_width">160dp</dimen>
     <dimen name="loginLogoHeight">140dp</dimen>
-    <dimen name="loginLogoMarginBottom">10dp</dimen>
-    <dimen name="loginInputMarginTop">10dp</dimen>
-    <dimen name="loginButtonMarginTop">24dp</dimen>
-    <dimen name="loginButtonTextSize">16sp</dimen>
-    <dimen name="loginSignupTextSize">15sp</dimen>
-    <dimen name="loginSignupTextMarginTop">5dp</dimen>
-    <dimen name="loginSignupTextPadding">10dp</dimen>
-    <dimen name="loginEditTextSize">16sp</dimen>
+    <dimen name="login_logo_marginBottom">10dp</dimen>
+    <dimen name="login_input_marginTop">10dp</dimen>
+    <dimen name="login_button_marginTop">24dp</dimen>
+    <dimen name="login_button_textSize">16sp</dimen>
+    <dimen name="login_signup_textSize">15sp</dimen>
+    <dimen name="login_signup_text_marginTop">5dp</dimen>
+    <dimen name="login_signup_text_padding">10dp</dimen>
+    <dimen name="login_edit_textSize">16sp</dimen>
 
     <!--科室-->
-    <dimen name="pluginLineHeight">60dp</dimen>
-    <dimen name="pluginLinePaddingLeft">10dp</dimen>
-    <dimen name="pluginLineTextMarginLeft">20dp</dimen>
-    <dimen name="pluginTitleTextSize">16sp</dimen>
+    <dimen name="plugin_line_height">60dp</dimen>
+    <dimen name="plugin_line_paddingLeft">10dp</dimen>
+    <dimen name="plugin_line_text_marginLeft">20dp</dimen>
+    <dimen name="plugin_title_textSize">16sp</dimen>
 
     <!--联系人-->
 
     <!--我的-->
-    <dimen name="personalInfoHeight">75dp</dimen>
-    <dimen name="businessInfoHeight">45dp</dimen>
-    <dimen name="blockMarginBottom">20dp</dimen>
-    <dimen name="personalInfoLineHeight">45dp</dimen>
-    <dimen name="personalInfoLinePaddingLeft">20dp</dimen>
-    <dimen name="personalInfoLineTextSize">15sp</dimen>
+    <dimen name="personal_info_height">75dp</dimen>
+    <dimen name="business_info_height">45dp</dimen>
+    <dimen name="block_marginBottom">20dp</dimen>
+    <dimen name="personal_info_line_height">45dp</dimen>
+    <dimen name="personal_info_line_paddingLeft">20dp</dimen>
+    <dimen name="personal_Info_line_textSize">15sp</dimen>
+    <dimen name="personal_Info_avatar_width">50dp</dimen>
 
-    <dimen name="settingSpaceHeight">10dp</dimen>
+    <dimen name="setting_space_height">10dp</dimen>
 
 </resources>
