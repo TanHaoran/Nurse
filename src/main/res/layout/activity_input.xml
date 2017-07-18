@@ -6,11 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.jerry.nurse.activity.NicknameActivity">
+    tools:context="com.jerry.nurse.activity.InputActivity">
 
     <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_input"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
+        app:left_text="@string/back"
+        app:right_text="@string/save"
         app:title_text="@string/nickname"/>
 
 
@@ -19,12 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/edit_bg"
+        android:background="@drawable/edit_up_down_bg"
         android:drawablePadding="7dp"
-        android:hint="@string/nickname"
+        android:lines="1"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:singleLine="true"
         android:textColor="@color/oil"
         android:textSize="17sp"/>
 

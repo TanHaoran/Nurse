@@ -21,7 +21,9 @@
             android:layout_height="@dimen/personal_Info_avatar_width"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
-            android:background="@drawable/icon_avatar_default"/>
+            android:src="@drawable/icon_avatar_default"
+            app:border_color="@color/white"
+            app:border_width="1dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,6 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/iv_arrow_enter"
+            android:textColor="@color/monsoon"
+            android:textSize="@dimen/personal_info_right_textSize"
             tools:text="已认证"/>
 
     </RelativeLayout>
@@ -67,12 +71,15 @@
         android:id="@+id/rl_credit"
         style="@style/BusinessLineStyle">
 
+
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
             android:text="@string/credit"/>
 
         <ImageView
+            android:id="@+id/iv_arrow_credit"
             style="@style/ArrowEnterStyle"/>
+
 
     </RelativeLayout>
 

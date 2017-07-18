@@ -2,17 +2,60 @@
 <com.mcxtzhang.swipemenulib.SwipeMenuLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:ios="false"
     app:leftSwipe="true"
     app:swipeEnable="true">
 
-    <TextView
-        android:id="@+id/text001"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="item"/>
+        android:paddingBottom="@dimen/contact_item_paddingTop"
+        android:paddingLeft="@dimen/contact_item_paddingLeft"
+        android:paddingRight="@dimen/contact_item_paddingLeft"
+        android:paddingTop="@dimen/contact_item_paddingTop">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="@dimen/contact_item_avatar_width"
+            android:layout_height="@dimen/contact_item_avatar_width"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_avatar"/>
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+            android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:textSize="@dimen/contact_item_nickname_textSize"
+            tools:text="紫萱"/>
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_nickname"
+            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+            android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:textSize="@dimen/contact_item_message_textSize"
+            tools:text="在吗"/>
+
+        <TextView
+            android:textSize="@dimen/contact_item_time_textSize"
+            tools:text="23:10"
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_time"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btn_delete"

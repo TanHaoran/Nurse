@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,13 +9,17 @@
     tools:context="com.jerry.nurse.activity.SettingActivity">
 
     <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_setting"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
+        app:left_text="@string/back"
         app:title_text="@string/setting"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/tb_setting">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,6 +146,7 @@
 
             <View
                 style="@style/DividerBorderStyle"/>
+
             <RelativeLayout
                 android:id="@+id/rl_feedback"
                 style="@style/PersonalInfoLineStyle"
@@ -159,6 +164,7 @@
 
             <View
                 style="@style/DividerBorderStyle"/>
+
             <RelativeLayout
                 android:id="@+id/rl_check_update"
                 style="@style/PersonalInfoLineStyle"
@@ -176,6 +182,7 @@
 
             <View
                 style="@style/DividerBorderStyle"/>
+
             <RelativeLayout
                 android:id="@+id/rl_about"
                 style="@style/PersonalInfoLineStyle"
@@ -193,7 +200,21 @@
 
             <View
                 style="@style/DividerBorderStyle"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/change_password_marginLeft"
+                android:layout_marginRight="@dimen/change_password_marginLeft"
+                android:layout_marginTop="@dimen/login_button_marginTop"
+                android:gravity="center"
+                android:text="@string/logout"
+                android:textColor="@color/white"
+                android:textSize="@dimen/login_button_textSize"/>
+
+
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>

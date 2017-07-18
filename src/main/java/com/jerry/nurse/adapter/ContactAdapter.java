@@ -31,7 +31,7 @@ public class ContactAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(parent.getContext()).inflate(R
                 .layout.item_contact, null);
-        TextView tv = (TextView) convertView.findViewById(R.id.text001);
+        TextView tv = (TextView) convertView.findViewById(R.id.tv_nickname);
         tv.setText(strings[position]);
         Button btn = (Button) convertView.findViewById(R.id.btn_delete);
         //删除监听  

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.activity.PluginActivity;
+import com.jerry.nurse.activity.HtmlActivity;
 
 import butterknife.OnClick;
 
@@ -41,14 +41,14 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
-        Intent intent = PluginActivity.getIntent(getActivity(), REPORT_EVENT_URL);
+        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL, R.string.event_report);
         startActivity(intent);
     }
 
 
     @OnClick(R.id.ll_nurse_class)
     void onNurseClass(View view) {
-        Intent intent = PluginActivity.getIntent(getActivity(), NURSE_CLASS_URL);
+        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL, R.string.nurse_class);
         startActivity(intent);
     }
 

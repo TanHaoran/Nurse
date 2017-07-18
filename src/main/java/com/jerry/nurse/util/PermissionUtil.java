@@ -3,6 +3,7 @@ package com.jerry.nurse.util;
 import android.Manifest;
 
 import com.jerry.nurse.activity.BaseActivity;
+import com.jerry.nurse.listener.PermissionListener;
 
 import java.util.List;
 

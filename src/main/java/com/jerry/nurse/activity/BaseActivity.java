@@ -1,23 +1,40 @@
 package com.jerry.nurse.activity;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.listener.PermissionListener;
+import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.util.ActivityCollector;
-import com.jerry.nurse.util.PermissionListener;
+import com.jerry.nurse.util.FileUtil;
+import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.PictureUtil;
 import com.jerry.nurse.util.ScreenUtil;
+import com.jerry.nurse.util.T;
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.ButterKnife;
 
 /**
@@ -26,9 +43,19 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    @BindString(R.string.photograph)
+    String mStringPhotograph;
+
+    @BindString(R.string.select_from_album)
+    String mStringSelectFromAlbum;
+
     private static final int REQUEST_PERMISSION_RESULT = 1;
 
-    private static PermissionListener mListener;
+    private static final int REQUEST_PHOTOGRAPH = 0;
+    private static final int REQUEST_SELECT_FROM_ALBUM = 1;
+
+    private static PermissionListener mPermissionListener;
+    private static PhotoSelectListener mPhotoSelectListener;
 
     /**
      * 获取当前页面的布局
@@ -86,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (topActivity == null) {
             return;
         }
-        mListener = listener;
+        mPermissionListener = listener;
         List<String> permissionList = new ArrayList<>();
         for (String permission : permissions) {
             // 如果没有这个权限，就添加到集合中
@@ -99,7 +126,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(topActivity,
                     permissionList.toArray(new String[permissionList.size()]), REQUEST_PERMISSION_RESULT);
         } else {
-            mListener.onGranted();
+            mPermissionListener.onGranted();
         }
     }
 
@@ -126,14 +153,162 @@ public abstract class BaseActivity extends AppCompatActivity {
                         }
                     }
                     if (deniedPermissions.isEmpty()) {
-                        mListener.onGranted();
+                        mPermissionListener.onGranted();
                     } else {
-                        mListener.onDenied(deniedPermissions);
+                        mPermissionListener.onDenied(deniedPermissions);
                     }
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 设置一个View进行拍照或者相册选择图片的监听器
+     *
+     * @param view
+     * @param photoSelectListener
+     */
+    public void setPhotoSelectListener(View view, PhotoSelectListener photoSelectListener) {
+
+        mPhotoSelectListener = photoSelectListener;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] items = {mStringPhotograph, mStringSelectFromAlbum};
+
+                new AlertDialog
+                        .Builder(ActivityCollector.getTopActivity())
+                        .setTitle(R.string.upload_phone)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    // 拍照
+                                    case 0:
+                                        photograph();
+                                        break;
+                                    // 从相册选择
+                                    case 1:
+                                        selectFromAlbum();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+        });
+    }
+
+    /**
+     * 调用照相机拍照
+     */
+    private void photograph() {
+        BaseActivity.requestRuntimePermission(new String[]{Manifest
+                        .permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new PermissionListener() {
+                    @Override
+                    public void onGranted() {
+                        //拿到sdcard是否可用的状态码
+                        String state = Environment.getExternalStorageState();
+                        if (state.equals(Environment.MEDIA_MOUNTED)) {
+                            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                            startActivityForResult(intent, REQUEST_PHOTOGRAPH);
+                        } else {
+                            T.showLong(ActivityCollector.getTopActivity(),
+                                    R.string.sdcard_disabled);
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> deniedPermissions) {
+
+                    }
+                });
+    }
+
+
+    /**
+     * 从本地选取照片
+     */
+    private void selectFromAlbum() {
+        BaseActivity.requestRuntimePermission(new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                new PermissionListener() {
+                    @Override
+                    public void onGranted() {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");//相片类型
+                        startActivityForResult(intent, REQUEST_SELECT_FROM_ALBUM);
+                    }
+
+                    @Override
+                    public void onDenied(List<String> deniedPermissions) {
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        Bitmap photoBitmap = null;
+        Uri uri = data.getData();
+        switch (requestCode) {
+            case REQUEST_PHOTOGRAPH:
+                // 避免有时候获取到的uri是空的情况
+                if (uri == null) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null) {
+                        try {
+                            // 从Bundle中获取图片
+                            photoBitmap = (Bitmap) bundle.get("data");
+
+                            File externalFilesDir = getExternalFilesDir(Environment
+                                    .DIRECTORY_PICTURES);
+                            File file = new File(externalFilesDir, System
+                                    .currentTimeMillis() + ".jpg");
+                            L.i("文件路径：" + file.getPath());
+                            // 打开文件输出流
+                            FileOutputStream fileOutputStream = new
+                                    FileOutputStream(file);
+                            // 生成图片文件
+                            photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                            // 压缩图片
+                            photoBitmap = PictureUtil.getScaleBitmap
+                                    (file.getPath(), this);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        T.showLong(ActivityCollector.getTopActivity(),
+                                R.string.photograph_failed);
+                        return;
+                    }
+                } else {
+                    // 压缩图片
+                    photoBitmap = PictureUtil.getScaleBitmap
+                            (FileUtil.getRealFilePath(this, uri), this);
+                }
+                break;
+            case REQUEST_SELECT_FROM_ALBUM:
+                // 压缩图片
+                photoBitmap = PictureUtil.getScaleBitmap
+                        (FileUtil.getRealFilePath(this, uri), this);
+
+                break;
+            default:
+                break;
+        }
+        if (mPhotoSelectListener != null) {
+            mPhotoSelectListener.onPhotoSelected(photoBitmap);
         }
     }
 }

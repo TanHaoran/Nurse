@@ -2,19 +2,29 @@ package com.jerry.nurse.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.bean.User;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.auth.QQToken;
+import com.tencent.connect.common.Constants;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
@@ -42,6 +52,15 @@ public class LoginActivity extends BaseActivity {
     @BindString(R.string.password_length_invalid)
     String mStringPasswordInvalid;
 
+    private static final String APP_ID = "1106292702";//官方获取的APPID
+    private Tencent mTencent;
+    private BaseUiListener mIUiListener;
+    private UserInfo mUserInfo;
+
+    public static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        return intent;
+    }
 
     @Override
     public int getContentViewResId() {
@@ -50,6 +69,8 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        //传入参数APPID和全局Context上下文
+        mTencent = Tencent.createInstance(APP_ID, this);
     }
 
     @OnClick(R.id.btn_login)
@@ -152,7 +173,10 @@ public class LoginActivity extends BaseActivity {
             if (resultCode == Activity.RESULT_OK) {
                 L.i("注册成功");
             }
+        } else if (requestCode == Constants.REQUEST_LOGIN) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, mIUiListener);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -160,5 +184,73 @@ public class LoginActivity extends BaseActivity {
     void onSignup(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivityForResult(intent, REQUEST_SIGNUP_CODE);
+    }
+
+    /**
+     * 使用qq登录
+     *
+     * @param view
+     */
+    @OnClick(R.id.tv_qq)
+    void onQQ(View view) {
+        /**通过这句代码，SDK实现了QQ的登录，这个方法有三个参数，第一个参数是context上下文，第二个参数SCOPO 是一个String类型的字符串，表示一些权限
+         官方文档中的说明：应用需要获得哪些API的权限，由“，”分隔。例如：SCOPE = “get_user_info,add_t”；所有权限用“all”
+         第三个参数，是一个事件监听器，IUiListener接口的实例，这里用的是该接口的实现类 */
+        mIUiListener = new BaseUiListener();
+        //all表示获取所有权限
+        mTencent.login(LoginActivity.this, "all", mIUiListener);
+    }
+
+    /**
+     * 自定义监听器实现IUiListener接口后，需要实现的3个方法
+     * onComplete完成 onError错误 onCancel取消
+     */
+    private class BaseUiListener implements IUiListener {
+
+        @Override
+        public void onComplete(Object response) {
+            Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
+            L.e("response:" + response);
+            JSONObject obj = (JSONObject) response;
+            try {
+                String openID = obj.getString("openid");
+                String accessToken = obj.getString("access_token");
+                String expires = obj.getString("expires_in");
+                mTencent.setOpenId(openID);
+                mTencent.setAccessToken(accessToken, expires);
+                QQToken qqToken = mTencent.getQQToken();
+                mUserInfo = new UserInfo(getApplicationContext(), qqToken);
+                mUserInfo.getUserInfo(new IUiListener() {
+                    @Override
+                    public void onComplete(Object response) {
+                        L.e("登录成功" + response.toString());
+                    }
+
+                    @Override
+                    public void onError(UiError uiError) {
+                        L.e("登录失败" + uiError.toString());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        L.e("登录取消");
+
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            T.showShort(LoginActivity.this, "授权失败");
+
+        }
+
+        @Override
+        public void onCancel() {
+            T.showShort(LoginActivity.this, "授权取消");
+        }
     }
 }

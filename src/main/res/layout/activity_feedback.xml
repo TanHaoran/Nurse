@@ -6,17 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.jerry.nurse.activity.HtmlActivity">
+    tools:context="com.jerry.nurse.activity.FeedbackActivity">
 
     <com.jerry.nurse.view.TitleBar
-        android:id="@+id/tb_html"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"/>
+        app:left_text="@string/back"
+        app:right_text="@string/submit"
+        app:title_text="@string/feedback"/>
 
-    <WebView
-        android:id="@+id/wv_plugin"
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="160dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/edit_around_bg"
+        android:gravity="top"
+        android:hint="@string/please_writer_your_advice"
+        android:padding="15dp"
+        android:textColor="@color/monsoon"
+        android:textSize="15sp"/>
 
 </LinearLayout>

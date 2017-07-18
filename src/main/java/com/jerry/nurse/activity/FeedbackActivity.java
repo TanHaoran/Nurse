@@ -6,16 +6,16 @@ import android.os.Bundle;
 
 import com.jerry.nurse.R;
 
-public class NicknameActivity extends BaseActivity {
+public class FeedbackActivity extends BaseActivity {
 
     public static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, NicknameActivity.class);
+        Intent intent = new Intent(context, FeedbackActivity.class);
         return intent;
     }
 
     @Override
     public int getContentViewResId() {
-        return R.layout.activity_nickname;
+        return R.layout.activity_feedback;
     }
 
     @Override

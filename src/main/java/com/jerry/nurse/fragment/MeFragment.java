@@ -6,8 +6,10 @@ import android.view.View;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.PersonalInfoActivity;
+import com.jerry.nurse.activity.SettingActivity;
 
 import butterknife.OnClick;
+
 
 /**
  * Created by Jerry on 2017/7/15.
@@ -63,7 +65,8 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_setting)
     void onSetting(View view) {
-
+        Intent intent = SettingActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 
 

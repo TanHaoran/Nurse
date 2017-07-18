@@ -42,8 +42,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/monsoon</item>
-        <item name="android:textSize">@dimen/personal_Info_line_textSize
-        </item>
+        <item name="android:textSize">@dimen/personal_Info_line_textSize</item>
     </style>
 
     <!--分割线-->
@@ -95,6 +94,22 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="business_line_right_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/monsoon</item>
+        <item name="android:textSize">@dimen/personal_info_right_textSize</item>
+    </style>
+
+    <style name="personal_info_line_right_text_style">
+        <item name="android:textColor">@color/monsoon</item>
+        <item name="android:textSize">@dimen/personal_info_line_right_textSize</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
 

@@ -45,4 +45,13 @@ public class ActivityCollector {
             return mActivities.get(mActivities.size() - 1);
         }
     }
+
+    /**
+     * 移除栈内所有Activity
+     */
+    public static void removeAllActivity() {
+        for(Activity activity: mActivities) {
+            activity.finish();
+        }
+    }
 }

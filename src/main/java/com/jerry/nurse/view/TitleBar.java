@@ -5,11 +5,13 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DensityUtil;
 
 /**
@@ -40,6 +42,17 @@ public class TitleBar extends RelativeLayout {
 
     private int mTextColor;
     private int mBgColor;
+
+    private OnLeftClickListener mOnLeftClickListener;
+    private OnRightClickListener mOnRightClickListener;
+
+    public interface OnLeftClickListener {
+        void onLeftClick(View view);
+    }
+
+    public interface OnRightClickListener {
+        void onRightClick(View view);
+    }
 
     public TitleBar(Context context) {
         this(context, null);
@@ -131,5 +144,54 @@ public class TitleBar extends RelativeLayout {
         addView(mLeftTextView, leftTextLayoutParam);
         addView(mRightTextView, rightTextLayoutParam);
         addView(mTitleTextView, titleTextLayoutParam);
+
+        mLeftTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mLeftText.isEmpty()) {
+                    if (mOnLeftClickListener != null) {
+                        mOnLeftClickListener.onLeftClick(v);
+                    } else {
+                        ActivityCollector.getTopActivity().finish();
+                    }
+                }
+            }
+        });
+
+        mRightTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnRightClickListener != null) {
+                    mOnRightClickListener.onRightClick(v);
+                }
+            }
+        });
+    }
+
+    /**
+     * 设置标题
+     * @param title
+     */
+    public void setTitle(String title) {
+        mTitleText = title;
+        mTitleTextView.setText(mTitleText);
+    }
+
+    /**
+     * 设置左侧按钮的监听事件
+     *
+     * @param onLeftClickListener
+     */
+    public void setLeftClickListener(OnLeftClickListener onLeftClickListener) {
+        mOnLeftClickListener = onLeftClickListener;
+    }
+
+    /**
+     * 设置右侧按钮的监听事件
+     *
+     * @param onRightClickListener
+     */
+    public void setRightClickListener(OnRightClickListener onRightClickListener) {
+        mOnRightClickListener = onRightClickListener;
     }
 }

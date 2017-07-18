@@ -3,10 +3,8 @@
           package="com.jerry.nurse">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <!-- 友盟 -->
@@ -92,11 +90,38 @@
         </activity>
         <activity android:name=".activity.PersonalInfoActivity">
         </activity>
-        <activity android:name=".activity.PluginActivity">
+        <activity android:name=".activity.HtmlActivity">
         </activity>
-        <activity android:name=".activity.NicknameActivity">
+        <activity android:name=".activity.InputActivity">
         </activity>
         <activity android:name=".activity.SettingActivity">
+        </activity>
+        <activity android:name=".activity.FeedbackActivity">
+        </activity>
+        <activity android:name=".activity.ChangePasswordActivity">
+        </activity>
+        <activity android:name=".activity.CertificateActivity">
+        </activity>
+
+        <!-- 注册SDKActivity -->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tencent1106292702"/> <!-- 开放平台获取的APPID -->
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:name=".activity.ChatActivity">
         </activity>
     </application>
 

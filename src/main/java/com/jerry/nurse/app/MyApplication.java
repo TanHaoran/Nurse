@@ -13,8 +13,6 @@ import org.litepal.LitePalApplication;
 import java.util.Iterator;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
  * Created by Jerry on 2017/7/17.
@@ -56,7 +54,7 @@ public class MyApplication extends LitePalApplication {
         // 默认的APP会在以包名为默认的process name下运行，如果查到的process name不是APP的process name就立即返回
 
         if (processAppName == null || !processAppName.equalsIgnoreCase(this.getPackageName())) {
-            L.e(TAG, "enter the service process!");
+            L.e("enter the service process!");
 
             // 则此application::onCreate 是被service 调用的，直接返回
             return;

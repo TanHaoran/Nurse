@@ -8,7 +8,7 @@
     <dimen name="login_paddingLeft">24dp</dimen>
     <dimen name="login_paddingTop">20dp</dimen>
     <dimen name="login_logo_width">160dp</dimen>
-    <dimen name="loginLogoHeight">140dp</dimen>
+    <dimen name="login_logo_height">140dp</dimen>
     <dimen name="login_logo_marginBottom">10dp</dimen>
     <dimen name="login_input_marginTop">10dp</dimen>
     <dimen name="login_button_marginTop">24dp</dimen>
@@ -23,18 +23,40 @@
     <dimen name="plugin_line_paddingLeft">10dp</dimen>
     <dimen name="plugin_line_text_marginLeft">20dp</dimen>
     <dimen name="plugin_title_textSize">16sp</dimen>
+    <dimen name="plugin_img_width">40dp</dimen>
 
     <!--联系人-->
+    <dimen name="contact_item_height">45dp</dimen>
+    <dimen name="contact_item_paddingTop">5dp</dimen>
+    <dimen name="contact_item_paddingLeft">10dp</dimen>
+    <dimen name="contact_item_avatar_width">45dp</dimen>
+    <dimen name="contact_item_nickname_marginLeft">8dp</dimen>
+    <dimen name="contact_item_nickname_marginTop">4dp</dimen>
+    <dimen name="contact_item_nickname_textSize">15sp</dimen>
+    <dimen name="contact_item_message_textSize">12sp</dimen>
+    <dimen name="contact_item_time_textSize">13dp</dimen>
 
     <!--我的-->
     <dimen name="personal_info_height">75dp</dimen>
     <dimen name="business_info_height">45dp</dimen>
+    <dimen name="personal_info_right_textSize">14sp</dimen>
     <dimen name="block_marginBottom">20dp</dimen>
     <dimen name="personal_info_line_height">45dp</dimen>
     <dimen name="personal_info_line_paddingLeft">20dp</dimen>
     <dimen name="personal_Info_line_textSize">15sp</dimen>
+    <dimen name="personal_info_line_right_textSize">14sp</dimen>
     <dimen name="personal_Info_avatar_width">50dp</dimen>
 
     <dimen name="setting_space_height">10dp</dimen>
+    <dimen name="change_password_marginLeft">20dp</dimen>
+    <dimen name="change_password_textSize">14sp</dimen>
+    <dimen name="change_password_edit_height">40dp</dimen>
+    <dimen name="change_password_edit_marginLeft">10dp</dimen>
+
+    <dimen name="change_password_text_marginTop">20dp</dimen>
+    <dimen name="change_password_edit_marginTop">10dp</dimen>
+
+    <dimen name="certificate_text_marginTop">15dp</dimen>
+    <dimen name="certificate_edit_marginTop">8dp</dimen>
 
 </resources>
