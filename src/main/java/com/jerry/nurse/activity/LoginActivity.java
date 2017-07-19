@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.bean.User;
 import com.jerry.nurse.util.L;
@@ -36,6 +39,9 @@ public class LoginActivity extends BaseActivity {
     // 注册请求码
     private static final int REQUEST_SIGNUP_CODE = 0;
 
+    private static final int MESSAGE_LOGIN_FAILED = 0;
+    private static final int MESSAGE_LOGIN_SUCCESS = 1;
+
     @Bind(R.id.et_cellphone)
     EditText mCellphoneEditText;
 
@@ -56,6 +62,23 @@ public class LoginActivity extends BaseActivity {
     private Tencent mTencent;
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
+    private ProgressDialog mProgressDialog;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_LOGIN_SUCCESS:
+                    onLoginSuccess();
+                    break;
+                case MESSAGE_LOGIN_FAILED:
+                    onLoginFailed();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -84,31 +107,20 @@ public class LoginActivity extends BaseActivity {
 
         mLoginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(this,
+        // 创建等待框
+        mProgressDialog = new ProgressDialog(this,
                 R.style.AppTheme_Dark_Dialog);
         // 设置不定时等待
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("登录中...");
-        progressDialog.show();
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setMessage("登录中...");
+        mProgressDialog.show();
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        String password = mPasswordEditText.getText().toString();
+        String cellphone = mCellphoneEditText.getText().toString().trim();
+        String password = mPasswordEditText.getText().toString().trim();
 
-        // TODO 登陆逻辑
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                mLoginButton.setEnabled(true);
-                // 登陆成功
-                onLoginSuccess();
-                // 登陆失败
-                // onLoginFailed()
-            }
-        }, 1000);
-
+        // TODO
+//        easeMobLogin();
+        onLoginSuccess();
     }
 
     /**
@@ -117,8 +129,8 @@ public class LoginActivity extends BaseActivity {
     private boolean validate() {
         boolean valid = true;
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        String password = mPasswordEditText.getText().toString();
+        String cellphone = mCellphoneEditText.getText().toString().trim();
+        String password = mPasswordEditText.getText().toString().trim();
 
         if (cellphone.isEmpty()) {
             mCellphoneEditText.setError(mStringCellphoneInvalid);
@@ -140,7 +152,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginSuccess() {
-
+        mLoginButton.setEnabled(true);
+        mProgressDialog.dismiss();
         // TODO
         // saveUserInfo();
         Intent intent = new Intent(this, MainActivity.class);
@@ -163,6 +176,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginFailed() {
+        mLoginButton.setEnabled(true);
+        mProgressDialog.dismiss();
         T.showShort(this, R.string.login_failed);
     }
 
@@ -179,7 +194,38 @@ public class LoginActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * 环信的登陆方法，是一个异步方法
+     */
+    private void easeMobLogin() {
+        String cellphone = mCellphoneEditText.getText().toString().trim();
+        String password = mPasswordEditText.getText().toString().trim();
+        EMClient.getInstance().login(cellphone, password, new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                L.i("环信登陆成功");
+                mHandler.sendEmptyMessage(MESSAGE_LOGIN_SUCCESS);
+            }
 
+
+            @Override
+            public void onError(int code, String error) {
+                L.i("环信登陆失败，错误码：" + code + "，错误信息：" + error);
+                mHandler.sendEmptyMessage(MESSAGE_LOGIN_FAILED);
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+        });
+    }
+
+    /**
+     * 注册按钮
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_signup)
     void onSignup(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
@@ -253,4 +299,6 @@ public class LoginActivity extends BaseActivity {
             T.showShort(LoginActivity.this, "授权取消");
         }
     }
+
+
 }

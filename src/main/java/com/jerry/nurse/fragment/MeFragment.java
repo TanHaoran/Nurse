@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
 
@@ -39,7 +40,13 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_personal_info)
     void onPersonalInfo(View view) {
-        Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
+        Intent intent = PersonalInfoActivity.getIntent(getActivity());
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.rl_event_report)
+    void onEventReport(View view) {
+        Intent intent = HtmlActivity.getIntent(getActivity(), "");
         startActivity(intent);
     }
 

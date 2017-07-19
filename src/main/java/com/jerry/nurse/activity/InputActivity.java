@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.common.ExtraValue;
 import com.jerry.nurse.view.TitleBar;
 
 import butterknife.Bind;
@@ -17,7 +18,7 @@ public class InputActivity extends BaseActivity {
 
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, InputActivity.class);
-        intent.putExtra(HtmlActivity.EXTRA_TITLE, title);
+        intent.putExtra(ExtraValue.EXTRA_TITLE, title);
         return intent;
     }
 
@@ -34,7 +35,7 @@ public class InputActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        String title = getIntent().getStringExtra(HtmlActivity.EXTRA_TITLE);
+        String title = getIntent().getStringExtra(ExtraValue.EXTRA_TITLE);
 
         mTitleBar.setTitle(title);
 

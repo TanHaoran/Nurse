@@ -1,47 +1,38 @@
 package com.jerry.nurse.adapter;
 
-import android.view.LayoutInflater;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.activity.ChatActivity;
+import com.jerry.nurse.bean.Contact;
+import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.T;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
 
-public class ContactAdapter extends BaseAdapter {
-    private String[] strings = new String[]{"helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod", "helo", "wod",};
+import java.util.List;
 
-    @Override
-    public int getCount() {
-        return strings.length;
+public class ContactAdapter extends CommonAdapter<Contact> {
+
+    private List<Contact> mContacts;
+
+    public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
+        super(context, layoutId, datas);
+        mContacts = datas;
     }
 
     @Override
-    public Object getItem(int position) {
-        return strings[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(parent.getContext()).inflate(R
-                .layout.item_contact, null);
-        TextView tv = (TextView) convertView.findViewById(R.id.tv_nickname);
-        tv.setText(strings[position]);
-        Button btn = (Button) convertView.findViewById(R.id.btn_delete);
-        //删除监听  
-        btn.setOnClickListener(new View.OnClickListener() {
+    protected void convert(ViewHolder holder, Contact contact, final int position) {
+        holder.setText(R.id.tv_nickname, contact.getNickname());
+        holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("hehh");
+                T.showShort(ActivityCollector.getTopActivity(), "点击了" + position);
+                Intent intent = ChatActivity.getIntent(ActivityCollector.getTopActivity());
+                ActivityCollector.getTopActivity().startActivity(intent);
             }
         });
-        return convertView;
     }
-
-}  
+}

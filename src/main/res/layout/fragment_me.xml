@@ -63,6 +63,24 @@
         style="@style/DividerBorderStyle"
         android:layout_marginBottom="@dimen/block_marginBottom"/>
 
+    <View
+        style="@style/DividerBorderStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_event_report"
+        style="@style/BusinessLineStyle">
+
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:text="@string/event_report"/>
+
+        <ImageView
+            android:id="@+id/iv_arrow_event_report"
+            style="@style/ArrowEnterStyle"/>
+
+
+    </RelativeLayout>
 
     <View
         style="@style/DividerBorderStyle"/>

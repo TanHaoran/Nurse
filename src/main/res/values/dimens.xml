@@ -35,6 +35,7 @@
     <dimen name="contact_item_nickname_textSize">15sp</dimen>
     <dimen name="contact_item_message_textSize">12sp</dimen>
     <dimen name="contact_item_time_textSize">13dp</dimen>
+    <dimen name="chat_line_height">50dp</dimen>
 
     <!--我的-->
     <dimen name="personal_info_height">75dp</dimen>
@@ -58,5 +59,10 @@
 
     <dimen name="certificate_text_marginTop">15dp</dimen>
     <dimen name="certificate_edit_marginTop">8dp</dimen>
+    <dimen name="get_verification_code_textSize">13sp</dimen>
+    <dimen name="get_verification_code_marginLeft">20dp</dimen>
+    <dimen name="sex_select_line_height">40dp</dimen>
+    <dimen name="sex_select_line_marginLeft">15dp</dimen>
+    <dimen name="sex_select_line_textSize">15sp</dimen>
 
 </resources>

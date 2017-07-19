@@ -1,11 +1,11 @@
 package com.jerry.nurse.activity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
@@ -40,6 +40,11 @@ public class PersonalInfoActivity extends BaseActivity {
 
     private Bitmap mAvatarBitmap;
 
+    public static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, PersonalInfoActivity.class);
+        return intent;
+    }
+
     @Override
     public int getContentViewResId() {
         return R.layout.activity_personal_info;
@@ -73,23 +78,8 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_sex)
     void onSex(View view) {
-
-        String[] items = {mStringMale, mStringFemale};
-
-        new AlertDialog
-                .Builder(this)
-                .setTitle(R.string.sex)
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.cancel, null)
-                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .setCancelable(false)
-                .show();
-
+        Intent intent = SexActivity.getIntent(this);
+        startActivity(intent);
     }
 
     /**

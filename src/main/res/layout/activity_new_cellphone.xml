@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.ChangeCellphoneActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_new_cellphone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:left_text="@string/back"
+        app:title_text="@string/new_cellphone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/change_password_marginLeft"
+        android:layout_marginTop="@dimen/change_password_text_marginTop"
+        android:text="@string/please_input_new_cellphone"
+        android:textColor="@color/jumbo"
+        android:textSize="@dimen/change_password_textSize"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/et_origin_cellphone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/change_password_edit_height"
+            android:layout_marginLeft="@dimen/change_password_marginLeft"
+            android:layout_marginRight="@dimen/change_password_marginLeft"
+            android:layout_marginTop="@dimen/change_password_edit_marginTop"
+            android:background="@drawable/edit_around_bg"
+            android:gravity="center_vertical"
+            android:inputType="number"
+            android:paddingLeft="@dimen/change_password_edit_marginLeft"
+            android:paddingRight="@dimen/change_password_edit_marginLeft"
+            android:textColor="@color/oil"
+            android:textSize="@dimen/login_edit_textSize"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/change_password_marginLeft"
+        android:layout_marginTop="@dimen/change_password_text_marginTop"
+        android:text="@string/verification_code"
+        android:textColor="@color/jumbo"
+        android:textSize="@dimen/change_password_textSize"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/change_password_marginLeft"
+        android:layout_marginRight="@dimen/change_password_marginLeft"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/login_input_marginTop"
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/et_verification_code"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/change_password_edit_height"
+                android:background="@drawable/edit_around_bg"
+                android:hint="@string/verification_code"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="10dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/login_edit_textSize"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+
+            android:id="@+id/btn_get_verification_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/get_verification_code"
+            android:textSize="@dimen/get_verification_code_textSize"
+            android:layout_marginLeft="@dimen/get_verification_code_marginLeft"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/change_password_marginLeft"
+        android:layout_marginRight="@dimen/change_password_marginLeft"
+        android:text="@string/modify"
+        android:textSize="@dimen/login_button_textSize"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

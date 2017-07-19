@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.T;
@@ -80,8 +82,8 @@ public class SignupActivity extends BaseActivity {
         progressDialog.setMessage("注册中...");
         progressDialog.show();
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        String verificationCode = mVerificationCodeEditText.getText().toString();
+        String cellphone = mCellphoneEditText.getText().toString().trim();
+        String verificationCode = mVerificationCodeEditText.getText().toString().trim();
         String password = mPasswordEditText.getText().toString();
 
         // TODO 注册逻辑
@@ -105,9 +107,9 @@ public class SignupActivity extends BaseActivity {
     private boolean validate() {
         boolean valid = true;
 
-        String cellphone = mCellphoneEditText.getText().toString();
+        String cellphone = mCellphoneEditText.getText().toString().trim();
         String verificationCode = mVerificationCodeEditText.getText()
-                .toString();
+                .toString().trim();
         String password = mPasswordEditText.getText().toString();
 
         // 本地验证手机号
@@ -151,6 +153,27 @@ public class SignupActivity extends BaseActivity {
      */
     private void onSignupFailed() {
         T.showShort(this, R.string.signup_failed);
+    }
+
+    /**
+     * 环信的注册方法，是一个同步方法
+     */
+    private void easeMobSignup() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String cellphone = mCellphoneEditText.getText().toString().trim();
+                String password = mPasswordEditText.getText().toString().trim();
+                try {
+                    EMClient.getInstance().createAccount(cellphone, password);
+                    L.i("注册成功！");
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    L.i("注册失败，错误码：" + e.getErrorCode() + "，错误信息：" + e.getMessage());
+                }
+            }
+        }
+        ).start();
     }
 
     @OnClick(R.id.tv_login)

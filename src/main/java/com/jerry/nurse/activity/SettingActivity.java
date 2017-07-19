@@ -31,6 +31,12 @@ public class SettingActivity extends BaseActivity {
 
     }
 
+    @OnClick(R.id.rl_cellphone)
+    void onCellphone(View view) {
+        Intent intent = ChangeCellphoneActivity.getIntent(this);
+        startActivity(intent);
+    }
+
     @OnClick(R.id.rl_change_password)
     void onChangePassword(View view) {
         Intent intent = ChangePasswordActivity.getIntent(this);
@@ -39,7 +45,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_help)
     void onHelp(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", R.string.help);
+        Intent intent = HtmlActivity.getIntent(this,"");
         startActivity(intent);
     }
 
@@ -81,7 +87,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_about)
     void onAbout(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", R.string.about);
+        Intent intent = HtmlActivity.getIntent(this, "");
         startActivity(intent);
     }
 

@@ -41,25 +41,21 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL, R.string.event_report);
+        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL);
         startActivity(intent);
     }
-
 
     @OnClick(R.id.ll_nurse_class)
     void onNurseClass(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL, R.string.nurse_class);
+        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL);
         startActivity(intent);
     }
-
 
     @OnClick(R.id.ll_credit_check)
     void onCreditCheck(View view) {
     }
 
-
     @OnClick(R.id.ll_schedule_check)
     void onScheduleCheck(View view) {
     }
-
 }

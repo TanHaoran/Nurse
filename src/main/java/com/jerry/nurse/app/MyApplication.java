@@ -7,11 +7,16 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.jerry.nurse.util.L;
 import com.umeng.analytics.MobclickAgent;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.log.LoggerInterceptor;
 
 import org.litepal.LitePalApplication;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 
 /**
@@ -28,6 +33,8 @@ public class MyApplication extends LitePalApplication {
         initMobclickAgent();
         // 初始化环信
         initEaseMob();
+        // 初始化OkHttp封装类
+        initOkHttp();
     }
 
     /**
@@ -89,5 +96,19 @@ public class MyApplication extends LitePalApplication {
             }
         }
         return processName;
+    }
+
+    /**
+     * 初始化OkHttp封装类
+     */
+    private void initOkHttp() {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new LoggerInterceptor(L.TAG))
+                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
+                .readTimeout(10000L, TimeUnit.MILLISECONDS)
+                //其他配置
+                .build();
+
+        OkHttpUtils.initClient(okHttpClient);
     }
 }

@@ -43,5 +43,9 @@ dependencies {
     compile 'com.hyphenate:hyphenate-sdk:3.3.0'
     compile 'com.android.support:design:25.0.0'
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    compile 'com.zhy:base-rvadapter:3.0.3'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.android.support:support-v4:25.0.0'
     testCompile 'junit:junit:4.12'
 }

@@ -6,6 +6,9 @@
     <string name="save">保存</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
+    <string name="edit">编辑</string>
+    <string name="update">更新</string>
+    <string name="modify">修改</string>
     <string name="submit">提交</string>
     <string name="upload_phone">上传照片</string>
 
@@ -36,6 +39,8 @@
 
     <!--联系人-->
     <string name="contact">联系人</string>
+    <string name="send">发送</string>
+    <string name="message_can_not_be_empty">发送消息不能为空!</string>
 
     <!--我的-->
     <string name="me">我的</string>
@@ -64,6 +69,12 @@
     <string name="select_from_album">从相册选择</string>
     <string name="male">男</string>
     <string name="female">女</string>
+
+    <string name="change_cellphone">修改手机</string>
+    <string name="new_cellphone">新手机</string>
+    <string name="please_input_origin_cellphone">请输入原手机号</string>
+    <string name="please_input_new_cellphone">请输入新手机号</string>
+    <string name="next_step">下一步</string>
 
     <string name="weixin">微信</string>
     <string name="qq">QQ</string>

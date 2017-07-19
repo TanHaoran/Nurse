@@ -4,7 +4,7 @@
     <color name="primary">#488AFF</color>
     <color name="primary_dark">#1F6BF2</color>
     <color name="primary_darker">#054ac4</color>
-    <color name="accent">#FF4081</color>
+    <color name="accent">#488AFF</color>
 
     <color name="black">#000000</color>
     <color name="jet">#222222</color>

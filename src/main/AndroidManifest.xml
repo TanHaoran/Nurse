@@ -123,6 +123,12 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity android:name=".activity.ChatActivity">
         </activity>
+        <activity android:name=".activity.ChangeCellphoneActivity">
+        </activity>
+        <activity android:name=".activity.NewCellphoneActivity">
+        </activity>
+        <activity android:name=".activity.SexActivity">
+        </activity>
     </application>
 
 </manifest>
