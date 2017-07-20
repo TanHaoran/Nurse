@@ -8,7 +8,11 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:title_text="@string/me"/>
+        app:title_text="@string/mine"/>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
         android:id="@+id/ll_personal_info"
@@ -20,128 +24,165 @@
             android:layout_width="@dimen/personal_Info_avatar_width"
             android:layout_height="@dimen/personal_Info_avatar_width"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:src="@drawable/icon_avatar_default"
-            app:border_color="@color/white"
-            app:border_width="1dp"/>
+            android:layout_marginRight="@dimen/avatar_marginRight"
+            android:background="@drawable/mine_head"/>
 
         <TextView
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/name_marginTop"
             android:layout_toRightOf="@id/civ_avatar"
-            android:textColor="@color/monsoon"
-            android:textSize="17sp"
-            tools:text="张馨月"/>
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/big_textSize"
+            tools:text="李静静"/>
+
+        <com.jerry.nurse.view.ValidatedView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/validated_height"
+            android:layout_alignBottom="@id/tv_name"
+            android:layout_marginBottom="@dimen/validated_marginBottom"
+            android:layout_marginLeft="@dimen/validated_marginLeft"
+            android:layout_toRightOf="@id/tv_name"
+            android:visibility="invisible"
+            app:text="已验证"/>
 
         <TextView
+            android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="@dimen/nickname_marginBottom"
             android:layout_toRightOf="@id/civ_avatar"
             android:textColor="@color/monsoon"
             android:textSize="14sp"
-            tools:text="月光"/>
+            tools:text="静静"/>
 
         <ImageView
             android:id="@+id/iv_arrow_enter"
             style="@style/ArrowEnterStyle"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/iv_arrow_enter"
-            android:textColor="@color/monsoon"
-            android:textSize="@dimen/personal_info_right_textSize"
-            tools:text="已认证"/>
-
     </RelativeLayout>
 
     <View
-        style="@style/DividerBorderStyle"
-        android:layout_marginBottom="@dimen/block_marginBottom"/>
+        style="@style/DividerLineStyle"/>
 
     <View
-        style="@style/DividerBorderStyle"/>
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
         android:id="@+id/rl_event_report"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_event_report"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_event_report"/>
 
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_event_report"
             android:text="@string/event_report"/>
 
         <ImageView
-            android:id="@+id/iv_arrow_event_report"
             style="@style/ArrowEnterStyle"/>
 
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 
-    <View
-        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_credit"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_event_credit"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_credit"/>
 
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_event_credit"
             android:text="@string/credit"/>
 
         <ImageView
-            android:id="@+id/iv_arrow_credit"
             style="@style/ArrowEnterStyle"/>
 
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 
-    <View
-        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_collection"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_event_collection"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_collection"/>
+
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_event_collection"
             android:text="@string/collection"/>
 
         <ImageView
             style="@style/ArrowEnterStyle"/>
 
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"/>
+
     </RelativeLayout>
 
-    <View
-        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_schedule"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_schedule"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_schedule"/>
+
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_schedule"
             android:text="@string/schedule"/>
 
         <ImageView
             style="@style/ArrowEnterStyle"/>
 
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"/>
+
     </RelativeLayout>
 
-    <View
-        style="@style/DividerBorderStyle"/>
 
     <RelativeLayout
         android:id="@+id/rl_exam"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_exam"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_exam"/>
+
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_exam"
             android:text="@string/exam"/>
 
         <ImageView
@@ -149,19 +190,27 @@
 
     </RelativeLayout>
 
-    <View
-        style="@style/DividerBorderStyle"
-        android:layout_marginBottom="@dimen/block_marginBottom"/>
 
     <View
-        style="@style/DividerBorderStyle"/>
+        style="@style/DividerLineStyle"/>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
         android:id="@+id/rl_setting"
         style="@style/BusinessLineStyle">
 
+        <ImageView
+            android:id="@+id/iv_setting"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_setting"/>
+
         <TextView
             style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_setting"
             android:text="@string/setting"/>
 
         <ImageView
@@ -170,7 +219,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/DividerBorderStyle"/>
+        style="@style/DividerLineStyle"/>
 
 
 </LinearLayout>

@@ -2,7 +2,7 @@
     <!-- 连框颜色值 -->
     <item>
         <shape>
-            <solid android:color="@color/base"/>
+            <solid android:color="@color/divider_line"/>
         </shape>
     </item>
     <!-- 主体背景颜色值 --><!-- 此处定义只有上下两边有边框 高度为1像素-->

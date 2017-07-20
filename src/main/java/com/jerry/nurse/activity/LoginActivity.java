@@ -16,6 +16,7 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.bean.User;
+import com.jerry.nurse.common.ServiceMethod;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
@@ -25,6 +26,8 @@ import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +36,7 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 public class LoginActivity extends BaseActivity {
 
@@ -69,7 +73,9 @@ public class LoginActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_LOGIN_SUCCESS:
-                    onLoginSuccess();
+                    String cellphone = mCellphoneEditText.getText().toString();
+                    String password = mPasswordEditText.getText().toString();
+                    login(cellphone, password);
                     break;
                 case MESSAGE_LOGIN_FAILED:
                     onLoginFailed();
@@ -94,43 +100,40 @@ public class LoginActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         //传入参数APPID和全局Context上下文
         mTencent = Tencent.createInstance(APP_ID, this);
-    }
-
-    @OnClick(R.id.btn_login)
-    void onLoginButton(View view) {
-        L.i("登陆");
-
-        //验证用户名和密码格式是否符合
-//        if (!validate()) {
-//            return;
-//        }
-
-        mLoginButton.setEnabled(false);
 
         // 创建等待框
         mProgressDialog = new ProgressDialog(this,
                 R.style.AppTheme_Dark_Dialog);
         // 设置不定时等待
         mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setMessage("登录中...");
-        mProgressDialog.show();
+    }
 
-        String cellphone = mCellphoneEditText.getText().toString().trim();
-        String password = mPasswordEditText.getText().toString().trim();
+    @OnClick(R.id.btn_login)
+    void onLoginButton(View view) {
+        L.i("点击登录按钮");
+        String cellphone = mCellphoneEditText.getText().toString();
+        String password = mPasswordEditText.getText().toString();
 
-        // TODO
-//        easeMobLogin();
+//        //验证用户名和密码格式是否符合
+//        if (!localValidate(cellphone, password)) {
+//            return;
+//        }
+//
+//        mLoginButton.setEnabled(false);
+//
+//        mProgressDialog.setMessage("登录中...");
+//        mProgressDialog.show();
+//
+//        // 第一步：登陆环信IM账号
+//        easeMobLogin(cellphone, password);
         onLoginSuccess();
     }
 
     /**
      * 本地验证登陆
      */
-    private boolean validate() {
+    private boolean localValidate(String cellphone, String password) {
         boolean valid = true;
-
-        String cellphone = mCellphoneEditText.getText().toString().trim();
-        String password = mPasswordEditText.getText().toString().trim();
 
         if (cellphone.isEmpty()) {
             mCellphoneEditText.setError(mStringCellphoneInvalid);
@@ -152,8 +155,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginSuccess() {
-        mLoginButton.setEnabled(true);
         mProgressDialog.dismiss();
+        mLoginButton.setEnabled(true);
         // TODO
         // saveUserInfo();
         Intent intent = new Intent(this, MainActivity.class);
@@ -176,8 +179,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginFailed() {
-        mLoginButton.setEnabled(true);
         mProgressDialog.dismiss();
+        mLoginButton.setEnabled(true);
         T.showShort(this, R.string.login_failed);
     }
 
@@ -196,10 +199,10 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 环信的登陆方法，是一个异步方法
+     * @param cellphone
+     * @param password
      */
-    private void easeMobLogin() {
-        String cellphone = mCellphoneEditText.getText().toString().trim();
-        String password = mPasswordEditText.getText().toString().trim();
+    private void easeMobLogin(String cellphone, String password) {
         EMClient.getInstance().login(cellphone, password, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -219,6 +222,35 @@ public class LoginActivity extends BaseActivity {
 
             }
         });
+    }
+
+    /**
+     * 登录
+     * @param cellphone
+     * @param password
+     */
+    private void login(String cellphone, String password) {
+        OkHttpUtils.post().url(ServiceMethod.LOGIN)
+                .addParams("cellphone", cellphone)
+                .addParams("password", password)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        L.e("登录出错");
+                        onLoginFailed();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        // 判断登陆是否成功
+                        if (response.equals("")) {
+                            onLoginSuccess();
+                        } else {
+                            onLoginFailed();
+                        }
+                    }
+                });
     }
 
     /**

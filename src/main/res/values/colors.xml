@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--公共-->
-    <color name="primary">#488AFF</color>
+    <color name="primary">#48A2F8</color>
     <color name="primary_dark">#1F6BF2</color>
     <color name="primary_darker">#054ac4</color>
     <color name="accent">#488AFF</color>
+    <color name="background">#F8F8F8</color>
+    <color name="divider_line">#E4E4E4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="normal_textColor">#333333</color>
+    <color name="gray_textColor">#999999</color>
+    <color name="certification">#F7B55F</color>
 
     <color name="black">#000000</color>
     <color name="jet">#222222</color>
@@ -14,7 +20,6 @@
     <color name="aluminum">#999999</color>
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
-    <color name="white">#FFFFFF</color>
     <color name="grey">#AAAAAA</color>
 
     <!--主页-->

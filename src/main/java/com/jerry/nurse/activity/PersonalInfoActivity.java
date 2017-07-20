@@ -141,7 +141,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @OnClick(R.id.rl_office)
     void onOffice(View view) {
-        Intent intent = InputActivity.getIntent(this, R.string.office);
+        Intent intent = InputActivity.getIntent(this, R.string.business);
         startActivity(intent);
     }
 

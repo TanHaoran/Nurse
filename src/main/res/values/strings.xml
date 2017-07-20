@@ -11,6 +11,7 @@
     <string name="modify">修改</string>
     <string name="submit">提交</string>
     <string name="upload_phone">上传照片</string>
+    <string name="me">我</string>
 
     <!--登陆-->
     <string name="cellphone">手机</string>
@@ -30,9 +31,10 @@
     <!--消息-->
     <string name="message">消息</string>
 
-    <!--科室-->
+    <!--院务-->
     <string name="office">科室</string>
-    <string name="event_report">不良事件上报</string>
+    <string name="business">院务</string>
+    <string name="event_report">护理不良事件</string>
     <string name="nurse_class">护士学堂</string>
     <string name="credit_check">学分查看</string>
     <string name="schedule_check">排班查看</string>
@@ -43,7 +45,7 @@
     <string name="message_can_not_be_empty">发送消息不能为空!</string>
 
     <!--我的-->
-    <string name="me">我的</string>
+    <string name="mine">我的</string>
     <string name="avatar">头像</string>
     <string name="certified">已认证</string>
     <string name="credit">学分</string>

@@ -3,6 +3,7 @@
 
     <!--标题栏-->
     <declare-styleable name="TitleBar">
+        <attr name="show_back" format="boolean"/>
         <attr name="left_text" format="string"/>
         <attr name="right_text" format="string"/>
         <attr name="title_text" format="string"/>
@@ -20,5 +21,11 @@
         <attr name="border_color" format="color"/>
         <attr name="border_overlay" format="boolean"/>
         <attr name="fill_color" format="color"/>
+    </declare-styleable>
+
+    <!--已验证View-->
+    <declare-styleable name="ValidatedView">
+        <attr name="validated_bg_color" format="color"/>
+        <attr name="text" format="string"/>
     </declare-styleable>
 </resources>

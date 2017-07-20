@@ -10,7 +10,7 @@
         <item name="colorControlHighlight">@color/white</item>
         <item name="android:textColorHint">@color/iron</item>
 
-        <item name="colorButtonNormal">@color/primary_dark</item>
+        <item name="colorButtonNormal">@color/primary</item>
     </style>
 
     <!--加载框-->
@@ -31,9 +31,6 @@
         <item name="android:paddingLeft">
             @dimen/personal_info_line_paddingLeft
         </item>
-        <item name="android:paddingRight">
-            @dimen/personal_info_line_paddingLeft
-        </item>
     </style>
 
     <!--个人中心行左侧文字-->
@@ -41,15 +38,15 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/monsoon</item>
-        <item name="android:textSize">@dimen/personal_Info_line_textSize</item>
+        <item name="android:textColor">@color/normal_textColor</item>
+        <item name="android:textSize">@dimen/normal_textSize</item>
     </style>
 
     <!--分割线-->
     <style name="DividerLineStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/plugin_line_divider</item>
+        <item name="android:background">@color/divider_line</item>
     </style>
 
     <!--边框线-->
@@ -76,21 +73,16 @@
     <!--个人业务行-->
     <style name="BusinessLineStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/business_info_height
-        </item>
+        <item name="android:layout_height">@dimen/business_info_height</item>
         <item name="android:background">@drawable/plugin_line_selector</item>
         <item name="android:clickable">true</item>
-        <item name="android:paddingLeft">
-            @dimen/personal_info_line_paddingLeft
-        </item>
-        <item name="android:paddingRight">
-            @dimen/personal_info_line_paddingLeft
-        </item>
+        <item name="android:paddingLeft">@dimen/line_paddingLeft</item>
     </style>
 
     <!--进入箭头样式-->
     <style name="ArrowEnterStyle">
-        <item name="android:src">@drawable/ic_action_arrow_enter</item>
+        <item name="android:layout_marginRight">@dimen/line_paddingRight</item>
+        <item name="android:src">@drawable/arrow_right</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentRight">true</item>
@@ -106,11 +98,19 @@
     </style>
 
     <style name="personal_info_line_right_text_style">
-        <item name="android:textColor">@color/monsoon</item>
-        <item name="android:textSize">@dimen/personal_info_line_right_textSize</item>
+        <item name="android:textColor">@color/gray_textColor</item>
+        <item name="android:textSize">@dimen/normal_textSize</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">@dimen/line_paddingRight</item>
+    </style>
+
+    <style name="PlugImageStyle">
+        <item name="android:layout_width">@dimen/mine_plug_image_width</item>
+        <item name="android:layout_height">@dimen/mine_plug_image_width</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">@dimen/mine_plug_image_marginLeft</item>
     </style>
 
 

@@ -11,7 +11,7 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"
+        app:show_back="true"
         app:title_text="@string/personal_info"/>
 
     <ScrollView
@@ -23,33 +23,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
             <RelativeLayout
                 android:id="@+id/rl_avatar"
                 style="@style/PersonalInfoLineStyle"
                 android:layout_height="@dimen/personal_info_height">
 
                 <TextView
+                    android:id="@+id/tv_name"
+                    tools:text="李静静"
                     style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/avatar"/>
+
+                <ImageView
+                    android:id="@+id/iv_avatar"
+                    style="@style/ArrowEnterStyle"/>
 
                 <com.jerry.nurse.view.CircleImageView
                     android:id="@+id/civ_avatar"
                     android:layout_width="@dimen/personal_Info_avatar_width"
                     android:layout_height="@dimen/personal_Info_avatar_width"
-                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/icon_avatar_default"
-                    app:border_color="@color/white"
-                    app:border_width="1dp"/>
+                    android:layout_marginRight="@dimen/line_paddingRight"
+                    android:layout_toLeftOf="@id/iv_avatar"
+                    android:src="@drawable/mine_head"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginBottom="@dimen/block_marginBottom"/>
-
-            <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nickname"
@@ -62,20 +67,20 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_nickname"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_nickname"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_nickname"
-                    tools:text="林山夕风"/>
+                    tools:text="静静"/>
 
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
-
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_sex"
@@ -88,18 +93,19 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_sex"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_sex"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_sex"
-                    tools:text="男"/>
+                    tools:text="女"/>
             </RelativeLayout>
 
-            <View
-                style="@style/DividerBorderStyle"/>
 
+            <View
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_birthday"
@@ -113,10 +119,10 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_birthday"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_birthday"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_alignTop="@+id/textView"
                     android:layout_toLeftOf="@id/iv_arrow_birthday"
@@ -124,11 +130,11 @@
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginBottom="@dimen/block_marginBottom"/>
+                style="@style/DividerLineStyle"/>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
 
 
             <RelativeLayout
@@ -142,17 +148,18 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_nurse_certificate"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_nurse_certificate"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_nurse_certificate"
-                    tools:text="已验证"/>
+                    tools:text="副主任护师"/>
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nurse_practising_certificate"
@@ -165,17 +172,18 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_nurse_practising_certificate"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_nurse_practising_certificate"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_nurse_practising_certificate"
-                    tools:text="已验证"/>
+                    tools:text="No.134857"/>
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_nursing_age"
@@ -189,22 +197,22 @@
                 <ImageView
                     android:id="@+id/iv_arrow_nursing_age"
                     style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"
                     android:visibility="invisible"/>
 
                 <TextView
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_nursing_age"
+                    android:id="@+id/tv_nursing_age"
                     tools:text="8年"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginBottom="@dimen/block_marginBottom"/>
+                style="@style/DividerLineStyle"/>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
 
             <RelativeLayout
                 android:id="@+id/rl_hospital"
@@ -217,18 +225,18 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_hospital"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_hospital"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_hospital"
                     tools:text="西安交通大学第一附属医院"/>
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
-
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_office"
@@ -241,18 +249,18 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_office"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/tv_office"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_office"
                     tools:text="眼科"/>
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
-
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_job_number"
@@ -265,10 +273,10 @@
 
                 <ImageView
                     android:id="@+id/iv_arrow_job_number"
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
                 <TextView
+                    android:id="@+id/id_job_number"
                     style="@style/personal_info_line_right_text_style"
                     android:layout_toLeftOf="@id/iv_arrow_job_number"
                     tools:text="083421"/>
@@ -276,8 +284,8 @@
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginBottom="@dimen/block_marginBottom"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginBottom="@dimen/block_marinTop"/>
 
         </LinearLayout>
     </ScrollView>

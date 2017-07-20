@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.common.ExtraValue;
+import com.jerry.nurse.view.ClearEditText;
 import com.jerry.nurse.view.TitleBar;
 
 import butterknife.Bind;
@@ -15,6 +16,9 @@ public class InputActivity extends BaseActivity {
 
     @Bind(R.id.tb_input)
     TitleBar mTitleBar;
+
+    @Bind(R.id.cet_input)
+    ClearEditText mInputEditText;
 
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, InputActivity.class);
@@ -38,6 +42,7 @@ public class InputActivity extends BaseActivity {
         String title = getIntent().getStringExtra(ExtraValue.EXTRA_TITLE);
 
         mTitleBar.setTitle(title);
+        mInputEditText.setHint("请输入" + title);
 
         mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
             @Override

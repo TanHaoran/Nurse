@@ -7,6 +7,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,16 +23,17 @@ public class TitleBar extends RelativeLayout {
     private static final int DEFAULT_BUTTON_WIDTH = 50;
 
     private static final int DEFAULT_BUTTON_TEXT_SIZE = 14;
-    private static final int DEFAULT_TITLE_TEXT_SIZE = 20;
+    private static final int DEFAULT_TITLE_TEXT_SIZE = 18;
 
     private static final int DEFAULT_TEXT_COLOR = 0xFFFFFFFF;
-    private static final int DEFAULT_BG_COLOR = 0xFF488AFF;
+    private static final int DEFAULT_BG_COLOR = 0xFF48A2F8;
 
-    private Context mContext;
-
+    private ImageView mBackImageView;
     private TextView mLeftTextView;
     private TextView mRightTextView;
     private TextView mTitleTextView;
+
+    private boolean mShowBack;
 
     private String mLeftText;
     private String mRightText;
@@ -65,9 +67,9 @@ public class TitleBar extends RelativeLayout {
     public TitleBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        mContext = context;
-
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TitleBar);
+
+        mShowBack = ta.getBoolean(R.styleable.TitleBar_show_back, false);
 
         mLeftText = ta.getString(R.styleable.TitleBar_left_text);
         mRightText = ta.getString(R.styleable.TitleBar_right_text);
@@ -98,11 +100,13 @@ public class TitleBar extends RelativeLayout {
      */
     private void initView(Context context) {
         // 创建View
+        mBackImageView = new ImageView(context);
         mLeftTextView = new TextView(context);
         mRightTextView = new TextView(context);
         mTitleTextView = new TextView(context);
 
         // 设置文字内容
+        mBackImageView.setImageResource(R.drawable.arrow_back);
         mLeftTextView.setText(mLeftText);
         mRightTextView.setText(mRightText);
         mTitleTextView.setText(mTitleText);
@@ -126,6 +130,9 @@ public class TitleBar extends RelativeLayout {
         mRightTextView.setGravity(Gravity.CENTER);
 
         // 设置布局摆放方式
+        LayoutParams backLayoutParam = new LayoutParams(
+                DensityUtil.dp2px(context, DEFAULT_BUTTON_WIDTH),
+                ViewGroup.LayoutParams.MATCH_PARENT);
         LayoutParams leftTextLayoutParam = new LayoutParams(
                 DensityUtil.dp2px(context, DEFAULT_BUTTON_WIDTH),
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -136,24 +143,35 @@ public class TitleBar extends RelativeLayout {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
+        backLayoutParam.addRule(ALIGN_PARENT_LEFT, TRUE);
+
+        mBackImageView.setPadding(DensityUtil.dp2px(context, 3),
+                DensityUtil.dp2px(context, 10), DensityUtil.dp2px(context, 3),
+                DensityUtil.dp2px(context, 10));
+
         leftTextLayoutParam.addRule(ALIGN_PARENT_LEFT, TRUE);
         rightTextLayoutParam.addRule(ALIGN_PARENT_RIGHT, TRUE);
         titleTextLayoutParam.addRule(CENTER_IN_PARENT, TRUE);
 
         // 添加布局
-        addView(mLeftTextView, leftTextLayoutParam);
+        addView(mBackImageView, backLayoutParam);
+        // addView(mLeftTextView, leftTextLayoutParam);
         addView(mRightTextView, rightTextLayoutParam);
         addView(mTitleTextView, titleTextLayoutParam);
 
-        mLeftTextView.setOnClickListener(new OnClickListener() {
+        if (mShowBack) {
+            mBackImageView.setVisibility(VISIBLE);
+        } else {
+            mBackImageView.setVisibility(INVISIBLE);
+        }
+
+        mBackImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mLeftText.isEmpty()) {
-                    if (mOnLeftClickListener != null) {
-                        mOnLeftClickListener.onLeftClick(v);
-                    } else {
-                        ActivityCollector.getTopActivity().finish();
-                    }
+                if (mOnLeftClickListener != null) {
+                    mOnLeftClickListener.onLeftClick(v);
+                } else {
+                    ActivityCollector.getTopActivity().finish();
                 }
             }
         });
@@ -170,6 +188,7 @@ public class TitleBar extends RelativeLayout {
 
     /**
      * 设置标题
+     *
      * @param title
      */
     public void setTitle(String title) {

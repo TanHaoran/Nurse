@@ -12,23 +12,34 @@
         android:id="@+id/tb_input"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"
-        app:right_text="@string/save"
-        app:title_text="@string/nickname"/>
+        app:button_textSize="@dimen/normal_textSize"
+        app:right_text="@string/cancel"
+        app:show_back="true"/>
 
 
     <com.jerry.nurse.view.ClearEditText
-        android:id="@+id/user_name"
+        android:id="@+id/cet_input"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/block_marinTop"
         android:background="@drawable/edit_up_down_bg"
         android:drawablePadding="7dp"
         android:lines="1"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:textColor="@color/oil"
-        android:textSize="17sp"/>
+        android:textColor="@color/normal_textColor"
+        android:textColorHint="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/line_paddingLeft"
+        android:layout_marginRight="@dimen/line_paddingLeft"
+        android:layout_marginTop="@dimen/block_marinTop"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_textSize"/>
 
 
 </LinearLayout>

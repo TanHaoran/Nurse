@@ -42,13 +42,13 @@ public class MainActivity extends BaseActivity
                 R.string.message);
 
         BottomNavigationItem officeItem = new BottomNavigationItem(R.drawable
-                .ic_action_office, R.string.office);
+                .ic_action_office, R.string.business);
 
         BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
                 .ic_action_contact, R.string.contact);
 
         BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
-                .string.me);
+                .string.mine);
 
         // 添加元素并显示
         mNavigationBar.addItem(messageItem)

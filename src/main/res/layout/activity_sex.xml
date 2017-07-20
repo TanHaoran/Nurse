@@ -11,12 +11,18 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"
+        app:show_back="true"
         app:title_text="@string/sex"/>
+
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sex_select_line_height"
+        android:clickable="true"
         android:background="@drawable/plugin_line_selector"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -28,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/male"
-            android:textColor="@color/monsoon"
-            android:textSize="@dimen/sex_select_line_textSize"/>
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"/>
 
         <ImageView
             android:layout_width="15dp"
@@ -38,9 +44,10 @@
     </LinearLayout>
 
     <View
-        style="@style/DividerBorderStyle"/>
+        style="@style/DividerLineStyle"/>
 
     <LinearLayout
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sex_select_line_height"
         android:background="@drawable/plugin_line_selector"
@@ -54,8 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/female"
-            android:textColor="@color/monsoon"
-            android:textSize="@dimen/sex_select_line_textSize"/>
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"/>
 
         <ImageView
             android:layout_width="15dp"
@@ -65,7 +72,7 @@
     </LinearLayout>
 
     <View
-        style="@style/DividerBorderStyle"/>
+        style="@style/DividerLineStyle"/>
 
 
 </LinearLayout>
