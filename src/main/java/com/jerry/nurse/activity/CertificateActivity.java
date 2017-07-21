@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.common.ExtraValue;
+import com.jerry.nurse.constant.ExtraValue;
 import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.view.TitleBar;
 

@@ -1,4 +1,4 @@
-package com.jerry.nurse.bean;
+package com.jerry.nurse.model;
 
 import org.litepal.crud.DataSupport;
 

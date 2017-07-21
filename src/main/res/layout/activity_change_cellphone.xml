@@ -30,28 +30,23 @@
         android:layout_marginLeft="@dimen/change_password_marginLeft"
         android:layout_marginTop="@dimen/change_password_text_marginTop"
         android:text="@string/please_input_origin_cellphone"
-        android:textColor="@color/jumbo"
-        android:textSize="@dimen/change_password_textSize"/>
+        android:textColor="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
 
-    <android.support.design.widget.TextInputLayout
+    <com.jerry.nurse.view.ClearEditText
+        android:id="@+id/cet_input"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/et_origin_cellphone"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/change_password_edit_height"
-            android:layout_marginLeft="@dimen/change_password_marginLeft"
-            android:layout_marginRight="@dimen/change_password_marginLeft"
-            android:layout_marginTop="@dimen/change_password_edit_marginTop"
-            android:background="@drawable/edit_around_bg"
-            android:gravity="center_vertical"
-            android:inputType="number"
-            android:paddingLeft="@dimen/change_password_edit_marginLeft"
-            android:paddingRight="@dimen/change_password_edit_marginLeft"
-            android:textColor="@color/oil"
-            android:textSize="@dimen/login_edit_textSize"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="40dp"
+        android:layout_marginTop="@dimen/block_marinTop"
+        android:background="@drawable/edit_up_down_bg"
+        android:drawablePadding="7dp"
+        android:inputType="number"
+        android:lines="1"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textColor="@color/normal_textColor"
+        android:textColorHint="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
 
     <TextView
         android:layout_width="wrap_content"

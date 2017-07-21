@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.common.ExtraValue;
+import com.jerry.nurse.constant.ExtraValue;
 import com.jerry.nurse.view.ClearEditText;
 import com.jerry.nurse.view.TitleBar;
 

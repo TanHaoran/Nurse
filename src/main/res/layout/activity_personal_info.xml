@@ -35,8 +35,7 @@
                 <TextView
                     android:id="@+id/tv_name"
                     tools:text="李静静"
-                    style="@style/PersonalInfoLineLeftTextStyle"
-                    android:text="@string/avatar"/>
+                    style="@style/PersonalInfoLineLeftTextStyle"/>
 
                 <ImageView
                     android:id="@+id/iv_avatar"

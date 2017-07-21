@@ -14,12 +14,12 @@
         app:show_back="true"
         app:title_text="@string/sex"/>
 
-
     <View
         style="@style/DividerLineStyle"
         android:layout_marginTop="@dimen/block_marinTop"/>
 
     <LinearLayout
+        android:id="@+id/ll_male"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sex_select_line_height"
         android:clickable="true"
@@ -38,15 +38,17 @@
             android:textSize="@dimen/normal_textSize"/>
 
         <ImageView
+            android:id="@+id/iv_male"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:src="@drawable/ic_action_check"/>
+            android:src="@drawable/choose"/>
     </LinearLayout>
 
     <View
         style="@style/DividerLineStyle"/>
 
     <LinearLayout
+        android:id="@+id/ll_female"
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sex_select_line_height"
@@ -65,14 +67,14 @@
             android:textSize="@dimen/normal_textSize"/>
 
         <ImageView
+            android:id="@+id/iv_female"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:src="@drawable/ic_action_check"
+            android:src="@drawable/choose"
             android:visibility="invisible"/>
     </LinearLayout>
 
     <View
         style="@style/DividerLineStyle"/>
-
 
 </LinearLayout>

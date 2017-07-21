@@ -47,4 +47,5 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.android.support:support-v4:25.0.0'
     testCompile 'junit:junit:4.12'
+    compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
 }

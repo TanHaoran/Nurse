@@ -1,4 +1,4 @@
-package com.jerry.nurse.common;
+package com.jerry.nurse.constant;
 
 /**
  * Created by Jerry on 2017/7/19.

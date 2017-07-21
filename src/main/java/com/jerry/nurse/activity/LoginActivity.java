@@ -15,8 +15,8 @@ import android.widget.Toast;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
-import com.jerry.nurse.bean.User;
-import com.jerry.nurse.common.ServiceMethod;
+import com.jerry.nurse.constant.ServiceMethod;
+import com.jerry.nurse.model.User;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
@@ -102,8 +102,7 @@ public class LoginActivity extends BaseActivity {
         mTencent = Tencent.createInstance(APP_ID, this);
 
         // 创建等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
+        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
         // 设置不定时等待
         mProgressDialog.setIndeterminate(true);
     }
@@ -114,19 +113,18 @@ public class LoginActivity extends BaseActivity {
         String cellphone = mCellphoneEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
-//        //验证用户名和密码格式是否符合
-//        if (!localValidate(cellphone, password)) {
-//            return;
-//        }
-//
-//        mLoginButton.setEnabled(false);
-//
-//        mProgressDialog.setMessage("登录中...");
-//        mProgressDialog.show();
-//
-//        // 第一步：登陆环信IM账号
-//        easeMobLogin(cellphone, password);
-        onLoginSuccess();
+        //验证用户名和密码格式是否符合
+        if (!localValidate(cellphone, password)) {
+            return;
+        }
+
+        mLoginButton.setEnabled(false);
+
+        mProgressDialog.setMessage("登录中...");
+        mProgressDialog.show();
+
+        // 第一步：登陆环信IM账号
+        easeMobLogin(cellphone, password);
     }
 
     /**
@@ -199,6 +197,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 环信的登陆方法，是一个异步方法
+     *
      * @param cellphone
      * @param password
      */
@@ -226,6 +225,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 登录
+     *
      * @param cellphone
      * @param password
      */

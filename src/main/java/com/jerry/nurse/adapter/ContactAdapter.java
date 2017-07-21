@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.ChatActivity;
-import com.jerry.nurse.bean.Contact;
+import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.T;
 import com.zhy.adapter.recyclerview.CommonAdapter;

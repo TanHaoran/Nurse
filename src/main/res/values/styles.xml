@@ -45,7 +45,7 @@
     <!--分割线-->
     <style name="DividerLineStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_height">@dimen/divider_line_height</item>
         <item name="android:background">@color/divider_line</item>
     </style>
 

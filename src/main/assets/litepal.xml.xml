@@ -5,6 +5,6 @@
     <version value="1"></version>
 
     <list>
-        <mapping class="com.jerry.nurse.bean.User"></mapping>
+        <mapping class="com.jerry.nurse.model.User"></mapping>
     </list>
 </litepal>

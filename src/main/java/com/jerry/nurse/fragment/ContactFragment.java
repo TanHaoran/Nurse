@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.adapter.ContactAdapter;
-import com.jerry.nurse.bean.Contact;
+import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.view.RecycleViewDivider;
 

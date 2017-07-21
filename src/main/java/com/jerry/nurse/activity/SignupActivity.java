@@ -8,10 +8,13 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
-import com.jerry.nurse.common.ServiceMethod;
+import com.jerry.nurse.constant.ServiceMethod;
+import com.jerry.nurse.model.ServiceResult;
+import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -65,13 +68,14 @@ public class SignupActivity extends BaseActivity {
             // 验证码倒计时
             mValidateCountDown--;
             if (mValidateCountDown == 0) {
-                mHandler.removeCallbacks(mValidateRunnable);
                 mGetVerificationCodeButton.setText("获取验证码");
                 mValidateCountDown = 60;
                 mGetVerificationCodeButton.setEnabled(true);
+                mHandler.removeCallbacks(mValidateRunnable);
+            } else {
+                mGetVerificationCodeButton.setText(mValidateCountDown + "秒后重新获取");
+                mHandler.postDelayed(mValidateRunnable, 1000);
             }
-            mGetVerificationCodeButton.setText("(" + mValidateCountDown + "秒)");
-            mHandler.postDelayed(mValidateRunnable, 1000);
         }
     };
 
@@ -97,7 +101,23 @@ public class SignupActivity extends BaseActivity {
      */
     @OnClick(R.id.btn_get_verification_code)
     void onGetVerificationCode(View v) {
+        // 首先验证手机号是否为空和是否合法
+        String cellphone = mCellphoneEditText.getText().toString();
+        if (cellphone.isEmpty()) {
+            T.showLong(this, R.string.cellphone_empty);
+            return;
+        }
+        if (!AccountValidatorUtil.isMobile(cellphone)) {
+            T.showLong(this, R.string.cellphone_invalid);
+            return;
+        }
+
+        mGetVerificationCodeButton.setEnabled(false);
+        mGetVerificationCodeButton.setText(mValidateCountDown + "秒后重新获取");
+        mHandler.postDelayed(mValidateRunnable, 1000);
+
         OkHttpUtils.get().url(ServiceMethod.GET_VERIFICATION_CODE)
+                .addParams("Phone", cellphone)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -107,14 +127,18 @@ public class SignupActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        L.i(response);
+                        Gson gson = new Gson();
+                        ServiceResult serviceResult = gson.fromJson(response, ServiceResult.class);
                         // 验证码是否发送成功
-                        if (response.equals("")) {
+                        if (serviceResult.getCode() == 0) {
                             L.i("发送验证码成功");
-                            mGetVerificationCodeButton.setEnabled(true);
+                            mGetVerificationCodeButton.setEnabled(false);
                             mGetVerificationCodeButton.setText("(" + mValidateCountDown + "秒)");
                             mHandler.postDelayed(mValidateRunnable, 1000);
                         } else {
-                            L.i("发送验证码失败");
+                            L.i("发送验证码失败" + serviceResult.getMsg());
+                            T.showLong(SignupActivity.this, R.string.get_verification_code_failed);
                         }
                     }
                 });
@@ -161,7 +185,7 @@ public class SignupActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         // 验证验证码是否正确
-                        if (response.equals("")) {
+                        if (response.equals("0")) {
                             L.i("验证验证码成功");
                             String cellphone = mCellphoneEditText.getText().toString();
                             String password = mPasswordEditText.getText().toString();
@@ -195,7 +219,7 @@ public class SignupActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         // 验证是否注册成功
-                        if (response.equals("")) {
+                        if (response.equals("0")) {
                             L.i("注册成功");
                             onSignupSuccess();
                         } else {
@@ -290,5 +314,11 @@ public class SignupActivity extends BaseActivity {
     void onLogin(View view) {
         mHandler.removeCallbacks(mValidateRunnable);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(mValidateRunnable);
     }
 }

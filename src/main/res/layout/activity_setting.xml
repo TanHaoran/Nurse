@@ -12,7 +12,7 @@
         android:id="@+id/tb_setting"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"
+        app:show_back="true"
         app:title_text="@string/setting"/>
 
     <ScrollView
@@ -27,8 +27,8 @@
             android:orientation="vertical">
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginTop="@dimen/setting_space_height"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
 
             <RelativeLayout
                 android:id="@+id/rl_cellphone"
@@ -40,13 +40,13 @@
                     android:text="@string/cellphone"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_weixin"
@@ -58,13 +58,13 @@
                     android:text="@string/weixin"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_qq"
@@ -76,13 +76,13 @@
                     android:text="@string/qq"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_microblog"
@@ -94,17 +94,16 @@
                     android:text="@string/microblog"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"/>
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginTop="@dimen/setting_space_height"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
 
             <RelativeLayout
                 android:id="@+id/rl_change_password"
@@ -116,18 +115,17 @@
                     android:text="@string/change_password"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"/>
 
 
             <View
-                style="@style/DividerBorderStyle"
-                android:layout_marginTop="@dimen/setting_space_height"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
 
             <RelativeLayout
                 android:id="@+id/rl_help"
@@ -139,13 +137,13 @@
                     android:text="@string/help"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_feedback"
@@ -157,13 +155,13 @@
                     android:text="@string/feedback"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_check_update"
@@ -175,13 +173,13 @@
                     android:text="@string/check_update"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
 
             <RelativeLayout
                 android:id="@+id/rl_about"
@@ -193,21 +191,21 @@
                     android:text="@string/about"/>
 
                 <ImageView
-                    style="@style/ArrowEnterStyle"
-                    android:src="@drawable/ic_action_arrow_enter"/>
+                    style="@style/ArrowEnterStyle"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerBorderStyle"/>
+                style="@style/DividerLineStyle"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/change_password_marginLeft"
-                android:layout_marginRight="@dimen/change_password_marginLeft"
-                android:layout_marginTop="@dimen/login_button_marginTop"
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                android:layout_marginRight="@dimen/line_paddingLeft"
+                android:layout_marginTop="@dimen/block_marinTop"
+                android:layout_marginBottom="@dimen/block_marinTop"
                 android:gravity="center"
                 android:text="@string/logout"
                 android:textColor="@color/white"
