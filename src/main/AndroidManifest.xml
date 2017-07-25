@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <!-- 友盟 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -49,7 +49,7 @@
         <!-- 设置环信应用的AppKey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
-            android:value="1115170714115162#test"/>
+            android:value="1119170720115073#test"/>
         <!-- 声明SDK所需的service SDK核心功能 -->
         <service
             android:name="com.hyphenate.chat.EMChatService"
@@ -114,8 +114,8 @@
 
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:scheme="tencent1106292702"/> <!-- 开放平台获取的APPID -->
+                <!-- 开放平台获取的APPID -->
+                <data android:scheme="tencent1106292702"/>
             </intent-filter>
         </activity>
         <activity
@@ -129,6 +129,10 @@
         <activity android:name=".activity.NewCellphoneActivity">
         </activity>
         <activity android:name=".activity.SexActivity">
+        </activity>
+        <activity android:name=".activity.CountryActivity">
+        </activity>
+        <activity android:name=".activity.PasswordActivity">
         </activity>
     </application>
 

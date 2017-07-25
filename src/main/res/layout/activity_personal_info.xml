@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
         app:show_back="true"
+        app:right_text="@string/skip"
         app:title_text="@string/personal_info"/>
 
     <ScrollView
@@ -48,7 +49,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/line_paddingRight"
                     android:layout_toLeftOf="@id/iv_avatar"
-                    android:src="@drawable/mine_head"/>
+                    android:src="@drawable/icon_avatar_default"/>
 
             </RelativeLayout>
 

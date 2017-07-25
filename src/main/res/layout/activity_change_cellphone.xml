@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/get_verification_code_marginLeft"
-            android:text="@string/get_verification_code"
+            android:text="@string/send_verification_code"
             android:textColor="@color/white"
             android:textSize="@dimen/get_verification_code_textSize"/>
     </LinearLayout>

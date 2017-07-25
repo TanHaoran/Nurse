@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.jerry.nurse.R;
 import com.jerry.nurse.adapter.ContactAdapter;
 import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.view.RecycleViewDivider;
 
@@ -63,7 +64,7 @@ public class ContactFragment extends Fragment {
 
         // 设置间隔线
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
-                LinearLayoutManager.HORIZONTAL, 2, getResources().getColor(R.color.iron)));
+                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
 
         mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mContacts);
         mRecyclerView.setAdapter(mAdapter);

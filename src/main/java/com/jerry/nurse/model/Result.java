@@ -1,17 +1,14 @@
 package com.jerry.nurse.model;
 
 /**
- * Created by Jerry on 2017/7/21.
- *
- * 用于查看是否请求成功的服务返回类
+ * Created by Jerry on 2017/7/22.
  */
 
-public class ServiceResult {
-
+public class Result {
 
     /**
      * code : 1
-     * msg : statusCode=112310;statusMsg=【短信】应用未上线，模板短信接收号码外呼受限;data=null;
+     * msg : 失败
      * body : null
      */
 

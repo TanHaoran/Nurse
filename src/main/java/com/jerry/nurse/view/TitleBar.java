@@ -213,4 +213,13 @@ public class TitleBar extends RelativeLayout {
     public void setRightClickListener(OnRightClickListener onRightClickListener) {
         mOnRightClickListener = onRightClickListener;
     }
+
+    /**
+     * 设置右边按钮是否可见
+     *
+     * @param visible
+     */
+    public void setRightVisible(int visible) {
+        mRightTextView.setVisibility(visible);
+    }
 }

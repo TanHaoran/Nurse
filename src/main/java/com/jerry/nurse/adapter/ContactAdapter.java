@@ -18,9 +18,9 @@ public class ContactAdapter extends CommonAdapter<Contact> {
 
     private List<Contact> mContacts;
 
-    public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
-        super(context, layoutId, datas);
-        mContacts = datas;
+    public ContactAdapter(Context context, int layoutId, List<Contact> contacts) {
+        super(context, layoutId, contacts);
+        mContacts = contacts;
     }
 
     @Override

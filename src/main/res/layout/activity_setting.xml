@@ -55,7 +55,7 @@
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
-                    android:text="@string/weixin"/>
+                    android:text="@string/wechat"/>
 
                 <ImageView
                     style="@style/ArrowEnterStyle"/>

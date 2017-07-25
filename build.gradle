@@ -29,15 +29,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile files('libs/open_sdk_r5793_lite.jar')
+    compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.ashokvarma.android:bottom-navigation-bar:1.2.0'
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.2.5'
-    compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'org.litepal.android:core:1.5.1'
-    compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.google.android.gms:play-services-gcm:9.4.0'
     compile 'com.hyphenate:hyphenate-sdk:3.3.0'
@@ -47,5 +46,4 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.android.support:support-v4:25.0.0'
     testCompile 'junit:junit:4.12'
-    compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
 }

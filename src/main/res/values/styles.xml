@@ -11,6 +11,7 @@
         <item name="android:textColorHint">@color/iron</item>
 
         <item name="colorButtonNormal">@color/primary</item>
+
     </style>
 
     <!--加载框-->
@@ -111,6 +112,14 @@
         <item name="android:layout_height">@dimen/mine_plug_image_width</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:layout_marginLeft">@dimen/mine_plug_image_marginLeft</item>
+    </style>
+
+    <style name="Third_Party_login_Layout_Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
 

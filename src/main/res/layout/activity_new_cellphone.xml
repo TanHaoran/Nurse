@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/get_verification_code"
+            android:text="@string/send_verification_code"
             android:textSize="@dimen/get_verification_code_textSize"
             android:layout_marginLeft="@dimen/get_verification_code_marginLeft"
             android:textColor="@color/white"/>

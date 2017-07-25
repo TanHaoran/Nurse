@@ -49,10 +49,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @BindString(R.string.select_from_album)
     String mStringSelectFromAlbum;
 
-    private static final int REQUEST_PERMISSION_RESULT = 1;
+    private static final int REQUEST_PERMISSION_RESULT = 0x00001001;
 
-    private static final int REQUEST_PHOTOGRAPH = 0;
-    private static final int REQUEST_SELECT_FROM_ALBUM = 1;
+    private static final int REQUEST_PHOTOGRAPH = 0x00001002;
+    private static final int REQUEST_SELECT_FROM_ALBUM = 0x00001003;
 
     private static PermissionListener mPermissionListener;
     private static PhotoSelectListener mPhotoSelectListener;
@@ -260,7 +260,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             return;
         }
         Bitmap photoBitmap = null;
-        Uri uri = data.getData();
+        Uri uri = null;
+        if (data != null) {
+            uri = data.getData();
+        }
         switch (requestCode) {
             case REQUEST_PHOTOGRAPH:
                 // 避免有时候获取到的uri是空的情况

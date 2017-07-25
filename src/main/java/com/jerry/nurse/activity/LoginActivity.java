@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +11,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
-import com.jerry.nurse.constant.ServiceMethod;
+import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.User;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.SPUtil;
+import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQToken;
@@ -27,7 +29,6 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,16 +38,16 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
 import okhttp3.Call;
+import okhttp3.MediaType;
+
+import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_REGISTER;
 
 public class LoginActivity extends BaseActivity {
-
-    // 注册请求码
-    private static final int REQUEST_SIGNUP_CODE = 0;
 
     private static final int MESSAGE_LOGIN_FAILED = 0;
     private static final int MESSAGE_LOGIN_SUCCESS = 1;
 
-    @Bind(R.id.et_cellphone)
+    @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
 
     @Bind(R.id.et_password)
@@ -62,20 +63,23 @@ public class LoginActivity extends BaseActivity {
     @BindString(R.string.password_length_invalid)
     String mStringPasswordInvalid;
 
-    private static final String APP_ID = "1106292702";//官方获取的APPID
+    // 腾讯官方获取的APPID
+    private static final String APP_ID = "1106292702";
     private Tencent mTencent;
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
     private ProgressDialog mProgressDialog;
+
+    private User mUser;
+
+    private String mErrorMessage;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_LOGIN_SUCCESS:
-                    String cellphone = mCellphoneEditText.getText().toString();
-                    String password = mPasswordEditText.getText().toString();
-                    login(cellphone, password);
+                    onLoginSuccess();
                     break;
                 case MESSAGE_LOGIN_FAILED:
                     onLoginFailed();
@@ -109,7 +113,6 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
-        L.i("点击登录按钮");
         String cellphone = mCellphoneEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
@@ -118,47 +121,58 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        if (mErrorMessage != null) {
+            T.showShort(this, mErrorMessage);
+            return;
+        }
+
         mLoginButton.setEnabled(false);
 
         mProgressDialog.setMessage("登录中...");
         mProgressDialog.show();
 
-        // 第一步：登陆环信IM账号
-        easeMobLogin(cellphone, password);
+        // 第一步：登陆护士通账号
+        login(cellphone, password);
     }
+
 
     /**
      * 本地验证登陆
      */
     private boolean localValidate(String cellphone, String password) {
-        boolean valid = true;
 
         if (cellphone.isEmpty()) {
-            mCellphoneEditText.setError(mStringCellphoneInvalid);
-            valid = false;
+            mErrorMessage = mStringCellphoneInvalid;
+            return false;
         } else {
-            mCellphoneEditText.setError(null);
+            mErrorMessage = null;
         }
 
         // 密码的长度要介于4和10之间
         if (password.isEmpty() || password.length() < 4 || password
                 .length() > 10) {
-            mPasswordEditText.setError(mStringPasswordInvalid);
-            valid = false;
+            mErrorMessage = mStringPasswordInvalid;
+            return false;
         } else {
-            mPasswordEditText.setError(null);
+            mErrorMessage = null;
         }
 
-        return valid;
+        return true;
     }
 
     private void onLoginSuccess() {
         mProgressDialog.dismiss();
         mLoginButton.setEnabled(true);
-        // TODO
-        // saveUserInfo();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        // 登陆成功后，保存用户数据信息
+        saveUserInfo();
+        // 判断用户是否第一次登陆，如果是第一次登陆，要跳转到是否完善信息的页面
+        Intent intent;
+//        if (mUser.getBody().getAvatar() == "") {
+//            intent = PersonalInfoActivity.getIntent(this, true);
+//        } else {
+//            intent = MainActivity.getIntent(this);
+//        }
+        //       startActivity(intent);
         finish();
     }
 
@@ -168,12 +182,15 @@ public class LoginActivity extends BaseActivity {
     private void saveUserInfo() {
 
         // 用户存在，密码正确，登录成功, 先保存登录信息，然后跳转至主界面
-        SPUtil.put(this, "cellphone", "具体手机号");
+//        SPUtil.put(this, "cellphone", mUser.getBody().getPhone());
+//        SPUtil.put(this, "name", mUser.getBody().getName());
+//        SPUtil.put(this, "nickname", mUser.getBody().getNickName());
 
         //先清除数据库
         DataSupport.deleteAll(User.class);
         User user = new User();
         user.save();
+        L.i("保存用户信息成功");
     }
 
     private void onLoginFailed() {
@@ -185,11 +202,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SIGNUP_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                L.i("注册成功");
-            }
-        } else if (requestCode == Constants.REQUEST_LOGIN) {
+        if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mIUiListener);
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -209,10 +222,9 @@ public class LoginActivity extends BaseActivity {
                 mHandler.sendEmptyMessage(MESSAGE_LOGIN_SUCCESS);
             }
 
-
             @Override
             public void onError(int code, String error) {
-                L.i("环信登陆失败，错误码：" + code + "，错误信息：" + error);
+                L.e("环信登陆失败，错误码：" + code + "，错误信息：" + error);
                 mHandler.sendEmptyMessage(MESSAGE_LOGIN_FAILED);
             }
 
@@ -229,28 +241,55 @@ public class LoginActivity extends BaseActivity {
      * @param cellphone
      * @param password
      */
-    private void login(String cellphone, String password) {
-        OkHttpUtils.post().url(ServiceMethod.LOGIN)
-                .addParams("cellphone", cellphone)
-                .addParams("password", password)
+    private void login(final String cellphone, final String password) {
+
+        Register register = new Register(cellphone, password);
+        OkHttpUtils.postString()
+                .url(ServiceConstant.LOGIN)
+                .content(StringUtil.addModelWithJson(register))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new StringCallback() {
+                .execute(new FilterStringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        L.e("登录出错");
+                        L.e("护士通登录失败");
                         onLoginFailed();
                     }
 
                     @Override
-                    public void onResponse(String response, int id) {
+                    public void onFilterResponse(String response, int id) {
+                        Gson gson = new Gson();
+                        mUser = gson.fromJson(response, User.class);
                         // 判断登陆是否成功
-                        if (response.equals("")) {
-                            onLoginSuccess();
-                        } else {
-                            onLoginFailed();
-                        }
+//                        if (mUser.getCode() == 0) {
+//                            L.i("护士通登录成功");
+//                            easeMobLogin(cellphone, password);
+//                        } else {
+//                            L.i("护士通登录失败");
+//                            onLoginFailed();
+//                        }
                     }
                 });
+    }
+
+    /**
+     * 忘记密码
+     *
+     * @param view
+     */
+    @OnClick(R.id.tv_forget_password)
+    void onForgetPassword(View view) {
+
+    }
+
+    /**
+     * 验证码登陆
+     *
+     * @param view
+     */
+    @OnClick(R.id.tv_verification_code_login)
+    void onVerificationCodeLogin(View view) {
+
     }
 
     /**
@@ -260,16 +299,18 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_signup)
     void onSignup(View view) {
-        Intent intent = new Intent(this, SignupActivity.class);
-        startActivityForResult(intent, REQUEST_SIGNUP_CODE);
+        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_REGISTER);
+        startActivity(intent);
     }
 
-    /**
+    /********************************第三方登陆********************************************
+
+     /**
      * 使用qq登录
      *
      * @param view
      */
-    @OnClick(R.id.tv_qq)
+    @OnClick(R.id.ll_qq)
     void onQQ(View view) {
         /**通过这句代码，SDK实现了QQ的登录，这个方法有三个参数，第一个参数是context上下文，第二个参数SCOPO 是一个String类型的字符串，表示一些权限
          官方文档中的说明：应用需要获得哪些API的权限，由“，”分隔。例如：SCOPE = “get_user_info,add_t”；所有权限用“all”
@@ -331,6 +372,4 @@ public class LoginActivity extends BaseActivity {
             T.showShort(LoginActivity.this, "授权取消");
         }
     }
-
-
 }

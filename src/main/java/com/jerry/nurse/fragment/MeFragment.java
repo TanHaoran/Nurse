@@ -40,7 +40,7 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_personal_info)
     void onPersonalInfo(View view) {
-        Intent intent = PersonalInfoActivity.getIntent(getActivity());
+        Intent intent = PersonalInfoActivity.getIntent(getActivity(), false);
         startActivity(intent);
     }
 

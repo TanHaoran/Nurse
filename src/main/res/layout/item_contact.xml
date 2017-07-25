@@ -23,7 +23,7 @@
             android:layout_width="@dimen/contact_item_avatar_width"
             android:layout_height="@dimen/contact_item_avatar_width"
             android:layout_centerVertical="true"
-            android:src="@drawable/icon_avatar"/>
+            android:src="@drawable/icon_avatar_default"/>
 
         <TextView
             android:id="@+id/tv_nickname"

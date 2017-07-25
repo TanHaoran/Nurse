@@ -3,14 +3,40 @@
 
     <!--公共-->
     <dimen name="title_bar_height">44dp</dimen>
-    <dimen name="big_textSize">18sp</dimen>
-    <dimen name="normal_textSize">17sp</dimen>
-    <dimen name="small_textSize">11sp</dimen>
+    <dimen name="big_textSize">17sp</dimen>
+    <dimen name="normal_textSize">15sp</dimen>
+    <dimen name="small_textSize">13sp</dimen>
+    <dimen name="smaller_textSize">10sp</dimen>
     <dimen name="line_paddingLeft">15dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
 
+    <!--注册-->
+    <dimen name="signup_text_marginLeft">5dp</dimen>
+    <dimen name="signup_edit_marginLeft">100dp</dimen>
+    <dimen name="signup_password_paddingBottom">10dp</dimen>
+    <dimen name="protocol_line_height">57dp</dimen>
+    <dimen name="checkbox_marginRight">8dp</dimen>
+    <dimen name="protocol_text_marginLeft">15dp</dimen>
+    <dimen name="signup_button_height">49dp</dimen>
+    <dimen name="signup_button_marginLeft">10dp</dimen>
+    <dimen name="checkbox_width">18dp</dimen>
+    <dimen name="send_verification_code_space_width">20dp</dimen>
+    <dimen name="send_verification_code_button_bottom_line_width">100dp</dimen>
+
     <!--登陆-->
+    <dimen name="login_avatar_marginTop">28dp</dimen>
+    <dimen name="login_avatar_width">75dp</dimen>
+    <dimen name="login_line_height">45dp</dimen>
+    <dimen name="vertical_line_marginLeft">5sp</dimen>
+    <dimen name="third_party_login_height">100dp</dimen>
+    <dimen name="third_party_login_line_marginTop">8dp</dimen>
+    <dimen name="third_party_login_text_marginLeft">15dp</dimen>
+    <dimen name="login_bottom_paddingLeft">40dp</dimen>
+    <dimen name="login_bottom_paddingTop">30dp</dimen>
+    <dimen name="login_bottom_paddingBottom">10dp</dimen>
+    <dimen name="third_party_login_text_marginTop">5dp</dimen>
+
     <dimen name="login_paddingLeft">24dp</dimen>
     <dimen name="login_paddingTop">20dp</dimen>
     <dimen name="login_logo_width">160dp</dimen>

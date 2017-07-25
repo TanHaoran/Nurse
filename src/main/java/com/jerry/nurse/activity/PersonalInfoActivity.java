@@ -21,6 +21,8 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
 
+import static com.jerry.nurse.constant.ExtraValue.EXTRA_IS_FIRST_LOGIN;
+
 public class PersonalInfoActivity extends BaseActivity {
 
     @Bind(R.id.civ_avatar)
@@ -38,10 +40,9 @@ public class PersonalInfoActivity extends BaseActivity {
     @BindString(R.string.female)
     String mStringFemale;
 
-    private Bitmap mAvatarBitmap;
-
-    public static Intent getIntent(Context context) {
+    public static Intent getIntent(Context context, boolean isFirstLogin) {
         Intent intent = new Intent(context, PersonalInfoActivity.class);
+        intent.putExtra(EXTRA_IS_FIRST_LOGIN, isFirstLogin);
         return intent;
     }
 
