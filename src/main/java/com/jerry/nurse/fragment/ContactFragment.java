@@ -53,7 +53,6 @@ public class ContactFragment extends Fragment {
     }
 
     private void initView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mContacts = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
@@ -63,6 +62,7 @@ public class ContactFragment extends Fragment {
         }
 
         // 设置间隔线
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
 

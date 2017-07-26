@@ -1,5 +1,6 @@
 package com.jerry.nurse.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jerry.nurse.R;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -18,6 +20,8 @@ import butterknife.ButterKnife;
 public abstract class BaseFragment extends Fragment {
 
     private View mRootView;
+
+    protected ProgressDialog mProgressDialog;
 
     /**
      * 获取页面布局文件
@@ -38,6 +42,14 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutResId(), container, false);
         ButterKnife.bind(this, mRootView);
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+
         init(savedInstanceState);
         return mRootView;
     }

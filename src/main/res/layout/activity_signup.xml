@@ -7,10 +7,10 @@
               android:orientation="vertical">
 
     <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_signup"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:right_text="@string/cancel"
-        app:title_text="@string/new_user_signup"/>
+        app:right_text="@string/cancel"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -204,8 +204,7 @@
                         android:id="@+id/iv_agree"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/choose"
-                        android:visibility="invisible"/>
+                        android:src="@drawable/choose"/>
 
                 </LinearLayout>
 
@@ -236,7 +235,7 @@
                 android:layout_marginRight="@dimen/signup_button_marginLeft"
                 android:text="@string/signup"
                 android:textColor="@color/white"
-                android:textSize="@dimen/big_textSize"/>
+                android:textSize="@dimen/normal_textSize"/>
 
 
         </LinearLayout>

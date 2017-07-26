@@ -31,4 +31,5 @@ public class StringUtil {
     public static String addModelWithJson(Object o) {
         return "{\"model\":" + new Gson().toJson(o) + "}";
     }
+
 }

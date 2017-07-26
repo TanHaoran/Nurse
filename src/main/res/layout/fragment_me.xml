@@ -28,6 +28,7 @@
             android:layout_marginRight="@dimen/avatar_marginRight"
             android:background="@drawable/icon_avatar_default"/>
 
+        android:visibility="invisible"
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
@@ -45,7 +46,6 @@
             android:layout_marginBottom="@dimen/validated_marginBottom"
             android:layout_marginLeft="@dimen/validated_marginLeft"
             android:layout_toRightOf="@id/tv_name"
-            android:visibility="invisible"
             app:text="已验证"/>
 
         <TextView

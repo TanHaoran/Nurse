@@ -2,6 +2,7 @@ package com.jerry.nurse.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -57,6 +58,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static PermissionListener mPermissionListener;
     private static PhotoSelectListener mPhotoSelectListener;
 
+    protected ProgressDialog mProgressDialog;
+
     /**
      * 获取当前页面的布局
      *
@@ -78,6 +81,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getContentViewResId());
         ScreenUtil.setWindowStatusBarColor(this, R.color.primary);
         ButterKnife.bind(this);
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         init(savedInstanceState);
     }
 

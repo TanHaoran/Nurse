@@ -1,7 +1,6 @@
 package com.jerry.nurse.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,13 +22,13 @@ import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.User;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.UserUtil;
+import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.BindColor;
@@ -38,8 +37,11 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
+import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_NAME;
 import static com.jerry.nurse.constant.ExtraValue.EXTRA_SIGNUP_TYPE;
 import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
+import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 
 
 /**
@@ -49,16 +51,18 @@ import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
 public class SignupActivity extends BaseActivity {
 
     public static final int EXTRA_TYPE_REGISTER = 0;
-    public static final int EXTRA_TYPE_VERTIFICATION_CODE = 1;
-    public static final int EXTRA_TYPE_FORGET_PASSWORD = 2;
+    public static final int EXTRA_TYPE_FORGET_PASSWORD = 1;
+    public static final int EXTRA_TYPE_VERIFICATION_CODE = 2;
 
     private static final int REQUEST_COUNTRY = 0x00000101;
 
     private static final int MESSAGE_SIGNUP_SUCCESS = 0;
     private static final int MESSAGE_SIGNUP_FAILED = 1;
-    private static final int MESSAGE_LOGIN_FAILED = 2;
-    private static final int MESSAGE_LOGIN_SUCCESS = 3;
+    private static final int MESSAGE_EASE_MOB_LOGIN_FAILED = 2;
+    private static final int MESSAGE_EASE_MOB_LOGIN_SUCCESS = 3;
 
+    @Bind(R.id.tb_signup)
+    TitleBar mTitleBar;
 
     @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
@@ -90,13 +94,14 @@ public class SignupActivity extends BaseActivity {
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
 
-    private ProgressDialog mProgressDialog;
-
-    private boolean mIsAgree;
+    // 是否同意协议
+    private boolean mIsAgree = true;
 
     private String mErrorMessage;
 
-    private User mUser;
+    private int mType = EXTRA_TYPE_REGISTER;
+
+    private String mRegisterId;
 
     /**
      * 验证码获取间隔
@@ -125,16 +130,14 @@ public class SignupActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                // 注册成功
                 case MESSAGE_SIGNUP_SUCCESS:
+                case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
                     onSignupSuccess();
                     break;
+                // 注册失败
                 case MESSAGE_SIGNUP_FAILED:
-                    onSignupFailed();
-                    break;
-                case MESSAGE_LOGIN_SUCCESS:
-                    onLoginSuccess();
-                    break;
-                case MESSAGE_LOGIN_FAILED:
+                case MESSAGE_EASE_MOB_LOGIN_FAILED:
                     onSignupFailed();
                     break;
                 default:
@@ -146,6 +149,7 @@ public class SignupActivity extends BaseActivity {
     public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, SignupActivity.class);
         intent.putExtra(EXTRA_SIGNUP_TYPE, type);
+
         return intent;
     }
 
@@ -157,13 +161,22 @@ public class SignupActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        int type = getIntent().getIntExtra(EXTRA_SIGNUP_TYPE, -1);
+        mType = getIntent().getIntExtra(EXTRA_SIGNUP_TYPE, -1);
 
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
+        if (mType == EXTRA_TYPE_REGISTER) {
+            mTitleBar.setTitle("新用户注册");
+        } else if (mType == EXTRA_TYPE_FORGET_PASSWORD) {
+            mTitleBar.setTitle("忘记密码");
+        } else if (mType == EXTRA_TYPE_VERIFICATION_CODE) {
+            mTitleBar.setTitle("验证码登陆");
+            mSignupButton.setText(R.string.login);
+        }
+        mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
+            @Override
+            public void onRightClick(View view) {
+                finish();
+            }
+        });
     }
 
     /**
@@ -192,17 +205,14 @@ public class SignupActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
 
                     @Override
-                    public void onError(Call call, Exception e, int id) {
+                    public void onFilterError(Call call, Exception e, int id) {
                         mProgressDialog.dismiss();
-                        T.showLong(SignupActivity.this, R.string.get_verification_code_failed);
-                        L.e("发送验证码失败");
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
                         if (response.equals(ServiceConstant.REQUEST_SUCCESS)) {
-                            L.i("发送验证码成功");
                             // 控制发送验证码的状态
                             mGetVerificationCodeTextView.setEnabled(false);
                             mGetVerificationCodeTextView.setTextColor(mGrayColor);
@@ -210,7 +220,6 @@ public class SignupActivity extends BaseActivity {
                             mHandler.postDelayed(mValidateRunnable, 1000);
                             T.showLong(SignupActivity.this, R.string.get_verification_finished);
                         } else {
-                            L.i("发送验证码失败" + response);
                             T.showLong(SignupActivity.this, R.string.get_verification_code_failed);
                         }
                     }
@@ -260,66 +269,41 @@ public class SignupActivity extends BaseActivity {
                 .build()
                 .execute(new FilterStringCallback() {
                     @Override
-                    public void onError(Call call, Exception e, int id) {
-                        L.e("验证验证码失败");
-                        T.showLong(SignupActivity.this, R.string.verification_code_invalid);
+                    public void onFilterError(Call call, Exception e, int id) {
                         onSignupFailed();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.contains(ServiceConstant.USER_EXIST)) {
-                            L.i("用户已存在，准备护士通登录");
-                            if (response.split("|").length == 2) {
-                                String registerId = response.split("|")[1];
-                                // 获取用户信息，然后在环信登录
-                                getUserInfo(cellphone, registerId);
+                        // 第一种情况，用户已存在，要在环信登陆，下一步设置密码
+                        if (response.contains(ServiceConstant.USER_PHONE)) {
+                            L.i("用户已存在，准备环信登录");
+                            if (response.split(USER_COLON).length == 4) {
+                                mRegisterId = response.split(USER_COLON)[3];
+                                // 环信登录
+                                easeMobLogin(mRegisterId, EASE_MOB_PASSWORD);
                             } else {
                                 onSignupFailed();
                             }
-                        } else if (response.startsWith(ServiceConstant.USER_NOT_EXIST)) {
+                        }
+                        // 第二种情况，用户不存在，需要先在护士通注册，然后在环信注册
+                        else if (response.startsWith(ServiceConstant.USER_REGISTER_ID)) {
                             L.i("用户不存在，准备环信注册");
                             // 用户不存在，服务端自动进行护士通注册
-                            if (response.split(":").length == 2) {
-                                String registerId = response.split(":")[1];
+                            if (response.split(USER_COLON).length == 2) {
+                                mRegisterId = response.split(USER_COLON)[1];
                                 // 然后在环信注册
-                                easeMobSignup(registerId, EASE_MOB_PASSWORD);
+                                easeMobSignup(mRegisterId, EASE_MOB_PASSWORD);
                             } else {
                                 onSignupFailed();
                             }
                         } else {
-                            L.i(response);
-                            T.showLong(SignupActivity.this, response);
                             onSignupFailed();
                         }
                     }
                 });
     }
 
-    /**
-     * 获取用户信息并在环信登陆
-     */
-    private void getUserInfo(final String cellphone, final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_INFO)
-                .addParams("Phone", cellphone)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        L.e("获取用户信息失败");
-                        onSignupFailed();
-                        T.showLong(SignupActivity.this, R.string.signup_failed);
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        L.e("获取用户信息成功，护士通登陆");
-                        mUser = new Gson().fromJson(response, User.class);
-                        easeMobLogin(registerId, EASE_MOB_PASSWORD);
-                    }
-                });
-    }
 
     /**
      * 环信的登陆方法，是一个异步方法
@@ -332,13 +316,13 @@ public class SignupActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 L.i("环信登陆成功");
-                mHandler.sendEmptyMessage(MESSAGE_LOGIN_SUCCESS);
+                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_SUCCESS);
             }
 
             @Override
             public void onError(int code, String error) {
                 L.e("环信登陆失败，错误码：" + code + "，错误信息：" + error);
-                mHandler.sendEmptyMessage(MESSAGE_LOGIN_FAILED);
+                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_FAILED);
             }
 
             @Override
@@ -400,62 +384,78 @@ public class SignupActivity extends BaseActivity {
         return true;
     }
 
-    /**
-     * 登陆成功后执行
-     */
-    private void onLoginSuccess() {
-        // 首先处理界面
-        resetUI();
-        T.showLong(this, R.string.login_success);
-
-        // 保存用户信息
-        SPUtil.put(this, "cellphone", mUser.getPhone());
-        SPUtil.put(this, "name", mUser.getName());
-        SPUtil.put(this, "nickname", mUser.getNickName());
-
-        //先清除数据库
-        DataSupport.deleteAll(User.class);
-        User user = new User();
-        user.save();
-        L.i("保存用户信息成功");
-
-        String cellphone = mCellphoneEditText.getText().toString();
-        Intent intent = PasswordActivity.getIntent(this, "设置密码", cellphone);
-        startActivity(intent);
-    }
-
     private void resetUI() {
         mProgressDialog.dismiss();
         mSignupButton.setEnabled(true);
-        mHandler.removeCallbacks(mValidateRunnable);
     }
-
 
     /**
      * 注册成功
      */
     private void onSignupSuccess() {
-        // 首先处理界面
-        resetUI();
-        T.showLong(this, R.string.signup_success);
+        if (mType != EXTRA_TYPE_VERIFICATION_CODE) {
+            // 首先处理界面
+            resetUI();
+            T.showLong(this, R.string.signup_success);
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        Intent intent = PasswordActivity.getIntent(this, "设置密码", cellphone);
-        startActivity(intent);
+            String cellphone = mCellphoneEditText.getText().toString();
+            Intent intent = PasswordActivity.getIntent(this, "设置密码", cellphone, mRegisterId);
+            startActivity(intent);
+            mHandler.removeCallbacks(mValidateRunnable);
+        } else {
+            getUserRegisterInfo(mRegisterId);
+        }
+    }
+
+    /**
+     * 获取用户注册信息
+     */
+    private void getUserRegisterInfo(final String registerId) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        mSignupButton.setEnabled(true);
+                        L.e("获取用户信息成功，护士通登陆");
+                        User user = new Gson().fromJson(response, User.class);
+
+                        UserUtil.saveUser(SignupActivity.this, user);
+                        ActivityCollector.removeAllActivity();
+                        Intent intent = MainActivity.getIntent(SignupActivity.this);
+                        startActivity(intent);
+                    }
+                });
     }
 
     /**
      * 注册失败
      */
     private void onSignupFailed() {
-        mProgressDialog.dismiss();
-        mSignupButton.setEnabled(true);
+        resetUI();
+        L.i("注册失败");
     }
 
+    /**
+     * 点击国家代码切换
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_country)
     void onCountry(View view) {
-        Intent intent = CountryActivity.getIntent(this);
-        startActivityForResult(intent, REQUEST_COUNTRY);
+        if (mCountryTextView.getText().toString().split(" ").length == 2) {
+            String countryCode = mCountryTextView.getText().toString().split(" ")[1];
+            Intent intent = CountryActivity.getIntent(this, countryCode);
+            startActivityForResult(intent, REQUEST_COUNTRY);
+        }
     }
 
     @OnClick({R.id.ll_agree, R.id.tv_agree})
@@ -482,8 +482,10 @@ public class SignupActivity extends BaseActivity {
         }
         if (requestCode == REQUEST_COUNTRY) {
             // 获取国家地区编号并显示
-            String country = data.getStringExtra("");
-            mCountryTextView.setText(country);
+            Bundle bundle = data.getExtras();
+            String countryName = bundle.getString(EXTRA_COUNTRY_NAME);
+            String countryCode = bundle.getString(EXTRA_COUNTRY_CODE);
+            mCountryTextView.setText(countryName + " " + countryCode);
         }
     }
 }

@@ -2,13 +2,20 @@ package com.jerry.nurse.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
+import com.jerry.nurse.model.User;
+import com.jerry.nurse.view.CircleImageView;
 
+import org.litepal.crud.DataSupport;
+
+import butterknife.Bind;
 import butterknife.OnClick;
 
 
@@ -17,6 +24,17 @@ import butterknife.OnClick;
  */
 
 public class MeFragment extends BaseFragment {
+
+    @Bind(R.id.civ_avatar)
+    CircleImageView mAvatarImageView;
+
+    @Bind(R.id.tv_name)
+    TextView mNameTextView;
+
+    @Bind(R.id.tv_nickname)
+    TextView mNicknameTextView;
+
+    private User mUser;
 
     /**
      * 实例化方法
@@ -35,7 +53,22 @@ public class MeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        // 初始化用户信息显示
+        initUserInfo();
+    }
 
+    /**
+     * 初始化用户信息显示
+     */
+    private void initUserInfo() {
+        mUser = DataSupport.findFirst(User.class);
+
+        if (!TextUtils.isEmpty(mUser.getName())) {
+            mNameTextView.setText(mUser.getName());
+        }
+        if (!TextUtils.isEmpty(mUser.getNickName())) {
+            mNicknameTextView.setText(mUser.getNickName());
+        }
     }
 
     @OnClick(R.id.ll_personal_info)

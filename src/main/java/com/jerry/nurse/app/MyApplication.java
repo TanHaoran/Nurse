@@ -10,6 +10,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.log.LoggerInterceptor;
 
+import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
 
 import java.util.Iterator;
@@ -29,12 +30,22 @@ public class MyApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
 
+        // 初始化LitePal        
+        initLitePal();
+
         // 初始化友盟
         initMobclickAgent();
         // 初始化环信
         initEaseMob();
         // 初始化OkHttp封装类
         initOkHttp();
+    }
+
+    /**
+     * 初始化LitePal
+     */
+    private void initLitePal() {
+        LitePal.initialize(this);
     }
 
     /**

@@ -17,6 +17,11 @@ public class ExtraValue {
     public static final String EXTRA_CELLPHONE = "extra_cellphone";
 
     /**
+     * 注册Id
+     */
+    public static final String EXTRA_REGISTER_ID = "extra_register_id";
+
+    /**
      * 是否第一次登陆
      */
     public static final String EXTRA_IS_FIRST_LOGIN = "extra_is_first_login";

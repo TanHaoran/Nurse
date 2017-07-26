@@ -1,19 +1,22 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Register;
+import com.jerry.nurse.model.User;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -23,6 +26,7 @@ import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ExtraValue.EXTRA_CELLPHONE;
+import static com.jerry.nurse.constant.ExtraValue.EXTRA_REGISTER_ID;
 import static com.jerry.nurse.constant.ExtraValue.EXTRA_TITLE;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
@@ -40,12 +44,17 @@ public class PasswordActivity extends BaseActivity {
 
     private String mErrorMessage;
 
-    private ProgressDialog mProgressDialog;
+    private User mUser;
 
-    public static Intent getIntent(Context context, String title, String cellphone) {
+    private String mCellphone;
+    private String mRegisterId;
+
+    public static Intent getIntent(Context context, String title, String cellphone, String registerId) {
         Intent intent = new Intent(context, PasswordActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_CELLPHONE, cellphone);
+        intent.putExtra(EXTRA_REGISTER_ID, registerId);
+
         return intent;
     }
 
@@ -57,14 +66,9 @@ public class PasswordActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        final String cellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
+        mCellphone= getIntent().getStringExtra(EXTRA_CELLPHONE);
+        mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
         mTitleBar.setTitle(title);
-
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
 
         mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -75,7 +79,7 @@ public class PasswordActivity extends BaseActivity {
                 }
                 String password = mPasswordEditText.getText().toString();
                 // 设置密码
-                setPassword(cellphone, password);
+                setPassword(mCellphone, password);
             }
         });
     }
@@ -104,7 +108,8 @@ public class PasswordActivity extends BaseActivity {
      * @param cellphone
      * @param password
      */
-    private void setPassword(String cellphone, String password) {
+    private void setPassword(final String cellphone, String password) {
+        mProgressDialog.setMessage("请稍后...");
         mProgressDialog.show();
         Register register = new Register(cellphone, password);
         OkHttpUtils.postString()
@@ -114,8 +119,7 @@ public class PasswordActivity extends BaseActivity {
                 .build()
                 .execute(new FilterStringCallback() {
                     @Override
-                    public void onError(Call call, Exception e, int id) {
-                        L.e("设置密码失败");
+                    public void onFilterError(Call call, Exception e, int id) {
                         mProgressDialog.dismiss();
                         T.showLong(PasswordActivity.this, R.string.set_password_failed);
                     }
@@ -124,13 +128,50 @@ public class PasswordActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置密码成功");
-                            Intent intent = MainActivity.getIntent(PasswordActivity.this);
-                            startActivity(intent);
+                            getUserRegisterInfo(mRegisterId);
                         } else {
                             L.i("设置密码失败");
-                            T.showLong(PasswordActivity.this, R.string.set_password_failed);
+                            mProgressDialog.dismiss();
                         }
                     }
                 });
+    }
+
+
+    /**
+     * 获取用户注册信息
+     */
+    private void getUserRegisterInfo(final String registerId) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        L.e("获取用户信息成功，护士通登陆");
+                        mUser = new Gson().fromJson(response, User.class);
+                        onSuccess();
+                    }
+                });
+    }
+
+    /**
+     * 设置密码成功后执行
+     */
+    private void onSuccess() {
+        // 首先处理界面
+
+        UserUtil.saveUser(this, mUser);
+
+        ActivityCollector.removeAllActivity();
+        Intent intent = MainActivity.getIntent(this);
+        startActivity(intent);
     }
 }

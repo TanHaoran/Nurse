@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,8 +19,10 @@ import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.User;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.UserUtil;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQToken;
 import com.tencent.connect.common.Constants;
@@ -32,7 +33,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -40,12 +40,16 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_FORGET_PASSWORD;
 import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_REGISTER;
+import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_VERIFICATION_CODE;
+import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
+import static com.jerry.nurse.constant.ServiceConstant.USER_REGISTER_ID;
 
 public class LoginActivity extends BaseActivity {
 
-    private static final int MESSAGE_LOGIN_FAILED = 0;
-    private static final int MESSAGE_LOGIN_SUCCESS = 1;
+    private static final int MESSAGE_EASE_MOB_LOGIN_FAILED = 0;
+    private static final int MESSAGE_EASE_MOB_LOGIN_SUCCESS = 1;
 
     @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
@@ -68,7 +72,6 @@ public class LoginActivity extends BaseActivity {
     private Tencent mTencent;
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
-    private ProgressDialog mProgressDialog;
 
     private User mUser;
 
@@ -78,10 +81,11 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MESSAGE_LOGIN_SUCCESS:
-                    onLoginSuccess();
+                case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
+                    String cellphone = mCellphoneEditText.getText().toString();
+                    getUserInfo(cellphone);
                     break;
-                case MESSAGE_LOGIN_FAILED:
+                case MESSAGE_EASE_MOB_LOGIN_FAILED:
                     onLoginFailed();
                     break;
                 default:
@@ -102,13 +106,16 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        // 入口处判断用户是否已经登陆
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
+        if (!registerId.equals("-1")) {
+            Intent intent = MainActivity.getIntent(this);
+            startActivity(intent);
+            finish();
+        }
+
         //传入参数APPID和全局Context上下文
         mTencent = Tencent.createInstance(APP_ID, this);
-
-        // 创建等待框
-        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
     }
 
     @OnClick(R.id.btn_login)
@@ -118,11 +125,9 @@ public class LoginActivity extends BaseActivity {
 
         //验证用户名和密码格式是否符合
         if (!localValidate(cellphone, password)) {
-            return;
-        }
-
-        if (mErrorMessage != null) {
-            T.showShort(this, mErrorMessage);
+            if (mErrorMessage != null) {
+                T.showShort(this, mErrorMessage);
+            }
             return;
         }
 
@@ -161,47 +166,30 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void onLoginSuccess() {
-        mProgressDialog.dismiss();
-        mLoginButton.setEnabled(true);
+        resetUI();
         // 登陆成功后，保存用户数据信息
-        saveUserInfo();
-        // 判断用户是否第一次登陆，如果是第一次登陆，要跳转到是否完善信息的页面
-        Intent intent;
-//        if (mUser.getBody().getAvatar() == "") {
-//            intent = PersonalInfoActivity.getIntent(this, true);
-//        } else {
-//            intent = MainActivity.getIntent(this);
-//        }
-        //       startActivity(intent);
+        UserUtil.saveUser(this, mUser);
+
+        Intent intent = MainActivity.getIntent(this);
+        startActivity(intent);
         finish();
     }
 
-    /**
-     * 保存用户信息
-     */
-    private void saveUserInfo() {
-
-        // 用户存在，密码正确，登录成功, 先保存登录信息，然后跳转至主界面
-//        SPUtil.put(this, "cellphone", mUser.getBody().getPhone());
-//        SPUtil.put(this, "name", mUser.getBody().getName());
-//        SPUtil.put(this, "nickname", mUser.getBody().getNickName());
-
-        //先清除数据库
-        DataSupport.deleteAll(User.class);
-        User user = new User();
-        user.save();
-        L.i("保存用户信息成功");
-    }
-
-    private void onLoginFailed() {
+    private void resetUI() {
         mProgressDialog.dismiss();
         mLoginButton.setEnabled(true);
+    }
+
+
+    private void onLoginFailed() {
+        resetUI();
         T.showShort(this, R.string.login_failed);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 腾讯的第三方登陆
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mIUiListener);
         }
@@ -219,13 +207,13 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 L.i("环信登陆成功");
-                mHandler.sendEmptyMessage(MESSAGE_LOGIN_SUCCESS);
+                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_SUCCESS);
             }
 
             @Override
             public void onError(int code, String error) {
                 L.e("环信登陆失败，错误码：" + code + "，错误信息：" + error);
-                mHandler.sendEmptyMessage(MESSAGE_LOGIN_FAILED);
+                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_FAILED);
             }
 
             @Override
@@ -251,25 +239,55 @@ public class LoginActivity extends BaseActivity {
                 .build()
                 .execute(new FilterStringCallback() {
                     @Override
-                    public void onError(Call call, Exception e, int id) {
-                        L.e("护士通登录失败");
+                    public void onFilterError(Call call, Exception e, int id) {
                         onLoginFailed();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        Gson gson = new Gson();
-                        mUser = gson.fromJson(response, User.class);
                         // 判断登陆是否成功
-//                        if (mUser.getCode() == 0) {
-//                            L.i("护士通登录成功");
-//                            easeMobLogin(cellphone, password);
-//                        } else {
-//                            L.i("护士通登录失败");
-//                            onLoginFailed();
-//                        }
+                        if (response.startsWith(USER_REGISTER_ID)) {
+                            if (response.split(":").length == 2) {
+                                String registerId = response.split(":")[1];
+                                easeMobLogin(registerId, EASE_MOB_PASSWORD);
+                            } else {
+                                L.i("护士通登录失败");
+                                onLoginFailed();
+                            }
+                        } else {
+                            L.i("护士通登录失败");
+                            onLoginFailed();
+                        }
                     }
                 });
+    }
+
+    /**
+     * 获取用户信息
+     */
+    private void getUserInfo(final String cellphone) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+                .addParams("Phone", cellphone)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        onLoginFailed();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mUser = new Gson().fromJson(response, User.class);
+                        onLoginSuccess();
+                    }
+                });
+    }
+
+    @OnClick(R.id.tv_protocol)
+    void onProtocol(View view) {
+        Intent intent = HtmlActivity.getIntent(this, "");
+        startActivity(intent);
     }
 
     /**
@@ -279,7 +297,8 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_forget_password)
     void onForgetPassword(View view) {
-
+        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_FORGET_PASSWORD);
+        startActivity(intent);
     }
 
     /**
@@ -289,7 +308,8 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_verification_code_login)
     void onVerificationCodeLogin(View view) {
-
+        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_VERIFICATION_CODE);
+        startActivity(intent);
     }
 
     /**

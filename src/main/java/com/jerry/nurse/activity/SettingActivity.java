@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.UserUtil;
 
 import butterknife.OnClick;
 
@@ -45,7 +46,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_help)
     void onHelp(View view) {
-        Intent intent = HtmlActivity.getIntent(this,"");
+        Intent intent = HtmlActivity.getIntent(this, "");
         startActivity(intent);
     }
 
@@ -98,6 +99,7 @@ public class SettingActivity extends BaseActivity {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        UserUtil.deleteUser(SettingActivity.this);
                         ActivityCollector.removeAllActivity();
                         Intent intent = LoginActivity.getIntent(SettingActivity.this);
                         startActivity(intent);

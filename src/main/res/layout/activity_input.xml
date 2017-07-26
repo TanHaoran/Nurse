@@ -29,9 +29,11 @@
         android:paddingRight="20dp"
         android:textColor="@color/normal_textColor"
         android:textColorHint="@color/gray_textColor"
+        android:textCursorDrawable="@null"
         android:textSize="@dimen/normal_textSize"/>
 
     <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/line_paddingLeft"
