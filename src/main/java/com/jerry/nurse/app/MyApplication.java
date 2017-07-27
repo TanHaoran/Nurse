@@ -86,6 +86,7 @@ public class MyApplication extends LitePalApplication {
 
     /**
      * 获取app名称
+     *
      * @param pID
      * @return
      */

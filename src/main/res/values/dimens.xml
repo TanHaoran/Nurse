@@ -68,6 +68,7 @@
     <dimen name="contact_item_message_textSize">12sp</dimen>
     <dimen name="contact_item_time_textSize">13dp</dimen>
     <dimen name="chat_line_height">50dp</dimen>
+    <dimen name="contact_title_text_height">30dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>
@@ -79,6 +80,7 @@
     <dimen name="validated_height">16dp</dimen>
     <dimen name="validated_marginBottom">3dp</dimen>
     <dimen name="validated_marginLeft">15dp</dimen>
+    <dimen name="feedback_height">160dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

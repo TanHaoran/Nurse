@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbname value="demo"></dbname>
+    <dbname value="nurse"></dbname>
 
     <version value="1"></version>
 
     <list>
-        <mapping class="com.jerry.nurse.model.User"></mapping>
+        <mapping class="com.jerry.nurse.model.UserRegisterInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.UserBasicInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.UserCertificateInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.UserHospitalInfo"></mapping>
     </list>
 </litepal>

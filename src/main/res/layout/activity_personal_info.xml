@@ -12,7 +12,6 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:right_text="@string/skip"
         app:show_back="true"
         app:title_text="@string/personal_info"/>
 

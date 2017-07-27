@@ -55,6 +55,16 @@ public class ServiceConstant {
      */
     public static final String GET_USER_BASIC_INFO = IP + "GetUserBasicinfoById";
 
+    /**
+     * 获取用户执业证信息
+     */
+    public static final String GET_USER_CERTIFICATE_INFO = IP + "GetUserPtccetById";
+
+    /**
+     * 获取用户医院相关信息
+     */
+    public static final String GET_USER_HOSPITAL_INFO = IP + "GetUserRelcodById";
+
 
     /**
      * 设置头像
@@ -62,12 +72,50 @@ public class ServiceConstant {
     public static final String SET_AVATAR = IP + "SetNickNameById";
 
     /**
-     * 设置昵称
+     * 更新用户注册信息
      */
-    public static final String SET_NICKNAME = IP + "SetNickNameById";
+    public static final String UPDATE_REGISTER_INFO = IP + "UpdateUserRegisterInfo";
 
     /**
-     * 设置性别
+     * 更新用户基础信息
      */
-    public static final String SET_SEX = "";
+    public static final String UPDATE_BASIC_INFO = IP + "Updateuserbasicinfo";
+
+    /**
+     * 修改用户执业证信息
+     */
+    public static final String UPDATE_CERTIFICATE_INFO = IP + "Updateuserbasicinfo";
+
+    /**
+     * 修改用户医院信息
+     */
+    public static final String UPDATE_HOSPITAL_INFO = IP + "UpdateuserrelrecordInfo";
+
+    /**
+     * 提交反馈信息
+     */
+    public static final String SEND_FEEDBACK = IP + "SetNickNameById";
+
+    /**
+     * 修改密码
+     */
+    public static final String CHANGE_PASSWORD = IP + "SetNickNameById";
+
+
+    /**
+     * 获取医院信息
+     */
+    public static final String GET_HOSPITAL_INFO = IP + "GethospitalById";
+
+
+    /**
+     * 获取科室信息
+     */
+    public static final String GET_OFFICE_INFO = IP + "GetdepartmentById";
+
+
+    /**
+     * 读取APP最新版本信息
+     */
+    public static final String GET_APP_VERSION = IP + "";
 }

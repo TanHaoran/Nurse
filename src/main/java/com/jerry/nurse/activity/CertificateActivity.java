@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.constant.ExtraValue;
 import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.view.TitleBar;
 
@@ -15,6 +14,8 @@ import butterknife.Bind;
 
 
 public class CertificateActivity extends BaseActivity {
+
+    public static final String EXTRA_TITLE = "extra_title";
 
     @Bind(R.id.tb_certificate)
     TitleBar mTitleBar;
@@ -24,7 +25,7 @@ public class CertificateActivity extends BaseActivity {
 
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, CertificateActivity.class);
-        intent.putExtra(ExtraValue.EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 
@@ -40,7 +41,7 @@ public class CertificateActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        String title = getIntent().getStringExtra(ExtraValue.EXTRA_TITLE);
+        String title = getIntent().getStringExtra(EXTRA_TITLE);
         mTitleBar.setTitle(title);
 
 

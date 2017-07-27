@@ -19,7 +19,7 @@ import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.ShortMessage;
-import com.jerry.nurse.model.User;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.ActivityCollector;
@@ -39,7 +39,6 @@ import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_NAME;
-import static com.jerry.nurse.constant.ExtraValue.EXTRA_SIGNUP_TYPE;
 import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 
@@ -49,6 +48,8 @@ import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
  */
 
 public class SignupActivity extends BaseActivity {
+
+    public static final String EXTRA_SIGNUP_TYPE = "extra_signup_type";
 
     public static final int EXTRA_TYPE_REGISTER = 0;
     public static final int EXTRA_TYPE_FORGET_PASSWORD = 1;
@@ -426,9 +427,10 @@ public class SignupActivity extends BaseActivity {
                         mProgressDialog.dismiss();
                         mSignupButton.setEnabled(true);
                         L.e("获取用户信息成功，护士通登陆");
-                        User user = new Gson().fromJson(response, User.class);
+                        UserRegisterInfo userRegisterInfo = new Gson()
+                                .fromJson(response, UserRegisterInfo.class);
 
-                        UserUtil.saveUser(SignupActivity.this, user);
+                        UserUtil.saveRegisterInfo(SignupActivity.this, userRegisterInfo);
                         ActivityCollector.removeAllActivity();
                         Intent intent = MainActivity.getIntent(SignupActivity.this);
                         startActivity(intent);

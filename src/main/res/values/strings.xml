@@ -75,7 +75,9 @@
     <!--联系人-->
     <string name="contact">联系人</string>
     <string name="send">发送</string>
-    <string name="message_can_not_be_empty">发送消息不能为空!</string>
+    <string name="message_can_not_be_empty">发送消息不能为空</string>
+    <string name="my_collection">我的收藏</string>
+    <string name="my_contact">我的联系人</string>
 
     <!--我的-->
     <string name="mine">我的</string>
@@ -86,6 +88,12 @@
     <string name="schedule">排班</string>
     <string name="exam">考试</string>
     <string name="setting">设置</string>
+    <string name="feedback_empty">反馈内容为空</string>
+    <string name="origin_password_empty">原始密码为空</string>
+    <string name="new_password_empty">新密码为空</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="clear_finish">清除完毕</string>
+    <string name="date_invalid">日期格式有误</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

@@ -1,28 +1,36 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
+import com.jerry.nurse.util.DateUtil;
+
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Jerry on 2017/7/26.
+ * 用户基本信息
  */
 
-public class UserBasicInfo {
+public class UserBasicInfo extends DataSupport {
+
 
     /**
-     * Address : 唐风国际
-     * Age : 29
-     * Birthday : /Date(563212800000+0800)/
-     * City : 西安市
-     * EMail : 4785475@163.com
-     * Education : 本科
-     * IDCard : 747215896523201411
-     * MeritalStatus : 已婚
-     * Name : 李静静
-     * Nation : 汉
-     * Phone : 13002909620
-     * Province : 陕西省
-     * QQ : 141256325
-     * Region : 高新区
-     * RegisterId : 0000000011
-     * Sex : 女
+     * Address :
+     * Age : 0
+     * Birthday : /Date(-2209017600000+0800)/
+     * City :
+     * EMail :
+     * Education :
+     * IDCard :
+     * MeritalStatus :
+     * Name :
+     * Nation :
+     * Phone : 18709269196
+     * Province :
+     * QQ :
+     * Region :
+     * RegisterId : 0000000012
+     * Sex :
      */
 
     private String Address;
@@ -59,7 +67,10 @@ public class UserBasicInfo {
     }
 
     public String getBirthday() {
-        return Birthday;
+        if (!TextUtils.isEmpty(Birthday)) {
+            return DateUtil.parseMysqlDateToString(Birthday);
+        }
+        return null;
     }
 
     public void setBirthday(String Birthday) {

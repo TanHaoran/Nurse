@@ -1,5 +1,7 @@
 package com.jerry.nurse.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.adapter.ContactAdapter;
+import com.jerry.nurse.activity.ChatActivity;
 import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +35,16 @@ import butterknife.ButterKnife;
 
 public class ContactFragment extends Fragment {
 
+    @Bind(R.id.rv_collection)
+    RecyclerView mCollectionRecyclerView;
+
     @Bind(R.id.rv_contact)
-    RecyclerView mRecyclerView;
+    RecyclerView mContactRecyclerView;
 
-    private ContactAdapter mAdapter;
+    private ContactAdapter mCollectionAdapter;
+    private ContactAdapter mContactAdapter;
 
+    private List<Contact> mCollections;
     private List<Contact> mContacts;
 
     public static ContactFragment newInstance() {
@@ -54,20 +65,50 @@ public class ContactFragment extends Fragment {
 
     private void initView() {
 
+        mCollections = new ArrayList<>();
         mContacts = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 6; i++) {
             Contact c = new Contact();
             c.setNickname(i + "号");
+            mCollections.add(c);
             mContacts.add(c);
         }
 
         // 设置间隔线
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
+        mCollectionRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mCollectionRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
 
-        mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mContacts);
-        mRecyclerView.setAdapter(mAdapter);
+        mContactRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mContactRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
+                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
+
+        mCollectionAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mCollections);
+        mContactAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mContacts);
+
+        mCollectionRecyclerView.setAdapter(mCollectionAdapter);
+        mContactRecyclerView.setAdapter(mContactAdapter);
+    }
+
+    class ContactAdapter extends CommonAdapter<Contact> {
+
+
+        public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
+            super(context, layoutId, datas);
+        }
+
+        @Override
+        protected void convert(ViewHolder holder, Contact contact, final int position) {
+            holder.setText(R.id.tv_nickname, contact.getNickname());
+            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T.showShort(ActivityCollector.getTopActivity(), "点击了" + position);
+                    Intent intent = ChatActivity.getIntent(ActivityCollector.getTopActivity());
+                    ActivityCollector.getTopActivity().startActivity(intent);
+                }
+            });
+        }
     }
 
 

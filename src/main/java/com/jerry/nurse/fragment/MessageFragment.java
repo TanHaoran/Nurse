@@ -1,14 +1,21 @@
 package com.jerry.nurse.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.adapter.ContactAdapter;
+import com.jerry.nurse.activity.ChatActivity;
 import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DensityUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +32,7 @@ public class MessageFragment extends BaseFragment {
     @Bind(R.id.rv_message)
     RecyclerView mRecyclerView;
 
-    private ContactAdapter mAdapter;
+    private MessageAdapter mAdapter;
 
     private List<Contact> mContacts;
 
@@ -64,9 +71,32 @@ public class MessageFragment extends BaseFragment {
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
 
-        mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mContacts);
+        mAdapter = new MessageAdapter(getActivity(), R.layout.item_contact, mContacts);
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    class MessageAdapter extends CommonAdapter<Contact> {
+
+
+        public MessageAdapter(Context context, int layoutId, List<Contact> datas) {
+            super(context, layoutId, datas);
+        }
+
+        @Override
+        protected void convert(ViewHolder holder, Contact contact, final int position) {
+            holder.setText(R.id.tv_nickname, contact.getNickname());
+            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T.showShort(ActivityCollector.getTopActivity(), "点击了" + position);
+                    Intent intent = ChatActivity.getIntent(ActivityCollector.getTopActivity());
+                    ActivityCollector.getTopActivity().startActivity(intent);
+                }
+            });
+
+
+
+        }
+    }
 
 }

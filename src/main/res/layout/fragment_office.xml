@@ -24,7 +24,7 @@
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             app:ci_drawable="@drawable/indicator_selected"
-            app:ci_drawable_unselected="@drawable/indicator_selected"/>
+            app:ci_drawable_unselected="@drawable/indicator_unselected"/>
     </RelativeLayout>
 
     <LinearLayout

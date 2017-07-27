@@ -10,7 +10,7 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
-import com.jerry.nurse.model.User;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.view.CircleImageView;
 
 import org.litepal.crud.DataSupport;
@@ -34,8 +34,6 @@ public class MeFragment extends BaseFragment {
     @Bind(R.id.tv_nickname)
     TextView mNicknameTextView;
 
-    private User mUser;
-
     /**
      * 实例化方法
      *
@@ -53,6 +51,11 @@ public class MeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         // 初始化用户信息显示
         initUserInfo();
     }
@@ -61,19 +64,20 @@ public class MeFragment extends BaseFragment {
      * 初始化用户信息显示
      */
     private void initUserInfo() {
-        mUser = DataSupport.findFirst(User.class);
+        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
 
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mNameTextView.setText(mUser.getName());
+        // TODO 设置头像
+        if (!TextUtils.isEmpty(userRegisterInfo.getName())) {
+            mNameTextView.setText(userRegisterInfo.getName());
         }
-        if (!TextUtils.isEmpty(mUser.getNickName())) {
-            mNicknameTextView.setText(mUser.getNickName());
+        if (!TextUtils.isEmpty(userRegisterInfo.getNickName())) {
+            mNicknameTextView.setText(userRegisterInfo.getNickName());
         }
     }
 
     @OnClick(R.id.ll_personal_info)
     void onPersonalInfo(View view) {
-        Intent intent = PersonalInfoActivity.getIntent(getActivity(), false);
+        Intent intent = PersonalInfoActivity.getIntent(getActivity());
         startActivity(intent);
     }
 

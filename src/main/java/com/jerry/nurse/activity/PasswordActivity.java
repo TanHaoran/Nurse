@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Register;
-import com.jerry.nurse.model.User;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
@@ -25,13 +25,14 @@ import butterknife.BindString;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ExtraValue.EXTRA_CELLPHONE;
-import static com.jerry.nurse.constant.ExtraValue.EXTRA_REGISTER_ID;
-import static com.jerry.nurse.constant.ExtraValue.EXTRA_TITLE;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class PasswordActivity extends BaseActivity {
 
+
+    private static final String EXTRA_TITLE = "extra_title";
+    private static final String EXTRA_CELLPHONE = "extra_cellphone";
+    private static final String EXTRA_REGISTER_ID = "extra_register_id";
 
     @Bind(R.id.tb_password)
     TitleBar mTitleBar;
@@ -44,7 +45,6 @@ public class PasswordActivity extends BaseActivity {
 
     private String mErrorMessage;
 
-    private User mUser;
 
     private String mCellphone;
     private String mRegisterId;
@@ -66,7 +66,7 @@ public class PasswordActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        mCellphone= getIntent().getStringExtra(EXTRA_CELLPHONE);
+        mCellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
         mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
         mTitleBar.setTitle(title);
 
@@ -155,20 +155,23 @@ public class PasswordActivity extends BaseActivity {
                     @Override
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
-                        L.e("获取用户信息成功，护士通登陆");
-                        mUser = new Gson().fromJson(response, User.class);
-                        onSuccess();
+                        L.e("获取用户注册信息成功，护士通登陆");
+
+                        UserRegisterInfo userRegisterInfo = new Gson().fromJson(response, UserRegisterInfo.class);
+                        onSuccess(userRegisterInfo);
                     }
                 });
     }
 
     /**
      * 设置密码成功后执行
+     *
+     * @param userRegisterInfo
      */
-    private void onSuccess() {
+    private void onSuccess(UserRegisterInfo userRegisterInfo) {
         // 首先处理界面
 
-        UserUtil.saveUser(this, mUser);
+        UserUtil.saveRegisterInfo(this, userRegisterInfo);
 
         ActivityCollector.removeAllActivity();
         Intent intent = MainActivity.getIntent(this);

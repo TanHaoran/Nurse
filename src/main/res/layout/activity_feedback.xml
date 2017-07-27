@@ -5,25 +5,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical"
     tools:context="com.jerry.nurse.activity.FeedbackActivity">
 
     <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_feedback"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"
         app:right_text="@string/submit"
+        app:show_back="true"
         app:title_text="@string/feedback"/>
 
     <EditText
+        android:id="@+id/et_feedback"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/edit_around_bg"
+        android:layout_height="@dimen/feedback_height"
+        android:layout_marginTop="@dimen/block_marinTop"
+        android:background="@drawable/edit_up_down_bg"
         android:gravity="top"
         android:hint="@string/please_writer_your_advice"
         android:padding="15dp"
-        android:textColor="@color/monsoon"
-        android:textSize="15sp"/>
+        android:textColor="@color/normal_textColor"
+        android:textColorHint="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
 
 </LinearLayout>

@@ -81,6 +81,6 @@ public class ValidatedView extends LinearLayout {
         addView(mImageView);
         addView(mTextView);
 
-        setPadding(DensityUtil.dp2px(context, 8), 4, DensityUtil.dp2px(context, 8), 4);
+        setPadding(DensityUtil.dp2px(context, 8), 3, DensityUtil.dp2px(context, 8), 3);
     }
 }

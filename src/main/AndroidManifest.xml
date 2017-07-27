@@ -134,6 +134,10 @@
         </activity>
         <activity android:name=".activity.PasswordActivity">
         </activity>
+        <activity android:name=".activity.HospitalActivity">
+        </activity>
+        <activity android:name=".activity.OfficeActivity">
+        </activity>
     </application>
 
 </manifest>

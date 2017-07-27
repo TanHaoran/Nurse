@@ -58,7 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static PermissionListener mPermissionListener;
     private static PhotoSelectListener mPhotoSelectListener;
 
-    protected ProgressDialog mProgressDialog;
+    public static ProgressDialog mProgressDialog;
 
     /**
      * 获取当前页面的布局

@@ -8,11 +8,11 @@ public class Register {
 
     private String Phone;
 
-    private String password;
+    private String Password;
 
     public Register(String phone, String password) {
         Phone = phone;
-        this.password = password;
+        Password = password;
     }
 
     public String getPhone() {
@@ -24,10 +24,10 @@ public class Register {
     }
 
     public String getPassword() {
-        return password;
+        return Password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        Password = password;
     }
 }

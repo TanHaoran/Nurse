@@ -17,12 +17,16 @@ import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.PhotoSelectListener;
-import com.jerry.nurse.model.User;
 import com.jerry.nurse.model.UserBasicInfo;
+import com.jerry.nurse.model.UserCertificateInfo;
+import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
+import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.CircleImageView;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -36,12 +40,16 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
 import okhttp3.Call;
+import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ExtraValue.EXTRA_IS_FIRST_LOGIN;
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class PersonalInfoActivity extends BaseActivity {
 
-    public static final int REQUEST_NICKNAME = 0x00000101;
+    public static final int REQUEST_REGISTER_INFO = 0x00000101;
+    public static final int REQUEST_BASIC_INFO = 0x00000102;
+    public static final int REQUEST_CERTIFICATE_INFO = 0x00000103;
+    public static final int REQUEST_HOSPITAL_INFO = 0x00000104;
 
     @Bind(R.id.civ_avatar)
     CircleImageView mAvatarView;
@@ -88,13 +96,15 @@ public class PersonalInfoActivity extends BaseActivity {
     @BindString(R.string.female)
     String mStringFemale;
 
-    private User mUser;
+    private UserRegisterInfo mRegisterInfo;
+    private UserBasicInfo mBasicInfo;
+    private UserCertificateInfo mCertificateInfo;
+    private UserHospitalInfo mHospitalInfo;
 
     private String mRegisterId;
 
-    public static Intent getIntent(Context context, boolean isFirstLogin) {
+    public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalInfoActivity.class);
-        intent.putExtra(EXTRA_IS_FIRST_LOGIN, isFirstLogin);
         return intent;
     }
 
@@ -114,14 +124,19 @@ public class PersonalInfoActivity extends BaseActivity {
         });
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
 
-        mUser = DataSupport.findFirst(User.class);
-        getUserBasicInfo(mRegisterId);
+        // 读取用户注册信息
+        updateRegisterInfo();
+
+        // 获取用户各类信息
+        getBasicInfo(mRegisterId);
+        getCertificateInfo(mRegisterId);
+        getHospitalInfo(mRegisterId);
     }
 
     /**
      * 获取用户基本信息
      */
-    private void getUserBasicInfo(final String registerId) {
+    private void getBasicInfo(final String registerId) {
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_USER_BASIC_INFO)
                 .addParams("RegisterId", registerId)
@@ -137,13 +152,14 @@ public class PersonalInfoActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
                         try {
-                            UserBasicInfo userBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
-                            if (userBasicInfo != null) {
+                            mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
+                            if (mBasicInfo != null) {
                                 // 更新个人基本信息
-                                updateUserBasicInfo(userBasicInfo);
-                                setUserInfo();
+                                UserUtil.saveBasicInfo(mBasicInfo);
+                                updateBasicInfo();
                             }
                         } catch (JsonSyntaxException e) {
+                            L.i("获取基本信息失败");
                             e.printStackTrace();
                         }
                     }
@@ -151,64 +167,126 @@ public class PersonalInfoActivity extends BaseActivity {
     }
 
     /**
-     * 跟新个人基本信息
-     *
-     * @param userBasicInfo
+     * 获取用户执业证信息
      */
-    private void updateUserBasicInfo(UserBasicInfo userBasicInfo) {
-        mUser = DataSupport.findFirst(User.class);
-        mUser.setBirthday(userBasicInfo.getBirthday());
-        mUser.setName(userBasicInfo.getName());
-        mUser.setPhone(userBasicInfo.getPhone());
-        mUser.setQQ(userBasicInfo.getQQ());
-        mUser.setSex(userBasicInfo.getSex());
+    private void getCertificateInfo(final String registerId) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_CERTIFICATE_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
 
-        // 更新数据库
-        UserUtil.updateUser(this, mUser);
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        try {
+                            mCertificateInfo = new Gson().fromJson(response, UserCertificateInfo.class);
+                            if (mCertificateInfo != null) {
+                                // 更新个人执业证信息
+                                UserUtil.saveCertificateInfo(mCertificateInfo);
+                                updateCertificateInfo();
+                            }
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取执业证信息失败");
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 获取用户医院信息
+     */
+    private void getHospitalInfo(final String registerId) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        try {
+                            mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
+                            if (mHospitalInfo != null) {
+                                // 更新个人医院信息
+                                UserUtil.saveHospitalInfo(mHospitalInfo);
+                                updateHospitalInfo();
+                            }
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取医院信息失败");
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
 
     /**
-     * 初始化用户信息
+     * 更新用户注册信息
      */
-    private void setUserInfo() {
+    private void updateRegisterInfo() {
 
-        mUser = DataSupport.findFirst(User.class);
+        mRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
 
-        if (!TextUtils.isEmpty(mUser.getAvatar())) {
+        if (!TextUtils.isEmpty(mRegisterInfo.getAvatar())) {
 
         }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mNameTextView.setText(mUser.getName());
+        if (!TextUtils.isEmpty(mRegisterInfo.getName())) {
+            mNameTextView.setText(mRegisterInfo.getName());
         }
-        if (!TextUtils.isEmpty(mUser.getNickName())) {
-            mNicknameTextView.setText(mUser.getNickName());
-        }
-        if (!TextUtils.isEmpty(mUser.getSex())) {
-            mSexTextView.setText(mUser.getSex());
-        }
-        if (!TextUtils.isEmpty(mUser.getBirthday())) {
-            mBirthdayTextView.setText(mUser.getBirthday());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mCertificateTextView.setText(mUser.getName());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mPractisingCertificateTextView.setText(mUser.getName());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mNursingAgeTextView.setText(mUser.getName());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mHospitalTextView.setText(mUser.getName());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mOfficeTextView.setText(mUser.getName());
-        }
-        if (!TextUtils.isEmpty(mUser.getName())) {
-            mJobNumberTextView.setText(mUser.getName());
+        if (!TextUtils.isEmpty(mRegisterInfo.getNickName())) {
+            mNicknameTextView.setText(mRegisterInfo.getNickName());
         }
     }
+
+
+    /**
+     * 更新用户基础信息
+     */
+    private void updateBasicInfo() {
+
+        mBasicInfo = DataSupport.findFirst(UserBasicInfo.class);
+
+        if (!TextUtils.isEmpty(mBasicInfo.getSex())) {
+            mSexTextView.setText(mBasicInfo.getSex());
+        }
+        if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
+            mBirthdayTextView.setText(mBasicInfo.getBirthday());
+        }
+    }
+
+
+    /**
+     * 更新用户执业证信息
+     */
+    private void updateCertificateInfo() {
+        mCertificateInfo = DataSupport.findFirst(UserCertificateInfo.class);
+    }
+
+    /**
+     * 更新用户医院信息
+     */
+    private void updateHospitalInfo() {
+        mHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+
+        if (!TextUtils.isEmpty(mHospitalInfo.getEmployeeId())) {
+            mJobNumberTextView.setText(mHospitalInfo.getEmployeeId());
+        }
+
+    }
+
 
     /**
      * 修改昵称
@@ -218,17 +296,7 @@ public class PersonalInfoActivity extends BaseActivity {
     @OnClick(R.id.rl_nickname)
     void onNickname(View view) {
         Intent intent = InputActivity.getIntent(this, InputActivity.NICKNAME);
-        startActivityForResult(intent, REQUEST_NICKNAME);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            mUser = DataSupport.findFirst(User.class);
-            if (requestCode == REQUEST_NICKNAME) {
-                mNicknameTextView.setText(mUser.getNickName());
-            }
-        }
+        startActivityForResult(intent, REQUEST_REGISTER_INFO);
     }
 
     /**
@@ -238,8 +306,9 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_sex)
     void onSex(View view) {
-        Intent intent = SexActivity.getIntent(this);
-        startActivity(intent);
+        String sex = mBasicInfo.getSex();
+        Intent intent = SexActivity.getIntent(this, sex);
+        startActivityForResult(intent, REQUEST_BASIC_INFO);
     }
 
     /**
@@ -249,9 +318,8 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_birthday)
     void onBirthday(View view) {
-
-        if (!TextUtils.isEmpty(mUser.getBirthday())) {
-            Date birthDate = DateUtil.parseStringToDate(mUser.getBirthday());
+        if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
+            Date birthDate = DateUtil.parseStringToDate(mBasicInfo.getBirthday());
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(birthDate);
@@ -270,7 +338,11 @@ public class PersonalInfoActivity extends BaseActivity {
                             int year = datePicker.getYear();
                             int month = datePicker.getMonth();
                             int day = datePicker.getDayOfMonth();
-                            L.i(year + "," + month + "," + day);
+                            String date = year + "-" + (month + 1) + "-" + day;
+                            L.i("设置的生日是：" + date);
+                            mBasicInfo.setBirthday(DateUtil.parseStringToMysqlDate(date));
+                            datePickerDialog.dismiss();
+                            postUserBasicInfo();
                         }
                     });
 
@@ -279,14 +351,43 @@ public class PersonalInfoActivity extends BaseActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            System.out.println("BUTTON_NEGATIVE~~");
                         }
                     });
             datePickerDialog.show();
         } else {
-            L.i("生日格式出错");
+            T.showShort(this, R.string.date_invalid);
+            L.i("生日格式有误");
         }
     }
+
+    /**
+     * 更新用户基础信息
+     */
+    private void postUserBasicInfo() {
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_BASIC_INFO)
+                .content(StringUtil.addModelWithJson(mBasicInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            L.i("设置生日成功");
+                            // 设置成功后更新数据库
+                            UserUtil.saveBasicInfo(mBasicInfo);
+                            updateBasicInfo();
+                        } else {
+                            L.i("设置生日失败");
+                        }
+                    }
+                });
+    }
+
 
     @OnClick(R.id.rl_certificate)
     void onNurseCertificate(View view) {
@@ -307,19 +408,34 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @OnClick(R.id.rl_hospital)
     void onHospital(View view) {
-        Intent intent = InputActivity.getIntent(this, R.string.hospital);
+        Intent intent = HospitalActivity.getIntent(this);
         startActivity(intent);
     }
 
     @OnClick(R.id.rl_office)
     void onOffice(View view) {
-        Intent intent = InputActivity.getIntent(this, R.string.business);
+        Intent intent = OfficeActivity.getIntent(this);
         startActivity(intent);
     }
 
     @OnClick(R.id.rl_job_number)
     void onJobNumber(View view) {
-        Intent intent = InputActivity.getIntent(this, R.string.job_number);
-        startActivity(intent);
+        Intent intent = InputActivity.getIntent(this, "工号");
+        startActivityForResult(intent, REQUEST_HOSPITAL_INFO);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            // 通过回调类型更新界面
+            if (requestCode == REQUEST_REGISTER_INFO) {
+                updateRegisterInfo();
+            } else if (requestCode == REQUEST_BASIC_INFO) {
+                updateBasicInfo();
+            } else if (requestCode == REQUEST_HOSPITAL_INFO) {
+                updateHospitalInfo();
+            }
+        }
     }
 }

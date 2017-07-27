@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -9,10 +10,114 @@
         android:layout_height="@dimen/title_bar_height"
         app:title_text="@string/contact"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_contact"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_hospital"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/plugin_line_selector"
+                android:clickable="true"
+                android:paddingBottom="@dimen/contact_item_paddingTop"
+                android:paddingLeft="@dimen/contact_item_paddingLeft"
+                android:paddingRight="@dimen/contact_item_paddingLeft"
+                android:paddingTop="@dimen/contact_item_paddingTop">
+
+                <ImageView
+                    android:id="@+id/iv_hospital"
+                    android:layout_width="@dimen/contact_item_avatar_width"
+                    android:layout_height="@dimen/contact_item_avatar_width"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_avatar_default"/>
+
+                <TextView
+                    android:id="@+id/tv_hospital"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+                    android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+                    android:layout_toRightOf="@id/iv_hospital"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="西安交通大学第一附属医院"/>
+
+                <ImageView
+                    style="@style/ArrowEnterStyle"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_office"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/plugin_line_selector"
+                android:clickable="true"
+                android:paddingBottom="@dimen/contact_item_paddingTop"
+                android:paddingLeft="@dimen/contact_item_paddingLeft"
+                android:paddingRight="@dimen/contact_item_paddingLeft"
+                android:paddingTop="@dimen/contact_item_paddingTop">
+
+                <ImageView
+                    android:id="@+id/iv_office"
+                    android:layout_width="@dimen/contact_item_avatar_width"
+                    android:layout_height="@dimen/contact_item_avatar_width"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_avatar_default"/>
+
+                <TextView
+                    android:id="@+id/tv_office"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+                    android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+                    android:layout_toRightOf="@id/iv_office"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="西安交通大学第一附属医院"/>
+
+                <ImageView
+                    style="@style/ArrowEnterStyle"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/contact_title_text_height"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/contact_item_paddingLeft"
+                android:text="@string/my_collection"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/contact_title_text_height"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/contact_item_paddingLeft"
+                android:text="@string/my_contact"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

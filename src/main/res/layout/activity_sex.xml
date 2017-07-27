@@ -41,6 +41,7 @@
             android:id="@+id/iv_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:src="@drawable/choose"/>
     </LinearLayout>
 

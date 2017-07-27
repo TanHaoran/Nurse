@@ -1,5 +1,6 @@
 package com.jerry.nurse.net;
 
+import com.jerry.nurse.activity.BaseActivity;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
@@ -20,6 +21,9 @@ public abstract class FilterStringCallback extends StringCallback {
 
     @Override
     public void onError(Call call, Exception e, int id) {
+        if (BaseActivity.mProgressDialog.isShowing()) {
+            BaseActivity.mProgressDialog.dismiss();
+        }
         L.e("请求失败：" + e.getMessage());
         T.showShort(ActivityCollector.getTopActivity(), "请求失败");
         onFilterError(call, e, id);
@@ -27,6 +31,9 @@ public abstract class FilterStringCallback extends StringCallback {
 
     @Override
     public void onResponse(String response, int id) {
+        if (BaseActivity.mProgressDialog.isShowing()) {
+            BaseActivity.mProgressDialog.dismiss();
+        }
         response = StringUtil.dealJsonString(response);
         L.i("请求成功" + response);
         onFilterResponse(response, id);

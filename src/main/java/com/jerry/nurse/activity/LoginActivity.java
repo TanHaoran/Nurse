@@ -16,7 +16,7 @@ import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Register;
-import com.jerry.nurse.model.User;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
@@ -73,7 +73,7 @@ public class LoginActivity extends BaseActivity {
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
 
-    private User mUser;
+    private UserRegisterInfo mUserRegisterInfo;
 
     private String mErrorMessage;
 
@@ -168,7 +168,7 @@ public class LoginActivity extends BaseActivity {
     private void onLoginSuccess() {
         resetUI();
         // 登陆成功后，保存用户数据信息
-        UserUtil.saveUser(this, mUser);
+        UserUtil.saveRegisterInfo(this, mUserRegisterInfo);
 
         Intent intent = MainActivity.getIntent(this);
         startActivity(intent);
@@ -278,7 +278,7 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mUser = new Gson().fromJson(response, User.class);
+                        mUserRegisterInfo = new Gson().fromJson(response, UserRegisterInfo.class);
                         onLoginSuccess();
                     }
                 });

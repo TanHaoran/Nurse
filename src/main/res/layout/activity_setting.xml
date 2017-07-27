@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     tools:context="com.jerry.nurse.activity.SettingActivity">
 
     <com.jerry.nurse.view.TitleBar
@@ -171,6 +172,24 @@
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/check_update"/>
+
+                <ImageView
+                    style="@style/ArrowEnterStyle"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_clear_cache"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/clear_cache"/>
 
                 <ImageView
                     style="@style/ArrowEnterStyle"/>

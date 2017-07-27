@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.constant.ExtraValue;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.User;
+import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
@@ -24,12 +24,14 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.PersonalInfoActivity.REQUEST_NICKNAME;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class InputActivity extends BaseActivity {
 
     public static final String NICKNAME = "昵称";
+    public static final String JOB_NUMBER = "工号";
+
+    public static final String EXTRA_TITLE = "title";
 
     @Bind(R.id.tb_input)
     TitleBar mTitleBar;
@@ -39,9 +41,12 @@ public class InputActivity extends BaseActivity {
 
     private String mTitle;
 
+    private UserRegisterInfo mUserRegisterInfo;
+    private UserHospitalInfo mUserHospitalInfo;
+
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, InputActivity.class);
-        intent.putExtra(ExtraValue.EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 
@@ -58,7 +63,7 @@ public class InputActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        mTitle = getIntent().getStringExtra(ExtraValue.EXTRA_TITLE);
+        mTitle = getIntent().getStringExtra(EXTRA_TITLE);
 
         mTitleBar.setTitle(mTitle);
         mInputEditText.setHint("请输入" + mTitle);
@@ -69,15 +74,25 @@ public class InputActivity extends BaseActivity {
                 finish();
             }
         });
+
+        if (mTitle.equals(NICKNAME)) {
+            mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+            mInputEditText.setText(mUserRegisterInfo.getNickName());
+        } else if (mTitle.equals(JOB_NUMBER)) {
+            mUserHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+            mInputEditText.setText(mUserHospitalInfo.getEmployeeId());
+        }
+
     }
 
     @OnClick(R.id.btn_save)
     void onSave(View view) {
         if (mTitle.equals(NICKNAME)) {
             String nickname = mInputEditText.getText().toString();
-            updateNickname(nickname);
-        } else {
-
+            postNickname(nickname);
+        } else if (mTitle.equals(JOB_NUMBER)) {
+            String jobNumber = mInputEditText.getText().toString();
+            postJobNumber(jobNumber);
         }
     }
 
@@ -86,13 +101,12 @@ public class InputActivity extends BaseActivity {
      *
      * @param nickname
      */
-    void updateNickname(final String nickname) {
+    void postNickname(final String nickname) {
         mProgressDialog.show();
-        User user = DataSupport.findFirst(User.class);
-        user.setNickName(nickname);
+        mUserRegisterInfo.setNickName(nickname);
         OkHttpUtils.postString()
-                .url(ServiceConstant.SET_NICKNAME)
-                .content(StringUtil.addModelWithJson(user))
+                .url(ServiceConstant.UPDATE_REGISTER_INFO)
+                .content(StringUtil.addModelWithJson(mUserRegisterInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
                 .execute(new FilterStringCallback() {
@@ -107,13 +121,47 @@ public class InputActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置昵称成功");
                             // 设置成功后更新数据库
-                            User user = DataSupport.findFirst(User.class);
-                            user.setNickName(nickname);
-                            UserUtil.updateUser(InputActivity.this, user);
-                            setResult(REQUEST_NICKNAME);
+                            UserUtil.saveRegisterInfo(InputActivity.this, mUserRegisterInfo);
+                            setResult(RESULT_OK);
                             finish();
                         } else {
                             L.i("设置昵称失败");
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 设置工号
+     *
+     * @param jobNumber
+     */
+    void postJobNumber(final String jobNumber) {
+        mProgressDialog.show();
+        mUserHospitalInfo.setEmployeeId(jobNumber);
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_HOSPITAL_INFO)
+                .content(StringUtil.addModelWithJson(mUserHospitalInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            L.i("设置工号成功");
+                            // 设置成功后更新数据库
+                            UserUtil.saveHospitalInfo(mUserHospitalInfo);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            L.i("设置工号失败");
                         }
                     }
                 });
