@@ -201,7 +201,7 @@ public class TitleBar extends RelativeLayout {
      *
      * @param onLeftClickListener
      */
-    public void setLeftClickListener(OnLeftClickListener onLeftClickListener) {
+    public void setOnLeftClickListener(OnLeftClickListener onLeftClickListener) {
         mOnLeftClickListener = onLeftClickListener;
     }
 
@@ -210,7 +210,7 @@ public class TitleBar extends RelativeLayout {
      *
      * @param onRightClickListener
      */
-    public void setRightClickListener(OnRightClickListener onRightClickListener) {
+    public void setOnRightClickListener(OnRightClickListener onRightClickListener) {
         mOnRightClickListener = onRightClickListener;
     }
 

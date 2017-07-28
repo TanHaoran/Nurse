@@ -2,6 +2,7 @@ package com.jerry.nurse.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +18,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.DatePicker;
 
 import com.jerry.nurse.R;
+import com.jerry.nurse.listener.OnDateSelectListener;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.util.ActivityCollector;
@@ -33,6 +36,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindString;
@@ -174,6 +179,60 @@ public abstract class BaseActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    /**
+     * 给一个View设置日期选择控件
+     *
+     * @param view
+     * @param origin
+     * @param onDateSelectListener
+     */
+    public void setDateSelectListener(View view, final Date origin, final OnDateSelectListener onDateSelectListener) {
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                if (origin != null) {
+                    calendar.setTime(origin);
+                }
+
+                final DatePickerDialog datePickerDialog =
+                        new DatePickerDialog(ActivityCollector.getTopActivity(), null,
+                                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH));
+
+                //手动设置按钮
+                datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "完成",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //通过mDialog.getDatePicker()获得dialog上的DatePicker组件，然后可以获取日期信息
+                                DatePicker datePicker = datePickerDialog.getDatePicker();
+                                int year = datePicker.getYear();
+                                int month = datePicker.getMonth();
+                                int day = datePicker.getDayOfMonth();
+                                String date = year + "-" + (month + 1) + "-" + day;
+                                L.i("设置的日期是：" + date);
+                                if (onDateSelectListener != null) {
+                                    onDateSelectListener.onDateSelected(date);
+                                }
+                                datePickerDialog.dismiss();
+                            }
+                        });
+
+                //取消按钮，如果不需要直接不设置即可
+                datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                datePickerDialog.show();
+            }
+        });
+
     }
 
     /**

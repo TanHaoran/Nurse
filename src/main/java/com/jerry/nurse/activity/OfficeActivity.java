@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.jerry.nurse.R;
@@ -50,6 +51,12 @@ public class OfficeActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mTitleBar.setTitle(mTitle);
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
+            @Override
+            public void onRightClick(View view) {
+                finish();
+            }
+        });
 
         mOffices = new ArrayList();
         for (int i = 0; i < 20; i++) {

@@ -172,7 +172,7 @@ public class SignupActivity extends BaseActivity {
             mTitleBar.setTitle("验证码登陆");
             mSignupButton.setText(R.string.login);
         }
-        mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 finish();

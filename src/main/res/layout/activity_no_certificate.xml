@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.ProfessionalCertificateEditActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_certificate"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:left_text="@string/back"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/no_certificate_text_marginBottom"
+        android:layout_marginTop="@dimen/no_certificate_text_marginTop"
+        android:text="@string/no_certificate"
+        android:textColor="@color/normal_textColor"
+        android:textSize="@dimen/normal_textSize"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/acb_go_certificate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/signup_button_marginLeft"
+        android:layout_marginRight="@dimen/signup_button_marginLeft"
+        android:text="@string/go_certificate"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_textSize"/>
+
+
+</LinearLayout>

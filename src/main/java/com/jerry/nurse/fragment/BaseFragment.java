@@ -1,6 +1,7 @@
 package com.jerry.nurse.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -52,6 +53,14 @@ public abstract class BaseFragment extends Fragment {
 
         init(savedInstanceState);
         return mRootView;
+    }
+
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        // 加载动画效果
+//        getActivity().overridePendingTransition(R.anim.activity_in, 0);
     }
 
     @Override

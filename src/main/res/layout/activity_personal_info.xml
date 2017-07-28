@@ -138,22 +138,22 @@
 
 
             <RelativeLayout
-                android:id="@+id/rl_certificate"
+                android:id="@+id/rl_professional_certificate"
                 style="@style/PersonalInfoLineStyle"
                 android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
-                    android:text="@string/nurse_certificate"/>
+                    android:text="@string/professional_certificate"/>
 
                 <ImageView
-                    android:id="@+id/iv_arrow_certificate"
+                    android:id="@+id/iv_arrow_professional_certificate"
                     style="@style/ArrowEnterStyle"/>
 
                 <TextView
-                    android:id="@+id/tv_certificate"
+                    android:id="@+id/tv_professional_certificate"
                     style="@style/personal_info_line_right_text_style"
-                    android:layout_toLeftOf="@id/iv_arrow_certificate"
+                    android:layout_toLeftOf="@id/iv_arrow_professional_certificate"
                     tools:text="副主任护师"/>
             </RelativeLayout>
 
@@ -168,7 +168,7 @@
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
-                    android:text="@string/nurse_practising_certificate"/>
+                    android:text="@string/practising_certificate"/>
 
                 <ImageView
                     android:id="@+id/iv_arrow_practising_certificate"

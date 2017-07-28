@@ -19,8 +19,7 @@ public class DateUtil {
      */
     public static String parseMysqlDateToString(String mysqlDate) {
 
-        // 这里在MySQL数据库中查出数据后要加一天的时间
-        Date date = new Date(parseMysqlDateToLong(mysqlDate) + 1000 * 60 * 60 * 24);
+        Date date = new Date(parseMysqlDateToLong(mysqlDate));
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
@@ -62,7 +61,7 @@ public class DateUtil {
         try {
             date = format.parse(stringDate);
             // 在MySQL数据库插入要减一天
-            return "/Date(" + (date.getTime() - 1000 * 60 * 60 * 24) + "+0800)/";
+            return "/Date(" + date.getTime() + "+0800)/";
         } catch (ParseException e) {
             e.printStackTrace();
         }

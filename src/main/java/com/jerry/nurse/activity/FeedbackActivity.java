@@ -43,7 +43,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 String content = mFeedbackEditText.getText().toString();

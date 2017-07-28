@@ -63,9 +63,6 @@ public class SettingActivity extends BaseActivity {
         startActivity(intent);
     }
 
-
-    int progress = 50;
-
     @OnClick(R.id.rl_check_update)
     void onCheckUpdate(View view) {
 

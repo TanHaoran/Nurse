@@ -1,14 +1,11 @@
 package com.jerry.nurse.activity;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,25 +13,26 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.OnDateSelectListener;
 import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.model.UserBasicInfo;
-import com.jerry.nurse.model.UserCertificateInfo;
 import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserPractisingCertificateInfo;
+import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
-import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.CircleImageView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -48,8 +46,9 @@ public class PersonalInfoActivity extends BaseActivity {
 
     public static final int REQUEST_REGISTER_INFO = 0x00000101;
     public static final int REQUEST_BASIC_INFO = 0x00000102;
-    public static final int REQUEST_CERTIFICATE_INFO = 0x00000103;
-    public static final int REQUEST_HOSPITAL_INFO = 0x00000104;
+    public static final int REQUEST_PROFESSIONAL_CERTIFICATE_INFO = 0x00000103;
+    public static final int REQUEST_PRACTISING_CERTIFICATE_INFO = 0x00000104;
+    public static final int REQUEST_HOSPITAL_INFO = 0x00000105;
 
     @Bind(R.id.civ_avatar)
     CircleImageView mAvatarView;
@@ -69,8 +68,8 @@ public class PersonalInfoActivity extends BaseActivity {
     @Bind(R.id.tv_birthday)
     TextView mBirthdayTextView;
 
-    @Bind(R.id.tv_certificate)
-    TextView mCertificateTextView;
+    @Bind(R.id.tv_professional_certificate)
+    TextView mProfessionalCertificateTextView;
 
     @Bind(R.id.tv_practising_certificate)
     TextView mPractisingCertificateTextView;
@@ -87,6 +86,9 @@ public class PersonalInfoActivity extends BaseActivity {
     @Bind(R.id.tv_job_number)
     TextView mJobNumberTextView;
 
+    @Bind(R.id.rl_birthday)
+    RelativeLayout mBirthdayLayout;
+
     @BindString(R.string.change_avatar)
     String mStringChangeAvatar;
 
@@ -98,7 +100,8 @@ public class PersonalInfoActivity extends BaseActivity {
 
     private UserRegisterInfo mRegisterInfo;
     private UserBasicInfo mBasicInfo;
-    private UserCertificateInfo mCertificateInfo;
+    private UserProfessionalCertificateInfo mProfessionalCertificateInfo;
+    private UserPractisingCertificateInfo mPractisingCertificateInfo;
     private UserHospitalInfo mHospitalInfo;
 
     private String mRegisterId;
@@ -129,7 +132,8 @@ public class PersonalInfoActivity extends BaseActivity {
 
         // 获取用户各类信息
         getBasicInfo(mRegisterId);
-        getCertificateInfo(mRegisterId);
+        getProfessionalCertificateInfo(mRegisterId);
+        getPractisingCertificateInfo(mRegisterId);
         getHospitalInfo(mRegisterId);
     }
 
@@ -145,12 +149,11 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        updateBasicInfo();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
                             mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
                             if (mBasicInfo != null) {
@@ -160,6 +163,7 @@ public class PersonalInfoActivity extends BaseActivity {
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取基本信息失败");
+                            updateBasicInfo();
                             e.printStackTrace();
                         }
                     }
@@ -167,32 +171,67 @@ public class PersonalInfoActivity extends BaseActivity {
     }
 
     /**
-     * 获取用户执业证信息
+     * 获取用户专业技术资格证信息
      */
-    private void getCertificateInfo(final String registerId) {
+    private void getProfessionalCertificateInfo(final String registerId) {
         mProgressDialog.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_CERTIFICATE_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_PROFESSIONAL_CERTIFICATE_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
                 .execute(new FilterStringCallback() {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        updateProfessionalCertificateInfo();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
-                            mCertificateInfo = new Gson().fromJson(response, UserCertificateInfo.class);
-                            if (mCertificateInfo != null) {
+                            mProfessionalCertificateInfo = new Gson().fromJson(response, UserProfessionalCertificateInfo.class);
+
+                            if (mProfessionalCertificateInfo != null) {
                                 // 更新个人执业证信息
-                                UserUtil.saveCertificateInfo(mCertificateInfo);
-                                updateCertificateInfo();
+                                UserUtil.saveProfessionalCertificateInfo(mProfessionalCertificateInfo);
+                                updateProfessionalCertificateInfo();
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取执业证信息失败");
+                            updateProfessionalCertificateInfo();
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 获取用户执业证信息
+     */
+    private void getPractisingCertificateInfo(final String registerId) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_PRACTISING_CERTIFICATE_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        updatePractisingCertificateInfo();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        try {
+                            mPractisingCertificateInfo = new Gson().fromJson(response, UserPractisingCertificateInfo.class);
+                            if (mPractisingCertificateInfo != null) {
+                                // 更新个人专业技术资格证信息
+                                UserUtil.savePractisingCertificateInfo(mPractisingCertificateInfo);
+                                updatePractisingCertificateInfo();
+                            }
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取专业技术资格证信息失败");
+                            updatePractisingCertificateInfo();
                             e.printStackTrace();
                         }
                     }
@@ -211,12 +250,11 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        updateHospitalInfo();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
                             mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
                             if (mHospitalInfo != null) {
@@ -226,6 +264,7 @@ public class PersonalInfoActivity extends BaseActivity {
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取医院信息失败");
+                            updateHospitalInfo();
                             e.printStackTrace();
                         }
                     }
@@ -238,16 +277,19 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     private void updateRegisterInfo() {
 
-        mRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        mRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
 
-        if (!TextUtils.isEmpty(mRegisterInfo.getAvatar())) {
 
-        }
-        if (!TextUtils.isEmpty(mRegisterInfo.getName())) {
-            mNameTextView.setText(mRegisterInfo.getName());
-        }
-        if (!TextUtils.isEmpty(mRegisterInfo.getNickName())) {
-            mNicknameTextView.setText(mRegisterInfo.getNickName());
+        if (mRegisterInfo != null) {
+            if (!TextUtils.isEmpty(mRegisterInfo.getAvatar())) {
+
+            }
+            if (!TextUtils.isEmpty(mRegisterInfo.getName())) {
+                mNameTextView.setText(mRegisterInfo.getName());
+            }
+            if (!TextUtils.isEmpty(mRegisterInfo.getNickName())) {
+                mNicknameTextView.setText(mRegisterInfo.getNickName());
+            }
         }
     }
 
@@ -257,34 +299,89 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     private void updateBasicInfo() {
 
-        mBasicInfo = DataSupport.findFirst(UserBasicInfo.class);
+        mBasicInfo = DataSupport.findLast(UserBasicInfo.class);
 
-        if (!TextUtils.isEmpty(mBasicInfo.getSex())) {
-            mSexTextView.setText(mBasicInfo.getSex());
-        }
-        if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
-            mBirthdayTextView.setText(mBasicInfo.getBirthday());
+        if (mBasicInfo != null) {
+            if (!TextUtils.isEmpty(mBasicInfo.getSex())) {
+                mSexTextView.setText(mBasicInfo.getSex());
+            }
+            if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
+                mBirthdayTextView.setText(mBasicInfo.getBirthday());
+            }
+
+            Date origin = DateUtil.parseStringToDate(mBasicInfo.getBirthday());
+
+            setDateSelectListener(mBirthdayLayout, origin, new OnDateSelectListener() {
+                        @Override
+                        public void onDateSelected(String date) {
+                            mBasicInfo.setBirthday(DateUtil.parseStringToMysqlDate(date));
+                            postUserBasicInfo();
+                        }
+                    }
+            );
         }
     }
 
 
     /**
+     * 更新用户专业技术资格证信息
+     */
+    private void updateProfessionalCertificateInfo() {
+
+        List<UserProfessionalCertificateInfo> infos = DataSupport.findAll(UserProfessionalCertificateInfo.class);
+
+        mProfessionalCertificateInfo = DataSupport.
+                findLast(UserProfessionalCertificateInfo.class);
+
+        L.i("读取到的是" + mProfessionalCertificateInfo.getVerifyStatus());
+
+        if (mProfessionalCertificateInfo != null) {
+            mProfessionalCertificateTextView.
+                    setText(getAuditString(mProfessionalCertificateInfo.getVerifyStatus()));
+
+        }
+    }
+
+    /**
      * 更新用户执业证信息
      */
-    private void updateCertificateInfo() {
-        mCertificateInfo = DataSupport.findFirst(UserCertificateInfo.class);
+    private void updatePractisingCertificateInfo() {
+        mPractisingCertificateInfo = DataSupport.
+                findLast(UserPractisingCertificateInfo.class);
+
+        if (mPractisingCertificateInfo != null) {
+            mPractisingCertificateTextView.
+                    setText(getAuditString(mPractisingCertificateInfo.getVerifyStatus()));
+
+        }
     }
 
     /**
      * 更新用户医院信息
      */
     private void updateHospitalInfo() {
-        mHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+        mHospitalInfo = DataSupport.findLast(UserHospitalInfo.class);
 
-        if (!TextUtils.isEmpty(mHospitalInfo.getEmployeeId())) {
-            mJobNumberTextView.setText(mHospitalInfo.getEmployeeId());
+        if (mHospitalInfo != null) {
+            if (!TextUtils.isEmpty(mHospitalInfo.getEmployeeId())) {
+                mJobNumberTextView.setText(mHospitalInfo.getEmployeeId());
+            }
         }
+    }
 
+    private String getAuditString(int status) {
+        L.i("status是" + status);
+        if (status == ServiceConstant.AUDIT_EMPTY) {
+            return "未认证";
+        } else if (status == ServiceConstant.AUDIT_ING) {
+            return "认证中";
+        } else if (status == ServiceConstant.AUDIT_FAILED) {
+            return "未通过";
+        } else if (status == ServiceConstant.AUDIT_SUCCESS) {
+            return "已认证";
+        } else {
+            return "未认证";
+        }
     }
 
 
@@ -309,55 +406,6 @@ public class PersonalInfoActivity extends BaseActivity {
         String sex = mBasicInfo.getSex();
         Intent intent = SexActivity.getIntent(this, sex);
         startActivityForResult(intent, REQUEST_BASIC_INFO);
-    }
-
-    /**
-     * 修改生日
-     *
-     * @param view
-     */
-    @OnClick(R.id.rl_birthday)
-    void onBirthday(View view) {
-        if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
-            Date birthDate = DateUtil.parseStringToDate(mBasicInfo.getBirthday());
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(birthDate);
-
-            final DatePickerDialog datePickerDialog = new DatePickerDialog(this, null,
-                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH));
-
-            //手动设置按钮
-            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "完成",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //通过mDialog.getDatePicker()获得dialog上的DatePicker组件，然后可以获取日期信息
-                            DatePicker datePicker = datePickerDialog.getDatePicker();
-                            int year = datePicker.getYear();
-                            int month = datePicker.getMonth();
-                            int day = datePicker.getDayOfMonth();
-                            String date = year + "-" + (month + 1) + "-" + day;
-                            L.i("设置的生日是：" + date);
-                            mBasicInfo.setBirthday(DateUtil.parseStringToMysqlDate(date));
-                            datePickerDialog.dismiss();
-                            postUserBasicInfo();
-                        }
-                    });
-
-            //取消按钮，如果不需要直接不设置即可
-            datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-            datePickerDialog.show();
-        } else {
-            T.showShort(this, R.string.date_invalid);
-            L.i("生日格式有误");
-        }
     }
 
     /**
@@ -388,22 +436,26 @@ public class PersonalInfoActivity extends BaseActivity {
                 });
     }
 
-
-    @OnClick(R.id.rl_certificate)
+    /**
+     * 专业技术资格证书
+     *
+     * @param view
+     */
+    @OnClick(R.id.rl_professional_certificate)
     void onNurseCertificate(View view) {
-        Intent intent = CertificateActivity.getIntent(this, R.string.nurse_certificate);
-        startActivity(intent);
+        Intent intent = NoCertificateActivity.getIntent(this, NoCertificateActivity.PROFESSIONAL_CERTIFICATE);
+        startActivityForResult(intent, REQUEST_PROFESSIONAL_CERTIFICATE_INFO);
     }
 
+    /**
+     * 护士执业证书
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_practising_certificate)
     void onNursePractisingCertificate(View view) {
-        Intent intent = CertificateActivity.getIntent(this, R.string.nurse_practising_certificate);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.rl_nursing_age)
-    void onNursingAge(View view) {
-
+        Intent intent = NoCertificateActivity.getIntent(this, NoCertificateActivity.PRACTISING_CERTIFICATE);
+        startActivityForResult(intent, REQUEST_PRACTISING_CERTIFICATE_INFO);
     }
 
     @OnClick(R.id.rl_hospital)
@@ -433,6 +485,10 @@ public class PersonalInfoActivity extends BaseActivity {
                 updateRegisterInfo();
             } else if (requestCode == REQUEST_BASIC_INFO) {
                 updateBasicInfo();
+            } else if (requestCode == REQUEST_PROFESSIONAL_CERTIFICATE_INFO) {
+                updateProfessionalCertificateInfo();
+            } else if (requestCode == REQUEST_PRACTISING_CERTIFICATE_INFO) {
+                updatePractisingCertificateInfo();
             } else if (requestCode == REQUEST_HOSPITAL_INFO) {
                 updateHospitalInfo();
             }

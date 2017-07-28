@@ -53,7 +53,7 @@ public class SexActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        userBasicInfo = DataSupport.findFirst(UserBasicInfo.class);
+        userBasicInfo = DataSupport.findLast(UserBasicInfo.class);
         mSex = getIntent().getStringExtra(EXTRA_SEX);
         if (SEX_MALE.equals(mSex)) {
             mMaleChooseImageView.setVisibility(View.VISIBLE);

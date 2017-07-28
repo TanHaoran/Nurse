@@ -135,4 +135,12 @@ public class MainActivity extends BaseActivity
     public void onTabReselected(int position) {
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.MAIN");
+        intent.addCategory("android.intent.category.HOME");
+        startActivity(intent);
+    }
 }

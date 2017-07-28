@@ -64,7 +64,7 @@ public class MeFragment extends BaseFragment {
      * 初始化用户信息显示
      */
     private void initUserInfo() {
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        UserRegisterInfo userRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
 
         // TODO 设置头像
         if (!TextUtils.isEmpty(userRegisterInfo.getName())) {

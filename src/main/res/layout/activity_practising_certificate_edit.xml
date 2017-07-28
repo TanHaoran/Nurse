@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.ProfessionalCertificateEditActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_certificate"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="@string/professional_certificate"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/block_marginBottom"
+            android:paddingTop="@dimen/block_marginBottom">
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/name"/>
+
+                <EditText
+                    android:id="@+id/et_name"
+                    style="@style/Certificate_Line_Edit_Style"
+                    android:inputType="number"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/tv_birthday"
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/birthday"/>
+
+                <TextView
+                    android:id="@+id/et_birthday"
+                    style="@style/Certificate_Line_Edit_Style"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/sex"/>
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_birthday"
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/country_nation"/>
+
+                <TextView
+                    android:id="@+id/tv_country_nation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/practising_location"/>
+
+                <EditText
+                    android:id="@+id/et_practising_location"
+                    style="@style/Certificate_Line_Edit_Style"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/practising_number"/>
+
+                <EditText
+                    android:id="@+id/et_practising_number"
+                    style="@style/Certificate_Line_Edit_Style"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/id_card_number"/>
+
+                <EditText
+                    android:id="@+id/et_id_card_number"
+                    style="@style/Certificate_Line_Edit_Style"
+                    android:inputType="number"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_approve_date"
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/first_sign_date"/>
+
+                <TextView
+                    android:id="@+id/tv_first_sign_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/last_sign_date"/>
+
+                <TextView
+                    android:id="@+id/et_last_sign_date"
+                    style="@style/Certificate_Line_Edit_Style"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/last_sign_date_valid"/>
+
+                <TextView
+                    android:id="@+id/tv_last_sign_date_valid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/sign_department"/>
+
+                <TextView
+                    android:id="@+id/tv_sign_department"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/certificate_organization"/>
+
+                <TextView
+                    android:id="@+id/tv_certificate_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/certificate_date"/>
+
+                <TextView
+                    android:id="@+id/tv_certificate_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/first_word_date"/>
+
+                <TextView
+                    android:id="@+id/tv_first_word_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/certificate_image_width"
+                    android:layout_height="@dimen/certificate_image_width"/>
+
+                <ImageView
+                    android:layout_width="@dimen/certificate_image_width"
+                    android:layout_height="@dimen/certificate_image_width"/>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/certificate_image_width"
+                android:layout_height="@dimen/certificate_image_width"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/acb_submit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_button_height"
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                android:layout_marginRight="@dimen/line_paddingLeft"
+                android:text="@string/submit_and_authentication"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_textSize"/>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</LinearLayout>

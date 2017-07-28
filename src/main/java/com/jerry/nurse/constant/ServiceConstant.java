@@ -12,6 +12,18 @@ public class ServiceConstant {
     public static final String USER_REGISTER_ID = "Id:";
     public static final String USER_PHONE = "Phone:";
 
+    /**
+     * 几种审核状态
+     */
+    // 未认证
+    public static final int AUDIT_EMPTY = 0;
+    // 认证中
+    public static final int AUDIT_ING = 1;
+    // 未通过
+    public static final int AUDIT_FAILED = 2;
+    // 已认证
+    public static final int AUDIT_SUCCESS = 3;
+
     // 环信注册密码
     public static final String EASE_MOB_PASSWORD = "queYL798";
 
@@ -51,25 +63,29 @@ public class ServiceConstant {
     public static final String GET_USER_REGISTER_INFO = IP + "GetUserReginfoById";
 
     /**
+     * 设置头像
+     */
+    public static final String SET_AVATAR = IP + "SetNickNameById";
+
+    /**
      * 获取用户基本信息
      */
     public static final String GET_USER_BASIC_INFO = IP + "GetUserBasicinfoById";
 
     /**
-     * 获取用户执业证信息
+     * 获取专业资格证书
      */
-    public static final String GET_USER_CERTIFICATE_INFO = IP + "GetUserPtccetById";
+    public static final String GET_PROFESSIONAL_CERTIFICATE_INFO = IP + "GetUserQuacetById";
 
     /**
-     * 获取用户医院相关信息
+     * 获取护士职业证书
+     */
+    public static final String GET_PRACTISING_CERTIFICATE_INFO = IP + "GetUserPtccetById";
+
+    /**
+     * 获取用户医院信息
      */
     public static final String GET_USER_HOSPITAL_INFO = IP + "GetUserRelcodById";
-
-
-    /**
-     * 设置头像
-     */
-    public static final String SET_AVATAR = IP + "SetNickNameById";
 
     /**
      * 更新用户注册信息
@@ -82,9 +98,14 @@ public class ServiceConstant {
     public static final String UPDATE_BASIC_INFO = IP + "Updateuserbasicinfo";
 
     /**
-     * 修改用户执业证信息
+     * 更新专业资格证信息
      */
-    public static final String UPDATE_CERTIFICATE_INFO = IP + "Updateuserbasicinfo";
+    public static final String UPDATE_PROFESSIONAL_CERTIFICATE_INFO = IP + "UpdateuserquacertificateInfo";
+
+    /**
+     * 更新用户执业证信息
+     */
+    public static final String UPDATE_PRACTISING_CERTIFICATE_INFO = IP + "UpdateuserpracticecertificateInfo";
 
     /**
      * 修改用户医院信息
@@ -99,14 +120,12 @@ public class ServiceConstant {
     /**
      * 修改密码
      */
-    public static final String CHANGE_PASSWORD = IP + "SetNickNameById";
-
+    public static final String CHANGE_PASSWORD = IP + "ResetPassword";
 
     /**
      * 获取医院信息
      */
     public static final String GET_HOSPITAL_INFO = IP + "GethospitalById";
-
 
     /**
      * 获取科室信息

@@ -7,13 +7,13 @@ package com.jerry.nurse.model;
 public class Password {
 
     private String RegisterId;
-    private String OriginPassword;
-    private String NewPassword;
+    private String PasswordOld;
+    private String PasswordNew;
 
-    public Password(String registerId, String originPassword, String newPassword) {
+    public Password(String registerId, String passwordOld, String passwordNew) {
         RegisterId = registerId;
-        OriginPassword = originPassword;
-        NewPassword = newPassword;
+        PasswordOld = passwordOld;
+        PasswordNew = passwordNew;
     }
 
     public String getRegisterId() {
@@ -24,19 +24,19 @@ public class Password {
         RegisterId = registerId;
     }
 
-    public String getOriginPassword() {
-        return OriginPassword;
+    public String getPasswordOld() {
+        return PasswordOld;
     }
 
-    public void setOriginPassword(String originPassword) {
-        OriginPassword = originPassword;
+    public void setPasswordOld(String passwordOld) {
+        PasswordOld = passwordOld;
     }
 
-    public String getNewPassword() {
-        return NewPassword;
+    public String getPasswordNew() {
+        return PasswordNew;
     }
 
-    public void setNewPassword(String newPassword) {
-        NewPassword = newPassword;
+    public void setPasswordNew(String passwordNew) {
+        PasswordNew = passwordNew;
     }
 }

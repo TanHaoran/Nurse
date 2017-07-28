@@ -68,7 +68,7 @@ public class InputActivity extends BaseActivity {
         mTitleBar.setTitle(mTitle);
         mInputEditText.setHint("请输入" + mTitle);
 
-        mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 finish();
@@ -76,10 +76,10 @@ public class InputActivity extends BaseActivity {
         });
 
         if (mTitle.equals(NICKNAME)) {
-            mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+            mUserRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
             mInputEditText.setText(mUserRegisterInfo.getNickName());
         } else if (mTitle.equals(JOB_NUMBER)) {
-            mUserHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+            mUserHospitalInfo = DataSupport.findLast(UserHospitalInfo.class);
             mInputEditText.setText(mUserHospitalInfo.getEmployeeId());
         }
 

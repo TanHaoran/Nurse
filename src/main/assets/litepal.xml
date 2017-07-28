@@ -7,7 +7,8 @@
     <list>
         <mapping class="com.jerry.nurse.model.UserRegisterInfo"></mapping>
         <mapping class="com.jerry.nurse.model.UserBasicInfo"></mapping>
-        <mapping class="com.jerry.nurse.model.UserCertificateInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.UserProfessionalCertificateInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.UserPractisingCertificateInfo"></mapping>
         <mapping class="com.jerry.nurse.model.UserHospitalInfo"></mapping>
     </list>
 </litepal>

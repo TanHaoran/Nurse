@@ -12,6 +12,7 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Password;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -22,6 +23,8 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
+
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class ChangePasswordActivity extends BaseActivity {
 
@@ -51,15 +54,21 @@ public class ChangePasswordActivity extends BaseActivity {
         String originPassword = mOriginPasswordEditText.getText().toString();
         String newPassword = mNewPasswordEditText.getText().toString();
 
-        if (!TextUtils.isEmpty(originPassword)) {
+        if (TextUtils.isEmpty(originPassword)) {
             T.showShort(this, R.string.origin_password_empty);
             return;
         }
 
-        if (!TextUtils.isEmpty(newPassword)) {
+        if (TextUtils.isEmpty(newPassword)) {
             T.showShort(this, R.string.new_password_empty);
             return;
         }
+
+        if (originPassword.equals(newPassword)) {
+            T.showShort(this, R.string.password_same);
+            return;
+        }
+
         changePassword(originPassword, newPassword);
 
     }
@@ -80,12 +89,16 @@ public class ChangePasswordActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            T.showShort(ChangePasswordActivity.this, R.string.password_change_success);
+                            finish();
+                        } else {
+                            L.i("密码修改失败");
+                        }
                     }
                 });
     }

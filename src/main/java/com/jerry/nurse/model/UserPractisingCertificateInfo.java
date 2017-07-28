@@ -1,13 +1,17 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
+import com.jerry.nurse.util.DateUtil;
+
 import org.litepal.crud.DataSupport;
 
 /**
- * Created by Jerry on 2017/7/27.
- * 用户资格证关联表
+ * Created by Jerry on 2017/7/28.
  */
 
-public class UserCertificateInfo  extends DataSupport {
+public class UserPractisingCertificateInfo extends DataSupport {
+
 
     /**
      * BirthDate : /Date(-2209017600000+0800)/
@@ -24,31 +28,83 @@ public class UserCertificateInfo  extends DataSupport {
      * PracticeAddress :
      * PracticeCertificateNumber :
      * RegisterAuthority :
-     * RegisterId : 0000000012
+     * RegisterId : 0000000016
      * RegisterToDate : /Date(-2209017600000+0800)/
      * Sex :
+     * VerifyStatus : 0
+     * VerifyView :
      */
 
+    /**
+     * 出生日期
+     */
     private String BirthDate;
+    /**
+     * 发证机关
+     */
     private String CertificateAuthority;
+    /**
+     * 发证日期
+     */
     private String CertificateDate;
+    /**
+     * 国籍
+     */
     private String Country;
+    /**
+     * 首次注册日期
+     */
     private String FirstRegisterDate;
+    /**
+     * 身份证编号
+     */
     private String IDCard;
+    /**
+     * 最近注册日期
+     */
     private String LastRegisterDate;
     private String Picture1;
     private String Picture2;
     private String Picture3;
     private String Picture4;
+    /**
+     * 职业地点
+     */
     private String PracticeAddress;
-    private String PracticeCertificateNumber;
+    /**
+     * 执业证编号
+     */
+    private String CertificateId;
+    /**
+     * 注册机关
+     */
     private String RegisterAuthority;
+    /**
+     * 注册ID
+     */
     private String RegisterId;
+    /**
+     * 最近注册有效期至
+     */
     private String RegisterToDate;
+    /**
+     * 性别
+     */
     private String Sex;
+    /**
+     * 认证状态
+     */
+    private int VerifyStatus;
+    /**
+     * 审核意见
+     */
+    private String VerifyView;
 
     public String getBirthDate() {
-        return BirthDate;
+        if (!TextUtils.isEmpty(BirthDate)) {
+            return DateUtil.parseMysqlDateToString(BirthDate);
+        }
+        return null;
     }
 
     public void setBirthDate(String BirthDate) {
@@ -64,7 +120,10 @@ public class UserCertificateInfo  extends DataSupport {
     }
 
     public String getCertificateDate() {
-        return CertificateDate;
+        if (!TextUtils.isEmpty(CertificateDate)) {
+            return DateUtil.parseMysqlDateToString(CertificateDate);
+        }
+        return null;
     }
 
     public void setCertificateDate(String CertificateDate) {
@@ -80,7 +139,10 @@ public class UserCertificateInfo  extends DataSupport {
     }
 
     public String getFirstRegisterDate() {
-        return FirstRegisterDate;
+        if (!TextUtils.isEmpty(FirstRegisterDate)) {
+            return DateUtil.parseMysqlDateToString(FirstRegisterDate);
+        }
+        return null;
     }
 
     public void setFirstRegisterDate(String FirstRegisterDate) {
@@ -96,7 +158,10 @@ public class UserCertificateInfo  extends DataSupport {
     }
 
     public String getLastRegisterDate() {
-        return LastRegisterDate;
+        if (!TextUtils.isEmpty(LastRegisterDate)) {
+            return DateUtil.parseMysqlDateToString(LastRegisterDate);
+        }
+        return null;
     }
 
     public void setLastRegisterDate(String LastRegisterDate) {
@@ -143,12 +208,12 @@ public class UserCertificateInfo  extends DataSupport {
         this.PracticeAddress = PracticeAddress;
     }
 
-    public String getPracticeCertificateNumber() {
-        return PracticeCertificateNumber;
+    public String getCertificateId() {
+        return CertificateId;
     }
 
-    public void setPracticeCertificateNumber(String PracticeCertificateNumber) {
-        this.PracticeCertificateNumber = PracticeCertificateNumber;
+    public void setCertificateId(String CertificateId) {
+        this.CertificateId = CertificateId;
     }
 
     public String getRegisterAuthority() {
@@ -168,7 +233,10 @@ public class UserCertificateInfo  extends DataSupport {
     }
 
     public String getRegisterToDate() {
-        return RegisterToDate;
+        if (!TextUtils.isEmpty(RegisterToDate)) {
+            return DateUtil.parseMysqlDateToString(RegisterToDate);
+        }
+        return null;
     }
 
     public void setRegisterToDate(String RegisterToDate) {
@@ -181,5 +249,21 @@ public class UserCertificateInfo  extends DataSupport {
 
     public void setSex(String Sex) {
         this.Sex = Sex;
+    }
+
+    public int getVerifyStatus() {
+        return VerifyStatus;
+    }
+
+    public void setVerifyStatus(int VerifyStatus) {
+        this.VerifyStatus = VerifyStatus;
+    }
+
+    public String getVerifyView() {
+        return VerifyView;
+    }
+
+    public void setVerifyView(String VerifyView) {
+        this.VerifyView = VerifyView;
     }
 }

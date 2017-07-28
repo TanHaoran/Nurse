@@ -70,7 +70,7 @@ public class PasswordActivity extends BaseActivity {
         mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
         mTitleBar.setTitle(title);
 
-        mTitleBar.setRightClickListener(new TitleBar.OnRightClickListener() {
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 if (!localValidate()) {
