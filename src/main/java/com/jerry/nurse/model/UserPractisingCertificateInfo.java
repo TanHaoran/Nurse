@@ -33,6 +33,8 @@ public class UserPractisingCertificateInfo extends DataSupport {
      * Sex :
      * VerifyStatus : 0
      * VerifyView :
+     * Name:
+     * FirstJobTime:
      */
 
     /**
@@ -67,6 +69,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
     private String Picture2;
     private String Picture3;
     private String Picture4;
+
     /**
      * 职业地点
      */
@@ -100,11 +103,18 @@ public class UserPractisingCertificateInfo extends DataSupport {
      */
     private String VerifyView;
 
+    /**
+     * 姓名
+     */
+    private String Name;
+
+    /**
+     * 首次工作时间
+     */
+    private String FirstJobTime;
+
     public String getBirthDate() {
-        if (!TextUtils.isEmpty(BirthDate)) {
-            return DateUtil.parseMysqlDateToString(BirthDate);
-        }
-        return null;
+        return BirthDate;
     }
 
     public void setBirthDate(String BirthDate) {
@@ -120,10 +130,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
     }
 
     public String getCertificateDate() {
-        if (!TextUtils.isEmpty(CertificateDate)) {
-            return DateUtil.parseMysqlDateToString(CertificateDate);
-        }
-        return null;
+        return CertificateDate;
     }
 
     public void setCertificateDate(String CertificateDate) {
@@ -265,5 +272,21 @@ public class UserPractisingCertificateInfo extends DataSupport {
 
     public void setVerifyView(String VerifyView) {
         this.VerifyView = VerifyView;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
+
+    public String getFirstJobTime() {
+        return FirstJobTime;
+    }
+
+    public void setFirstJobTime(String firstJobTime) {
+        FirstJobTime = firstJobTime;
     }
 }

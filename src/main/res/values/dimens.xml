@@ -85,6 +85,7 @@
     <dimen name="no_certificate_text_marginTop">50dp</dimen>
     <dimen name="no_certificate_text_marginBottom">20dp</dimen>
     <dimen name="certificate_image_width">100dp</dimen>
+    <dimen name="change_cellphone_edit_marginTop">40dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

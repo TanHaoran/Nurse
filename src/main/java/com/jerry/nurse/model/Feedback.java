@@ -7,11 +7,11 @@ package com.jerry.nurse.model;
 public class Feedback {
 
     private String RegisterId;
-    private String Feedback;
+    private String Content;
 
-    public Feedback(String registerId, String feedback) {
+    public Feedback(String registerId, String content) {
         RegisterId = registerId;
-        Feedback = feedback;
+        Content = content;
     }
 
     public String getRegisterId() {
@@ -22,11 +22,11 @@ public class Feedback {
         RegisterId = registerId;
     }
 
-    public String getFeedback() {
-        return Feedback;
+    public String getContent() {
+        return Content;
     }
 
-    public void setFeedback(String feedback) {
-        Feedback = feedback;
+    public void setContent(String content) {
+        Content = content;
     }
 }

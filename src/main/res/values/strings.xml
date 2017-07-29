@@ -22,6 +22,8 @@
     <string name="country_and_region">国家和地区</string>
     <string name="country_china_number">中国 +86</string>
     <string name="cellphone_number">手机号码</string>
+    <string name="origin_cellphone_number">原手机号码</string>
+    <string name="new_cellphone_number">新手机号码</string>
     <string name="verification_code">验证码</string>
     <string name="send_verification_code">发送验证码</string>
     <string name="password">密码</string>
@@ -123,7 +125,13 @@
     <string name="sign_department">注册机关</string>
     <string name="certificate_organization">发证机关</string>
     <string name="certificate_date">发证日期</string>
-    <string name="first_word_date">首次参加工作日期</string>
+    <string name="first_work_date">首次参加工作日期</string>
+    <string name="submit_success">提交成功</string>
+    <string name="validate_failed">验证失败</string>
+    <string name="cellphone_not_exist">手机号不存在</string>
+    <string name="tips">提示</string>
+    <string name="this_is_the_last_version">当前已经是最新版本</string>
+    <string name="found_new_version">发现新版本</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

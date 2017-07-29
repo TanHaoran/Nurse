@@ -23,6 +23,8 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.Date;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -90,20 +92,20 @@ public class ProfessionalCertificateEditActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
             @Override
-            public void onDateSelected(String date) {
-                mBirthdayTextView.setText(date);
+            public void onDateSelected(Date date) {
+                mBirthdayTextView.setText(DateUtil.parseDateToString(date));
             }
         });
         setDateSelectListener(mApproveDateLayout, null, new OnDateSelectListener() {
             @Override
-            public void onDateSelected(String date) {
-                mApproveDateTextView.setText(date);
+            public void onDateSelected(Date date) {
+                mApproveDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
         setDateSelectListener(mSignDateLayout, null, new OnDateSelectListener() {
             @Override
-            public void onDateSelected(String date) {
-                mSignDateTextView.setText(date);
+            public void onDateSelected(Date date) {
+                mSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
 

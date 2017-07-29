@@ -12,6 +12,7 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Feedback;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -22,6 +23,8 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.MediaType;
+
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class FeedbackActivity extends BaseActivity {
 
@@ -47,7 +50,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onRightClick(View view) {
                 String content = mFeedbackEditText.getText().toString();
-                if (!TextUtils.isEmpty(content)) {
+                if (TextUtils.isEmpty(content)) {
                     T.showShort(FeedbackActivity.this, R.string.feedback_empty);
                     return;
                 }
@@ -73,12 +76,16 @@ public class FeedbackActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            T.showShort(FeedbackActivity.this, R.string.submit_success);
+                            finish();
+                        } else {
+                            L.i("提交失败");
+                        }
                     }
                 });
     }

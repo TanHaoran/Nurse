@@ -83,12 +83,6 @@ public class SignupActivity extends BaseActivity {
     @Bind(R.id.tv_country)
     TextView mCountryTextView;
 
-    @BindString(R.string.cellphone_invalid)
-    String mStringCellphoneInvalid;
-
-    @BindString(R.string.verification_code_length_invalid)
-    String mStringVerificationCodeInvalid;
-
     @BindColor(R.color.primary)
     int mPrimaryColor;
 
@@ -230,10 +224,13 @@ public class SignupActivity extends BaseActivity {
     @OnClick(R.id.btn_signup)
     void onSignup(View view) {
         // 本地验证用户名和密码格式是否符合
-        if (!localValidate()) {
-            if (mErrorMessage != null) {
-                T.showLong(this, mErrorMessage);
-            }
+        String cellphone = mCellphoneEditText.getText().toString();
+        String verificationCode = mVerificationCodeEditText.getText().toString();
+
+        String errorMessage = localValidate(cellphone, verificationCode);
+
+        if (errorMessage != null) {
+            T.showLong(this, mErrorMessage);
             return;
         }
 
@@ -248,11 +245,9 @@ public class SignupActivity extends BaseActivity {
         mProgressDialog.setMessage("注册中...");
         mProgressDialog.show();
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        String code = mVerificationCodeEditText.getText().toString();
-
         // 远端服务验证
-        validateVerificationCode(cellphone, code);
+        validateVerificationCode(cellphone, verificationCode);
+
     }
 
     /**
@@ -360,29 +355,24 @@ public class SignupActivity extends BaseActivity {
     /**
      * 本地验证注册
      */
-    private boolean localValidate() {
+    public static String localValidate(String cellphone, String verificationCode) {
 
-        String cellphone = mCellphoneEditText.getText().toString();
-        String verificationCode = mVerificationCodeEditText.getText()
-                .toString();
-
+        String errorMessage = null;
         // 本地验证手机号
         if (cellphone.isEmpty()) {
-            mErrorMessage = mStringCellphoneInvalid;
-            return false;
+            errorMessage = "手机号不合法";
         } else {
-            mErrorMessage = null;
+            errorMessage = null;
         }
 
         // 本地验证验证码
-        if (verificationCode.length() != 4) {
-            mErrorMessage = mStringVerificationCodeInvalid;
-            return false;
+        if (verificationCode.length() != 6) {
+            errorMessage = "验证码长度不正确";
         } else {
-            mErrorMessage = null;
+            errorMessage = null;
         }
 
-        return true;
+        return errorMessage;
     }
 
     private void resetUI() {

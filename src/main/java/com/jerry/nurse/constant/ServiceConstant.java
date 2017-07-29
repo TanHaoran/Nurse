@@ -115,7 +115,7 @@ public class ServiceConstant {
     /**
      * 提交反馈信息
      */
-    public static final String SEND_FEEDBACK = IP + "SetNickNameById";
+    public static final String SEND_FEEDBACK = IP + "AddfeedbackInfo";
 
     /**
      * 修改密码
@@ -136,5 +136,5 @@ public class ServiceConstant {
     /**
      * 读取APP最新版本信息
      */
-    public static final String GET_APP_VERSION = IP + "";
+    public static final String GET_APP_VERSION = IP + "GetReleaseversionInfo";
 }

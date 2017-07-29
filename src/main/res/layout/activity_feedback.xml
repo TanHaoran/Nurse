@@ -18,6 +18,7 @@
         app:title_text="@string/feedback"/>
 
     <EditText
+        android:textCursorDrawable="@null"
         android:id="@+id/et_feedback"
         android:layout_width="match_parent"
         android:layout_height="@dimen/feedback_height"

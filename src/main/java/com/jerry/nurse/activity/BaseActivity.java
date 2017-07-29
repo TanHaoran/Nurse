@@ -25,6 +25,7 @@ import com.jerry.nurse.listener.OnDateSelectListener;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.listener.PhotoSelectListener;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.FileUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.PictureUtil;
@@ -216,7 +217,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 String date = year + "-" + (month + 1) + "-" + day;
                                 L.i("设置的日期是：" + date);
                                 if (onDateSelectListener != null) {
-                                    onDateSelectListener.onDateSelected(date);
+                                    onDateSelectListener.onDateSelected(DateUtil.parseStringToDate(date));
                                 }
                                 datePickerDialog.dismiss();
                             }

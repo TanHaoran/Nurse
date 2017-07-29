@@ -3,15 +3,22 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.AppVersion;
+import com.jerry.nurse.model.UserBasicInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.AppUtil;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -65,7 +72,6 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_check_update)
     void onCheckUpdate(View view) {
-
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_APP_VERSION)
                 .build()
@@ -77,13 +83,32 @@ public class SettingActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        try {
+                            AppVersion appVersion = new Gson().fromJson(response, AppVersion.class);
+                            String localVersion = AppUtil.getVersionName(SettingActivity.this);
+                            L.i("本地版本：" + localVersion);
+                            L.i("远程版本：" + appVersion.getVersion());
+                            if (!localVersion.equals(appVersion.getVersion())) {
+                                new AlertDialog.Builder(SettingActivity.this)
+                                        .setTitle(R.string.tips)
+                                        .setMessage("发现新版本：" + appVersion.getVersion() + ",是否更新?")
+                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        }).setNegativeButton(R.string.cancel, null)
+                                        .show();
+                            } else {
+                                new AlertDialog.Builder(SettingActivity.this)
+                                        .setTitle(R.string.this_is_the_last_version)
+                                        .setMessage("")
+                                        .show();
+                            }
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取APP版本信息失败");
+                            e.printStackTrace();
                         }
-                        new AlertDialog.Builder(SettingActivity.this)
-                                .setMessage("检查到新版本，是否更新？")
-                                .setPositiveButton("确定", null)
-                                .setNegativeButton("取消", null)
-                                .show();
                     }
                 });
     }

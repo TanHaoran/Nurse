@@ -15,91 +15,153 @@
         app:left_text="@string/back"
         app:title_text="@string/new_cellphone"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/change_password_marginLeft"
-        android:layout_marginTop="@dimen/change_password_text_marginTop"
-        android:text="@string/please_input_new_cellphone"
-        android:textColor="@color/jumbo"
-        android:textSize="@dimen/change_password_textSize"/>
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginRight="@dimen/send_verification_code_space_width"
+        android:layout_marginTop="@dimen/block_marinTop"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/rl_cellphone"
+        style="@style/BusinessLineStyle"
+        android:clickable="false">
 
-        <EditText
-            android:id="@+id/et_origin_cellphone"
+        <TextView
+            android:id="@+id/tv_cellphone"
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/signup_text_marginLeft"
+            android:text="@string/new_cellphone_number"/>
+
+        <com.jerry.nurse.view.ClearEditText
+            android:id="@+id/cet_cellphone"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/change_password_edit_height"
-            android:layout_marginLeft="@dimen/change_password_marginLeft"
-            android:layout_marginRight="@dimen/change_password_marginLeft"
-            android:layout_marginTop="@dimen/change_password_edit_marginTop"
-            android:background="@drawable/edit_around_bg"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+            android:background="@drawable/edit_no_border"
             android:gravity="center_vertical"
             android:inputType="number"
-            android:paddingLeft="@dimen/change_password_edit_marginLeft"
-            android:paddingRight="@dimen/change_password_edit_marginLeft"
-            android:textColor="@color/oil"
-            android:textSize="@dimen/login_edit_textSize"/>
-    </android.support.design.widget.TextInputLayout>
+            android:lines="1"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:paddingRight="@dimen/line_paddingLeft"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/change_password_marginLeft"
-        android:layout_marginTop="@dimen/change_password_text_marginTop"
-        android:text="@string/verification_code"
-        android:textColor="@color/jumbo"
-        android:textSize="@dimen/change_password_textSize"/>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/change_password_marginLeft"
-        android:layout_marginRight="@dimen/change_password_marginLeft"
-        android:orientation="horizontal">
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/login_input_marginTop"
-            android:layout_weight="1">
+    <RelativeLayout
+        android:id="@+id/rl_verification_code"
+        style="@style/BusinessLineStyle"
+        android:clickable="false">
 
-            <EditText
-                android:id="@+id/et_verification_code"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/change_password_edit_height"
-                android:background="@drawable/edit_around_bg"
-                android:hint="@string/verification_code"
-                android:inputType="textEmailAddress"
-                android:paddingLeft="10dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/login_edit_textSize"/>
-        </android.support.design.widget.TextInputLayout>
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/signup_text_marginLeft"
+            android:text="@string/verification_code"/>
 
-        <android.support.v7.widget.AppCompatButton
 
-            android:id="@+id/btn_get_verification_code"
+        <TextView
+            android:id="@+id/tv_send_verification_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/line_paddingLeft"
             android:text="@string/send_verification_code"
-            android:textSize="@dimen/get_verification_code_textSize"
-            android:layout_marginLeft="@dimen/get_verification_code_marginLeft"
-            android:textColor="@color/white"/>
-    </LinearLayout>
+            android:textColor="@color/primary"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <EditText
+            android:id="@+id/et_verification_code"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+            android:layout_marginRight="@dimen/line_paddingLeft"
+            android:layout_toLeftOf="@id/tv_send_verification_code"
+            android:background="@drawable/edit_no_border"
+            android:gravity="center_vertical"
+            android:inputType="number"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:paddingRight="@dimen/line_paddingLeft"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
+
+
+        <View
+            android:id="@+id/v_send_verification_code_button_bottom_line"
+            style="@style/DividerLineStyle"
+            android:layout_width="@dimen/send_verification_code_button_bottom_line_width"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"/>
+
+
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/send_verification_code_space_width"
+            android:layout_toLeftOf="@id/v_send_verification_code_button_bottom_line"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_password"
+        style="@style/BusinessLineStyle"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/signup_text_marginLeft"
+            android:text="@string/password"/>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+            android:layout_marginRight="@dimen/line_paddingLeft"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/signup_password_paddingBottom"
+            app:passwordToggleDrawable="@drawable/login_eye">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/edit_no_border"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/line_paddingLeft"
+                android:paddingRight="@dimen/line_paddingLeft"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+        </android.support.design.widget.TextInputLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_next"
+        android:id="@+id/acb_next"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/change_password_marginLeft"
-        android:layout_marginRight="@dimen/change_password_marginLeft"
-        android:text="@string/modify"
-        android:textSize="@dimen/login_button_textSize"
-        android:textColor="@color/white"/>
+        android:layout_height="@dimen/signup_button_height"
+        android:layout_marginLeft="@dimen/signup_button_marginLeft"
+        android:layout_marginRight="@dimen/signup_button_marginLeft"
+        android:layout_marginTop="@dimen/block_marinTop"
+        android:text="@string/finish"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_textSize"/>
 
 
 </LinearLayout>

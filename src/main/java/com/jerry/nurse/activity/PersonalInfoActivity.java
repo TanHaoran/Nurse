@@ -32,7 +32,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import java.util.Date;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -129,12 +128,23 @@ public class PersonalInfoActivity extends BaseActivity {
 
         // 读取用户注册信息
         updateRegisterInfo();
+        updateBasicInfo();
+        updateProfessionalCertificateInfo();
+        updatePractisingCertificateInfo();;
+        updateHospitalInfo();
 
         // 获取用户各类信息
         getBasicInfo(mRegisterId);
         getProfessionalCertificateInfo(mRegisterId);
         getPractisingCertificateInfo(mRegisterId);
         getHospitalInfo(mRegisterId);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateProfessionalCertificateInfo();
+        updatePractisingCertificateInfo();
     }
 
     /**
@@ -306,15 +316,15 @@ public class PersonalInfoActivity extends BaseActivity {
                 mSexTextView.setText(mBasicInfo.getSex());
             }
             if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
-                mBirthdayTextView.setText(mBasicInfo.getBirthday());
+                mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
             }
 
-            Date origin = DateUtil.parseStringToDate(mBasicInfo.getBirthday());
+            Date origin = DateUtil.parseMysqlDateToDate(mBasicInfo.getBirthday());
 
             setDateSelectListener(mBirthdayLayout, origin, new OnDateSelectListener() {
                         @Override
-                        public void onDateSelected(String date) {
-                            mBasicInfo.setBirthday(DateUtil.parseStringToMysqlDate(date));
+                        public void onDateSelected(Date date) {
+                            mBasicInfo.setBirthday(DateUtil.parseDateToMysqlDate(date));
                             postUserBasicInfo();
                         }
                     }
@@ -328,12 +338,8 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     private void updateProfessionalCertificateInfo() {
 
-        List<UserProfessionalCertificateInfo> infos = DataSupport.findAll(UserProfessionalCertificateInfo.class);
-
         mProfessionalCertificateInfo = DataSupport.
                 findLast(UserProfessionalCertificateInfo.class);
-
-        L.i("读取到的是" + mProfessionalCertificateInfo.getVerifyStatus());
 
         if (mProfessionalCertificateInfo != null) {
             mProfessionalCertificateTextView.
@@ -370,7 +376,6 @@ public class PersonalInfoActivity extends BaseActivity {
     }
 
     private String getAuditString(int status) {
-        L.i("status是" + status);
         if (status == ServiceConstant.AUDIT_EMPTY) {
             return "未认证";
         } else if (status == ServiceConstant.AUDIT_ING) {
@@ -485,10 +490,6 @@ public class PersonalInfoActivity extends BaseActivity {
                 updateRegisterInfo();
             } else if (requestCode == REQUEST_BASIC_INFO) {
                 updateBasicInfo();
-            } else if (requestCode == REQUEST_PROFESSIONAL_CERTIFICATE_INFO) {
-                updateProfessionalCertificateInfo();
-            } else if (requestCode == REQUEST_PRACTISING_CERTIFICATE_INFO) {
-                updatePractisingCertificateInfo();
             } else if (requestCode == REQUEST_HOSPITAL_INFO) {
                 updateHospitalInfo();
             }

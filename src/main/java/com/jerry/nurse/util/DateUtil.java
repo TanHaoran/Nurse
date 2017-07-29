@@ -36,6 +36,45 @@ public class DateUtil {
         return Long.parseLong(mysqlDate);
     }
 
+    /**
+     * 把MySQL日期转成标准日期格式
+     *
+     * @param mysqlDate
+     * @return
+     */
+    public static Date parseMysqlDateToDate(String mysqlDate) {
+        Date date = new Date(parseMysqlDateToLong(mysqlDate));
+        return date;
+    }
+
+    /**
+     * 把Date数据转换成String
+     *
+     * @param date
+     * @return
+     */
+    public static String parseDateToString(Date date) {
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+
+    /**
+     * 把Date类型转换成MySqlDate类型
+     *
+     * @param date
+     * @return
+     */
+    public static String parseDateToMysqlDate(Date date) {
+        return "/Date(" + date.getTime() + "+0800)/";
+    }
+
+    /**
+     * 把String类型转成Date类型
+     *
+     * @param stringDate
+     * @return
+     */
     public static Date parseStringToDate(String stringDate) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
@@ -60,7 +99,6 @@ public class DateUtil {
         Date date;
         try {
             date = format.parse(stringDate);
-            // 在MySQL数据库插入要减一天
             return "/Date(" + date.getTime() + "+0800)/";
         } catch (ParseException e) {
             e.printStackTrace();

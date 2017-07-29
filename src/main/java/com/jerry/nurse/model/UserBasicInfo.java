@@ -67,10 +67,7 @@ public class UserBasicInfo extends DataSupport {
     }
 
     public String getBirthday() {
-        if (!TextUtils.isEmpty(Birthday)) {
-            return DateUtil.parseMysqlDateToString(Birthday);
-        }
-        return null;
+        return Birthday;
     }
 
     public void setBirthday(String Birthday) {
