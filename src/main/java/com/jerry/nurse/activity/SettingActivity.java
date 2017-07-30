@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -89,20 +90,23 @@ public class SettingActivity extends BaseActivity {
                             L.i("本地版本：" + localVersion);
                             L.i("远程版本：" + appVersion.getVersion());
                             if (!localVersion.equals(appVersion.getVersion())) {
-                                new AlertDialog.Builder(SettingActivity.this)
-                                        .setTitle(R.string.tips)
-                                        .setMessage("发现新版本：" + appVersion.getVersion() + ",是否更新?")
-                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
+                                if (!SettingActivity.this.isFinishing()) {
+                                    new AlertDialog.Builder(SettingActivity.this)
+                                            .setTitle(R.string.tips)
+                                            .setMessage("发现新版本：" + appVersion.getVersion() + ",是否更新?")
+                                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
 
-                                            }
-                                        }).setNegativeButton(R.string.cancel, null)
-                                        .show();
+                                                }
+                                            }).setNegativeButton(R.string.cancel, null)
+                                            .show();
+                                }
                             } else {
                                 new AlertDialog.Builder(SettingActivity.this)
-                                        .setTitle(R.string.this_is_the_last_version)
-                                        .setMessage("")
+                                        .setTitle(R.string.tips)
+                                        .setMessage(R.string.this_is_the_last_version)
+                                        .setPositiveButton(R.string.ok, null)
                                         .show();
                             }
                         } catch (JsonSyntaxException e) {

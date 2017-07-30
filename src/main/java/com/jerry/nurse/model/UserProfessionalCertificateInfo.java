@@ -92,10 +92,7 @@ public class UserProfessionalCertificateInfo extends DataSupport {
     private String VerifyView;
 
     public String getApproveDate() {
-        if (!TextUtils.isEmpty(ApproveDate)) {
-            return DateUtil.parseMysqlDateToString(ApproveDate);
-        }
-        return null;
+        return ApproveDate;
     }
 
     public void setApproveDate(String ApproveDate) {
@@ -111,10 +108,7 @@ public class UserProfessionalCertificateInfo extends DataSupport {
     }
 
     public String getDateBirth() {
-        if (!TextUtils.isEmpty(DateBirth)) {
-            return DateUtil.parseMysqlDateToString(DateBirth);
-        }
-        return null;
+        return DateBirth;
     }
 
     public void setDateBirth(String DateBirth) {
@@ -130,10 +124,7 @@ public class UserProfessionalCertificateInfo extends DataSupport {
     }
 
     public String getIssuingDate() {
-        if (!TextUtils.isEmpty(IssuingDate)) {
-            return DateUtil.parseMysqlDateToString(IssuingDate);
-        }
-        return null;
+        return IssuingDate;
     }
 
     public void setIssuingDate(String IssuingDate) {

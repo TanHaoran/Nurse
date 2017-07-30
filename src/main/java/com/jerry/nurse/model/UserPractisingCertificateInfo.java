@@ -146,10 +146,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
     }
 
     public String getFirstRegisterDate() {
-        if (!TextUtils.isEmpty(FirstRegisterDate)) {
-            return DateUtil.parseMysqlDateToString(FirstRegisterDate);
-        }
-        return null;
+        return FirstRegisterDate;
     }
 
     public void setFirstRegisterDate(String FirstRegisterDate) {
@@ -165,10 +162,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
     }
 
     public String getLastRegisterDate() {
-        if (!TextUtils.isEmpty(LastRegisterDate)) {
-            return DateUtil.parseMysqlDateToString(LastRegisterDate);
-        }
-        return null;
+        return LastRegisterDate;
     }
 
     public void setLastRegisterDate(String LastRegisterDate) {
@@ -240,10 +234,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
     }
 
     public String getRegisterToDate() {
-        if (!TextUtils.isEmpty(RegisterToDate)) {
-            return DateUtil.parseMysqlDateToString(RegisterToDate);
-        }
-        return null;
+        return RegisterToDate;
     }
 
     public void setRegisterToDate(String RegisterToDate) {

@@ -10,13 +10,18 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
+import com.jerry.nurse.model.UserPractisingCertificateInfo;
+import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.view.CircleImageView;
+import com.jerry.nurse.view.ValidatedView;
 
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+
+import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 
 
 /**
@@ -33,6 +38,9 @@ public class MeFragment extends BaseFragment {
 
     @Bind(R.id.tv_nickname)
     TextView mNicknameTextView;
+
+    @Bind(R.id.vv_valid)
+    ValidatedView mValidatedView;
 
     /**
      * 实例化方法
@@ -64,7 +72,13 @@ public class MeFragment extends BaseFragment {
      * 初始化用户信息显示
      */
     private void initUserInfo() {
-        UserRegisterInfo userRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
+        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+
+        UserProfessionalCertificateInfo userProfessionalCertificateInfo =
+                DataSupport.findFirst(UserProfessionalCertificateInfo.class);
+
+        UserPractisingCertificateInfo userPractisingCertificateInfo =
+                DataSupport.findFirst(UserPractisingCertificateInfo.class);
 
         // TODO 设置头像
         if (!TextUtils.isEmpty(userRegisterInfo.getName())) {
@@ -72,6 +86,13 @@ public class MeFragment extends BaseFragment {
         }
         if (!TextUtils.isEmpty(userRegisterInfo.getNickName())) {
             mNicknameTextView.setText(userRegisterInfo.getNickName());
+        }
+
+        if (userProfessionalCertificateInfo != null &&
+                userProfessionalCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS &&
+                userPractisingCertificateInfo != null &&
+                userPractisingCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS) {
+            mValidatedView.setVisibility(View.VISIBLE);
         }
     }
 

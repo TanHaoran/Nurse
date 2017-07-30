@@ -131,7 +131,6 @@ public class InputActivity extends BaseActivity {
                 });
     }
 
-
     /**
      * 设置工号
      *

@@ -58,9 +58,14 @@ public class ServiceConstant {
     public static final String SET_PASSWORD = IP + "SetPwdByPhone";
 
     /**
-     * 获取用户注册信息
+     * 通过注册ID获取用户注册信息
      */
-    public static final String GET_USER_REGISTER_INFO = IP + "GetUserReginfoById";
+    public static final String GET_USER_REGISTER_INFO_BY_ID = IP + "GetUserReginfoById";
+
+    /**
+     * 通过手机号获取用户注册信息
+     */
+    public static final String GET_USER_REGISTER_INFO_BY_PHONE = IP + "GetUserReginfoByPhone";
 
     /**
      * 设置头像
@@ -125,7 +130,7 @@ public class ServiceConstant {
     /**
      * 获取医院信息
      */
-    public static final String GET_HOSPITAL_INFO = IP + "GethospitalById";
+    public static final String GET_NEARBY_HOSPITAL_INFO = IP + "GetAddressByLngLat";
 
     /**
      * 获取科室信息

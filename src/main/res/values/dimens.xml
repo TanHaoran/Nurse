@@ -86,6 +86,10 @@
     <dimen name="no_certificate_text_marginBottom">20dp</dimen>
     <dimen name="certificate_image_width">100dp</dimen>
     <dimen name="change_cellphone_edit_marginTop">40dp</dimen>
+    <dimen name="certificate_edit_marginLeft">150dp</dimen>
+    <dimen name="sex_toggle_width">70dp</dimen>
+    <dimen name="sex_toggle_height">35dp</dimen>
+    <dimen name="sex_toggle_text_margin">15dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

@@ -53,15 +53,13 @@ public class UserUtil {
         UserBasicInfo user = new UserBasicInfo();
         user.setAddress(info.getAddress());
         user.setAge(info.getAge());
-        user.setBirthday(DateUtil.parseStringToMysqlDate(info.getBirthday()));
+        user.setBirthday(info.getBirthday());
         user.setCity(info.getCity());
         user.setEMail(info.getEMail());
         user.setEducation(info.getEducation());
         user.setIDCard(info.getIDCard());
         user.setMeritalStatus(info.getMeritalStatus());
-        user.setName(info.getName());
         user.setNation(info.getNation());
-        user.setPhone(info.getPhone());
         user.setProvince(info.getProvince());
         user.setQQ(info.getQQ());
         user.setRegion(info.getRegion());
@@ -81,11 +79,11 @@ public class UserUtil {
         DataSupport.deleteAll(UserProfessionalCertificateInfo.class);
 
         UserProfessionalCertificateInfo user = new UserProfessionalCertificateInfo();
-        user.setApproveDate(DateUtil.parseStringToMysqlDate(info.getApproveDate()));
+        user.setApproveDate(info.getApproveDate());
         user.setCategory(info.getCategory());
-        user.setDateBirth(DateUtil.parseStringToMysqlDate(info.getDateBirth()));
+        user.setDateBirth(info.getDateBirth());
         user.setIssuingAgency(info.getIssuingAgency());
-        user.setIssuingDate(DateUtil.parseStringToMysqlDate(info.getIssuingDate()));
+        user.setIssuingDate(info.getIssuingDate());
         user.setMajorName(info.getMajorName());
         user.setManageId(info.getManageId());
         user.setName(info.getName());
@@ -111,13 +109,13 @@ public class UserUtil {
         DataSupport.deleteAll(UserPractisingCertificateInfo.class);
 
         UserPractisingCertificateInfo user = new UserPractisingCertificateInfo();
-        user.setBirthDate(DateUtil.parseStringToMysqlDate(info.getBirthDate()));
+        user.setBirthDate(info.getBirthDate());
         user.setCertificateAuthority(info.getCertificateAuthority());
-        user.setCertificateDate(DateUtil.parseStringToMysqlDate(info.getCertificateDate()));
+        user.setCertificateDate(info.getCertificateDate());
         user.setCountry(info.getCountry());
-        user.setFirstRegisterDate(DateUtil.parseStringToMysqlDate(info.getFirstRegisterDate()));
+        user.setFirstRegisterDate(info.getFirstRegisterDate());
         user.setIDCard(info.getIDCard());
-        user.setLastRegisterDate(DateUtil.parseStringToMysqlDate(info.getLastRegisterDate()));
+        user.setLastRegisterDate(info.getLastRegisterDate());
         user.setPicture1(info.getPicture1());
         user.setPicture2(info.getPicture2());
         user.setPicture3(info.getPicture3());
@@ -127,7 +125,8 @@ public class UserUtil {
         user.setCertificateAuthority(info.getCertificateAuthority());
         user.setRegisterAuthority(info.getRegisterAuthority());
         user.setRegisterId(info.getRegisterId());
-        user.setRegisterToDate(DateUtil.parseStringToMysqlDate(info.getRegisterToDate()));
+        user.setRegisterToDate(info.getRegisterToDate());
+        user.setFirstJobTime(info.getFirstJobTime());
         user.setSex(info.getSex());
         user.setVerifyStatus(info.getVerifyStatus());
         user.setVerifyView(info.getVerifyView());

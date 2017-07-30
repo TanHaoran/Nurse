@@ -19,6 +19,7 @@ import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
+import com.jerry.nurse.view.ToggleButton;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -30,10 +31,11 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.AUDIT_EMPTY;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 
-public class PractisingCertificateEditActivity extends BaseActivity {
+public class PractisingCertificateActivity extends BaseActivity {
 
     @Bind(R.id.rl_birthday)
     RelativeLayout mBirthdayLayout;
@@ -55,6 +57,9 @@ public class PractisingCertificateEditActivity extends BaseActivity {
 
     @Bind(R.id.et_name)
     EditText mNameEditText;
+
+    @Bind(R.id.tb_sex)
+    ToggleButton mSexButton;
 
     @Bind(R.id.tv_birthday)
     TextView mBirthdayTextView;
@@ -92,75 +97,94 @@ public class PractisingCertificateEditActivity extends BaseActivity {
     @Bind(R.id.tv_first_work_date)
     TextView mFirstWorkDateTextView;
 
+
     private UserPractisingCertificateInfo mInfo;
 
     private String mErrorMessage;
 
     public static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, PractisingCertificateEditActivity.class);
+        Intent intent = new Intent(context, PractisingCertificateActivity.class);
         return intent;
     }
 
     @Override
     public int getContentViewResId() {
-        return R.layout.activity_practising_certificate_edit;
+        return R.layout.activity_practising_certificate;
     }
 
     @Override
     public void init(Bundle savedInstanceState) {
-        setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mBirthdayTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mFirstSignDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mLastSignDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mLastSignDateValidLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mCertificateDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mFirstWordDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
+
 
         mInfo = DataSupport.findFirst(UserPractisingCertificateInfo.class);
 
         if (mInfo != null) {
             mNameEditText.setText(mInfo.getName());
-            mBirthdayTextView.setText(mInfo.getBirthDate());
+            mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getBirthDate()));
             mCountryNationEditText.setText(mInfo.getCountry());
             mPractisingLocationEditText.setText(mInfo.getPracticeAddress());
             mCertificateNumberEditText.setText(mInfo.getCertificateId());
             mIdCardNumberEditText.setText(mInfo.getIDCard());
-            mFirstSignDateTextView.setText(mInfo.getFirstRegisterDate());
-            mLastSignDateTextView.setText(mInfo.getLastRegisterDate());
-            mLastSignDateValidTextView.setText(mInfo.getRegisterToDate());
+            mFirstSignDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getFirstRegisterDate()));
+            mLastSignDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getLastRegisterDate()));
+            mLastSignDateValidTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getRegisterToDate()));
             mSignDepartmentTextView.setText(mInfo.getRegisterAuthority());
             mCertificateOrganizationTextView.setText(mInfo.getCertificateAuthority());
-            mCertificateDateTextView.setText(mInfo.getCertificateDate());
-            mFirstWorkDateTextView.setText(mInfo.getFirstJobTime());
+            mCertificateDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getCertificateDate()));
+            mFirstWorkDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getFirstJobTime()));
+
+            if (mInfo.getVerifyStatus() != AUDIT_EMPTY) {
+                mNameEditText.setEnabled(false);
+                mBirthdayTextView.setEnabled(false);
+                mCountryNationEditText.setEnabled(false);
+                mPractisingLocationEditText.setEnabled(false);
+                mCertificateNumberEditText.setEnabled(false);
+                mIdCardNumberEditText.setEnabled(false);
+                mFirstSignDateTextView.setEnabled(false);
+                mLastSignDateTextView.setEnabled(false);
+                mLastSignDateValidTextView.setEnabled(false);
+                mSignDepartmentTextView.setEnabled(false);
+                mCertificateOrganizationTextView.setEnabled(false);
+                mCertificateDateTextView.setEnabled(false);
+                mFirstWorkDateTextView.setEnabled(false);
+            } else {
+                setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mBirthdayTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mFirstSignDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mLastSignDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mLastSignDateValidLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mCertificateDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mFirstWordDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+            }
         }
     }
 
@@ -174,19 +198,24 @@ public class PractisingCertificateEditActivity extends BaseActivity {
         }
 
         // 组装数据
-        mInfo.setBirthDate(mNameEditText.getText().toString());
-        mInfo.setCountry(mBirthdayTextView.getText().toString());
-        mInfo.setPracticeAddress(mCountryNationEditText.getText().toString());
-        mInfo.setCertificateId(mPractisingLocationEditText.getText().toString());
-        mInfo.setIDCard(mCertificateNumberEditText.getText().toString());
-        mInfo.setFirstRegisterDate(mIdCardNumberEditText.getText().toString());
-        mInfo.setLastRegisterDate(mFirstSignDateTextView.getText().toString());
-        mInfo.setRegisterToDate(mLastSignDateTextView.getText().toString());
-        mInfo.setRegisterAuthority(mLastSignDateValidTextView.getText().toString());
-        mInfo.setCertificateAuthority(mSignDepartmentTextView.getText().toString());
-        mInfo.setCertificateDate(mCertificateOrganizationTextView.getText().toString());
-        mInfo.setBirthDate(mCertificateDateTextView.getText().toString());
-        mInfo.setBirthDate(mFirstWorkDateTextView.getText().toString());
+        mInfo.setName(mNameEditText.getText().toString());
+        mInfo.setBirthDate(mBirthdayTextView.getText().toString());
+        if (mSexButton.getSex() == 0) {
+            mInfo.setSex("男");
+        } else {
+            mInfo.setSex("女");
+        }
+        mInfo.setCountry(mCountryNationEditText.getText().toString());
+        mInfo.setPracticeAddress(mPractisingLocationEditText.getText().toString());
+        mInfo.setCertificateId(mCertificateNumberEditText.getText().toString());
+        mInfo.setIDCard(mIdCardNumberEditText.getText().toString());
+        mInfo.setFirstRegisterDate(DateUtil.parseStringToMysqlDate(mFirstSignDateTextView.getText().toString()));
+        mInfo.setLastRegisterDate(DateUtil.parseStringToMysqlDate(mLastSignDateTextView.getText().toString()));
+        mInfo.setRegisterToDate(DateUtil.parseStringToMysqlDate(mLastSignDateValidTextView.getText().toString()));
+        mInfo.setRegisterAuthority(DateUtil.parseStringToMysqlDate(mSignDepartmentTextView.getText().toString()));
+        mInfo.setCertificateAuthority(mCertificateOrganizationTextView.getText().toString());
+        mInfo.setCertificateDate(DateUtil.parseStringToMysqlDate(mCertificateDateTextView.getText().toString()));
+        mInfo.setFirstJobTime(DateUtil.parseStringToMysqlDate(mFirstWorkDateTextView.getText().toString()));
 
         postProfessionalCertificate();
     }
@@ -201,13 +230,9 @@ public class PractisingCertificateEditActivity extends BaseActivity {
             return false;
         }
         if (TextUtils.isEmpty(mCountryNationEditText.getText().toString())) {
-            mErrorMessage = "国家为空！";
+            mErrorMessage = "国籍为空！";
             return false;
         }
-//        if (TextUtils.isEmpty(mSex.getText().toString())) {
-//            mErrorMessage = "编号为空！";
-//        return false;
-//        }
         if (TextUtils.isEmpty(mPractisingLocationEditText.getText().toString())) {
             mErrorMessage = "执业地点为空！";
             return false;
@@ -270,6 +295,8 @@ public class PractisingCertificateEditActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置执业证成功");
+                            T.showShort(PractisingCertificateActivity.this,
+                                    R.string.submit_success_please_wait);
                             // 设置成功后更新数据库
                             UserUtil.savePractisingCertificateInfo(mInfo);
                             setResult(RESULT_OK);

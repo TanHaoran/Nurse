@@ -15,8 +15,10 @@ import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.UserUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -26,6 +28,8 @@ import butterknife.BindColor;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
+
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class NewCellphoneActivity extends BaseActivity {
     @Bind(R.id.cet_cellphone)
@@ -50,6 +54,8 @@ public class NewCellphoneActivity extends BaseActivity {
      * 验证码获取间隔
      */
     private int mValidateCountDown = 60;
+
+    private UserRegisterInfo mUserRegisterInfo;
 
     private Runnable mValidateRunnable = new Runnable() {
         @Override
@@ -83,8 +89,8 @@ public class NewCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        String cellphone = userRegisterInfo.getPhone();
+        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        String cellphone = mUserRegisterInfo.getPhone();
         if (cellphone == null) {
             mGetVerificationCodeTextView.setEnabled(false);
             mNextButton.setEnabled(false);
@@ -158,7 +164,8 @@ public class NewCellphoneActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        ShortMessage shortMessage = new ShortMessage(cellphone, code);
+        ShortMessage shortMessage = new ShortMessage(
+                mUserRegisterInfo.getRegisterId(), cellphone, code, 1);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -172,12 +179,49 @@ public class NewCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.contains(ServiceConstant.USER_PHONE)) {
-                            // TODO
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            String cellphone = mCellphoneEditText.getText().toString();
+                            postNewCellphone(cellphone);
                         } else {
                             T.showShort(NewCellphoneActivity.this, R.string.validate_failed);
                         }
                         mNextButton.setEnabled(true);
+                    }
+                });
+    }
+
+    /**
+     * 设置新手机号
+     *
+     * @param cellphone
+     */
+    void postNewCellphone(String cellphone) {
+        mProgressDialog.show();
+        final UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        userRegisterInfo.setPhone(cellphone);
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_REGISTER_INFO)
+                .content(StringUtil.addModelWithJson(userRegisterInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            L.i("设置手机号成功");
+                            // 设置成功后更新数据库
+                            UserUtil.saveRegisterInfo(NewCellphoneActivity.this, userRegisterInfo);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            L.i("设置昵称失败");
+                        }
                     }
                 });
     }

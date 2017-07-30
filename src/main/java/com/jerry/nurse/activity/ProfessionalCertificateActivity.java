@@ -3,6 +3,7 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
+import com.jerry.nurse.view.ToggleButton;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -30,10 +32,12 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.AUDIT_EMPTY;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 
-public class ProfessionalCertificateEditActivity extends BaseActivity {
+public class ProfessionalCertificateActivity extends BaseActivity {
+
 
     @Bind(R.id.rl_birthday)
     RelativeLayout mBirthdayLayout;
@@ -49,6 +53,12 @@ public class ProfessionalCertificateEditActivity extends BaseActivity {
 
     @Bind(R.id.et_name)
     EditText mNameEditText;
+
+    @Bind(R.id.tb_sex)
+    ToggleButton mSexButton;
+
+    @Bind(R.id.tv_sex)
+    TextView mSexTextView;
 
     @Bind(R.id.tv_birthday)
     TextView mBirthdayTextView;
@@ -74,40 +84,25 @@ public class ProfessionalCertificateEditActivity extends BaseActivity {
     @Bind(R.id.rl_sign_date)
     RelativeLayout mSignDateLayout;
 
+    @Bind(R.id.acb_submit)
+    AppCompatButton mSubmitButton;
+
     private UserProfessionalCertificateInfo mInfo;
 
     private String mErrorMessage;
 
     public static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, ProfessionalCertificateEditActivity.class);
+        Intent intent = new Intent(context, ProfessionalCertificateActivity.class);
         return intent;
     }
 
     @Override
     public int getContentViewResId() {
-        return R.layout.activity_professional_certificate_edit;
+        return R.layout.activity_professional_certificate;
     }
 
     @Override
     public void init(Bundle savedInstanceState) {
-        setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mBirthdayTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mApproveDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mApproveDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mSignDateLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mSignDateTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
 
         mInfo = DataSupport.findFirst(UserProfessionalCertificateInfo.class);
 
@@ -115,13 +110,53 @@ public class ProfessionalCertificateEditActivity extends BaseActivity {
             mIdNumberEditText.setText(mInfo.getCertificateId());
             mManagementNumberEditText.setText(mInfo.getManageId());
             mNameEditText.setText(mInfo.getName());
-            mBirthdayTextView.setText(mInfo.getDateBirth());
+            mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getDateBirth()));
             mProfessionNameEditText.setText(mInfo.getMajorName());
             mCertificateLevelEditText.setText(mInfo.getCategory());
             mTypeEditText.setText(mInfo.getQuaLevel());
-            mApproveDateTextView.setText(mInfo.getApproveDate());
+            mApproveDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getApproveDate()));
             mSignOrganizationEditText.setText(mInfo.getIssuingAgency());
-            mSignDateTextView.setText(mInfo.getIssuingDate());
+            mSignDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getIssuingDate()));
+
+            if (mInfo.getVerifyStatus() != AUDIT_EMPTY) {
+                mIdNumberEditText.setEnabled(false);
+                mManagementNumberEditText.setEnabled(false);
+                mNameEditText.setEnabled(false);
+                mBirthdayTextView.setEnabled(false);
+                mProfessionNameEditText.setEnabled(false);
+                mCertificateLevelEditText.setEnabled(false);
+                mTypeEditText.setEnabled(false);
+                mApproveDateTextView.setEnabled(false);
+                mSignOrganizationEditText.setEnabled(false);
+                mSignDateTextView.setEnabled(false);
+                mSexButton.setVisibility(View.INVISIBLE);
+                mSexTextView.setVisibility(View.VISIBLE);
+                mSubmitButton.setVisibility(View.GONE);
+                mSexTextView.setText(mInfo.getSex());
+
+            } else {
+                mSexButton.setVisibility(View.VISIBLE);
+                mSexTextView.setVisibility(View.INVISIBLE);
+                mSubmitButton.setVisibility(View.VISIBLE);
+                setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mBirthdayTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mApproveDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mApproveDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+                setDateSelectListener(mSignDateLayout, null, new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mSignDateTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+            }
         }
     }
 
@@ -217,6 +252,8 @@ public class ProfessionalCertificateEditActivity extends BaseActivity {
                             L.i("设置专业资格证成功");
                             // 设置成功后更新数据库
                             UserUtil.saveProfessionalCertificateInfo(mInfo);
+                            T.showShort(ProfessionalCertificateActivity.this,
+                                    R.string.submit_success_please_wait);
                             setResult(RESULT_OK);
                             finish();
                         } else {

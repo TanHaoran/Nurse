@@ -142,7 +142,7 @@ public class PasswordActivity extends BaseActivity {
      * 获取用户注册信息
      */
     private void getUserRegisterInfo(final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_ID)
                 .addParams("RegisterId", registerId)
                 .build()
                 .execute(new FilterStringCallback() {

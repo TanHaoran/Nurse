@@ -15,6 +15,8 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import butterknife.OnClick;
 
+import static com.jerry.nurse.constant.ServiceConstant.AUDIT_EMPTY;
+
 public class NoCertificateActivity extends BaseActivity {
 
     public static final String EXTRA_TITLE = "title";
@@ -44,16 +46,18 @@ public class NoCertificateActivity extends BaseActivity {
         if (PROFESSIONAL_CERTIFICATE.equals(mTitle)) {
             UserProfessionalCertificateInfo professionalCertificateInfo =
                     DataSupport.findFirst(UserProfessionalCertificateInfo.class);
-            if (professionalCertificateInfo != null) {
-                Intent intent = ProfessionalCertificateEditActivity.getIntent(this);
+            if (professionalCertificateInfo != null &&
+                    professionalCertificateInfo.getVerifyStatus() != AUDIT_EMPTY) {
+                Intent intent = ProfessionalCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();
             }
         } else if (PRACTISING_CERTIFICATE.equals(mTitle)) {
             UserPractisingCertificateInfo practisingCertificateInfo =
                     DataSupport.findFirst(UserPractisingCertificateInfo.class);
-            if (practisingCertificateInfo != null) {
-                Intent intent = PractisingCertificateEditActivity.getIntent(this);
+            if (practisingCertificateInfo != null &&
+                    practisingCertificateInfo.getVerifyStatus() != AUDIT_EMPTY) {
+                Intent intent = PractisingCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();
             }
@@ -65,11 +69,11 @@ public class NoCertificateActivity extends BaseActivity {
     @OnClick(R.id.acb_go_certificate)
     void onGoCertificateButton(View view) {
         if (PROFESSIONAL_CERTIFICATE.equals(mTitle)) {
-            Intent intent = ProfessionalCertificateEditActivity.getIntent(this);
+            Intent intent = ProfessionalCertificateActivity.getIntent(this);
             startActivity(intent);
             finish();
         } else if (PRACTISING_CERTIFICATE.equals(mTitle)) {
-            Intent intent = PractisingCertificateEditActivity.getIntent(this);
+            Intent intent = PractisingCertificateActivity.getIntent(this);
             startActivity(intent);
             finish();
         }

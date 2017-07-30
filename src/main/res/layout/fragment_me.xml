@@ -2,8 +2,8 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:background="@color/background"
               android:layout_height="match_parent"
+              android:background="@color/background"
               android:orientation="vertical">
 
     <com.jerry.nurse.view.TitleBar
@@ -29,6 +29,7 @@
             android:background="@drawable/icon_avatar_default"/>
 
         android:visibility="invisible"
+
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
@@ -40,12 +41,14 @@
             tools:text="李静静"/>
 
         <com.jerry.nurse.view.ValidatedView
+            android:id="@+id/vv_valid"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/validated_height"
             android:layout_alignBottom="@id/tv_name"
             android:layout_marginBottom="@dimen/validated_marginBottom"
             android:layout_marginLeft="@dimen/validated_marginLeft"
             android:layout_toRightOf="@id/tv_name"
+            android:visibility="invisible"
             app:text="已验证"/>
 
         <TextView
@@ -121,9 +124,9 @@
 
 
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/rl_collection"
-        style="@style/BusinessLineStyle">
+        style="@style/BusinessLineStyle"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_event_collection"
@@ -165,17 +168,17 @@
             style="@style/ArrowEnterStyle"/>
 
         <View
-            android:visibility="gone"
             style="@style/DividerLineStyle"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
 
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/rl_exam"
-        style="@style/BusinessLineStyle">
+        style="@style/BusinessLineStyle"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_exam"

@@ -29,9 +29,12 @@ import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 
 public class ChangeCellphoneActivity extends BaseActivity {
+
+    private static final int REQUEST_CHANGE_CELLPHONE = 0x00000101;
 
     @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
@@ -53,6 +56,8 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
+
+    private UserRegisterInfo mUserRegisterInfo;
 
     /**
      * 验证码获取间隔
@@ -91,12 +96,16 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        String cellphone = userRegisterInfo.getPhone();
+        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        String cellphone = mUserRegisterInfo.getPhone();
         if (cellphone == null) {
             mCellphoneTextView.setText(R.string.cellphone_not_exist);
             mGetVerificationCodeTextView.setEnabled(false);
             mNextButton.setEnabled(false);
+        } else {
+            mCellphoneTextView.setText(cellphone.substring(0, 3) + "XXXX" + cellphone.substring(7));
+            mGetVerificationCodeTextView.setEnabled(true);
+            mNextButton.setEnabled(true);
         }
     }
 
@@ -110,6 +119,10 @@ public class ChangeCellphoneActivity extends BaseActivity {
         }
         if (!AccountValidatorUtil.isMobile(cellphone)) {
             T.showLong(this, R.string.cellphone_invalid);
+            return;
+        }
+        if (!mUserRegisterInfo.getPhone().equals(cellphone)) {
+            T.showShort(this, R.string.cellphone_dismatch);
             return;
         }
 
@@ -167,7 +180,8 @@ public class ChangeCellphoneActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        ShortMessage shortMessage = new ShortMessage(cellphone, code);
+        ShortMessage shortMessage = new ShortMessage(
+                mUserRegisterInfo.getRegisterId(), cellphone, code, 0);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -181,15 +195,24 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.contains(ServiceConstant.USER_PHONE)) {
+                        if (response.equals(REQUEST_SUCCESS)) {
                             Intent intent = NewCellphoneActivity.getIntent(ChangeCellphoneActivity.this);
-                            startActivity(intent);
+                            startActivityForResult(intent, REQUEST_CHANGE_CELLPHONE);
                         } else {
                             T.showShort(ChangeCellphoneActivity.this, R.string.validate_failed);
                         }
                         mNextButton.setEnabled(true);
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CHANGE_CELLPHONE) {
+                finish();
+            }
+        }
     }
 
     @Override

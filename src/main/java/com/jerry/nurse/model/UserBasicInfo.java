@@ -23,9 +23,7 @@ public class UserBasicInfo extends DataSupport {
      * Education :
      * IDCard :
      * MeritalStatus :
-     * Name :
      * Nation :
-     * Phone : 18709269196
      * Province :
      * QQ :
      * Region :
@@ -41,9 +39,7 @@ public class UserBasicInfo extends DataSupport {
     private String Education;
     private String IDCard;
     private String MeritalStatus;
-    private String Name;
     private String Nation;
-    private String Phone;
     private String Province;
     private String QQ;
     private String Region;
@@ -114,13 +110,6 @@ public class UserBasicInfo extends DataSupport {
         this.MeritalStatus = MeritalStatus;
     }
 
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String Name) {
-        this.Name = Name;
-    }
 
     public String getNation() {
         return Nation;
@@ -128,14 +117,6 @@ public class UserBasicInfo extends DataSupport {
 
     public void setNation(String Nation) {
         this.Nation = Nation;
-    }
-
-    public String getPhone() {
-        return Phone;
-    }
-
-    public void setPhone(String Phone) {
-        this.Phone = Phone;
     }
 
     public String getProvince() {

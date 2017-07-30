@@ -126,12 +126,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:layout_marginLeft">@dimen/signup_edit_marginLeft</item>
+        <item name="android:layout_marginLeft">@dimen/certificate_edit_marginLeft</item>
         <item name="android:background">@drawable/edit_no_border</item>
-        <item name="android:lines">1</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
         <item name="android:paddingLeft">@dimen/line_paddingLeft</item>
         <item name="android:paddingRight">@dimen/line_paddingLeft</item>
-        <item name="android:textColor">@color/normal_textColor</item>
+        <item name="android:textColor">@color/gray_textColor</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:textSize">@dimen/normal_textSize</item>
         <item name="android:gravity">center_vertical|right</item>

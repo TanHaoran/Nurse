@@ -58,6 +58,7 @@
     <string name="get_verification_finished">验证码已发送</string>
     <string name="cellphone_empty">手机号不能为空</string>
     <string name="cellphone_invalid">手机号不合法</string>
+    <string name="cellphone_dismatch">手机号不匹配</string>
     <string name="verification_code_invalid">验证码不正确</string>
     <string name="verification_code_length_invalid">验证码长度不正确</string>
     <string name="password_length_invalid">密码长度应在4和10之间</string>
@@ -132,6 +133,7 @@
     <string name="tips">提示</string>
     <string name="this_is_the_last_version">当前已经是最新版本</string>
     <string name="found_new_version">发现新版本</string>
+    <string name="submit_success_please_wait">信息提交成功，请耐心等待审核</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

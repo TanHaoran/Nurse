@@ -129,10 +129,10 @@
         </activity>
         <activity android:name=".activity.ChangePasswordActivity">
         </activity>
-        <activity android:name=".activity.ProfessionalCertificateEditActivity">
+        <activity android:name=".activity.ProfessionalCertificateActivity">
         </activity>
 
-        <activity android:name=".activity.PractisingCertificateEditActivity">
+        <activity android:name=".activity.PractisingCertificateActivity">
         </activity>
 
         <!-- 注册SDKActivity -->

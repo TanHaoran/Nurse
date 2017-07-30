@@ -266,7 +266,7 @@ public class LoginActivity extends BaseActivity {
      * 获取用户信息
      */
     private void getUserInfo(final String cellphone) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_PHONE)
                 .addParams("Phone", cellphone)
                 .build()
                 .execute(new FilterStringCallback() {

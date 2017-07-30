@@ -13,20 +13,31 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.Poi;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.jerry.nurse.R;
+import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.Country;
 import com.jerry.nurse.model.Hospital;
+import com.jerry.nurse.model.UserBasicInfo;
+import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
+import okhttp3.Call;
 
 
 public class HospitalActivity extends BaseActivity {
@@ -67,11 +78,56 @@ public class HospitalActivity extends BaseActivity {
             }
         });
 
-        mHospitals = new ArrayList();
-        for (int i = 0; i < 20; i++) {
-            Hospital hospital = new Hospital("医院" + i);
-            mHospitals.add(hospital);
-        }
+        mLocationClient = new LocationClient(getApplicationContext());
+        //声明LocationClient类
+        mLocationClient.registerLocationListener(myListener);
+        //注册监听函数
+        initLocation();
+        // mLocationClient.start();
+        getNearbyHospital("34.274f", "108.943f");
+    }
+
+
+    /**
+     * 获取附近的医院
+     *
+     * @param lat
+     * @param lng
+     */
+    private void getNearbyHospital(String lat, String lng) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_INFO)
+                .addParams("lat", lat)
+                .addParams("lng", lng)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        try {
+                            mHospitals = new Gson().fromJson(response,
+                                    new TypeToken<List<Hospital>>() {
+                                    }.getType());
+                            L.i("读取到" + mHospitals.size() + "家医院");
+                            if (mHospitals != null) {
+                                setHospitalData();
+                            }
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取附近医院失败");
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 设置医院列表数据
+     */
+    private void setHospitalData() {
 
         mAdapter = new HospitalAdapter(this, R.layout.item_string, mHospitals);
 
@@ -81,13 +137,6 @@ public class HospitalActivity extends BaseActivity {
                 getResources().getColor(R.color.divider_line)));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
-
-        mLocationClient = new LocationClient(getApplicationContext());
-        //声明LocationClient类
-        mLocationClient.registerLocationListener(myListener);
-        //注册监听函数
-        initLocation();
-//        mLocationClient.start();
     }
 
     private void initLocation() {

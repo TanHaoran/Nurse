@@ -30,6 +30,8 @@ import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.crud.DataSupport;
+
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindString;
@@ -91,8 +93,6 @@ public class SignupActivity extends BaseActivity {
 
     // 是否同意协议
     private boolean mIsAgree = true;
-
-    private String mErrorMessage;
 
     private int mType = EXTRA_TYPE_REGISTER;
 
@@ -229,11 +229,6 @@ public class SignupActivity extends BaseActivity {
 
         String errorMessage = localValidate(cellphone, verificationCode);
 
-        if (errorMessage != null) {
-            T.showLong(this, mErrorMessage);
-            return;
-        }
-
         // 勾选同意
         if (!mIsAgree) {
             T.showLong(this, R.string.please_agree);
@@ -257,7 +252,9 @@ public class SignupActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        ShortMessage shortMessage = new ShortMessage(cellphone, code);
+        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        ShortMessage shortMessage = new ShortMessage(
+                userRegisterInfo.getRegisterId(), cellphone, code, 0);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -402,7 +399,7 @@ public class SignupActivity extends BaseActivity {
      * 获取用户注册信息
      */
     private void getUserRegisterInfo(final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_PHONE)
                 .addParams("RegisterId", registerId)
                 .build()
                 .execute(new FilterStringCallback() {

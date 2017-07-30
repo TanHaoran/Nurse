@@ -130,7 +130,8 @@ public class PersonalInfoActivity extends BaseActivity {
         updateRegisterInfo();
         updateBasicInfo();
         updateProfessionalCertificateInfo();
-        updatePractisingCertificateInfo();;
+        updatePractisingCertificateInfo();
+        ;
         updateHospitalInfo();
 
         // 获取用户各类信息
@@ -159,7 +160,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        updateBasicInfo();
                     }
 
                     @Override
@@ -168,12 +168,13 @@ public class PersonalInfoActivity extends BaseActivity {
                             mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
                             if (mBasicInfo != null) {
                                 // 更新个人基本信息
+
+                                L.i("服务读取的生日是：" + DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
                                 UserUtil.saveBasicInfo(mBasicInfo);
                                 updateBasicInfo();
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取基本信息失败");
-                            updateBasicInfo();
                             e.printStackTrace();
                         }
                     }
@@ -192,7 +193,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        updateProfessionalCertificateInfo();
                     }
 
                     @Override
@@ -207,7 +207,6 @@ public class PersonalInfoActivity extends BaseActivity {
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取执业证信息失败");
-                            updateProfessionalCertificateInfo();
                             e.printStackTrace();
                         }
                     }
@@ -227,7 +226,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        updatePractisingCertificateInfo();
                     }
 
                     @Override
@@ -241,7 +239,6 @@ public class PersonalInfoActivity extends BaseActivity {
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取专业技术资格证信息失败");
-                            updatePractisingCertificateInfo();
                             e.printStackTrace();
                         }
                     }
@@ -260,7 +257,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        updateHospitalInfo();
                     }
 
                     @Override
@@ -274,7 +270,6 @@ public class PersonalInfoActivity extends BaseActivity {
                             }
                         } catch (JsonSyntaxException e) {
                             L.i("获取医院信息失败");
-                            updateHospitalInfo();
                             e.printStackTrace();
                         }
                     }
@@ -316,6 +311,7 @@ public class PersonalInfoActivity extends BaseActivity {
                 mSexTextView.setText(mBasicInfo.getSex());
             }
             if (!TextUtils.isEmpty(mBasicInfo.getBirthday())) {
+                L.i("数据库读取的生日是：" + DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
                 mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
             }
 
@@ -325,6 +321,7 @@ public class PersonalInfoActivity extends BaseActivity {
                         @Override
                         public void onDateSelected(Date date) {
                             mBasicInfo.setBirthday(DateUtil.parseDateToMysqlDate(date));
+                            L.i("设置的生日是：" + DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
                             postUserBasicInfo();
                         }
                     }
@@ -449,7 +446,7 @@ public class PersonalInfoActivity extends BaseActivity {
     @OnClick(R.id.rl_professional_certificate)
     void onNurseCertificate(View view) {
         Intent intent = NoCertificateActivity.getIntent(this, NoCertificateActivity.PROFESSIONAL_CERTIFICATE);
-        startActivityForResult(intent, REQUEST_PROFESSIONAL_CERTIFICATE_INFO);
+        startActivity(intent);
     }
 
     /**
@@ -460,7 +457,7 @@ public class PersonalInfoActivity extends BaseActivity {
     @OnClick(R.id.rl_practising_certificate)
     void onNursePractisingCertificate(View view) {
         Intent intent = NoCertificateActivity.getIntent(this, NoCertificateActivity.PRACTISING_CERTIFICATE);
-        startActivityForResult(intent, REQUEST_PRACTISING_CERTIFICATE_INFO);
+        startActivity(intent);
     }
 
     @OnClick(R.id.rl_hospital)

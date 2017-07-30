@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="@dimen/sex_toggle_width"
+                android:layout_height="@dimen/sex_toggle_height"
+                android:background="@drawable/sex_bg">
+
+    <TextView
+        android:id="@+id/tv_male"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/sex_toggle_text_margin"
+        android:text="@string/male"
+        android:textColor="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
+
+    <TextView
+        android:id="@+id/tv_female"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/sex_toggle_text_margin"
+        android:text="@string/female"
+        android:textColor="@color/gray_textColor"
+        android:textSize="@dimen/normal_textSize"/>
+
+    <ImageView
+        android:id="@+id/iv_female"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/sex_round"/>
+
+
+</RelativeLayout>
