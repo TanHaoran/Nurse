@@ -83,6 +83,10 @@
     <string name="message_can_not_be_empty">发送消息不能为空</string>
     <string name="my_collection">我的收藏</string>
     <string name="my_contact">我的联系人</string>
+    <string name="press_and_record">按住录音</string>
+    <string name="up_and_cancel">手指上划，取消发送</string>
+    <string name="loosen_and_cancel">松开手指，取消发送</string>
+    <string name="voice_too_short">录音时间过短</string>
 
     <!--我的-->
     <string name="mine">我的</string>
