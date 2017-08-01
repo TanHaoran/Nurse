@@ -1,6 +1,7 @@
 package com.jerry.nurse.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class CountryActivity extends BaseActivity {
     private List<Country> mCountries;
 
     private String mCountryCode;
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context, String countryCode) {
         Intent intent = new Intent(context, CountryActivity.class);
@@ -56,6 +58,15 @@ public class CountryActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         mCountryCode = getIntent().getStringExtra(EXTRA_COUNTRY_CODE);
         getCountries();
     }

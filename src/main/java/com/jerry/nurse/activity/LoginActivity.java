@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,6 +94,7 @@ public class LoginActivity extends BaseActivity {
             }
         }
     };
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -106,6 +108,15 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         // 入口处判断用户是否已经登陆
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
         if (!registerId.equals("-1")) {

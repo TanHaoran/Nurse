@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ public class InputActivity extends BaseActivity {
 
     private UserRegisterInfo mUserRegisterInfo;
     private UserHospitalInfo mUserHospitalInfo;
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, InputActivity.class);
@@ -62,6 +64,14 @@ public class InputActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
 
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
 

@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
@@ -48,6 +48,7 @@ public class PasswordActivity extends BaseActivity {
 
     private String mCellphone;
     private String mRegisterId;
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context, String title, String cellphone, String registerId) {
         Intent intent = new Intent(context, PasswordActivity.class);
@@ -65,6 +66,15 @@ public class PasswordActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         mCellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
         mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
@@ -111,10 +121,13 @@ public class PasswordActivity extends BaseActivity {
     private void setPassword(final String cellphone, String password) {
         mProgressDialog.setMessage("请稍后...");
         mProgressDialog.show();
-        Register register = new Register(cellphone, password);
+        UserRegisterInfo info = new UserRegisterInfo();
+        info.setRegisterId(mRegisterId);
+        info.setPhone(cellphone);
+        info.setPassword(password);
         OkHttpUtils.postString()
-                .url(ServiceConstant.SET_PASSWORD)
-                .content(StringUtil.addModelWithJson(register))
+                .url(ServiceConstant.UPDATE_REGISTER_INFO)
+                .content(StringUtil.addModelWithJson(info))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
                 .execute(new FilterStringCallback() {

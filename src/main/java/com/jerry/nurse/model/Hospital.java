@@ -6,12 +6,20 @@ package com.jerry.nurse.model;
 
 public class Hospital {
 
+    private String HospitalId;
     private String Name;
-    private String Address;
 
-    public Hospital(String name, String address) {
+    public Hospital(String hospitalId, String name) {
+        HospitalId = hospitalId;
         Name = name;
-        Address = address;
+    }
+
+    public String getHospitalId() {
+        return HospitalId;
+    }
+
+    public void setHospitalId(String hospitalId) {
+        HospitalId = hospitalId;
     }
 
     public String getName() {
@@ -20,13 +28,5 @@ public class Hospital {
 
     public void setName(String name) {
         Name = name;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
     }
 }

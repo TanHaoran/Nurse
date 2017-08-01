@@ -1,12 +1,9 @@
 package com.jerry.nurse.fragment;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -17,17 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.activity.ChatActivity;
-import com.jerry.nurse.adapter.MeituanAdapter;
+import com.jerry.nurse.adapter.ContactAdapter;
 import com.jerry.nurse.model.Contact;
-import com.jerry.nurse.model.MeiTuanBean;
-import com.jerry.nurse.model.MeituanHeaderBean;
+import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.MeituanTopHeaderBean;
-import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -55,17 +48,16 @@ public class ContactFragment extends Fragment {
     @Bind(R.id.indexBar)
     IndexBar mIndexBar;
 
-
     private LinearLayoutManager mManager;
 
     //设置给InexBar、ItemDecoration的完整数据集
     private List<BaseIndexPinyinBean> mSourceDatas;
     //头部数据源
-    private List<MeituanHeaderBean> mHeaderDatas;
+    private List<ContactHeaderBean> mHeaderDatas;
     //主体部分数据源（城市数据）
-    private List<MeiTuanBean> mBodyDatas;
+    private List<Contact> mBodyDatas;
 
-    private MeituanAdapter mAdapter;
+    private ContactAdapter mAdapter;
     private HeaderRecyclerAndFooterWrapperAdapter mHeaderAdapter;
 
     private SuspensionDecoration mDecoration;
@@ -92,16 +84,17 @@ public class ContactFragment extends Fragment {
 
         mSourceDatas = new ArrayList<>();
         mHeaderDatas = new ArrayList<>();
-        List<String> locationCity = new ArrayList<>();
-        locationCity.add("定位中");
-        mHeaderDatas.add(new MeituanHeaderBean(locationCity, "定位城市", "定"));
-        List<String> recentCitys = new ArrayList<>();
-        mHeaderDatas.add(new MeituanHeaderBean(recentCitys, "最近访问城市", "近"));
-        List<String> hotCitys = new ArrayList<>();
-        mHeaderDatas.add(new MeituanHeaderBean(hotCitys, "热门城市", "热"));
+        List<Contact> collections = new ArrayList<>();
+        Contact contact = new Contact();
+        contact.setNickName("联系人1");
+        Contact contact2 = new Contact();
+        contact2.setNickName("联系人2");
+        collections.add(contact);
+        collections.add(contact2);
+        mHeaderDatas.add(new ContactHeaderBean(collections, "收藏联系人", "收"));
         mSourceDatas.addAll(mHeaderDatas);
 
-        mAdapter = new MeituanAdapter(getActivity(), R.layout.meituan_item_select_city, mBodyDatas);
+        mAdapter = new ContactAdapter(getActivity(), R.layout.meituan_item_select_city, mBodyDatas);
 
         mHeaderAdapter = new HeaderRecyclerAndFooterWrapperAdapter(mAdapter) {
 
@@ -109,27 +102,35 @@ public class ContactFragment extends Fragment {
             protected void onBindHeaderHolder(com.jerry.nurse.util.ViewHolder holder, int headerPos, int layoutId, Object o) {
                 switch (layoutId) {
                     case R.layout.meituan_item_header:
-                        final MeituanHeaderBean meituanHeaderBean = (MeituanHeaderBean) o;
+                        final ContactHeaderBean contactHeaderBean = (ContactHeaderBean) o;
                         //网格
                         RecyclerView recyclerView = holder.getView(R.id.rvCity);
                         recyclerView.setAdapter(
-                                new CommonAdapter<String>(getActivity(), R.layout.meituan_item_header_item, meituanHeaderBean.getCityList()) {
+                                new CommonAdapter<Contact>(getActivity(), R.layout.meituan_item_header_item, contactHeaderBean.getCityList()) {
                                     @Override
-                                    public void convert(ViewHolder holder, final String cityName) {
-                                        holder.setText(R.id.tvName, cityName);
+                                    public void convert(ViewHolder holder, final Contact contact) {
+                                        holder.setText(R.id.tvName, contact.getNickName());
                                         holder.getConvertView().setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Toast.makeText(mContext, "cityName:" + cityName, Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(mContext, "昵称:" + contact.getNickName(),
+                                                        Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
                                 });
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         break;
                     case R.layout.meituan_item_header_top:
-                        MeituanTopHeaderBean meituanTopHeaderBean = (MeituanTopHeaderBean) o;
+                        final MeituanTopHeaderBean meituanTopHeaderBean = (MeituanTopHeaderBean) o;
                         holder.setText(R.id.tvCurrent, meituanTopHeaderBean.getTxt());
+                        holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getActivity(), meituanTopHeaderBean.getTxt(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         break;
                     default:
                         break;
@@ -137,10 +138,9 @@ public class ContactFragment extends Fragment {
             }
         };
 
-        mHeaderAdapter.setHeaderView(0, R.layout.meituan_item_header_top, new MeituanTopHeaderBean("当前：上海徐汇"));
-        mHeaderAdapter.setHeaderView(1, R.layout.meituan_item_header, mHeaderDatas.get(0));
-        mHeaderAdapter.setHeaderView(2, R.layout.meituan_item_header, mHeaderDatas.get(1));
-        mHeaderAdapter.setHeaderView(3, R.layout.meituan_item_header, mHeaderDatas.get(2));
+        mHeaderAdapter.setHeaderView(0, R.layout.meituan_item_header_top, new MeituanTopHeaderBean("全院"));
+        mHeaderAdapter.setHeaderView(1, R.layout.meituan_item_header_top, new MeituanTopHeaderBean("当前科室"));
+        mHeaderAdapter.setHeaderView(2, R.layout.meituan_item_header, mHeaderDatas.get(0));
 
 
         mRv.setAdapter(mHeaderAdapter);
@@ -168,61 +168,24 @@ public class ContactFragment extends Fragment {
      * @return
      */
     private void initDatas(final String[] data) {
-        //延迟两秒 模拟加载数据中....
-        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mBodyDatas = new ArrayList<>();
-                for (int i = 0; i < data.length; i++) {
-                    MeiTuanBean cityBean = new MeiTuanBean();
-                    cityBean.setCity(data[i]);//设置城市名称
-                    mBodyDatas.add(cityBean);
-                }
-                //先排序
-                mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
+        mBodyDatas = new ArrayList<>();
+        for (int i = 0; i < data.length; i++) {
+            Contact cityBean = new Contact();
+            cityBean.setNickName(data[i]);//设置城市名称
+            mBodyDatas.add(cityBean);
+        }
+        //先排序
+        mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 
-                mAdapter.setDatas(mBodyDatas);
-                mHeaderAdapter.notifyDataSetChanged();
-                mSourceDatas.addAll(mBodyDatas);
+        mAdapter.setDatas(mBodyDatas);
+        mHeaderAdapter.notifyDataSetChanged();
+        mSourceDatas.addAll(mBodyDatas);
 
-                mIndexBar.setmSourceDatas(mSourceDatas)//设置数据
-                        .invalidate();
-                mDecoration.setmDatas(mSourceDatas);
-            }
-        }, 1000);
 
-        //延迟两秒加载头部
-        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MeituanHeaderBean header1 = mHeaderDatas.get(0);
-                header1.getCityList().clear();
-                header1.getCityList().add("上海");
+        mIndexBar.setmSourceDatas(mSourceDatas)//设置数据
+                .invalidate();
+        mDecoration.setmDatas(mSourceDatas);
 
-                MeituanHeaderBean header2 = mHeaderDatas.get(1);
-                List<String> recentCitys = new ArrayList<>();
-                recentCitys.add("日本");
-                recentCitys.add("北京");
-                header2.setCityList(recentCitys);
-
-                MeituanHeaderBean header3 = mHeaderDatas.get(2);
-                List<String> hotCitys = new ArrayList<>();
-                hotCitys.add("上海");
-                hotCitys.add("北京");
-                hotCitys.add("杭州");
-                hotCitys.add("广州");
-                hotCitys.add("广州");
-                hotCitys.add("广州");
-                hotCitys.add("广州");
-                hotCitys.add("广州");
-                header3.setCityList(hotCitys);
-
-                mHeaderAdapter.notifyItemRangeChanged(1, 3);
-
-            }
-        }, 2000);
-
+        mHeaderAdapter.notifyDataSetChanged();
     }
-
-
 }

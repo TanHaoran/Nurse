@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,26 +19,31 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.Country;
 import com.jerry.nurse.model.Hospital;
-import com.jerry.nurse.model.UserBasicInfo;
+import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import java.util.ArrayList;
+import org.litepal.crud.DataSupport;
+
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import okhttp3.Call;
+import okhttp3.MediaType;
+
+import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 
 public class HospitalActivity extends BaseActivity {
@@ -57,6 +63,7 @@ public class HospitalActivity extends BaseActivity {
 
     public LocationClient mLocationClient = null;
     public BDLocationListener myListener = new MyLocationListener();
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, HospitalActivity.class);
@@ -70,6 +77,15 @@ public class HospitalActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         mTitleBar.setTitle(mTitle);
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -96,7 +112,7 @@ public class HospitalActivity extends BaseActivity {
      */
     private void getNearbyHospital(String lat, String lng) {
         mProgressDialog.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_LIST)
                 .addParams("lat", lat)
                 .addParams("lng", lng)
                 .build()
@@ -104,15 +120,16 @@ public class HospitalActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         try {
                             mHospitals = new Gson().fromJson(response,
                                     new TypeToken<List<Hospital>>() {
                                     }.getType());
-                            L.i("读取到" + mHospitals.size() + "家医院");
                             if (mHospitals != null) {
                                 setHospitalData();
                             }
@@ -131,12 +148,60 @@ public class HospitalActivity extends BaseActivity {
 
         mAdapter = new HospitalAdapter(this, R.layout.item_string, mHospitals);
 
+        mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                postHospital(mHospitals.get(position));
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                return false;
+            }
+        });
+
         // 设置间隔线
         mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
                 getResources().getColor(R.color.divider_line)));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * 更新医院信息
+     *
+     * @param hospitalId
+     */
+    private void postHospital(Hospital hospitalId) {
+        final UserHospitalInfo userHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+        userHospitalInfo.setHospitalId(hospitalId.getHospitalId());
+        userHospitalInfo.setHospitalName(hospitalId.getName());
+        mProgressDialog.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_HOSPITAL_INFO)
+                .content(StringUtil.addModelWithJson(userHospitalInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            UserUtil.saveHospitalInfo(userHospitalInfo);
+                            T.showShort(HospitalActivity.this, R.string.submit_success);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            L.i("保存失败");
+                        }
+                    }
+                });
     }
 
     private void initLocation() {

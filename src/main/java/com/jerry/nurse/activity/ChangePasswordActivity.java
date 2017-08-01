@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @Bind(R.id.et_new_password)
     EditText mNewPasswordEditText;
+    private ProgressDialog mProgressDialog;
 
 
     public static Intent getIntent(Context context) {
@@ -47,6 +49,14 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
     }
 
     @OnClick(R.id.acb_change_password)
@@ -89,10 +99,12 @@ public class ChangePasswordActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         if (response.equals(REQUEST_SUCCESS)) {
                             T.showShort(ChangePasswordActivity.this, R.string.password_change_success);
                             finish();

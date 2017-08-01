@@ -74,6 +74,8 @@
     <string name="nurse_class">护士学堂</string>
     <string name="credit_check">学分查看</string>
     <string name="schedule_check">排班查看</string>
+    <string name="announcement">公告</string>
+    <string name="more">更多</string>
 
     <!--联系人-->
     <string name="contact">联系人</string>
@@ -101,7 +103,7 @@
     <string name="clear_cache">清除缓存</string>
     <string name="clear_finish">清除完毕</string>
     <string name="date_invalid">日期格式有误</string>
-    <string name="no_certificate">您还未认证哦</string>
+    <string name="no_certificate">您还未进行认证哦</string>
     <string name="go_certificate">去认证</string>
     <string name="id_number">编号</string>
     <string name="management_number">管理号</string>
@@ -111,7 +113,9 @@
     <string name="approve_date">批准日期</string>
     <string name="sign_organization">签发单位</string>
     <string name="sign_date">签发日期</string>
-    <string name="please_upload_picture">请上传资格证清晰照片</string>
+    <string name="please_upload_professional_picture">(请上传资格证清晰照片)</string>
+    <string name="please_upload_practising_picture">(请上传执业证清晰照片)</string>
+    <string name="please_upload_picture">(请上传清晰照片)</string>
     <string name="certificate_page_1">证件页1</string>
     <string name="certificate_page_2">证件页2</string>
     <string name="certificate_page_3">证件页3</string>
@@ -134,6 +138,12 @@
     <string name="this_is_the_last_version">当前已经是最新版本</string>
     <string name="found_new_version">发现新版本</string>
     <string name="submit_success_please_wait">信息提交成功，请耐心等待审核</string>
+    <string name="audit_failed_please">认证未通过，请</string>
+    <string name="audit_again">重新认证</string>
+    <string name="upload_failed">上传失败</string>
+    <string name="audit_failed_text">认证未通过原因</string>
+    <string name="scan_qr_code_and_be_my_friend">扫描上面的二维码，添加我为好友</string>
+    <string name="please_select_hospital_first">请先选择医院</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

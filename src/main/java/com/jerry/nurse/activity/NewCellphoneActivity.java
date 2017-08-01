@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,6 +77,7 @@ public class NewCellphoneActivity extends BaseActivity {
     };
 
     private Handler mHandler = new Handler();
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, NewCellphoneActivity.class);
@@ -89,6 +91,15 @@ public class NewCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
         String cellphone = mUserRegisterInfo.getPhone();
         if (cellphone == null) {
@@ -165,7 +176,7 @@ public class NewCellphoneActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
         ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, 1);
+                mUserRegisterInfo.getRegisterId(), cellphone, code, 3);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))

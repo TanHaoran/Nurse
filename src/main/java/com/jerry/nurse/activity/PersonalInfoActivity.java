@@ -1,20 +1,23 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
-import com.jerry.nurse.listener.PhotoSelectListener;
+import com.jerry.nurse.listener.OnPhotoSelectListener;
 import com.jerry.nurse.model.UserBasicInfo;
 import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.model.UserPractisingCertificateInfo;
@@ -25,13 +28,16 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
-import com.jerry.nurse.view.CircleImageView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -39,18 +45,19 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
+import static com.jerry.nurse.constant.ServiceConstant.USER_FILE;
 
 public class PersonalInfoActivity extends BaseActivity {
 
     public static final int REQUEST_REGISTER_INFO = 0x00000101;
     public static final int REQUEST_BASIC_INFO = 0x00000102;
-    public static final int REQUEST_PROFESSIONAL_CERTIFICATE_INFO = 0x00000103;
-    public static final int REQUEST_PRACTISING_CERTIFICATE_INFO = 0x00000104;
     public static final int REQUEST_HOSPITAL_INFO = 0x00000105;
 
     @Bind(R.id.civ_avatar)
-    CircleImageView mAvatarView;
+    ImageView mAvatarView;
 
     @Bind(R.id.rl_avatar)
     RelativeLayout mAvatarLayout;
@@ -105,6 +112,9 @@ public class PersonalInfoActivity extends BaseActivity {
 
     private String mRegisterId;
 
+    private Bitmap mAvatarBitmap;
+    private ProgressDialog mProgressDialog;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalInfoActivity.class);
         return intent;
@@ -117,11 +127,21 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         // 设置图片
-        setPhotoSelectListener(mAvatarLayout, new PhotoSelectListener() {
+        setPhotoSelectListener(mAvatarLayout, 0, new OnPhotoSelectListener() {
             @Override
-            public void onPhotoSelected(Bitmap bitmap) {
-                mAvatarView.setImageBitmap(bitmap);
+            public void onPhotoSelected(Bitmap bitmap, File file) {
+                mAvatarBitmap = bitmap;
+                postUserAvatar(file);
             }
         });
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
@@ -131,7 +151,6 @@ public class PersonalInfoActivity extends BaseActivity {
         updateBasicInfo();
         updateProfessionalCertificateInfo();
         updatePractisingCertificateInfo();
-        ;
         updateHospitalInfo();
 
         // 获取用户各类信息
@@ -160,10 +179,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         try {
                             mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
                             if (mBasicInfo != null) {
@@ -193,10 +214,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         try {
                             mProfessionalCertificateInfo = new Gson().fromJson(response, UserProfessionalCertificateInfo.class);
 
@@ -226,10 +249,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         try {
                             mPractisingCertificateInfo = new Gson().fromJson(response, UserPractisingCertificateInfo.class);
                             if (mPractisingCertificateInfo != null) {
@@ -257,10 +282,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         try {
                             mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
                             if (mHospitalInfo != null) {
@@ -276,6 +303,77 @@ public class PersonalInfoActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 上传头像
+     *
+     * @param file
+     */
+    private void postUserAvatar(File file) {
+        mProgressDialog.show();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "*/*");
+        OkHttpUtils.post()
+                .addFile("avatar", file.getName(), file)
+                .url(ServiceConstant.UPLOAD_AVATAR)
+                .headers(headers)
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    protected void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.startsWith(USER_FILE)) {
+                            if (response.split(USER_COLON).length == 2) {
+                                String name = response.split(USER_COLON)[1];
+                                postAvatar(name);
+                            }
+                        } else {
+                            L.i("上传头像失败");
+                            T.showShort(PersonalInfoActivity.this, R.string.upload_failed);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 设置头像
+     *
+     * @param name
+     */
+    void postAvatar(String name) {
+        mProgressDialog.show();
+        mRegisterInfo.setAvatar(name);
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_REGISTER_INFO)
+                .content(StringUtil.addModelWithJson(mRegisterInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            L.i("设置头像成功");
+                            mAvatarView.setImageBitmap(mAvatarBitmap);
+                            // 设置成功后更新数据库
+                            UserUtil.saveRegisterInfo(PersonalInfoActivity.this, mRegisterInfo);
+                            updateRegisterInfo();
+                        } else {
+                            L.i("设置头像失败");
+                        }
+                    }
+                });
+    }
+
 
     /**
      * 更新用户注册信息
@@ -284,14 +382,16 @@ public class PersonalInfoActivity extends BaseActivity {
 
         mRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
 
-
         if (mRegisterInfo != null) {
+            // 设置头像
             if (!TextUtils.isEmpty(mRegisterInfo.getAvatar())) {
-
+                Glide.with(this).load(AVATAR_ADDRESS + mRegisterInfo.getAvatar()).into(mAvatarView);
             }
+            // 设置姓名
             if (!TextUtils.isEmpty(mRegisterInfo.getName())) {
                 mNameTextView.setText(mRegisterInfo.getName());
             }
+            // 设置昵称
             if (!TextUtils.isEmpty(mRegisterInfo.getNickName())) {
                 mNicknameTextView.setText(mRegisterInfo.getNickName());
             }
@@ -366,6 +466,12 @@ public class PersonalInfoActivity extends BaseActivity {
         mHospitalInfo = DataSupport.findLast(UserHospitalInfo.class);
 
         if (mHospitalInfo != null) {
+            if (!TextUtils.isEmpty(mHospitalInfo.getHospitalName())) {
+                mHospitalTextView.setText(mHospitalInfo.getHospitalName());
+            }
+            if (!TextUtils.isEmpty(mHospitalInfo.getDepartmentName())) {
+                mOfficeTextView.setText(mHospitalInfo.getDepartmentName());
+            }
             if (!TextUtils.isEmpty(mHospitalInfo.getEmployeeId())) {
                 mJobNumberTextView.setText(mHospitalInfo.getEmployeeId());
             }
@@ -460,18 +566,37 @@ public class PersonalInfoActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    /**
+     * 修改医院信息
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_hospital)
     void onHospital(View view) {
         Intent intent = HospitalActivity.getIntent(this);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_HOSPITAL_INFO);
     }
 
+    /**
+     * 修改科室信息
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_office)
     void onOffice(View view) {
-        Intent intent = OfficeActivity.getIntent(this);
-        startActivity(intent);
+        if (!TextUtils.isEmpty(mHospitalInfo.getHospitalId())) {
+            Intent intent = OfficeActivity.getIntent(this);
+            startActivityForResult(intent, REQUEST_HOSPITAL_INFO);
+        } else {
+            T.showShort(this, R.string.please_select_hospital_first);
+        }
     }
 
+    /**
+     * 修改工号
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_job_number)
     void onJobNumber(View view) {
         Intent intent = InputActivity.getIntent(this, "工号");
@@ -481,6 +606,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             // 通过回调类型更新界面
             if (requestCode == REQUEST_REGISTER_INFO) {

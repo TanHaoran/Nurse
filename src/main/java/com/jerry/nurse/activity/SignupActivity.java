@@ -1,6 +1,7 @@
 package com.jerry.nurse.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,11 +31,8 @@ import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import org.litepal.crud.DataSupport;
-
 import butterknife.Bind;
 import butterknife.BindColor;
-import butterknife.BindString;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -140,6 +138,7 @@ public class SignupActivity extends BaseActivity {
             }
         }
     };
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, SignupActivity.class);
@@ -155,6 +154,15 @@ public class SignupActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
 
         mType = getIntent().getIntExtra(EXTRA_SIGNUP_TYPE, -1);
 
@@ -194,8 +202,17 @@ public class SignupActivity extends BaseActivity {
 
         mProgressDialog.setMessage("发送验证码...");
         mProgressDialog.show();
+        int type = 0;
+        if (mType == EXTRA_TYPE_REGISTER) {
+            type = 0;
+        } else if (mType == EXTRA_TYPE_FORGET_PASSWORD) {
+            type = 2;
+        } else if (mType == EXTRA_TYPE_VERIFICATION_CODE) {
+            type = 1;
+        }
         OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                 .addParams("Phone", cellphone)
+                .addParams("Type", String.valueOf(type))
                 .build()
                 .execute(new FilterStringCallback() {
 
@@ -252,9 +269,17 @@ public class SignupActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        int type = 0;
+        if (mType == EXTRA_TYPE_REGISTER) {
+            type = 0;
+        } else if (mType == EXTRA_TYPE_FORGET_PASSWORD) {
+            type = 2;
+        } else if (mType == EXTRA_TYPE_VERIFICATION_CODE) {
+            type = 1;
+        }
+
         ShortMessage shortMessage = new ShortMessage(
-                userRegisterInfo.getRegisterId(), cellphone, code, 0);
+                "", cellphone, code, type);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -263,11 +288,13 @@ public class SignupActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                         onSignupFailed();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         // 第一种情况，用户已存在，要在环信登陆，下一步设置密码
                         if (response.contains(ServiceConstant.USER_PHONE)) {
                             L.i("用户已存在，准备环信登录");
@@ -399,7 +426,7 @@ public class SignupActivity extends BaseActivity {
      * 获取用户注册信息
      */
     private void getUserRegisterInfo(final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_PHONE)
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_ID)
                 .addParams("RegisterId", registerId)
                 .build()
                 .execute(new FilterStringCallback() {

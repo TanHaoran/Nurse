@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -28,9 +28,7 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
-import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 
 public class ChangeCellphoneActivity extends BaseActivity {
 
@@ -83,6 +81,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
     };
 
     private Handler mHandler = new Handler();
+    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, ChangeCellphoneActivity.class);
@@ -96,6 +95,15 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(this,
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
+
         mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
         String cellphone = mUserRegisterInfo.getPhone();
         if (cellphone == null) {
@@ -181,7 +189,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
         ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, 0);
+                mUserRegisterInfo.getRegisterId(), cellphone, code, 3);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -190,11 +198,13 @@ public class ChangeCellphoneActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
                         mNextButton.setEnabled(true);
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
                         if (response.equals(REQUEST_SUCCESS)) {
                             Intent intent = NewCellphoneActivity.getIntent(ChangeCellphoneActivity.this);
                             startActivityForResult(intent, REQUEST_CHANGE_CELLPHONE);

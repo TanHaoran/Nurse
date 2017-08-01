@@ -62,14 +62,15 @@ public class MessageFragment extends BaseFragment {
         mContacts = new ArrayList<>();
         for (int i = 0; i < mNames.length; i++) {
             Contact c = new Contact();
-            c.setNickname(mNames[i]);
+            c.setNickName(mNames[i]);
             mContacts.add(c);
         }
 
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f), getResources().getColor(R.color.divider_line)));
+                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f),
+                getResources().getColor(R.color.divider_line)));
 
         mAdapter = new MessageAdapter(getActivity(), R.layout.item_contact, mContacts);
         mRecyclerView.setAdapter(mAdapter);
@@ -84,7 +85,7 @@ public class MessageFragment extends BaseFragment {
 
         @Override
         protected void convert(ViewHolder holder, Contact contact, final int position) {
-            holder.setText(R.id.tv_nickname, contact.getNickname());
+            holder.setText(R.id.tv_nickname, contact.getNickName());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

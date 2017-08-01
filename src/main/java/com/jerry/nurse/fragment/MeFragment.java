@@ -2,10 +2,15 @@ package com.jerry.nurse.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
@@ -13,6 +18,7 @@ import com.jerry.nurse.activity.SettingActivity;
 import com.jerry.nurse.model.UserPractisingCertificateInfo;
 import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
+import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.view.CircleImageView;
 import com.jerry.nurse.view.ValidatedView;
 
@@ -22,6 +28,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 
 /**
@@ -31,7 +38,7 @@ import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 public class MeFragment extends BaseFragment {
 
     @Bind(R.id.civ_avatar)
-    CircleImageView mAvatarImageView;
+    ImageView mAvatarImageView;
 
     @Bind(R.id.tv_name)
     TextView mNameTextView;
@@ -62,8 +69,8 @@ public class MeFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         // 初始化用户信息显示
         initUserInfo();
     }
@@ -80,12 +87,20 @@ public class MeFragment extends BaseFragment {
         UserPractisingCertificateInfo userPractisingCertificateInfo =
                 DataSupport.findFirst(UserPractisingCertificateInfo.class);
 
-        // TODO 设置头像
+        // 设置头像
+        if (!TextUtils.isEmpty(userRegisterInfo.getAvatar())) {
+            Glide.with(this).load(AVATAR_ADDRESS + userRegisterInfo.getAvatar()).into(mAvatarImageView);
+        }
+
         if (!TextUtils.isEmpty(userRegisterInfo.getName())) {
             mNameTextView.setText(userRegisterInfo.getName());
+        } else {
+            mNameTextView.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(userRegisterInfo.getNickName())) {
             mNicknameTextView.setText(userRegisterInfo.getNickName());
+        } else {
+            mNicknameTextView.setVisibility(View.GONE);
         }
 
         if (userProfessionalCertificateInfo != null &&
@@ -100,6 +115,24 @@ public class MeFragment extends BaseFragment {
     void onPersonalInfo(View view) {
         Intent intent = PersonalInfoActivity.getIntent(getActivity());
         startActivity(intent);
+    }
+
+    @OnClick(R.id.iv_qr_code)
+    void onQrCode(View view) {
+
+        View v = getActivity().getLayoutInflater().inflate(R.layout.view_qr_code, null);
+        ImageView qrCodeImageView = (ImageView) v.findViewById(R.id.iv_qr_code);
+        qrCodeImageView.setImageResource(R.drawable.erm);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        AlertDialog dialog = builder
+                .setView(v)
+                .setCancelable(true)
+                .create();
+        dialog.show();
+        //设置窗口的大小
+        dialog.getWindow().setLayout(DensityUtil.dp2px(getActivity(), 300),
+                DensityUtil.dp2px(getActivity(), 340));
     }
 
     @OnClick(R.id.rl_event_report)

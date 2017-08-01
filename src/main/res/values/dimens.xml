@@ -51,12 +51,16 @@
     <dimen name="login_signup_text_padding">10dp</dimen>
     <dimen name="login_edit_textSize">16sp</dimen>
 
-    <!--科室-->
-    <dimen name="plugin_line_height">60dp</dimen>
+    <!--院务-->
+    <dimen name="banner_height">150dp</dimen>
+    <dimen name="plugin_line_height">68dp</dimen>
     <dimen name="plugin_line_paddingLeft">10dp</dimen>
     <dimen name="plugin_line_text_marginLeft">20dp</dimen>
     <dimen name="plugin_title_textSize">16sp</dimen>
-    <dimen name="plugin_img_width">40dp</dimen>
+    <dimen name="plugin_img_width">50dp</dimen>
+    <dimen name="indicator_height">20dp</dimen>
+    <dimen name="announcement_height">55dp</dimen>
+    <dimen name="plugin_divider_line_marginLeft">70dp</dimen>
 
     <!--联系人-->
     <dimen name="contact_item_height">45dp</dimen>
@@ -73,7 +77,8 @@
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>
-    <dimen name="name_marginTop">28dp</dimen>
+    <dimen name="name_marginBottom">5dp</dimen>
+    <dimen name="valid_marginTop">28dp</dimen>
     <dimen name="nickname_marginBottom">19dp</dimen>
     <dimen name="block_marinTop">15dp</dimen>
     <dimen name="mine_plug_image_width">20dp</dimen>
@@ -87,9 +92,19 @@
     <dimen name="certificate_image_width">100dp</dimen>
     <dimen name="change_cellphone_edit_marginTop">40dp</dimen>
     <dimen name="certificate_edit_marginLeft">150dp</dimen>
-    <dimen name="sex_toggle_width">70dp</dimen>
+    <dimen name="sex_toggle_width">90dp</dimen>
     <dimen name="sex_toggle_height">35dp</dimen>
     <dimen name="sex_toggle_text_margin">15dp</dimen>
+    <dimen name="please_upload_text_marginBottom">7dp</dimen>
+    <dimen name="please_upload_picture_marginTop">10dp</dimen>
+    <dimen name="upload_picture_height">120dp</dimen>
+    <dimen name="upload_picture_marginBottom">4dp</dimen>
+    <dimen name="submit_success_text_marginTop">15dp</dimen>
+    <dimen name="audit_success_image_marginRight">50dp</dimen>
+    <dimen name="audit_success_image_marginTop">20dp</dimen>
+    <dimen name="qr_code_marginRight">40dp</dimen>
+    <dimen name="qr_code_width">30dp</dimen>
+    <dimen name="image_round_radius">5dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

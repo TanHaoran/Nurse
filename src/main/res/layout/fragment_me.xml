@@ -20,50 +20,77 @@
         style="@style/BusinessLineStyle"
         android:layout_height="@dimen/personal_info_height">
 
-        <com.jerry.nurse.view.CircleImageView
-            android:id="@+id/civ_avatar"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_avatar"
             android:layout_width="@dimen/personal_Info_avatar_width"
             android:layout_height="@dimen/personal_Info_avatar_width"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/avatar_marginRight"
-            android:background="@drawable/icon_avatar_default"/>
+            app:cardElevation="0dp"
+            app:cardCornerRadius="@dimen/image_round_radius">
 
-        android:visibility="invisible"
+            <ImageView
+                android:scaleType="fitXY"
+                android:id="@+id/civ_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/icon_avatar_default"/>
 
-        <TextView
-            android:id="@+id/tv_name"
+        </android.support.v7.widget.CardView>
+
+
+        <LinearLayout
+            android:id="@+id/ll_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/name_marginTop"
-            android:layout_toRightOf="@id/civ_avatar"
-            android:textColor="@color/normal_textColor"
-            android:textSize="@dimen/big_textSize"
-            tools:text="李静静"/>
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/cv_avatar"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/name_marginBottom"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/big_textSize"
+                tools:text="李静静"/>
+
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/civ_avatar"
+                android:textColor="@color/monsoon"
+                android:textSize="14sp"
+                tools:text="静静"/>
+        </LinearLayout>
+
 
         <com.jerry.nurse.view.ValidatedView
             android:id="@+id/vv_valid"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/validated_height"
-            android:layout_alignBottom="@id/tv_name"
-            android:layout_marginBottom="@dimen/validated_marginBottom"
             android:layout_marginLeft="@dimen/validated_marginLeft"
-            android:layout_toRightOf="@id/tv_name"
+            android:layout_marginTop="@dimen/valid_marginTop"
+            android:layout_toRightOf="@id/ll_name"
             android:visibility="invisible"
             app:text="已验证"/>
 
-        <TextView
-            android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/nickname_marginBottom"
-            android:layout_toRightOf="@id/civ_avatar"
-            android:textColor="@color/monsoon"
-            android:textSize="14sp"
-            tools:text="静静"/>
-
         <ImageView
             style="@style/ArrowEnterStyle"/>
+
+        <ImageView
+            android:id="@+id/iv_qr_code"
+            android:layout_width="@dimen/qr_code_width"
+            android:layout_height="@dimen/qr_code_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/qr_code_marginRight"
+            android:src="@drawable/erm"/>
     </RelativeLayout>
 
     <View

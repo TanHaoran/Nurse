@@ -146,9 +146,12 @@ public class UserUtil {
 
         UserHospitalInfo user = new UserHospitalInfo();
         user.setDepartmentId(info.getDepartmentId());
+        user.setDepartmentName(info.getDepartmentName());
         user.setEmployeeId(info.getEmployeeId());
         user.setHospitalId(info.getHospitalId());
+        user.setHospitalName(info.getHospitalName());
         user.setNursingUnitId(info.getNursingUnitId());
+        user.setNursingUnitName(info.getNursingUnitName());
         user.setRegisterId(info.getRegisterId());
         user.setRelRecordId(info.getRelRecordId());
         user.setRole(info.getRole());

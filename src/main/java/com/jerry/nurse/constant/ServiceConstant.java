@@ -11,6 +11,7 @@ public class ServiceConstant {
     public static final String USER_COLON = ":";
     public static final String USER_REGISTER_ID = "Id:";
     public static final String USER_PHONE = "Phone:";
+    public static final String USER_FILE = "File:";
 
     /**
      * 几种审核状态
@@ -29,6 +30,12 @@ public class ServiceConstant {
 
 
     public static final String IP = "http://192.168.0.100:9400/UserService.svc/";
+
+    public static final String UPLOAD_IP = "http://192.168.0.100:9400/";
+
+    public static final String AVATAR_ADDRESS = "http://192.168.0.100:9400/Avatar/";
+    public static final String PROFESSIONAL_ADDRESS = "http://192.168.0.100:9400/QC/";
+    public static final String PRACTISING_ADDRESS = "http://192.168.0.100:9400/PC/";
 
     /**
      * 获取验证码
@@ -68,9 +75,24 @@ public class ServiceConstant {
     public static final String GET_USER_REGISTER_INFO_BY_PHONE = IP + "GetUserReginfoByPhone";
 
     /**
-     * 设置头像
+     * 上传头像
      */
-    public static final String SET_AVATAR = IP + "SetNickNameById";
+    public static final String UPLOAD_AVATAR = UPLOAD_IP + "AvatarImgHandler.ashx";
+
+    /**
+     * 上传专业资格证
+     */
+    public static final String UPLOAD_PROFESSIONAL_PICTURE = UPLOAD_IP + "QCImgHandler.ashx";
+
+    /**
+     * 上传执业证
+     */
+    public static final String UPLOAD_PRACTISING_PICTURE = UPLOAD_IP + "PCImgHandler.ashx";
+
+    /**
+     * 上传文件的方法
+     */
+    public static final String UPLOAD_FILE = IP + "ImgHandler.ashx";
 
     /**
      * 获取用户基本信息
@@ -113,7 +135,7 @@ public class ServiceConstant {
     public static final String UPDATE_PRACTISING_CERTIFICATE_INFO = IP + "UpdateuserpracticecertificateInfo";
 
     /**
-     * 修改用户医院信息
+     * 更新用户医院信息
      */
     public static final String UPDATE_HOSPITAL_INFO = IP + "UpdateuserrelrecordInfo";
 
@@ -130,12 +152,12 @@ public class ServiceConstant {
     /**
      * 获取医院信息
      */
-    public static final String GET_NEARBY_HOSPITAL_INFO = IP + "GetAddressByLngLat";
+    public static final String GET_NEARBY_HOSPITAL_LIST = IP + "GetAddressByLngLat";
 
     /**
      * 获取科室信息
      */
-    public static final String GET_OFFICE_INFO = IP + "GetdepartmentById";
+    public static final String GET_OFFICE_LIST = IP + "GetDepartmentList";
 
 
     /**

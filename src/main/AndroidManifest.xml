@@ -94,11 +94,11 @@
         <!--百度地图-->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="wh1oA4rR31jibPcaDt50LLpP35hb6q70" />
+            android:value="wh1oA4rR31jibPcaDt50LLpP35hb6q70"/>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
+            android:process=":remote"/>
 
         <activity
             android:name=".activity.LoginActivity"
@@ -117,22 +117,38 @@
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.PersonalInfoActivity">
+        <activity
+            android:name=".activity.PersonalInfoActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.HtmlActivity">
+        <activity
+            android:name=".activity.HtmlActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.InputActivity">
+        <activity
+            android:name=".activity.InputActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.SettingActivity">
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.FeedbackActivity">
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ChangePasswordActivity">
+        <activity
+            android:name=".activity.ChangePasswordActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ProfessionalCertificateActivity">
+        <activity
+            android:name=".activity.ProfessionalCertificateActivity"
+            android:screenOrientation="portrait">
         </activity>
 
-        <activity android:name=".activity.PractisingCertificateActivity">
+        <activity
+            android:name=".activity.PractisingCertificateActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- 注册SDKActivity -->

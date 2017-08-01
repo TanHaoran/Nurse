@@ -22,8 +22,6 @@ public abstract class BaseFragment extends Fragment {
 
     private View mRootView;
 
-    protected ProgressDialog mProgressDialog;
-
     /**
      * 获取页面布局文件
      *
@@ -43,13 +41,6 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutResId(), container, false);
         ButterKnife.bind(this, mRootView);
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(getActivity(),
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
 
         init(savedInstanceState);
         return mRootView;

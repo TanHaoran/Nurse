@@ -21,9 +21,12 @@ public class UserHospitalInfo  extends DataSupport {
      */
 
     private String DepartmentId;
+    private String DepartmentName;
     private String EmployeeId;
     private String HospitalId;
+    private String HospitalName;
     private String NursingUnitId;
+    private String NursingUnitName;
     private String RegisterId;
     private String RelRecordId;
     private int Role;
@@ -82,5 +85,29 @@ public class UserHospitalInfo  extends DataSupport {
 
     public void setRole(int Role) {
         this.Role = Role;
+    }
+
+    public String getDepartmentName() {
+        return DepartmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        DepartmentName = departmentName;
+    }
+
+    public String getHospitalName() {
+        return HospitalName;
+    }
+
+    public void setHospitalName(String hospitalName) {
+        HospitalName = hospitalName;
+    }
+
+    public String getNursingUnitName() {
+        return NursingUnitName;
+    }
+
+    public void setNursingUnitName(String nursingUnitName) {
+        NursingUnitName = nursingUnitName;
     }
 }

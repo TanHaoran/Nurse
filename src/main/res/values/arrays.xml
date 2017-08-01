@@ -2,7 +2,7 @@
 <resources>
 
     <string-array name="provinces">
-        <item>广东</item>
+        <item>阿地方</item>
         <item>北京</item>
         <item>福建</item>
         <item>浙江</item>
@@ -11,7 +11,7 @@
         <item>河南</item>
         <item>安徽</item>
         <item>123</item>
-        <item>重庆</item>
+        <item>你不懂</item>
         <item>湖北</item>
         <item>湖南</item>
         <item>河北</item>
@@ -27,13 +27,13 @@
         <item>山西</item>
         <item>陕西</item>
         <item>上海</item>
-        <item>新疆</item>
-        <item>西藏</item>
-        <item>云南</item>
-        <item>甘肃</item>
-        <item>贵州</item>
-        <item>广西</item>
-        <item>海南</item>
+        <item>知道了</item>
+        <item>好吧</item>
+        <item>院内</item>
+        <item>阿北</item>
+        <item>草莓</item>
+        <item>巴菲</item>
+        <item>阿发</item>
 
         <item>A</item>
         <item>a</item>
