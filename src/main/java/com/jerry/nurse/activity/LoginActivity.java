@@ -16,9 +16,13 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.QQOriginUserInfo;
+import com.jerry.nurse.model.QQUserInfo;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.DeviceUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
@@ -45,6 +49,7 @@ import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_FORGET_PASSWORD
 import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_REGISTER;
 import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_VERIFICATION_CODE;
 import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
+import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 import static com.jerry.nurse.constant.ServiceConstant.USER_REGISTER_ID;
 
 public class LoginActivity extends BaseActivity {
@@ -60,10 +65,6 @@ public class LoginActivity extends BaseActivity {
 
     @Bind(R.id.btn_login)
     AppCompatButton mLoginButton;
-
-
-    @BindString(R.string.cellphone_invalid)
-    String mStringCellphoneInvalid;
 
     @BindString(R.string.password_length_invalid)
     String mStringPasswordInvalid;
@@ -84,7 +85,7 @@ public class LoginActivity extends BaseActivity {
             switch (msg.what) {
                 case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
                     String cellphone = mCellphoneEditText.getText().toString();
-                    getUserInfo(cellphone);
+                    getUserInfoByPhone(cellphone);
                     break;
                 case MESSAGE_EASE_MOB_LOGIN_FAILED:
                     onLoginFailed();
@@ -126,7 +127,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         //传入参数APPID和全局Context上下文
-        mTencent = Tencent.createInstance(APP_ID, this);
+        mTencent = Tencent.createInstance(APP_ID, getApplicationContext());
     }
 
     @OnClick(R.id.btn_login)
@@ -158,15 +159,26 @@ public class LoginActivity extends BaseActivity {
     private boolean localValidate(String cellphone, String password) {
 
         if (cellphone.isEmpty()) {
-            mErrorMessage = mStringCellphoneInvalid;
+            mErrorMessage = "手机号不能为空";
+            return false;
+        } else {
+            mErrorMessage = null;
+        }
+
+        if (!AccountValidatorUtil.isMobile(cellphone)) {
+            mErrorMessage = "手机号不合法";
+            return false;
+        }
+
+        if (password.isEmpty()) {
+            mErrorMessage = "密码不能为空";
             return false;
         } else {
             mErrorMessage = null;
         }
 
         // 密码的长度要介于4和10之间
-        if (password.isEmpty() || password.length() < 4 || password
-                .length() > 10) {
+        if (password.length() < 4 || password.length() > 10) {
             mErrorMessage = mStringPasswordInvalid;
             return false;
         } else {
@@ -194,7 +206,6 @@ public class LoginActivity extends BaseActivity {
 
     private void onLoginFailed() {
         resetUI();
-        T.showShort(this, R.string.login_failed);
     }
 
 
@@ -263,10 +274,12 @@ public class LoginActivity extends BaseActivity {
                                 easeMobLogin(registerId, EASE_MOB_PASSWORD);
                             } else {
                                 L.i("护士通登录失败");
+                                T.showShort(LoginActivity.this, response);
                                 onLoginFailed();
                             }
                         } else {
                             L.i("护士通登录失败");
+                            T.showShort(LoginActivity.this, response);
                             onLoginFailed();
                         }
                     }
@@ -276,7 +289,7 @@ public class LoginActivity extends BaseActivity {
     /**
      * 获取用户信息
      */
-    private void getUserInfo(final String cellphone) {
+    private void getUserInfoByPhone(final String cellphone) {
         OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_PHONE)
                 .addParams("Phone", cellphone)
                 .build()
@@ -294,6 +307,29 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
     }
+
+    /**
+     * 获取用户信息
+     */
+    private void getUserInfoByRegisterId(final String registerId) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_ID)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        onLoginFailed();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mUserRegisterInfo = new Gson().fromJson(response, UserRegisterInfo.class);
+                        onLoginSuccess();
+                    }
+                });
+    }
+
 
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
@@ -334,7 +370,7 @@ public class LoginActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    /********************************第三方登陆********************************************
+    /********************************QQ第三方登陆********************************************
 
      /**
      * 使用qq登录
@@ -363,17 +399,30 @@ public class LoginActivity extends BaseActivity {
             L.e("response:" + response);
             JSONObject obj = (JSONObject) response;
             try {
-                String openID = obj.getString("openid");
-                String accessToken = obj.getString("access_token");
-                String expires = obj.getString("expires_in");
+                final String openID = obj.getString("openid");
+                final String accessToken = obj.getString("access_token");
+                final String expires = obj.getString("expires_in");
                 mTencent.setOpenId(openID);
                 mTencent.setAccessToken(accessToken, expires);
-                QQToken qqToken = mTencent.getQQToken();
+                final QQToken qqToken = mTencent.getQQToken();
                 mUserInfo = new UserInfo(getApplicationContext(), qqToken);
                 mUserInfo.getUserInfo(new IUiListener() {
                     @Override
                     public void onComplete(Object response) {
-                        L.e("登录成功" + response.toString());
+                        QQOriginUserInfo originInfo = new Gson().fromJson(response.toString(), QQOriginUserInfo.class);
+                        String deviceId = DeviceUtil.getDeviceId(LoginActivity.this);
+                        QQUserInfo info = new QQUserInfo();
+                        info.setOpenId(openID);
+                        info.setFigureUrl(originInfo.getFigureurl_qq_2());
+                        info.setNickName(originInfo.getNickname());
+                        info.setProvince(originInfo.getProvince());
+                        info.setCity(originInfo.getCity());
+                        info.setGender(originInfo.getGender());
+                        info.setAccessToken(accessToken);
+                        info.setExpires(expires);
+                        info.setDeviceId(deviceId);
+                        L.e("登录成功" + new Gson().toJson(info));
+                        postQQLogin(info);
                     }
 
                     @Override
@@ -402,5 +451,39 @@ public class LoginActivity extends BaseActivity {
         public void onCancel() {
             T.showShort(LoginActivity.this, "授权取消");
         }
+    }
+
+    /**
+     * 使用qq登陆
+     *
+     * @param info
+     */
+    private void postQQLogin(QQUserInfo info) {
+        mProgressDialog.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.LOGIN_BY_QQ)
+                .content(StringUtil.addModelWithJson(info))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.startsWith(USER_REGISTER_ID)) {
+                            L.i("qq授权应用注册成功");
+                            if (response.split(USER_COLON).length == 2) {
+                                String registerId = response.split(USER_COLON)[1];
+                                getUserInfoByRegisterId(registerId);
+                            } else {
+                                T.showShort(LoginActivity.this, response);
+                            }
+                        }
+                    }
+                });
     }
 }

@@ -26,6 +26,7 @@ import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
+import com.jerry.nurse.view.TitleBar;
 import com.jerry.nurse.view.ToggleButton;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -46,13 +47,15 @@ import static com.jerry.nurse.constant.ServiceConstant.AUDIT_FAILED;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_ING;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.PRACTISING_ADDRESS;
-import static com.jerry.nurse.constant.ServiceConstant.PROFESSIONAL_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 import static com.jerry.nurse.constant.ServiceConstant.USER_FILE;
 
 
 public class PractisingCertificateActivity extends BaseActivity {
+
+    @Bind(R.id.tb_certificate)
+    TitleBar mTitleBar;
 
     @Bind(R.id.ll_auditing)
     LinearLayout mAuditingLayout;
@@ -171,6 +174,9 @@ public class PractisingCertificateActivity extends BaseActivity {
     @Bind(R.id.iv_audit_success)
     ImageView mSuccessImageView;
 
+    @Bind(R.id.tv_failed_message)
+    TextView mFailedMessageTextView;
+
     private Bitmap mBitmap1;
     private Bitmap mBitmap2;
     private Bitmap mBitmap3;
@@ -194,7 +200,6 @@ public class PractisingCertificateActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-
         // 初始化等待框
         mProgressDialog = new ProgressDialog(this,
                 R.style.AppTheme_Dark_Dialog);
@@ -203,11 +208,11 @@ public class PractisingCertificateActivity extends BaseActivity {
         mProgressDialog.setCancelable(false);
         mProgressDialog.setMessage("请稍后...");
 
-
         mInfo = DataSupport.findFirst(UserPractisingCertificateInfo.class);
 
         if (mInfo != null) {
             mNameEditText.setText(mInfo.getName());
+            mSexTextView.setText(mInfo.getSex());
             mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getBirthDate()));
             mCountryNationEditText.setText(mInfo.getCountry());
             mPractisingLocationEditText.setText(mInfo.getPracticeAddress());
@@ -222,46 +227,20 @@ public class PractisingCertificateActivity extends BaseActivity {
             mFirstWorkDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getFirstJobTime()));
 
             if (mInfo.getVerifyStatus() != AUDIT_EMPTY) {
-                mNameEditText.setEnabled(false);
-                mBirthdayTextView.setEnabled(false);
-                mCountryNationEditText.setEnabled(false);
-                mPractisingLocationEditText.setEnabled(false);
-                mCertificateNumberEditText.setEnabled(false);
-                mIdCardNumberEditText.setEnabled(false);
-                mFirstSignDateTextView.setEnabled(false);
-                mLastSignDateTextView.setEnabled(false);
-                mLastSignDateValidTextView.setEnabled(false);
-                mSignDepartmentTextView.setEnabled(false);
-                mCertificateOrganizationTextView.setEnabled(false);
-                mCertificateDateTextView.setEnabled(false);
-                mFirstWorkDateTextView.setEnabled(false);
+                makeUneditable();
 
-                mPhoto1ImageView.setVisibility(View.INVISIBLE);
-                mPhoto2ImageView.setVisibility(View.INVISIBLE);
-                mPhoto3ImageView.setVisibility(View.INVISIBLE);
-                mSexButton.setVisibility(View.INVISIBLE);
-                mTipTextView.setVisibility(View.GONE);
-                mSubmitButton.setVisibility(View.GONE);
-                mSexTextView.setText(mInfo.getSex());
 
+                // 审核中
                 if (mInfo.getVerifyStatus() == AUDIT_ING) {
-                    mAuditingLayout.setVisibility(View.VISIBLE);
-                    mStatusImageView.setVisibility(View.VISIBLE);
-                    mAuditingTextView.setVisibility(View.VISIBLE);
-                    mFailedTextView.setVisibility(View.INVISIBLE);
-                    mAuditAgainTextView.setVisibility(View.INVISIBLE);
-                    mStatusImageView.setImageResource(R.drawable.zyzgz_rzz);
-                }  else if (mInfo.getVerifyStatus() == AUDIT_FAILED) {
-                    mAuditingLayout.setVisibility(View.VISIBLE);
-                    mStatusImageView.setVisibility(View.VISIBLE);
-                    mAuditingTextView.setVisibility(View.INVISIBLE);
-                    mStatusImageView.setImageResource(R.drawable.zyzgz_wtg);
-                    mFailedTextView.setVisibility(View.VISIBLE);
-                    mAuditAgainTextView.setVisibility(View.VISIBLE);
-                    mFailedMessageLayout.setVisibility(View.VISIBLE);
-                }else if (mInfo.getVerifyStatus() == AUDIT_SUCCESS) {
-                    mSuccessImageView.setVisibility(View.VISIBLE);
-                    mAuditingLayout.setVisibility(View.GONE);
+                    setStatus(AUDIT_ING);
+                }
+                // 审核失败
+                else if (mInfo.getVerifyStatus() == AUDIT_FAILED) {
+                    setStatus(AUDIT_FAILED);
+                }
+                // 审核通过
+                else if (mInfo.getVerifyStatus() == AUDIT_SUCCESS) {
+                    setStatus(AUDIT_SUCCESS);
                 }
 
                 // 加载图片显示
@@ -269,68 +248,165 @@ public class PractisingCertificateActivity extends BaseActivity {
                 Glide.with(this).load(PRACTISING_ADDRESS + mInfo.getPicture2()).into(mPicture2ImageView);
                 Glide.with(this).load(PRACTISING_ADDRESS + mInfo.getPicture2()).into(mPicture3ImageView);
             } else {
-                mSexTextView.setVisibility(View.INVISIBLE);
-                mSubmitButton.setVisibility(View.VISIBLE);
-                setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mBirthdayTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-                setDateSelectListener(mFirstSignDateLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-                setDateSelectListener(mLastSignDateLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-                setDateSelectListener(mLastSignDateValidLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-                setDateSelectListener(mCertificateDateLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-                setDateSelectListener(mFirstWordDateLayout, null, new OnDateSelectListener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));
-                    }
-                });
-
-                setPhotoSelectListener(mPictureLayout1, 0, new OnPhotoSelectListener() {
-                    @Override
-                    public void onPhotoSelected(Bitmap bitmap, File file) {
-                        mBitmap1 = bitmap;
-                        postPicture(file, 0);
-                    }
-                });
-                setPhotoSelectListener(mPictureLayout2, 1, new OnPhotoSelectListener() {
-                    @Override
-                    public void onPhotoSelected(Bitmap bitmap, File file) {
-                        mBitmap2 = bitmap;
-                        postPicture(file, 1);
-                    }
-                });
-                setPhotoSelectListener(mPictureLayout3, 2, new OnPhotoSelectListener() {
-                    @Override
-                    public void onPhotoSelected(Bitmap bitmap, File file) {
-                        mBitmap3 = bitmap;
-                        postPicture(file, 2);
-                    }
-                });
+                makeEditable();
             }
         }
+    }
+
+    /**
+     * 根据不同审核状态改变显示状态
+     *
+     * @param status
+     */
+    private void setStatus(int status) {
+        if (status == AUDIT_ING) {
+
+
+            mAuditingLayout.setVisibility(View.VISIBLE);
+            mStatusImageView.setVisibility(View.VISIBLE);
+            mAuditingTextView.setVisibility(View.VISIBLE);
+            mFailedTextView.setVisibility(View.GONE);
+            mAuditAgainTextView.setVisibility(View.GONE);
+            mStatusImageView.setImageResource(R.drawable.zyzgz_rzz);
+        } else if (status == AUDIT_FAILED) {
+
+            mAuditingLayout.setVisibility(View.VISIBLE);
+            mStatusImageView.setVisibility(View.VISIBLE);
+            mAuditingTextView.setVisibility(View.GONE);
+            mStatusImageView.setImageResource(R.drawable.zyzgz_wtg);
+            mFailedTextView.setVisibility(View.VISIBLE);
+            mAuditAgainTextView.setVisibility(View.VISIBLE);
+            mFailedMessageLayout.setVisibility(View.VISIBLE);
+            mFailedMessageTextView.setVisibility(View.VISIBLE);
+            mFailedMessageTextView.setText(mInfo.getVerifyView());
+            mTitleBar.setRightText("认证").setOnRightClickListener(new TitleBar.OnRightClickListener() {
+                @Override
+                public void onRightClick(View view) {
+                    makeEditable();
+                }
+            });
+        } else if (status == AUDIT_SUCCESS) {
+            mSuccessImageView.setVisibility(View.VISIBLE);
+            mAuditingLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 进入预览状态
+     */
+    private void makeUneditable() {
+        mNameEditText.setEnabled(false);
+        mBirthdayTextView.setEnabled(false);
+        mCountryNationEditText.setEnabled(false);
+        mPractisingLocationEditText.setEnabled(false);
+        mCertificateNumberEditText.setEnabled(false);
+        mIdCardNumberEditText.setEnabled(false);
+        mFirstSignDateTextView.setEnabled(false);
+        mLastSignDateTextView.setEnabled(false);
+        mLastSignDateValidTextView.setEnabled(false);
+        mSignDepartmentTextView.setEnabled(false);
+        mCertificateOrganizationTextView.setEnabled(false);
+        mCertificateDateTextView.setEnabled(false);
+        mFirstWorkDateTextView.setEnabled(false);
+
+        mPhoto1ImageView.setVisibility(View.INVISIBLE);
+        mPhoto2ImageView.setVisibility(View.INVISIBLE);
+        mPhoto3ImageView.setVisibility(View.INVISIBLE);
+        mSexButton.setVisibility(View.INVISIBLE);
+        mTipTextView.setVisibility(View.GONE);
+        mSubmitButton.setVisibility(View.GONE);
+        mSexTextView.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
+     * 进入编辑状态
+     */
+    private void makeEditable() {
+        mNameEditText.setEnabled(true);
+        mBirthdayTextView.setEnabled(true);
+        mCountryNationEditText.setEnabled(true);
+        mPractisingLocationEditText.setEnabled(true);
+        mCertificateNumberEditText.setEnabled(true);
+        mIdCardNumberEditText.setEnabled(true);
+        mFirstSignDateTextView.setEnabled(true);
+        mLastSignDateTextView.setEnabled(true);
+        mLastSignDateValidTextView.setEnabled(true);
+        mSignDepartmentTextView.setEnabled(true);
+        mCertificateOrganizationTextView.setEnabled(true);
+        mCertificateDateTextView.setEnabled(true);
+        mFirstWorkDateTextView.setEnabled(true);
+
+        mAuditingLayout.setVisibility(View.GONE);
+        mFailedMessageLayout.setVisibility(View.GONE);
+        mPhoto1ImageView.setVisibility(View.VISIBLE);
+        mPhoto2ImageView.setVisibility(View.VISIBLE);
+        mPhoto3ImageView.setVisibility(View.VISIBLE);
+        mSexButton.setVisibility(View.VISIBLE);
+        mTipTextView.setVisibility(View.VISIBLE);
+        mSubmitButton.setVisibility(View.VISIBLE);
+        mSexTextView.setVisibility(View.INVISIBLE);
+
+        mTitleBar.setRightVisible(View.INVISIBLE);
+
+        setDateSelectListener(mBirthdayLayout, null, false, new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mBirthdayTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+        setDateSelectListener(mFirstSignDateLayout, null, false,new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+        setDateSelectListener(mLastSignDateLayout, null,false, new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+        setDateSelectListener(mLastSignDateValidLayout, null,false, new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+        setDateSelectListener(mCertificateDateLayout, null,false, new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+        setDateSelectListener(mFirstWordDateLayout, null,false, new OnDateSelectListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));
+            }
+        });
+
+        setPhotoSelectListener(mPictureLayout1, 0, new OnPhotoSelectListener() {
+            @Override
+            public void onPhotoSelected(Bitmap bitmap, File file) {
+                mBitmap1 = bitmap;
+                postPicture(file, 0);
+            }
+        });
+        setPhotoSelectListener(mPictureLayout2, 1, new OnPhotoSelectListener() {
+            @Override
+            public void onPhotoSelected(Bitmap bitmap, File file) {
+                mBitmap2 = bitmap;
+                postPicture(file, 1);
+            }
+        });
+        setPhotoSelectListener(mPictureLayout3, 2, new OnPhotoSelectListener() {
+            @Override
+            public void onPhotoSelected(Bitmap bitmap, File file) {
+                mBitmap3 = bitmap;
+                postPicture(file, 2);
+            }
+        });
     }
 
     @OnClick(R.id.acb_submit)
@@ -422,17 +498,17 @@ public class PractisingCertificateActivity extends BaseActivity {
             return false;
         }
         if (TextUtils.isEmpty(mInfo.getPicture1())) {
-            mErrorMessage = "图片1为空！";
+            mErrorMessage = "证件页1为空！";
             return false;
         }
 
         if (TextUtils.isEmpty(mInfo.getPicture2())) {
-            mErrorMessage = "图片2为空！";
+            mErrorMessage = "证件页2为空！";
             return false;
         }
 
         if (TextUtils.isEmpty(mInfo.getPicture3())) {
-            mErrorMessage = "图片3为空！";
+            mErrorMessage = "证件页3为空！";
             return false;
         }
 
@@ -515,4 +591,10 @@ public class PractisingCertificateActivity extends BaseActivity {
                     }
                 });
     }
+
+    @OnClick(R.id.tv_audit_again)
+    void onAuditAgain(View view) {
+        makeEditable();
+    }
+
 }

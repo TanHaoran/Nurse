@@ -11,48 +11,78 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:left_text="@string/back"/>
+        app:show_back="true"/>
 
-    <TextView
-        android:id="@+id/tv_content"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="top"
         android:padding="10dp"
-        android:textColor="@color/black">
+        android:textColor="@color/black"/>
 
-    </TextView>
+    <View
+        style="@style/DividerLineStyle"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/chat_line_height"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/chat_layout_paddingLeft"
+        android:paddingRight="@dimen/chat_layout_paddingLeft">
+
+        <ImageButton
+            android:id="@+id/ib_left"
+            android:layout_width="@dimen/chat_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_record"/>
 
         <EditText
             android:id="@+id/et_message"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="@dimen/chat_edit_marginTop"
             android:layout_weight="1"
-            android:lines="1"
-            android:visibility="gone"/>
+            android:background="@drawable/chat_edit_bg"
+            android:padding="@dimen/chat_edit_padding"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
 
         <com.jerry.nurse.view.AudioRecordButton
-            android:layout_width="200dp"
+            android:id="@+id/arb_record"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
+            android:layout_margin="@dimen/chat_edit_marginTop"
+            android:layout_weight="1"
+            android:background="@drawable/chat_record_bg"
+            android:gravity="center"
+            android:text="@string/press_and_record"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/ib_add"
+            android:layout_width="@dimen/chat_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_add"/>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_send"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:id="@+id/acb_send"
+            android:layout_width="@dimen/chat_send_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_send"
+            android:gravity="center"
             android:text="@string/send"
             android:textColor="@color/white"
-            android:textSize="@dimen/login_button_textSize"/>
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
 
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

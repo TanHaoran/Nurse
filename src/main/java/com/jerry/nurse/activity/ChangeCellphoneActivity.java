@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jerry.nurse.R;
@@ -48,6 +49,9 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Bind(R.id.acb_next)
     AppCompatButton mNextButton;
+
+    @Bind(R.id.ll_content)
+    LinearLayout mContentLayout;
 
     @BindColor(R.color.primary)
     int mPrimaryColor;
@@ -108,10 +112,9 @@ public class ChangeCellphoneActivity extends BaseActivity {
         String cellphone = mUserRegisterInfo.getPhone();
         if (cellphone == null) {
             mCellphoneTextView.setText(R.string.cellphone_not_exist);
-            mGetVerificationCodeTextView.setEnabled(false);
-            mNextButton.setEnabled(false);
+            mContentLayout.setVisibility(View.INVISIBLE);
         } else {
-            mCellphoneTextView.setText(cellphone.substring(0, 3) + "XXXX" + cellphone.substring(7));
+            mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
             mGetVerificationCodeTextView.setEnabled(true);
             mNextButton.setEnabled(true);
         }

@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background"
+    android:orientation="vertical"
     tools:context="com.jerry.nurse.activity.SettingActivity">
 
     <com.jerry.nurse.view.TitleBar
@@ -41,13 +41,25 @@
                     android:text="@string/cellphone"/>
 
                 <ImageView
+                    android:id="@+id/iv_arrow_cellphone"
                     style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_cellphone"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_cellphone"
+                    tools:text="13******238"/>
 
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_weixin"
@@ -59,13 +71,25 @@
                     android:text="@string/wechat"/>
 
                 <ImageView
+                    android:id="@+id/iv_arrow_wechat"
                     style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_wechat"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_wechat"
+                    tools:text="林山夕风"/>
 
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_qq"
@@ -77,13 +101,26 @@
                     android:text="@string/qq"/>
 
                 <ImageView
+                    android:id="@+id/iv_arrow_qq"
                     style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_qq"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_qq"
+                    tools:text="林山夕风"/>
+
 
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_microblog"
@@ -95,7 +132,19 @@
                     android:text="@string/microblog"/>
 
                 <ImageView
+                    android:id="@+id/iv_arrow_microblog"
                     style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_microblog"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_microblog"
+                    tools:text="林山夕风"/>
 
             </RelativeLayout>
 
@@ -143,8 +192,8 @@
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_feedback"
@@ -161,8 +210,8 @@
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_check_update"
@@ -179,8 +228,8 @@
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_clear_cache"
@@ -197,8 +246,8 @@
             </RelativeLayout>
 
             <View
-                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"
-                style="@style/DividerLineStyle"/>
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_about"
@@ -221,10 +270,10 @@
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/block_marinTop"
                 android:layout_marginLeft="@dimen/line_paddingLeft"
                 android:layout_marginRight="@dimen/line_paddingLeft"
                 android:layout_marginTop="@dimen/block_marinTop"
-                android:layout_marginBottom="@dimen/block_marinTop"
                 android:gravity="center"
                 android:text="@string/logout"
                 android:textColor="@color/white"

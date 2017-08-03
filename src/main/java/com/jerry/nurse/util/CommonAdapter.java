@@ -46,7 +46,7 @@ public abstract class CommonAdapter<T> extends RecyclerView.Adapter<ViewHolder> 
         if (null == mRv) {
             mRv = parent;
         }
-        //setListener(parent, viewHolder, viewType);
+        //setAudioFinishRecordListener(parent, viewHolder, viewType);
         //add by zhangxutong 2016 08 05 end ,for 点击事件为了兼容HeaderView FooterView 的Adapter
         return viewHolder;
     }

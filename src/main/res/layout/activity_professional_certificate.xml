@@ -112,9 +112,11 @@
                     android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
                 <TextView
+                    android:paddingTop="@dimen/audit_failed_text_padding"
+                    android:paddingBottom="@dimen/audit_failed_text_padding"
                     android:id="@+id/tv_failed_message"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/business_info_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/line_paddingLeft"
                     android:gravity="center_vertical"
                     android:textColor="@color/gray_textColor"
@@ -140,6 +142,7 @@
                     android:text="@string/id_number"/>
 
                 <EditText
+                    android:hint="@string/please_id_number"
                     android:id="@+id/et_id_number"
                     style="@style/Certificate_Line_Edit_Style"
                     android:inputType="number"/>
@@ -160,6 +163,7 @@
                     android:text="@string/management_number"/>
 
                 <EditText
+                    android:hint="@string/please_management_number"
                     android:id="@+id/et_management_number"
                     style="@style/Certificate_Line_Edit_Style"
                     android:inputType="number"/>
@@ -179,6 +183,7 @@
                     android:text="@string/name"/>
 
                 <EditText
+                    android:hint="@string/please_name"
                     android:id="@+id/et_name"
                     style="@style/Certificate_Line_Edit_Style"/>
 
@@ -242,8 +247,12 @@
                     android:text="@string/profession_name"/>
 
                 <EditText
+                    android:hint="@string/please_profession_name"
                     android:id="@+id/et_profession_name"
-                    style="@style/Certificate_Line_Edit_Style"/>
+                    style="@style/Certificate_Line_Edit_Style"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
 
             </RelativeLayout>
 
@@ -260,6 +269,7 @@
                     android:text="@string/certificate_level"/>
 
                 <EditText
+                    android:hint="@string/please_certificate_level"
                     android:id="@+id/et_certificate_level"
                     style="@style/Certificate_Line_Edit_Style"/>
 
@@ -278,9 +288,9 @@
                     android:text="@string/type"/>
 
                 <EditText
+                    android:hint="@string/please_type"
                     android:id="@+id/et_type"
-                    style="@style/Certificate_Line_Edit_Style"
-                    android:inputType="number"/>
+                    style="@style/Certificate_Line_Edit_Style"/>
 
             </RelativeLayout>
 
@@ -315,6 +325,7 @@
                     android:text="@string/sign_organization"/>
 
                 <EditText
+                    android:hint="@string/please_sign_organization"
                     android:id="@+id/et_sign_organization"
                     style="@style/Certificate_Line_Edit_Style"/>
 
@@ -386,10 +397,11 @@
                                 app:cardCornerRadius="@dimen/image_round_radius">
 
                                 <ImageView
+                                    android:scaleType="fitXY"
                                     android:id="@+id/iv_picture1"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:background="@drawable/professional_certificate_pic_1"/>
+                                    android:background="@drawable/zyzgzs_1"/>
                             </android.support.v7.widget.CardView>
 
 
@@ -439,10 +451,11 @@
                                 app:cardCornerRadius="@dimen/image_round_radius">
 
                                 <ImageView
+                                    android:scaleType="fitXY"
                                     android:id="@+id/iv_picture2"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:background="@drawable/professional_certificate_pic_2"/>
+                                    android:background="@drawable/zyzgzs_2"/>
                             </android.support.v7.widget.CardView>
 
 

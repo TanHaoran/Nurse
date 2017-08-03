@@ -1,5 +1,8 @@
 package com.jerry.nurse.fragment;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,24 +16,35 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
-import com.jerry.nurse.adapter.ContactAdapter;
+import com.jerry.nurse.activity.ContactListActivity;
+import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
-import com.jerry.nurse.model.MeituanTopHeaderBean;
+import com.jerry.nurse.model.ContactTopHeaderBean;
+import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserRegisterInfo;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
 import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
 
 
 /**
@@ -62,6 +76,11 @@ public class ContactFragment extends Fragment {
 
     private SuspensionDecoration mDecoration;
 
+    private ProgressDialog mProgressDialog;
+
+    private UserRegisterInfo mUserRegisterInfo;
+    private UserHospitalInfo mUserHospitalInfo;
+
     public static ContactFragment newInstance() {
 
         ContactFragment fragment = new ContactFragment();
@@ -78,7 +97,46 @@ public class ContactFragment extends Fragment {
         return view;
     }
 
+    /**
+     * 获取用户医院信息
+     */
+    private void getHospitalInfo(final String registerId) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        try {
+                            mUserHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
+                            UserUtil.saveHospitalInfo(mUserHospitalInfo);
+                        } catch (JsonSyntaxException e) {
+                            L.i("获取医院信息失败");
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
     private void initView() {
+
+        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
 
         mRv.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
 
@@ -122,12 +180,16 @@ public class ContactFragment extends Fragment {
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         break;
                     case R.layout.meituan_item_header_top:
-                        final MeituanTopHeaderBean meituanTopHeaderBean = (MeituanTopHeaderBean) o;
-                        holder.setText(R.id.tvCurrent, meituanTopHeaderBean.getTxt());
+                        final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
+                        holder.setText(R.id.tvCurrent, contactTopHeaderBean.getTxt());
                         holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Toast.makeText(getActivity(), meituanTopHeaderBean.getTxt(),
+                                if (contactTopHeaderBean.getTxt().equals("当前科室")) {
+                                    Intent intent = ContactListActivity.getIntent(getActivity());
+                                    startActivity(intent);
+                                }
+                                Toast.makeText(getActivity(), contactTopHeaderBean.getTxt(),
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -138,8 +200,8 @@ public class ContactFragment extends Fragment {
             }
         };
 
-        mHeaderAdapter.setHeaderView(0, R.layout.meituan_item_header_top, new MeituanTopHeaderBean("全院"));
-        mHeaderAdapter.setHeaderView(1, R.layout.meituan_item_header_top, new MeituanTopHeaderBean("当前科室"));
+        mHeaderAdapter.setHeaderView(0, R.layout.meituan_item_header_top, new ContactTopHeaderBean("全院"));
+        mHeaderAdapter.setHeaderView(1, R.layout.meituan_item_header_top, new ContactTopHeaderBean("当前科室"));
         mHeaderAdapter.setHeaderView(2, R.layout.meituan_item_header, mHeaderDatas.get(0));
 
 
@@ -158,6 +220,8 @@ public class ContactFragment extends Fragment {
                 .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
 
         initDatas(getResources().getStringArray(R.array.provinces));
+
+        getHospitalInfo(mUserRegisterInfo.getRegisterId());
     }
 
 
@@ -187,5 +251,16 @@ public class ContactFragment extends Fragment {
         mDecoration.setmDatas(mSourceDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
+    }
+
+    class ContactAdapter extends CommonAdapter<Contact> {
+        public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
+            super(context, layoutId, datas);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final Contact cityBean) {
+            holder.setText(R.id.tvCity, cityBean.getNickName());
+        }
     }
 }

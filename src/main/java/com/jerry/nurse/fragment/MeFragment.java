@@ -1,13 +1,12 @@
 package com.jerry.nurse.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,20 +14,26 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
+import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.UserPractisingCertificateInfo;
 import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.view.CircleImageView;
 import com.jerry.nurse.view.ValidatedView;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
+import static com.jerry.nurse.constant.ServiceConstant.QR_CODE_ADDRESS;
+import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
+import static com.jerry.nurse.constant.ServiceConstant.USER_NAME;
 
 
 /**
@@ -49,6 +54,10 @@ public class MeFragment extends BaseFragment {
     @Bind(R.id.vv_valid)
     ValidatedView mValidatedView;
 
+    private ProgressDialog mProgressDialog;
+
+    private UserRegisterInfo mUserRegisterInfo;
+
     /**
      * 实例化方法
      *
@@ -66,6 +75,14 @@ public class MeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        // 初始化等待框
+        mProgressDialog = new ProgressDialog(getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+        // 设置不定时等待
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage("请稍后...");
     }
 
     @Override
@@ -79,7 +96,7 @@ public class MeFragment extends BaseFragment {
      * 初始化用户信息显示
      */
     private void initUserInfo() {
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
 
         UserProfessionalCertificateInfo userProfessionalCertificateInfo =
                 DataSupport.findFirst(UserProfessionalCertificateInfo.class);
@@ -88,17 +105,21 @@ public class MeFragment extends BaseFragment {
                 DataSupport.findFirst(UserPractisingCertificateInfo.class);
 
         // 设置头像
-        if (!TextUtils.isEmpty(userRegisterInfo.getAvatar())) {
-            Glide.with(this).load(AVATAR_ADDRESS + userRegisterInfo.getAvatar()).into(mAvatarImageView);
+        if (!TextUtils.isEmpty(mUserRegisterInfo.getAvatar())) {
+            if (mUserRegisterInfo.getAvatar().startsWith("http")) {
+                Glide.with(this).load(mUserRegisterInfo.getAvatar()).into(mAvatarImageView);
+            } else {
+                Glide.with(this).load(AVATAR_ADDRESS + mUserRegisterInfo.getAvatar()).into(mAvatarImageView);
+            }
         }
 
-        if (!TextUtils.isEmpty(userRegisterInfo.getName())) {
-            mNameTextView.setText(userRegisterInfo.getName());
+        if (mUserRegisterInfo.getName() != null) {
+            mNameTextView.setText(mUserRegisterInfo.getName());
         } else {
             mNameTextView.setVisibility(View.GONE);
         }
-        if (!TextUtils.isEmpty(userRegisterInfo.getNickName())) {
-            mNicknameTextView.setText(userRegisterInfo.getNickName());
+        if (mUserRegisterInfo.getNickName() != null) {
+            mNicknameTextView.setText(mUserRegisterInfo.getNickName());
         } else {
             mNicknameTextView.setVisibility(View.GONE);
         }
@@ -117,11 +138,44 @@ public class MeFragment extends BaseFragment {
         startActivity(intent);
     }
 
+    /**
+     * 获取二维码
+     *
+     * @param view
+     */
     @OnClick(R.id.iv_qr_code)
     void onQrCode(View view) {
+        mProgressDialog.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_QR_CODE)
+                .addParams("RegisterId", mUserRegisterInfo.getRegisterId())
+                .build()
+                .execute(new FilterStringCallback() {
 
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.startsWith(USER_NAME)) {
+                            String name = response.split(USER_COLON)[1];
+                            showQrCode(name);
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 显示二维码
+     */
+    private void showQrCode(String name) {
+        String url = QR_CODE_ADDRESS + name;
         View v = getActivity().getLayoutInflater().inflate(R.layout.view_qr_code, null);
         ImageView qrCodeImageView = (ImageView) v.findViewById(R.id.iv_qr_code);
+        Glide.with(this).load(url).into(qrCodeImageView);
         qrCodeImageView.setImageResource(R.drawable.erm);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -133,6 +187,7 @@ public class MeFragment extends BaseFragment {
         //设置窗口的大小
         dialog.getWindow().setLayout(DensityUtil.dp2px(getActivity(), 300),
                 DensityUtil.dp2px(getActivity(), 340));
+
     }
 
     @OnClick(R.id.rl_event_report)

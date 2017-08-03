@@ -72,7 +72,7 @@ public class MessageFragment extends BaseFragment {
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f),
                 getResources().getColor(R.color.divider_line)));
 
-        mAdapter = new MessageAdapter(getActivity(), R.layout.item_contact, mContacts);
+        mAdapter = new MessageAdapter(getActivity(), R.layout.item_chat, mContacts);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -94,9 +94,6 @@ public class MessageFragment extends BaseFragment {
                     ActivityCollector.getTopActivity().startActivity(intent);
                 }
             });
-
-
-
         }
     }
 

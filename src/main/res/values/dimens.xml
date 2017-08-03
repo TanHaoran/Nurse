@@ -74,6 +74,16 @@
     <dimen name="contact_item_time_textSize">13dp</dimen>
     <dimen name="chat_line_height">50dp</dimen>
     <dimen name="contact_title_text_height">30dp</dimen>
+    <dimen name="contact_detail_avatar_width">75dp</dimen>
+    <dimen name="contact_detail_avatar_marginBottom">5dp</dimen>
+    <dimen name="contact_detail_option_padding">13dp</dimen>
+    <dimen name="contact_detail_option_height">78dp</dimen>
+    <dimen name="contact_detail_line_text_marginRight">20dp</dimen>
+    <dimen name="chat_button_width">29dp</dimen>
+    <dimen name="chat_send_button_width">45dp</dimen>
+    <dimen name="chat_edit_marginTop">8dp</dimen>
+    <dimen name="chat_layout_paddingLeft">5dp</dimen>
+    <dimen name="chat_edit_padding">4dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>
@@ -83,7 +93,7 @@
     <dimen name="block_marinTop">15dp</dimen>
     <dimen name="mine_plug_image_width">20dp</dimen>
     <dimen name="mine_plug_image_marginLeft">10dp</dimen>
-    <dimen name="validated_height">16dp</dimen>
+    <dimen name="validated_height">18dp</dimen>
     <dimen name="validated_marginBottom">3dp</dimen>
     <dimen name="validated_marginLeft">15dp</dimen>
     <dimen name="feedback_height">160dp</dimen>
@@ -93,7 +103,7 @@
     <dimen name="change_cellphone_edit_marginTop">40dp</dimen>
     <dimen name="certificate_edit_marginLeft">150dp</dimen>
     <dimen name="sex_toggle_width">90dp</dimen>
-    <dimen name="sex_toggle_height">35dp</dimen>
+    <dimen name="sex_toggle_height">33dp</dimen>
     <dimen name="sex_toggle_text_margin">15dp</dimen>
     <dimen name="please_upload_text_marginBottom">7dp</dimen>
     <dimen name="please_upload_picture_marginTop">10dp</dimen>
@@ -105,6 +115,7 @@
     <dimen name="qr_code_marginRight">40dp</dimen>
     <dimen name="qr_code_width">30dp</dimen>
     <dimen name="image_round_radius">5dp</dimen>
+    <dimen name="audit_failed_text_padding">10dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

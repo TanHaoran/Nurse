@@ -3,9 +3,14 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
@@ -15,6 +20,7 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.jerry.nurse.R;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.view.AudioRecordButton;
 
 import java.util.List;
 
@@ -24,11 +30,25 @@ import butterknife.OnClick;
 
 public class ChatActivity extends BaseActivity implements EMMessageListener {
 
-    @Bind(R.id.tv_content)
-    TextView mContentTextView;
+    @Bind(R.id.rv_content)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.ib_left)
+    ImageButton mTypeButton;
+
+    @Bind(R.id.ib_add)
+    ImageButton mAddButton;
+
+    @Bind(R.id.acb_send)
+    AppCompatButton mSendButton;
 
     @Bind(R.id.et_message)
     EditText mMessageEditText;
+
+    @Bind(R.id.arb_record)
+    AudioRecordButton mRecordButton;
+
+    private boolean mIsRecordState;
 
     private static final String mOtherId = "thr";
 
@@ -44,10 +64,40 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mMessageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String message = mMessageEditText.getText().toString();
+                if (!TextUtils.isEmpty(message)) {
+                    mSendButton.setVisibility(View.VISIBLE);
+                    mAddButton.setVisibility(View.GONE);
+                } else {
+                    mSendButton.setVisibility(View.GONE);
+                    mAddButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mRecordButton.setAudioFinishRecordListener(new AudioRecordButton.AudioFinishRecordListener() {
+            @Override
+            public void onFinish(float seconds, String filePath) {
+                Recorder recorder = new Recorder(seconds, filePath);
+
+            }
+        });
     }
 
-    @OnClick(R.id.btn_send)
+    @OnClick(R.id.acb_send)
     public void onSend(View view) {
         addMessageToContent("发送信息：\n");
         String message = mMessageEditText.getText().toString();
@@ -87,7 +137,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      * @param message
      */
     private void addMessageToContent(String message) {
-        mContentTextView.setText(mContentTextView.getText().toString() + "\n" + message);
     }
 
     @Override
@@ -120,6 +169,21 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     }
 
+    @OnClick(R.id.ib_left)
+    void onLeft(View view) {
+        if (mIsRecordState) {
+            mTypeButton.setBackgroundResource(R.drawable.icon_record);
+            mMessageEditText.setVisibility(View.VISIBLE);
+            mRecordButton.setVisibility(View.GONE);
+        } else {
+            mTypeButton.setBackgroundResource(R.drawable.icon_keybord);
+            mRecordButton.setVisibility(View.VISIBLE);
+            mMessageEditText.setVisibility(View.GONE);
+        }
+        mIsRecordState = !mIsRecordState;
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -131,4 +195,32 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         super.onStop();
         EMClient.getInstance().chatManager().removeMessageListener(this);
     }
+
+
+    class Recorder {
+        float time;
+        String filePath;
+
+        public Recorder(float time, String filePath) {
+            this.time = time;
+            this.filePath = filePath;
+        }
+
+        public float getTime() {
+            return time;
+        }
+
+        public void setTime(float time) {
+            this.time = time;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
+
+        public void setFilePath(String filePath) {
+            this.filePath = filePath;
+        }
+    }
+
 }

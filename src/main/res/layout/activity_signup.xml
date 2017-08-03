@@ -66,7 +66,6 @@
 
                 <com.jerry.nurse.view.ClearEditText
                     android:id="@+id/cet_cellphone"
-                    android:textCursorDrawable="@null"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
@@ -80,6 +79,7 @@
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/normal_textColor"
+                    android:textCursorDrawable="@null"
                     android:textSize="@dimen/normal_textSize"/>
 
             </RelativeLayout>
@@ -111,7 +111,6 @@
                     android:textSize="@dimen/normal_textSize"/>
 
                 <EditText
-                    android:textCursorDrawable="@null"
                     android:id="@+id/et_verification_code"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -124,6 +123,7 @@
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/normal_textColor"
+                    android:textCursorDrawable="@null"
                     android:textSize="@dimen/normal_textSize"/>
 
 
@@ -145,9 +145,9 @@
 
 
             <RelativeLayout
-                android:visibility="gone"
                 android:id="@+id/rl_password"
-                style="@style/BusinessLineStyle">
+                style="@style/BusinessLineStyle"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
@@ -185,6 +185,7 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <LinearLayout
+                android:id="@+id/ll_protocol"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/protocol_line_height"
                 android:gravity="center_vertical"
@@ -233,6 +234,7 @@
                 android:layout_height="@dimen/signup_button_height"
                 android:layout_marginLeft="@dimen/signup_button_marginLeft"
                 android:layout_marginRight="@dimen/signup_button_marginLeft"
+                android:layout_marginTop="@dimen/block_marinTop"
                 android:text="@string/signup"
                 android:textColor="@color/white"
                 android:textSize="@dimen/normal_textSize"/>

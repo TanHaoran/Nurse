@@ -160,7 +160,7 @@ public class OfficeActivity extends BaseActivity {
     private void postHospital(Office office) {
         final UserHospitalInfo userHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
         userHospitalInfo.setDepartmentName(office.getName());
-        userHospitalInfo.setDepartmentId(office.getName());
+        userHospitalInfo.setDepartmentId(office.getDepartmentId());
         mProgressDialog.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_HOSPITAL_INFO)

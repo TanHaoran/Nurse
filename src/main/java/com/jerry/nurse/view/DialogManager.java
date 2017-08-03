@@ -104,9 +104,10 @@ public class DialogManager {
      */
     public void updateVoiceLevel(int level) {
         if (mDialog != null && mDialog.isShowing()) {
-            mRecordImageView.setVisibility(View.VISIBLE);
-            mVoiceImageView.setVisibility(View.GONE);
-            mLableTextView.setVisibility(View.VISIBLE);
+
+//            mRecordImageView.setVisibility(View.VISIBLE);
+//            mVoiceImageView.setVisibility(View.GONE);
+//            mLableTextView.setVisibility(View.VISIBLE);
 
             int resId = mContext.getResources().getIdentifier("v" + level,
                     "drawable", mContext.getPackageName());

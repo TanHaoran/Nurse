@@ -3,7 +3,6 @@ package com.jerry.nurse.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,8 +21,8 @@ import android.widget.DatePicker;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnDateSelectListener;
-import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.listener.OnPhotoSelectListener;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.FileUtil;
@@ -41,7 +40,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.BindString;
 import butterknife.ButterKnife;
 
 /**
@@ -190,14 +188,23 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param origin
      * @param onDateSelectListener
      */
-    public void setDateSelectListener(View view, final Date origin, final OnDateSelectListener onDateSelectListener) {
+    public void setDateSelectListener(View view, final Date origin, final boolean isBirthday, final OnDateSelectListener onDateSelectListener) {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
+                int nowYear = calendar.get(Calendar.YEAR);
+                //  首先如果原日期不为空就先设置成原日期
                 if (origin != null) {
                     calendar.setTime(origin);
+                }
+                // 然后判断是否需要往前退20年
+                if (nowYear - calendar.get(Calendar.YEAR) > 20) {
+
+                    if (isBirthday) {
+                        calendar.set(Calendar.YEAR, nowYear - 20);
+                    }
                 }
 
                 final DatePickerDialog datePickerDialog =
@@ -216,7 +223,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 int month = datePicker.getMonth();
                                 int day = datePicker.getDayOfMonth();
                                 String date = year + "-" + (month + 1) + "-" + day;
-                                L.i("设置的日期是：" + date);
+                                Date nowDate = new Date();
+                                if (DateUtil.parseStringToDate(date).getTime() > nowDate.getTime()) {
+                                    T.showShort(ActivityCollector.getTopActivity(), "日期设置不能大于当天");
+                                    return;
+                                }
                                 if (onDateSelectListener != null) {
                                     onDateSelectListener.onDateSelected(DateUtil.parseStringToDate(date));
                                 }

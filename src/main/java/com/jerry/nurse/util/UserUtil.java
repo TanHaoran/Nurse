@@ -109,6 +109,8 @@ public class UserUtil {
         DataSupport.deleteAll(UserPractisingCertificateInfo.class);
 
         UserPractisingCertificateInfo user = new UserPractisingCertificateInfo();
+        user.setName(info.getName());
+        user.setSex(info.getSex());
         user.setBirthDate(info.getBirthDate());
         user.setCertificateAuthority(info.getCertificateAuthority());
         user.setCertificateDate(info.getCertificateDate());

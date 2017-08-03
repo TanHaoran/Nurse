@@ -3,7 +3,9 @@ package com.jerry.nurse.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Jerry on 2017/7/26.
@@ -105,4 +107,29 @@ public class DateUtil {
         }
         return "/Date(" + new Date().getTime() + "+0800)/";
     }
+
+    /**
+     * 计算两个日期相距间隔（月）
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static int getMonthsBetweenTwoDate(Date startDate, Date endDate) {
+        Calendar startCalendar = new GregorianCalendar();
+        startCalendar.setTime(startDate);
+        Calendar endCalendar = new GregorianCalendar();
+        endCalendar.setTime(endDate);
+
+        int diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+        int diffMonth = diffYear * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+        int diffDay = endCalendar.get(Calendar.DAY_OF_MONTH) - startCalendar.get(Calendar.DAY_OF_MONTH);
+        if (diffDay < 0) {
+            return diffMonth - 1;
+        } else {
+            return diffMonth;
+        }
+    }
+
+
 }

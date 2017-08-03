@@ -11,12 +11,12 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.ShortMessage;
@@ -30,6 +30,9 @@ import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import butterknife.Bind;
 import butterknife.BindColor;
@@ -50,6 +53,8 @@ import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 public class SignupActivity extends BaseActivity {
 
     public static final String EXTRA_SIGNUP_TYPE = "extra_signup_type";
+
+    public static final String DEFAULT_COUNTRY_CODE = "+86";
 
     public static final int EXTRA_TYPE_REGISTER = 0;
     public static final int EXTRA_TYPE_FORGET_PASSWORD = 1;
@@ -83,11 +88,15 @@ public class SignupActivity extends BaseActivity {
     @Bind(R.id.tv_country)
     TextView mCountryTextView;
 
+    @Bind(R.id.ll_protocol)
+    LinearLayout mProtocolLayout;
+
     @BindColor(R.color.primary)
     int mPrimaryColor;
 
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
+
 
     // 是否同意协议
     private boolean mIsAgree = true;
@@ -170,8 +179,11 @@ public class SignupActivity extends BaseActivity {
             mTitleBar.setTitle("新用户注册");
         } else if (mType == EXTRA_TYPE_FORGET_PASSWORD) {
             mTitleBar.setTitle("忘记密码");
+            mProtocolLayout.setVisibility(View.GONE);
+            mSignupButton.setText(R.string.next_step);
         } else if (mType == EXTRA_TYPE_VERIFICATION_CODE) {
             mTitleBar.setTitle("验证码登陆");
+            mProtocolLayout.setVisibility(View.GONE);
             mSignupButton.setText(R.string.login);
         }
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
@@ -210,32 +222,46 @@ public class SignupActivity extends BaseActivity {
         } else if (mType == EXTRA_TYPE_VERIFICATION_CODE) {
             type = 1;
         }
-        OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
-                .addParams("Phone", cellphone)
-                .addParams("Type", String.valueOf(type))
-                .build()
-                .execute(new FilterStringCallback() {
+        // 读取国家代码
+        String countryCode = DEFAULT_COUNTRY_CODE;
+        if (mCountryTextView.getText().toString().split(" ").length == 2) {
+            countryCode = mCountryTextView.getText().toString().split(" ")[1];
+        }
 
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+        try {
+            countryCode = URLEncoder.encode(countryCode, "UTF-8");
+            OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
+                    .addParams("Phone", cellphone)
+                    .addParams("CountryCode", countryCode)
+                    .addParams("Type", String.valueOf(type))
+                    .build()
+                    .execute(new FilterStringCallback() {
 
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(ServiceConstant.REQUEST_SUCCESS)) {
-                            // 控制发送验证码的状态
-                            mGetVerificationCodeTextView.setEnabled(false);
-                            mGetVerificationCodeTextView.setTextColor(mGrayColor);
-                            mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
-                            mHandler.postDelayed(mValidateRunnable, 1000);
-                            T.showLong(SignupActivity.this, R.string.get_verification_finished);
-                        } else {
-                            T.showLong(SignupActivity.this, R.string.get_verification_code_failed);
+                        @Override
+                        public void onFilterError(Call call, Exception e, int id) {
+                            mProgressDialog.dismiss();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onFilterResponse(String response, int id) {
+                            mProgressDialog.dismiss();
+                            if (response.equals(ServiceConstant.REQUEST_SUCCESS)) {
+                                // 控制发送验证码的状态
+                                mGetVerificationCodeTextView.setEnabled(false);
+                                mGetVerificationCodeTextView.setTextColor(mGrayColor);
+                                mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
+                                mHandler.postDelayed(mValidateRunnable, 1000);
+                                T.showLong(SignupActivity.this, R.string.get_verification_finished);
+                            } else {
+                                T.showLong(SignupActivity.this, response);
+                            }
+                        }
+                    });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @OnClick(R.id.btn_signup)
@@ -246,6 +272,11 @@ public class SignupActivity extends BaseActivity {
 
         String errorMessage = localValidate(cellphone, verificationCode);
 
+        if (errorMessage != null) {
+            T.showShort(this, errorMessage);
+            return;
+        }
+
         // 勾选同意
         if (!mIsAgree) {
             T.showLong(this, R.string.please_agree);
@@ -254,12 +285,11 @@ public class SignupActivity extends BaseActivity {
 
         mSignupButton.setEnabled(false);
 
-        mProgressDialog.setMessage("注册中...");
+        mProgressDialog.setMessage("验证中...");
         mProgressDialog.show();
 
         // 远端服务验证
         validateVerificationCode(cellphone, verificationCode);
-
     }
 
     /**
@@ -297,7 +327,7 @@ public class SignupActivity extends BaseActivity {
                         mProgressDialog.dismiss();
                         // 第一种情况，用户已存在，要在环信登陆，下一步设置密码
                         if (response.contains(ServiceConstant.USER_PHONE)) {
-                            L.i("用户已存在，准备环信登录");
+                            L.i("用户已存在，客户端准备环信登录");
                             if (response.split(USER_COLON).length == 4) {
                                 mRegisterId = response.split(USER_COLON)[3];
                                 // 环信登录
@@ -308,17 +338,18 @@ public class SignupActivity extends BaseActivity {
                         }
                         // 第二种情况，用户不存在，需要先在护士通注册，然后在环信注册
                         else if (response.startsWith(ServiceConstant.USER_REGISTER_ID)) {
-                            L.i("用户不存在，准备环信注册");
+                            L.i("用户不存在，服务端准备环信注册");
                             // 用户不存在，服务端自动进行护士通注册
                             if (response.split(USER_COLON).length == 2) {
                                 mRegisterId = response.split(USER_COLON)[1];
-                                // 然后在环信注册
-                                easeMobSignup(mRegisterId, EASE_MOB_PASSWORD);
+                                // 环信登陆
+                                easeMobLogin(mRegisterId, EASE_MOB_PASSWORD);
                             } else {
                                 onSignupFailed();
                             }
                         } else {
                             onSignupFailed();
+                            T.showShort(SignupActivity.this, response);
                         }
                     }
                 });
@@ -353,30 +384,6 @@ public class SignupActivity extends BaseActivity {
     }
 
     /**
-     * 环信的注册方法，是一个同步方法
-     *
-     * @param cellphone
-     * @param password
-     */
-    private void easeMobSignup(final String cellphone, final String password) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    EMClient.getInstance().createAccount(cellphone, password);
-                    L.i("环信注册成功！");
-                    mHandler.sendEmptyMessage(MESSAGE_SIGNUP_SUCCESS);
-                } catch (HyphenateException e) {
-                    e.printStackTrace();
-                    L.e("环信注册失败，错误码：" + e.getErrorCode() + "，错误信息：" + e.getMessage());
-                    mHandler.sendEmptyMessage(MESSAGE_SIGNUP_FAILED);
-                }
-            }
-        }
-        ).start();
-    }
-
-    /**
      * 本地验证注册
      */
     public static String localValidate(String cellphone, String verificationCode) {
@@ -384,16 +391,23 @@ public class SignupActivity extends BaseActivity {
         String errorMessage = null;
         // 本地验证手机号
         if (cellphone.isEmpty()) {
+            errorMessage = "手机号不能为空";
+            return errorMessage;
+        }
+
+        if (verificationCode.isEmpty()) {
+            errorMessage = "验证码不能为空";
+            return errorMessage;
+        }
+
+        if (!AccountValidatorUtil.isMobile(cellphone)) {
             errorMessage = "手机号不合法";
-        } else {
-            errorMessage = null;
+            return errorMessage;
         }
 
         // 本地验证验证码
         if (verificationCode.length() != 6) {
             errorMessage = "验证码长度不正确";
-        } else {
-            errorMessage = null;
         }
 
         return errorMessage;

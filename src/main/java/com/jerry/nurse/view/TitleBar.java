@@ -191,9 +191,22 @@ public class TitleBar extends RelativeLayout {
      *
      * @param title
      */
-    public void setTitle(String title) {
+    public TitleBar setTitle(String title) {
         mTitleText = title;
         mTitleTextView.setText(mTitleText);
+        return this;
+    }
+
+    /**
+     * 设置右侧按钮文字
+     *
+     * @param text
+     * @return
+     */
+    public TitleBar setRightText(String text) {
+        mRightTextView.setText(text);
+        mRightTextView.setVisibility(VISIBLE);
+        return this;
     }
 
     /**
@@ -201,8 +214,9 @@ public class TitleBar extends RelativeLayout {
      *
      * @param onLeftClickListener
      */
-    public void setOnLeftClickListener(OnLeftClickListener onLeftClickListener) {
+    public TitleBar setOnLeftClickListener(OnLeftClickListener onLeftClickListener) {
         mOnLeftClickListener = onLeftClickListener;
+        return this;
     }
 
     /**
@@ -210,8 +224,9 @@ public class TitleBar extends RelativeLayout {
      *
      * @param onRightClickListener
      */
-    public void setOnRightClickListener(OnRightClickListener onRightClickListener) {
+    public TitleBar setOnRightClickListener(OnRightClickListener onRightClickListener) {
         mOnRightClickListener = onRightClickListener;
+        return this;
     }
 
     /**
@@ -219,7 +234,8 @@ public class TitleBar extends RelativeLayout {
      *
      * @param visible
      */
-    public void setRightVisible(int visible) {
+    public TitleBar setRightVisible(int visible) {
         mRightTextView.setVisibility(visible);
+        return this;
     }
 }

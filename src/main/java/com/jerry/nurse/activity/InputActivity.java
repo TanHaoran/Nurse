@@ -13,6 +13,7 @@ import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.ClearEditText;
 import com.jerry.nurse.view.TitleBar;
@@ -21,7 +22,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
@@ -81,7 +81,18 @@ public class InputActivity extends BaseActivity {
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
-                finish();
+                String content = mInputEditText.getText().toString();
+                if (content.length() > 15) {
+                    T.showShort(InputActivity.this, "内容过长");
+                    return;
+                }
+                if (mTitle.equals(NICKNAME)) {
+                    String nickname = mInputEditText.getText().toString();
+                    postNickname(nickname);
+                } else if (mTitle.equals(JOB_NUMBER)) {
+                    String jobNumber = mInputEditText.getText().toString();
+                    postJobNumber(jobNumber);
+                }
             }
         });
 
@@ -93,17 +104,6 @@ public class InputActivity extends BaseActivity {
             mInputEditText.setText(mUserHospitalInfo.getEmployeeId());
         }
 
-    }
-
-    @OnClick(R.id.btn_save)
-    void onSave(View view) {
-        if (mTitle.equals(NICKNAME)) {
-            String nickname = mInputEditText.getText().toString();
-            postNickname(nickname);
-        } else if (mTitle.equals(JOB_NUMBER)) {
-            String jobNumber = mInputEditText.getText().toString();
-            postJobNumber(jobNumber);
-        }
     }
 
     /**
@@ -170,6 +170,7 @@ public class InputActivity extends BaseActivity {
                             setResult(RESULT_OK);
                             finish();
                         } else {
+                            T.showShort(InputActivity.this, "设置工号失败");
                             L.i("设置工号失败");
                         }
                     }

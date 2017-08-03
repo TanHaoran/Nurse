@@ -168,5 +168,27 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="Contact_Info_Line">
+        <item name="android:paddingLeft">@dimen/line_paddingLeft</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">@dimen/personal_info_line_height</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="Contact_Info_Line_Left_Text">
+        <item name="android:layout_marginRight">@dimen/contact_detail_line_text_marginRight</item>
+        <item name="android:textSize">@dimen/normal_textSize</item>
+        <item name="android:textColor">@color/gray_textColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Contact_Info_Line_Right_Text">
+        <item name="android:textSize">@dimen/normal_textSize</item>
+        <item name="android:textColor">@color/normal_textColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 
 </resources>

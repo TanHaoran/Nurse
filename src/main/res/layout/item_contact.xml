@@ -10,13 +10,12 @@
     app:swipeEnable="true">
 
     <RelativeLayout
-        android:background="@drawable/plugin_line_selector"
         android:id="@+id/rl_contact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/plugin_line_selector"
         android:paddingBottom="@dimen/contact_item_paddingTop"
         android:paddingLeft="@dimen/contact_item_paddingLeft"
-        android:paddingRight="@dimen/contact_item_paddingLeft"
         android:paddingTop="@dimen/contact_item_paddingTop">
 
         <ImageView
@@ -30,40 +29,18 @@
             android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
             android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
             android:layout_toRightOf="@id/iv_avatar"
             android:textSize="@dimen/contact_item_nickname_textSize"
             tools:text="紫萱"/>
 
-        <TextView
-            android:id="@+id/tv_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_nickname"
-            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
-            android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-            android:layout_toRightOf="@id/iv_avatar"
-            android:textSize="@dimen/contact_item_message_textSize"
-            tools:text="在吗"/>
-
-        <TextView
-            android:textSize="@dimen/contact_item_time_textSize"
-            tools:text="23:10"
-            android:layout_centerVertical="true"
-            android:id="@+id/tv_time"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/iv_arrow_nickname"
+            style="@style/ArrowEnterStyle"/>
 
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_delete"
-        android:layout_width="60dp"
-        android:layout_height="match_parent"
-        android:background="@color/delete"
-        android:text="删除"
-        android:textColor="@android:color/white"/>
 </com.mcxtzhang.swipemenulib.SwipeMenuLayout>

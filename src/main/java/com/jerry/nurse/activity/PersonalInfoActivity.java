@@ -45,6 +45,7 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
@@ -385,14 +386,18 @@ public class PersonalInfoActivity extends BaseActivity {
         if (mRegisterInfo != null) {
             // 设置头像
             if (!TextUtils.isEmpty(mRegisterInfo.getAvatar())) {
-                Glide.with(this).load(AVATAR_ADDRESS + mRegisterInfo.getAvatar()).into(mAvatarView);
+                if (mRegisterInfo.getAvatar().startsWith("http")) {
+                    Glide.with(this).load(mRegisterInfo.getAvatar()).into(mAvatarView);
+                } else {
+                    Glide.with(this).load(AVATAR_ADDRESS + mRegisterInfo.getAvatar()).into(mAvatarView);
+                }
             }
             // 设置姓名
-            if (!TextUtils.isEmpty(mRegisterInfo.getName())) {
+            if (mRegisterInfo.getName() != null) {
                 mNameTextView.setText(mRegisterInfo.getName());
             }
             // 设置昵称
-            if (!TextUtils.isEmpty(mRegisterInfo.getNickName())) {
+            if (mRegisterInfo.getNickName() != null) {
                 mNicknameTextView.setText(mRegisterInfo.getNickName());
             }
         }
@@ -417,7 +422,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
             Date origin = DateUtil.parseMysqlDateToDate(mBasicInfo.getBirthday());
 
-            setDateSelectListener(mBirthdayLayout, origin, new OnDateSelectListener() {
+            setDateSelectListener(mBirthdayLayout, origin, true, new OnDateSelectListener() {
                         @Override
                         public void onDateSelected(Date date) {
                             mBasicInfo.setBirthday(DateUtil.parseDateToMysqlDate(date));
@@ -429,7 +434,6 @@ public class PersonalInfoActivity extends BaseActivity {
         }
     }
 
-
     /**
      * 更新用户专业技术资格证信息
      */
@@ -439,9 +443,20 @@ public class PersonalInfoActivity extends BaseActivity {
                 findLast(UserProfessionalCertificateInfo.class);
 
         if (mProfessionalCertificateInfo != null) {
+            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
             mProfessionalCertificateTextView.
-                    setText(getAuditString(mProfessionalCertificateInfo.getVerifyStatus()));
+                    setText(getAuditString(professionalStatus));
+        }
 
+        if (mProfessionalCertificateInfo != null && mPractisingCertificateInfo != null) {
+            // 显示认证情况
+            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
+            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
+            // 如果两证都审核通过，就计算工龄
+            if (professionalStatus == AUDIT_SUCCESS && practisingStatus == AUDIT_SUCCESS) {
+                String nursingAge = getWorkingTime(mPractisingCertificateInfo.getFirstJobTime());
+                mNursingAgeTextView.setText(nursingAge);
+            }
         }
     }
 
@@ -453,9 +468,37 @@ public class PersonalInfoActivity extends BaseActivity {
                 findLast(UserPractisingCertificateInfo.class);
 
         if (mPractisingCertificateInfo != null) {
+            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
             mPractisingCertificateTextView.
-                    setText(getAuditString(mPractisingCertificateInfo.getVerifyStatus()));
+                    setText(getAuditString(practisingStatus));
+        }
 
+        if (mPractisingCertificateInfo != null && mProfessionalCertificateInfo != null) {
+            // 显示认证情况
+            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
+            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
+            // 如果两证都审核通过，就计算工龄
+            if (professionalStatus == AUDIT_SUCCESS && practisingStatus == AUDIT_SUCCESS) {
+                String nursingAge = getWorkingTime(mPractisingCertificateInfo.getFirstJobTime());
+                mNursingAgeTextView.setText(nursingAge);
+            }
+
+        }
+    }
+
+    /**
+     * 计算工龄
+     *
+     * @return
+     */
+    private String getWorkingTime(String firstWorkDate) {
+        Date firstDate = DateUtil.parseMysqlDateToDate(firstWorkDate);
+        Date now = new Date();
+        int mouths = DateUtil.getMonthsBetweenTwoDate(firstDate, now);
+        if (mouths >= 12) {
+            return mouths / 12 + "年";
+        } else {
+            return mouths + "个月";
         }
     }
 

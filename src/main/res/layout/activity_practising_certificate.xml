@@ -64,7 +64,6 @@
                             android:visibility="gone"/>
 
                         <TextView
-                            android:visibility="gone"
                             android:id="@+id/tv_failed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -72,10 +71,10 @@
                             android:layout_marginTop="@dimen/submit_success_text_marginTop"
                             android:text="@string/audit_failed_please"
                             android:textColor="@color/auditing"
-                            android:textSize="@dimen/normal_textSize"/>
+                            android:textSize="@dimen/normal_textSize"
+                            android:visibility="gone"/>
 
                         <TextView
-                            android:visibility="gone"
                             android:id="@+id/tv_audit_again"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -83,19 +82,20 @@
                             android:layout_marginTop="@dimen/submit_success_text_marginTop"
                             android:text="@string/audit_again"
                             android:textColor="@color/primary"
-                            android:textSize="@dimen/normal_textSize"/>
+                            android:textSize="@dimen/normal_textSize"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:visibility="gone"
-                    android:layout_marginBottom="@dimen/block_marinTop"
                     android:id="@+id/ll_failed_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginBottom="@dimen/block_marinTop"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <View
                         style="@style/DividerLineStyle"/>
@@ -116,9 +116,11 @@
                     <TextView
                         android:id="@+id/tv_failed_message"
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/business_info_height"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/line_paddingLeft"
                         android:gravity="center_vertical"
+                        android:paddingBottom="@dimen/audit_failed_text_padding"
+                        android:paddingTop="@dimen/audit_failed_text_padding"
                         android:textColor="@color/gray_textColor"
                         android:textSize="@dimen/normal_textSize"
                         tools:text="你的信息有误"/>
@@ -142,7 +144,8 @@
 
                     <EditText
                         android:id="@+id/et_name"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_name"/>
 
                 </RelativeLayout>
 
@@ -208,7 +211,8 @@
 
                     <EditText
                         android:id="@+id/et_country_nation"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_country_nation"/>
                 </RelativeLayout>
 
                 <View
@@ -225,7 +229,8 @@
 
                     <EditText
                         android:id="@+id/et_practising_location"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_practising_location"/>
 
                 </RelativeLayout>
 
@@ -244,6 +249,7 @@
                     <EditText
                         android:id="@+id/et_certificate_number"
                         style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_certificate_number"
                         android:inputType="number"/>
 
                 </RelativeLayout>
@@ -262,7 +268,8 @@
 
                     <EditText
                         android:id="@+id/et_id_card_number"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_id_card_number"/>
 
                 </RelativeLayout>
 
@@ -335,7 +342,8 @@
 
                     <EditText
                         android:id="@+id/et_sign_department"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_sign_department"/>
                 </RelativeLayout>
 
                 <View
@@ -352,7 +360,8 @@
 
                     <EditText
                         android:id="@+id/et_certificate_organization"
-                        style="@style/Certificate_Line_Edit_Style"/>
+                        style="@style/Certificate_Line_Edit_Style"
+                        android:hint="@string/please_certificate_organization"/>
                 </RelativeLayout>
 
                 <View
@@ -442,7 +451,8 @@
                                         android:id="@+id/iv_picture1"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/professional_certificate_pic_1"/>
+                                        android:background="@drawable/hszyzs_1"
+                                        android:scaleType="fitXY"/>
                                 </android.support.v7.widget.CardView>
 
 
@@ -495,7 +505,8 @@
                                         android:id="@+id/iv_picture2"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/professional_certificate_pic_2"/>
+                                        android:background="@drawable/hszyzs_2"
+                                        android:scaleType="fitXY"/>
                                 </android.support.v7.widget.CardView>
 
 
@@ -556,7 +567,8 @@
                                         android:id="@+id/iv_picture3"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/professional_certificate_pic_1"/>
+                                        android:background="@drawable/hszyzs_3"
+                                        android:scaleType="fitXY"/>
                                 </android.support.v7.widget.CardView>
 
 
@@ -610,7 +622,8 @@
                                         android:id="@+id/iv_picture4"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/professional_certificate_pic_2"/>
+                                        android:background="@drawable/hszyzs_1"
+                                        android:scaleType="fitXY"/>
                                 </android.support.v7.widget.CardView>
 
 
@@ -654,14 +667,14 @@
             </LinearLayout>
 
             <ImageView
-                android:visibility="invisible"
                 android:id="@+id/iv_audit_success"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/audit_success_image_marginRight"
                 android:layout_marginTop="@dimen/audit_success_image_marginTop"
                 android:src="@drawable/mark_shtg"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:visibility="invisible"/>
         </RelativeLayout>
 
 

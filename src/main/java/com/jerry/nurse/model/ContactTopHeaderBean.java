@@ -8,10 +8,10 @@ package com.jerry.nurse.model;
  * 时间： 16/11/28.
  */
 
-public class MeituanTopHeaderBean {
+public class ContactTopHeaderBean {
     private String txt;
 
-    public MeituanTopHeaderBean(String txt) {
+    public ContactTopHeaderBean(String txt) {
         this.txt = txt;
     }
 
@@ -19,7 +19,7 @@ public class MeituanTopHeaderBean {
         return txt;
     }
 
-    public MeituanTopHeaderBean setTxt(String txt) {
+    public ContactTopHeaderBean setTxt(String txt) {
         this.txt = txt;
         return this;
     }

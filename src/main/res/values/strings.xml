@@ -87,6 +87,8 @@
     <string name="up_and_cancel">手指上划，取消发送</string>
     <string name="loosen_and_cancel">松开手指，取消发送</string>
     <string name="voice_too_short">录音时间过短</string>
+    <string name="make_call">打电话</string>
+    <string name="send_message">发消息</string>
 
     <!--我的-->
     <string name="mine">我的</string>
@@ -110,12 +112,18 @@
     <string name="no_certificate">您还未进行认证哦</string>
     <string name="go_certificate">去认证</string>
     <string name="id_number">编号</string>
+    <string name="please_id_number">请输入编号</string>
     <string name="management_number">管理号</string>
+    <string name="please_management_number">请输入管理号</string>
     <string name="profession_name">专业名称</string>
+    <string name="please_profession_name">请输入专业名称</string>
     <string name="certificate_level">资格级别</string>
+    <string name="please_certificate_level">请输入资格级别</string>
     <string name="type">类别</string>
+    <string name="please_type">请输入类别</string>
     <string name="approve_date">批准日期</string>
     <string name="sign_organization">签发单位</string>
+    <string name="please_sign_organization">请输入签发单位</string>
     <string name="sign_date">签发日期</string>
     <string name="please_upload_professional_picture">(请上传资格证清晰照片)</string>
     <string name="please_upload_practising_picture">(请上传执业证清晰照片)</string>
@@ -125,14 +133,19 @@
     <string name="certificate_page_3">证件页3</string>
     <string name="submit_and_authentication">提交认证</string>
     <string name="country_nation">国籍</string>
+    <string name="please_country_nation">请输入国籍</string>
     <string name="id_card_number">身份证号</string>
+    <string name="please_id_card_number">请输入身份证号</string>
     <string name="practising_location">执业地点</string>
+    <string name="please_practising_location">请输入执业地点</string>
     <string name="practising_number">执业证书编号</string>
     <string name="first_sign_date">首次注册日期</string>
     <string name="last_sign_date">最近注册日期</string>
     <string name="last_sign_date_valid">最近注册有效期至</string>
     <string name="sign_department">注册机关</string>
+    <string name="please_sign_department">请输入注册机关</string>
     <string name="certificate_organization">发证机关</string>
+    <string name="please_certificate_organization">请输入发证机关</string>
     <string name="certificate_date">发证日期</string>
     <string name="first_work_date">首次参加工作日期</string>
     <string name="submit_success">提交成功</string>
@@ -142,17 +155,18 @@
     <string name="this_is_the_last_version">当前已经是最新版本</string>
     <string name="found_new_version">发现新版本</string>
     <string name="submit_success_please_wait">信息提交成功，请耐心等待审核</string>
-    <string name="audit_failed_please">认证未通过，请</string>
-    <string name="audit_again">重新认证</string>
+    <string name="audit_failed_please">认证未通过，请重新</string>
+    <string name="audit_again">认证</string>
     <string name="upload_failed">上传失败</string>
     <string name="audit_failed_text">认证未通过原因</string>
-    <string name="scan_qr_code_and_be_my_friend">扫描上面的二维码，添加我为好友</string>
+    <string name="scan_qr_code_and_be_my_friend">扫描二维码，添加我为好友</string>
     <string name="please_select_hospital_first">请先选择医院</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>
     <string name="sex">性别</string>
     <string name="birthday">生日</string>
+    <string name="please_birthday">请输入生日</string>
     <string name="professional_certificate">专业技术资格证书</string>
     <string name="practising_certificate">护士执业证书</string>
     <string name="nursing_age">护龄</string>
@@ -185,7 +199,9 @@
     <string name="please_input_new_password">请输入新密码</string>
 
     <string name="name">姓名</string>
+    <string name="please_name">请输入姓名</string>
     <string name="certificate_number">证书编号</string>
+    <string name="please_certificate_number">请输入证书编号</string>
 
     <string name="confirm_logout">确定退出登录吗？</string>
 

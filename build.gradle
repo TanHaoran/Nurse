@@ -35,6 +35,7 @@ dependencies {
     })
     compile files('libs/open_sdk_r5793_lite.jar')
     compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
+    compile files('libs/BaiduLBS_Android.jar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -53,5 +54,4 @@ dependencies {
     compile 'com.github.mcxtzhang:SuspensionIndexBar:V1.0.0'
     compile 'com.android.support:cardview-v7:25.3.1'
     testCompile 'junit:junit:4.12'
-    compile files('libs/BaiduLBS_Android.jar')
 }

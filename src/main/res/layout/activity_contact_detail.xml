@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.InputActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lxr_bigbg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.jerry.nurse.view.TitleBar
+            android:id="@+id/tb_input"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            app:bg_color="@color/transparent"
+            app:button_textSize="@dimen/normal_textSize"
+            app:show_back="true"/>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_avatar"
+            android:layout_width="@dimen/contact_detail_avatar_width"
+            android:layout_height="@dimen/contact_detail_avatar_width"
+            android:layout_marginTop="@dimen/block_marinTop"
+            app:cardCornerRadius="@dimen/image_round_radius"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/civ_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/icon_avatar_default"
+                android:scaleType="fitXY"/>
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/contact_detail_avatar_marginBottom"
+            android:layout_marginTop="@dimen/block_marinTop"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_textSize"
+            tools:text="刘小护"/>
+
+        <TextView
+            android:id="@+id/tv_remark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/block_marinTop"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_textSize"
+            tools:text="护理培训的护士长"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/contact_detail_option_height"
+        android:orientation="horizontal"
+        android:padding="@dimen/contact_detail_option_padding">
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/contact_detail_option_padding"
+            android:layout_weight="1"
+            android:background="@drawable/make_call_button"
+            android:text="@string/make_call"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/send_message_button"
+            android:text="@string/send_message"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/normal_textSize"/>
+
+    </LinearLayout>
+
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+    <LinearLayout
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/nickname"/>
+
+        <TextView
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="喵喵"/>
+
+    </LinearLayout>
+
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+    <LinearLayout
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/name"/>
+
+        <TextView
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="刘小护"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+    <LinearLayout
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/sex"/>
+
+        <TextView
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="女"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+    <LinearLayout
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/cellphone"/>
+
+        <TextView
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="13577878958"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+    <LinearLayout
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/office"/>
+
+        <TextView
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="儿科"/>
+
+    </LinearLayout>
+
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+
+</LinearLayout>

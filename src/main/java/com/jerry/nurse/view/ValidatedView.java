@@ -22,7 +22,7 @@ import com.jerry.nurse.util.DensityUtil;
 
 public class ValidatedView extends LinearLayout {
 
-    private static final int DEFAULT_TEXT_SIZE = 11;
+    private static final int DEFAULT_TEXT_SIZE = 10;
 
     private static final int DEFAULT_BACKGROUND_COLOR = 0xFFF7B55F;
 
@@ -81,6 +81,6 @@ public class ValidatedView extends LinearLayout {
         addView(mImageView);
         addView(mTextView);
 
-        setPadding(DensityUtil.dp2px(context, 8), 3, DensityUtil.dp2px(context, 8), 3);
+        setPadding(DensityUtil.dp2px(context, 8),0, DensityUtil.dp2px(context, 8), 0);
     }
 }

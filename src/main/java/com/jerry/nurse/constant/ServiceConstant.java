@@ -12,6 +12,7 @@ public class ServiceConstant {
     public static final String USER_REGISTER_ID = "Id:";
     public static final String USER_PHONE = "Phone:";
     public static final String USER_FILE = "File:";
+    public static final String USER_NAME = "Name:";
 
     /**
      * 几种审核状态
@@ -26,8 +27,7 @@ public class ServiceConstant {
     public static final int AUDIT_SUCCESS = 3;
 
     // 环信注册密码
-    public static final String EASE_MOB_PASSWORD = "queYL798";
-
+    public static final String EASE_MOB_PASSWORD = "WAJB357";
 
     public static final String IP = "http://192.168.0.100:9400/UserService.svc/";
 
@@ -36,6 +36,7 @@ public class ServiceConstant {
     public static final String AVATAR_ADDRESS = "http://192.168.0.100:9400/Avatar/";
     public static final String PROFESSIONAL_ADDRESS = "http://192.168.0.100:9400/QC/";
     public static final String PRACTISING_ADDRESS = "http://192.168.0.100:9400/PC/";
+    public static final String QR_CODE_ADDRESS = "http://192.168.0.100:9400/QRCode/";
 
     /**
      * 获取验证码
@@ -60,9 +61,14 @@ public class ServiceConstant {
     public static final String LOGIN = IP + "Login";
 
     /**
-     * 设置密码
+     * QQ第三方登陆
      */
-    public static final String SET_PASSWORD = IP + "SetPwdByPhone";
+    public static final String LOGIN_BY_QQ = IP + "ThirdPartLoginQQ";
+
+    /**
+     * 绑定qq
+     */
+    public static final String BIND_QQ = IP + "SetQQBing";
 
     /**
      * 通过注册ID获取用户注册信息
@@ -73,6 +79,11 @@ public class ServiceConstant {
      * 通过手机号获取用户注册信息
      */
     public static final String GET_USER_REGISTER_INFO_BY_PHONE = IP + "GetUserReginfoByPhone";
+
+    /**
+     * 获取二维码
+     */
+    public static final String GET_QR_CODE = IP + "GetQRCodeById";
 
     /**
      * 上传头像
@@ -103,6 +114,11 @@ public class ServiceConstant {
      * 获取专业资格证书
      */
     public static final String GET_PROFESSIONAL_CERTIFICATE_INFO = IP + "GetUserQuacetById";
+
+    /**
+     * 获取QQ昵称
+     */
+    public static final String GET_QQ_NICKNAME = IP + "GetQQNickNameById";
 
     /**
      * 获取护士职业证书
@@ -164,4 +180,9 @@ public class ServiceConstant {
      * 读取APP最新版本信息
      */
     public static final String GET_APP_VERSION = IP + "GetReleaseversionInfo";
+
+    /**
+     * 根据科室查询所有联系人
+     */
+    public static final String GET_CONTACT_LIST_BY_OFFICE_ID = IP + "GetContactByHopDepId";
 }
