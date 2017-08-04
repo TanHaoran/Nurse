@@ -68,6 +68,7 @@ public class MessageFragment extends BaseFragment {
 
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f),
                 getResources().getColor(R.color.divider_line)));

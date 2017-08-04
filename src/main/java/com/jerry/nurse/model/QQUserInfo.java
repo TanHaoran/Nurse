@@ -6,7 +6,7 @@ package com.jerry.nurse.model;
 
 public class QQUserInfo {
 
-    private String registerId;
+    private String RegisterId;
     private String OpenId;
     private String FigureUrl;
     private String NickName;
@@ -90,10 +90,10 @@ public class QQUserInfo {
     }
 
     public String getRegisterId() {
-        return registerId;
+        return RegisterId;
     }
 
     public void setRegisterId(String registerId) {
-        this.registerId = registerId;
+        RegisterId = registerId;
     }
 }

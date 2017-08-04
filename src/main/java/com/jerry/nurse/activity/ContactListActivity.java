@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -19,13 +18,12 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.OnItemClickListener;
-import com.jerry.nurse.util.ViewHolder;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -127,27 +125,16 @@ public class ContactListActivity extends BaseActivity {
         mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts);
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(ViewGroup parent, View view, Object o, int position) {
-                Intent intent = ChatActivity.getIntent(ContactListActivity.this);
-                startActivity(intent);
-            }
-
-            @Override
-            public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
-                return false;
-            }
-        });
     }
 
     class ContactAdapter extends CommonAdapter<Contact> {
+
         public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
             super(context, layoutId, datas);
         }
 
         @Override
-        public void convert(ViewHolder holder, final Contact contact) {
+        protected void convert(ViewHolder holder, Contact contact, int position) {
             holder.setText(R.id.tv_nickname, contact.getNickName());
             ImageView imageView = holder.getView(R.id.iv_avatar);
             if (contact.getAvatar().startsWith("http")) {
@@ -155,6 +142,13 @@ public class ContactListActivity extends BaseActivity {
             } else {
                 Glide.with(ContactListActivity.this).load(AVATAR_ADDRESS + contact.getAvatar()).into(imageView);
             }
+            holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = ChatActivity.getIntent(ContactListActivity.this);
+                    startActivity(intent);
+                }
+            });
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +25,7 @@ import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
@@ -114,7 +114,8 @@ public class PersonalInfoActivity extends BaseActivity {
     private String mRegisterId;
 
     private Bitmap mAvatarBitmap;
-    private ProgressDialog mProgressDialog;
+
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalInfoActivity.class);
@@ -128,14 +129,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         // 设置图片
         setPhotoSelectListener(mAvatarLayout, 0, new OnPhotoSelectListener() {
@@ -172,7 +166,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * 获取用户基本信息
      */
     private void getBasicInfo(final String registerId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_USER_BASIC_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
@@ -180,12 +174,10 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
                             mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
                             if (mBasicInfo != null) {
@@ -207,7 +199,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * 获取用户专业技术资格证信息
      */
     private void getProfessionalCertificateInfo(final String registerId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_PROFESSIONAL_CERTIFICATE_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
@@ -215,12 +207,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         try {
                             mProfessionalCertificateInfo = new Gson().fromJson(response, UserProfessionalCertificateInfo.class);
 
@@ -242,7 +234,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * 获取用户执业证信息
      */
     private void getPractisingCertificateInfo(final String registerId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_PRACTISING_CERTIFICATE_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
@@ -250,12 +242,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         try {
                             mPractisingCertificateInfo = new Gson().fromJson(response, UserPractisingCertificateInfo.class);
                             if (mPractisingCertificateInfo != null) {
@@ -275,7 +267,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * 获取用户医院信息
      */
     private void getHospitalInfo(final String registerId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
@@ -283,12 +275,12 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         try {
                             mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
                             if (mHospitalInfo != null) {
@@ -310,7 +302,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * @param file
      */
     private void postUserAvatar(File file) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "*/*");
         OkHttpUtils.post()
@@ -321,12 +313,12 @@ public class PersonalInfoActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         if (response.startsWith(USER_FILE)) {
                             if (response.split(USER_COLON).length == 2) {
                                 String name = response.split(USER_COLON)[1];
@@ -346,7 +338,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * @param name
      */
     void postAvatar(String name) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         mRegisterInfo.setAvatar(name);
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_REGISTER_INFO)
@@ -356,12 +348,12 @@ public class PersonalInfoActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置头像成功");
                             mAvatarView.setImageBitmap(mAvatarBitmap);
@@ -395,10 +387,13 @@ public class PersonalInfoActivity extends BaseActivity {
             // 设置姓名
             if (mRegisterInfo.getName() != null) {
                 mNameTextView.setText(mRegisterInfo.getName());
+                mNameTextView.setTextColor(getResources().getColor(R.color.normal_textColor));
             }
             // 设置昵称
             if (mRegisterInfo.getNickName() != null) {
                 mNicknameTextView.setText(mRegisterInfo.getNickName());
+            } else {
+                mNicknameTextView.setText("未设置");
             }
         }
     }

@@ -28,4 +28,11 @@
         <attr name="validated_bg_color" format="color"/>
         <attr name="text" format="string"/>
     </declare-styleable>
+
+
+    <!--字母导航条-->
+    <declare-styleable name="IndexBar">
+        <attr name="indexBarTextSize" format="dimension"/>
+        <attr name="indexBarPressBackground" format="color"/>
+    </declare-styleable>
 </resources>

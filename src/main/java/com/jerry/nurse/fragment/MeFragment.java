@@ -1,6 +1,5 @@
 package com.jerry.nurse.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +19,7 @@ import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.view.ValidatedView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -42,6 +42,8 @@ import static com.jerry.nurse.constant.ServiceConstant.USER_NAME;
 
 public class MeFragment extends BaseFragment {
 
+    private static final String EVENT_REPORT_URL = "http://192.168.0.49:3300?Ruid=ru00000002&from=103";
+
     @Bind(R.id.civ_avatar)
     ImageView mAvatarImageView;
 
@@ -54,9 +56,8 @@ public class MeFragment extends BaseFragment {
     @Bind(R.id.vv_valid)
     ValidatedView mValidatedView;
 
-    private ProgressDialog mProgressDialog;
-
     private UserRegisterInfo mUserRegisterInfo;
+    private ProgressDialogManager mProgressDialogManager;
 
     /**
      * 实例化方法
@@ -75,14 +76,7 @@ public class MeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(getActivity(),
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(getActivity());
     }
 
     @Override
@@ -112,7 +106,6 @@ public class MeFragment extends BaseFragment {
                 Glide.with(this).load(AVATAR_ADDRESS + mUserRegisterInfo.getAvatar()).into(mAvatarImageView);
             }
         }
-
         if (mUserRegisterInfo.getName() != null) {
             mNameTextView.setText(mUserRegisterInfo.getName());
         } else {
@@ -122,6 +115,12 @@ public class MeFragment extends BaseFragment {
             mNicknameTextView.setText(mUserRegisterInfo.getNickName());
         } else {
             mNicknameTextView.setVisibility(View.GONE);
+        }
+        // 如果姓名和昵称都没有设置的情况就显示未设置
+        if (mUserRegisterInfo.getName() == null && mUserRegisterInfo.getNickName() == null) {
+            mNicknameTextView.setVisibility(View.VISIBLE);
+            mNicknameTextView.setText("未设置");
+            mNicknameTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
         }
 
         if (userProfessionalCertificateInfo != null &&
@@ -145,7 +144,7 @@ public class MeFragment extends BaseFragment {
      */
     @OnClick(R.id.iv_qr_code)
     void onQrCode(View view) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_QR_CODE)
                 .addParams("RegisterId", mUserRegisterInfo.getRegisterId())
                 .build()
@@ -153,12 +152,12 @@ public class MeFragment extends BaseFragment {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         if (response.startsWith(USER_NAME)) {
                             String name = response.split(USER_COLON)[1];
                             showQrCode(name);
@@ -192,7 +191,7 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), "");
+        Intent intent = HtmlActivity.getIntent(getActivity(), EVENT_REPORT_URL);
         startActivity(intent);
     }
 

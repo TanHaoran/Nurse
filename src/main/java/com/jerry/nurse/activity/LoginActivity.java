@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,35 +8,27 @@ import android.os.Message;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.QQOriginUserInfo;
 import com.jerry.nurse.model.QQUserInfo;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.DeviceUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.TencentLoginUtil;
 import com.jerry.nurse.util.UserUtil;
-import com.tencent.connect.UserInfo;
-import com.tencent.connect.auth.QQToken;
 import com.tencent.connect.common.Constants;
-import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -70,14 +61,13 @@ public class LoginActivity extends BaseActivity {
     String mStringPasswordInvalid;
 
     // 腾讯官方获取的APPID
-    private static final String APP_ID = "1106292702";
-    private Tencent mTencent;
-    private BaseUiListener mIUiListener;
-    private UserInfo mUserInfo;
+    private TencentLoginUtil mTencentLoginUtil;
 
     private UserRegisterInfo mUserRegisterInfo;
 
     private String mErrorMessage;
+
+    private ProgressDialogManager mProgressDialogManager;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -95,7 +85,6 @@ public class LoginActivity extends BaseActivity {
             }
         }
     };
-    private ProgressDialog mProgressDialog;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -109,14 +98,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         // 入口处判断用户是否已经登陆
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
@@ -125,9 +107,6 @@ public class LoginActivity extends BaseActivity {
             startActivity(intent);
             finish();
         }
-
-        //传入参数APPID和全局Context上下文
-        mTencent = Tencent.createInstance(APP_ID, getApplicationContext());
     }
 
     @OnClick(R.id.btn_login)
@@ -145,8 +124,7 @@ public class LoginActivity extends BaseActivity {
 
         mLoginButton.setEnabled(false);
 
-        mProgressDialog.setMessage("登录中...");
-        mProgressDialog.show();
+        mProgressDialogManager.setMessage("登录中...");
 
         // 第一步：登陆护士通账号
         login(cellphone, password);
@@ -199,7 +177,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void resetUI() {
-        mProgressDialog.dismiss();
+        mProgressDialogManager.dismiss();
         mLoginButton.setEnabled(true);
     }
 
@@ -213,7 +191,7 @@ public class LoginActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 腾讯的第三方登陆
         if (requestCode == Constants.REQUEST_LOGIN) {
-            Tencent.onActivityResultData(requestCode, resultCode, data, mIUiListener);
+            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -379,78 +357,14 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.ll_qq)
     void onQQ(View view) {
-        /**通过这句代码，SDK实现了QQ的登录，这个方法有三个参数，第一个参数是context上下文，第二个参数SCOPO 是一个String类型的字符串，表示一些权限
-         官方文档中的说明：应用需要获得哪些API的权限，由“，”分隔。例如：SCOPE = “get_user_info,add_t”；所有权限用“all”
-         第三个参数，是一个事件监听器，IUiListener接口的实例，这里用的是该接口的实现类 */
-        mIUiListener = new BaseUiListener();
-        //all表示获取所有权限
-        mTencent.login(LoginActivity.this, "all", mIUiListener);
-    }
+        mTencentLoginUtil = new TencentLoginUtil(this) {
 
-    /**
-     * 自定义监听器实现IUiListener接口后，需要实现的3个方法
-     * onComplete完成 onError错误 onCancel取消
-     */
-    private class BaseUiListener implements IUiListener {
-
-        @Override
-        public void onComplete(Object response) {
-            Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
-            L.e("response:" + response);
-            JSONObject obj = (JSONObject) response;
-            try {
-                final String openID = obj.getString("openid");
-                final String accessToken = obj.getString("access_token");
-                final String expires = obj.getString("expires_in");
-                mTencent.setOpenId(openID);
-                mTencent.setAccessToken(accessToken, expires);
-                final QQToken qqToken = mTencent.getQQToken();
-                mUserInfo = new UserInfo(getApplicationContext(), qqToken);
-                mUserInfo.getUserInfo(new IUiListener() {
-                    @Override
-                    public void onComplete(Object response) {
-                        QQOriginUserInfo originInfo = new Gson().fromJson(response.toString(), QQOriginUserInfo.class);
-                        String deviceId = DeviceUtil.getDeviceId(LoginActivity.this);
-                        QQUserInfo info = new QQUserInfo();
-                        info.setOpenId(openID);
-                        info.setFigureUrl(originInfo.getFigureurl_qq_2());
-                        info.setNickName(originInfo.getNickname());
-                        info.setProvince(originInfo.getProvince());
-                        info.setCity(originInfo.getCity());
-                        info.setGender(originInfo.getGender());
-                        info.setAccessToken(accessToken);
-                        info.setExpires(expires);
-                        info.setDeviceId(deviceId);
-                        L.e("登录成功" + new Gson().toJson(info));
-                        postQQLogin(info);
-                    }
-
-                    @Override
-                    public void onError(UiError uiError) {
-                        L.e("登录失败" + uiError.toString());
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        L.e("登录取消");
-
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
+            @Override
+            public void loginComplete(QQUserInfo info) {
+                postQQLogin(info);
             }
-        }
-
-        @Override
-        public void onError(UiError uiError) {
-            T.showShort(LoginActivity.this, "授权失败");
-
-        }
-
-        @Override
-        public void onCancel() {
-            T.showShort(LoginActivity.this, "授权取消");
-        }
+        };
+        mTencentLoginUtil.login();
     }
 
     /**
@@ -459,7 +373,7 @@ public class LoginActivity extends BaseActivity {
      * @param info
      */
     private void postQQLogin(QQUserInfo info) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN_BY_QQ)
                 .content(StringUtil.addModelWithJson(info))
@@ -468,12 +382,12 @@ public class LoginActivity extends BaseActivity {
                 .execute(new FilterStringCallback() {
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
+                        mProgressDialogManager.dismiss();
                         if (response.startsWith(USER_REGISTER_ID)) {
                             L.i("qq授权应用注册成功");
                             if (response.split(USER_COLON).length == 2) {

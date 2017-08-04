@@ -71,6 +71,16 @@ public class ServiceConstant {
     public static final String BIND_QQ = IP + "SetQQBing";
 
     /**
+     * 绑定手机号
+     */
+    public static final String BIND_CELLPHONE = IP + "QQBindPhone";
+
+    /**
+     * 解绑qq
+     */
+    public static final String UN_BIND_QQ = IP + "QQUnBind";
+
+    /**
      * 通过注册ID获取用户注册信息
      */
     public static final String GET_USER_REGISTER_INFO_BY_ID = IP + "GetUserReginfoById";

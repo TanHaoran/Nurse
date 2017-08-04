@@ -23,9 +23,10 @@
         android:layout_width="24dp"
         android:layout_height="match_parent"
         android:layout_gravity="right"
-        android:paddingTop="45dp"
+        android:paddingTop="120dp"
+        android:paddingBottom="120dp"
         app:indexBarPressBackground="@color/partTranslucent"
-        app:indexBarTextSize="16sp"/>
+        app:indexBarTextSize="@dimen/small_textSize"/>
 
     <TextView
         android:id="@+id/tvSideBarHint"

@@ -59,6 +59,7 @@ public class SignupActivity extends BaseActivity {
     public static final int EXTRA_TYPE_REGISTER = 0;
     public static final int EXTRA_TYPE_FORGET_PASSWORD = 1;
     public static final int EXTRA_TYPE_VERIFICATION_CODE = 2;
+    public static final int EXTRA_TYPE_CHANGE_CELLPHONE = 3;
 
     private static final int REQUEST_COUNTRY = 0x00000101;
 

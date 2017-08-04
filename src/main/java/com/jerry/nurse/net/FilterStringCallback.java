@@ -1,6 +1,5 @@
 package com.jerry.nurse.net;
 
-import com.jerry.nurse.activity.BaseActivity;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;

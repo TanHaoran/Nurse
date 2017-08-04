@@ -14,9 +14,11 @@ import android.widget.TextView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.ShortMessage;
+import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -29,9 +31,15 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_CHANGE_CELLPHONE;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class ChangeCellphoneActivity extends BaseActivity {
+
+    private static final String EXTRA_TYPE = "type";
+
+    public static final int TYPE_CHANGE_CELLPHONE = 0x001;
+    public static final int TYPE_BIND = 0x002;
 
     private static final int REQUEST_CHANGE_CELLPHONE = 0x00000101;
 
@@ -61,6 +69,10 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     private UserRegisterInfo mUserRegisterInfo;
 
+    private int mType;
+
+    private ProgressDialog mProgressDialog;
+
     /**
      * 验证码获取间隔
      */
@@ -85,10 +97,10 @@ public class ChangeCellphoneActivity extends BaseActivity {
     };
 
     private Handler mHandler = new Handler();
-    private ProgressDialog mProgressDialog;
 
-    public static Intent getIntent(Context context) {
+    public static Intent getIntent(Context context, int enterType) {
         Intent intent = new Intent(context, ChangeCellphoneActivity.class);
+        intent.putExtra(EXTRA_TYPE, enterType);
         return intent;
     }
 
@@ -99,24 +111,25 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mType = getIntent().getIntExtra(EXTRA_TYPE, TYPE_CHANGE_CELLPHONE);
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialog = new ProgressDialog(this);
 
-        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        String cellphone = mUserRegisterInfo.getPhone();
-        if (cellphone == null) {
-            mCellphoneTextView.setText(R.string.cellphone_not_exist);
-            mContentLayout.setVisibility(View.INVISIBLE);
+        if (mType == TYPE_CHANGE_CELLPHONE) {
+
+            mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+            String cellphone = mUserRegisterInfo.getPhone();
+            if (cellphone == null) {
+                mCellphoneTextView.setText(R.string.cellphone_not_exist);
+                mContentLayout.setVisibility(View.INVISIBLE);
+            } else {
+                mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
+                mGetVerificationCodeTextView.setEnabled(true);
+                mNextButton.setEnabled(true);
+            }
         } else {
-            mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
-            mGetVerificationCodeTextView.setEnabled(true);
-            mNextButton.setEnabled(true);
+            mCellphoneTextView.setVisibility(View.GONE);
+            mNextButton.setText("绑定");
         }
     }
 
@@ -141,6 +154,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                 .addParams("Phone", cellphone)
+                .addParams("Type", String.valueOf(EXTRA_TYPE_CHANGE_CELLPHONE))
                 .build()
                 .execute(new FilterStringCallback() {
 
@@ -168,6 +182,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @OnClick(R.id.acb_next)
     void onNext(View view) {
+
         // 本地验证用户名和密码格式是否符合
         String cellphone = mCellphoneEditText.getText().toString();
         String verificationCode = mVerificationCodeEditText.getText().toString();
@@ -184,6 +199,43 @@ public class ChangeCellphoneActivity extends BaseActivity {
         validateVerificationCode(cellphone, verificationCode);
     }
 
+
+    /**
+     * 绑定手机
+     *
+     * @param cellphone
+     */
+    private void bindCellphone(final String cellphone) {
+        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
+        thirdPartInfo.setPhone(cellphone);
+        mProgressDialog.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.BIND_CELLPHONE)
+                .content(StringUtil.addModelWithJson(thirdPartInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback() {
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        mProgressDialog.dismiss();
+                        if (response.equals(REQUEST_SUCCESS)) {
+                            T.showShort(ChangeCellphoneActivity.this, "手机绑定成功");
+                            L.i("手机绑定成功");
+                            finish();
+                        } else {
+                            L.i("手机绑定失败");
+                            T.showShort(ChangeCellphoneActivity.this, response);
+                        }
+                    }
+                });
+    }
+
     /**
      * 验证验证码服务
      *
@@ -191,8 +243,16 @@ public class ChangeCellphoneActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, 3);
+
+        ShortMessage shortMessage;
+        if (mType == TYPE_CHANGE_CELLPHONE) {
+            shortMessage = new ShortMessage(
+                    mUserRegisterInfo.getRegisterId(), cellphone, code, EXTRA_TYPE_CHANGE_CELLPHONE);
+        } else {
+            shortMessage = new ShortMessage(
+                    mUserRegisterInfo.getRegisterId(), cellphone, code, EXTRA_TYPE_CHANGE_CELLPHONE);
+        }
+
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))

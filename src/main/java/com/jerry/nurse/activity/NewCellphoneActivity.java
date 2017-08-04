@@ -30,6 +30,7 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_CHANGE_CELLPHONE;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class NewCellphoneActivity extends BaseActivity {
@@ -125,6 +126,7 @@ public class NewCellphoneActivity extends BaseActivity {
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                 .addParams("Phone", cellphone)
+                .addParams("Type", String.valueOf(EXTRA_TYPE_CHANGE_CELLPHONE))
                 .build()
                 .execute(new FilterStringCallback() {
 
@@ -176,7 +178,7 @@ public class NewCellphoneActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
         ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, 3);
+                mUserRegisterInfo.getRegisterId(), cellphone, code, EXTRA_TYPE_CHANGE_CELLPHONE);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))

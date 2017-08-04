@@ -26,7 +26,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class OfficeFragment extends BaseFragment {
 
-    private static final String REPORT_EVENT_URL = "http://192.168.0.49:3300";
+    private static final String REPORT_EVENT_URL = "http://192.168.0.49:3300?Ruid=ru00000002";
 
     private static final String NURSE_CLASS_URL = "http://192.168.0.100:8100";
 

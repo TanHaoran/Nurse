@@ -63,10 +63,12 @@
     <dimen name="plugin_divider_line_marginLeft">70dp</dimen>
 
     <!--联系人-->
-    <dimen name="contact_item_height">45dp</dimen>
-    <dimen name="contact_item_paddingTop">5dp</dimen>
-    <dimen name="contact_item_paddingLeft">10dp</dimen>
-    <dimen name="contact_item_avatar_width">45dp</dimen>
+    <dimen name="contact_item_height">56dp</dimen>
+    <dimen name="contact_item_paddingTop">10dp</dimen>
+    <dimen name="contact_item_paddingBottom">8dp</dimen>
+    <dimen name="contact_item_paddingLeft">13dp</dimen>
+    <dimen name="contact_item_avatar_width">40dp</dimen>
+    <dimen name="contact_item_divider_line_marginLef">44dp</dimen>
     <dimen name="contact_item_nickname_marginLeft">8dp</dimen>
     <dimen name="contact_item_nickname_marginTop">4dp</dimen>
     <dimen name="contact_item_nickname_textSize">15sp</dimen>
