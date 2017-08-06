@@ -170,29 +170,61 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-        <activity android:name=".activity.ChatActivity">
+        <activity
+            android:name=".activity.ChatActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ChangeCellphoneActivity">
+        <activity
+            android:name=".activity.ChangeCellphoneActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.NewCellphoneActivity">
+        <activity
+            android:name=".activity.NewCellphoneActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.SexActivity">
+        <activity
+            android:name=".activity.SexActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.CountryActivity">
+        <activity
+            android:name=".activity.CountryActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.PasswordActivity">
+        <activity
+            android:name=".activity.PasswordActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.HospitalActivity">
+        <activity
+            android:name=".activity.HospitalActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.OfficeActivity">
+        <activity
+            android:name=".activity.OfficeActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.NoCertificateActivity">
+        <activity
+            android:name=".activity.NoCertificateActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ContactDetailActivity">
+        <activity
+            android:name=".activity.ContactDetailActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ContactOfficeActivity">
+        <activity
+            android:name=".activity.ContactOfficeActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ContactListActivity">
+        <activity
+            android:name=".activity.ContactListActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activity.AnnouncementActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activity.AnnouncementDetailActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

@@ -3,14 +3,11 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,13 +17,13 @@ import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
-import com.jerry.nurse.adapter.ChatAdapterForRv;
+import com.jerry.nurse.adapter.ChatAdapter;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.AudioRecordButton;
-import com.zhy.adapter.recyclerview.wrapper.LoadMoreWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +35,7 @@ import butterknife.OnClick;
 public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @Bind(R.id.rv_content)
-    RecyclerView mRecyclerView;
+    XRecyclerView mRecyclerView;
 
     @Bind(R.id.ib_left)
     ImageButton mTypeButton;
@@ -56,6 +53,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     AudioRecordButton mRecordButton;
 
     private boolean mIsRecordState;
+
+    private List<ChatMessage> mChatMessages;
+    private ChatAdapter mAdapter;
 
     private static final String mOtherId = "thr";
 
@@ -103,48 +103,27 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
         });
 
-        final List<ChatMessage> mDatas = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            ChatMessage msg;
+        mChatMessages = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            ChatMessage chatMessage = new ChatMessage();
             if (i % 2 == 0) {
-
-                msg = new ChatMessage(R.drawable.icon_avatar_default, "小黑", "有大码？", "", true);
+                chatMessage.setSend(true);
+                chatMessage.setAvatar(R.drawable.icon_avatar_default);
+                chatMessage.setContent("人马，有大吗？");
             } else {
-
-                msg = new ChatMessage(R.drawable.icon_avatar_default, "人马", "有大码？", "", false);
+                chatMessage.setSend(false);
+                chatMessage.setAvatar(R.drawable.icon_avatar_default);
+                chatMessage.setContent("小黑，你问我有大吗？那你有大吗？几级大呢？。。。。");
             }
-            mDatas.add(msg);
+            mChatMessages.add(chatMessage);
         }
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ChatAdapterForRv adapter = new ChatAdapterForRv(this, mDatas);
+        mAdapter = new ChatAdapter(this, mChatMessages);
 
-        final LoadMoreWrapper mLoadMoreWrapper = new LoadMoreWrapper(adapter);
-        mLoadMoreWrapper.setLoadMoreView(LayoutInflater.from(this).inflate(R.layout.default_loading, mRecyclerView, false));
-        mLoadMoreWrapper.setOnLoadMoreListener(new LoadMoreWrapper.OnLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean coming = Math.random() > 0.5;
-                        ChatMessage msg = null;
-                        msg = new ChatMessage(coming ? R.drawable.icon_avatar_default : R.drawable.icon_avatar_default,
-                                coming ? "人马" : "xiaohei", "where are you " + mDatas.size(),
-                                null, coming);
-                        mDatas.add(msg);
-                        mLoadMoreWrapper.notifyDataSetChanged();
-
-                    }
-                }, 3000);
-            }
-        });
-
-
-
-
-        mRecyclerView.setAdapter(mLoadMoreWrapper);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.scrollToPosition(mAdapter.getItemCount());
 
     }
 
@@ -156,7 +135,34 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             T.showShort(this, R.string.message_can_not_be_empty);
             return;
         }
+
         mMessageEditText.setText("");
+
+        // 本地发送消息
+        localSend(message);
+
+        // 发送环信消息
+        easeMobSend(message);
+    }
+
+    private void localSend(String message) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setSend(true);
+        chatMessage.setTime("2017-8-6 21:25:05");
+        chatMessage.setAvatar(R.drawable.icon_avatar_default);
+        chatMessage.setContent(message);
+        mChatMessages.add(chatMessage);
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+
+    }
+
+    /**
+     * 发送环信消息
+     *
+     * @param message
+     */
+    private void easeMobSend(String message) {
         // 创建消息
         EMMessage emMessage = EMMessage.createTxtSendMessage(message, mOtherId);
         emMessage.setChatType(EMMessage.ChatType.Chat);
@@ -180,8 +186,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             }
         });
-
-
     }
 
     /**

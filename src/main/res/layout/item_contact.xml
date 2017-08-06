@@ -6,7 +6,7 @@
     android:id="@+id/ll_contact"
     android:layout_width="match_parent"
     android:layout_height="@dimen/contact_item_height"
-    android:background="@color/white"
+    android:background="@drawable/plugin_line_selector"
     android:orientation="vertical"
     android:paddingLeft="@dimen/contact_item_paddingLeft"
     app:ios="false"
@@ -18,7 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/plugin_line_selector"
         android:paddingBottom="@dimen/contact_item_paddingBottom"
         android:paddingTop="@dimen/contact_item_paddingTop">
 

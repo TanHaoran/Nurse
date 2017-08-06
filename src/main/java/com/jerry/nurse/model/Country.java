@@ -1,11 +1,6 @@
 package com.jerry.nurse.model;
 
-/**
- * Created by Jerry on 2017/7/25.
- */
-
 public class Country {
-
     /**
      * CountryCode : +86
      * CountryId : 0000000001

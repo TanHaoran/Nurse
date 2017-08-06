@@ -37,5 +37,6 @@
 
     <!--联系人-->
     <color name="partTranslucent">#39000000</color>
+    <color name="chat_time_bg">#CECECE</color>
 
 </resources>

@@ -25,7 +25,6 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.jerry.nurse.view.ToggleButton;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -582,7 +581,7 @@ public class PractisingCertificateActivity extends BaseActivity {
                             T.showShort(PractisingCertificateActivity.this,
                                     R.string.submit_success_please_wait);
                             // 设置成功后更新数据库
-                            UserUtil.savePractisingCertificateInfo(mInfo);
+//                            LitePalUtil.savePractisingCertificateInfo(mInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {

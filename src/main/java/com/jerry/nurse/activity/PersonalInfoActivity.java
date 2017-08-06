@@ -17,8 +17,11 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
 import com.jerry.nurse.listener.OnPhotoSelectListener;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.UserBasicInfo;
 import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserInfo;
+import com.jerry.nurse.model.UserInfoResult;
 import com.jerry.nurse.model.UserPractisingCertificateInfo;
 import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
@@ -26,10 +29,8 @@ import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
-import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -48,8 +49,10 @@ import okhttp3.MediaType;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 import static com.jerry.nurse.constant.ServiceConstant.USER_FILE;
+import static org.litepal.crud.DataSupport.findFirst;
 
 public class PersonalInfoActivity extends BaseActivity {
 
@@ -111,11 +114,14 @@ public class PersonalInfoActivity extends BaseActivity {
     private UserPractisingCertificateInfo mPractisingCertificateInfo;
     private UserHospitalInfo mHospitalInfo;
 
-    private String mRegisterId;
 
     private Bitmap mAvatarBitmap;
 
     private ProgressDialogManager mProgressDialogManager;
+
+    private LoginInfo mLoginInfo;
+
+    private UserInfo mUserInfo;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalInfoActivity.class);
@@ -131,6 +137,10 @@ public class PersonalInfoActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
+        mLoginInfo = findFirst(LoginInfo.class);
+
+        initData();
+
         // 设置图片
         setPhotoSelectListener(mAvatarLayout, 0, new OnPhotoSelectListener() {
             @Override
@@ -139,60 +149,97 @@ public class PersonalInfoActivity extends BaseActivity {
                 postUserAvatar(file);
             }
         });
-        mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
 
-        // 读取用户注册信息
-        updateRegisterInfo();
-        updateBasicInfo();
-        updateProfessionalCertificateInfo();
-        updatePractisingCertificateInfo();
-        updateHospitalInfo();
+        // 获取个人信息
+        getUserInfo(mLoginInfo.getRegisterId());
+    }
 
-        // 获取用户各类信息
-        getBasicInfo(mRegisterId);
-        getProfessionalCertificateInfo(mRegisterId);
-        getPractisingCertificateInfo(mRegisterId);
-        getHospitalInfo(mRegisterId);
+    /**
+     * 根据登陆信息初始化界面
+     */
+    private void initData() {
+        if (!TextUtils.isEmpty(mLoginInfo.getAvatar())) {
+            if (mLoginInfo.getAvatar().startsWith("http")) {
+                Glide.with(this).load(mLoginInfo.getAvatar()).into(mAvatarView);
+            } else {
+                Glide.with(this).load(AVATAR_ADDRESS + mLoginInfo.getAvatar()).into(mAvatarView);
+            }
+        }
+        mNameTextView.setText(mLoginInfo.getName());
+        mHospitalTextView.setText(mLoginInfo.getHospitalName());
+        mOfficeTextView.setText(mLoginInfo.getDepartmentName());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateProfessionalCertificateInfo();
-        updatePractisingCertificateInfo();
     }
 
     /**
-     * 获取用户基本信息
+     * 获取用户信息
      */
-    private void getBasicInfo(final String registerId) {
+    private void getUserInfo(final String registerId) {
         mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_BASIC_INFO)
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
-                .execute(new FilterStringCallback() {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
-                    public void onFilterError(Call call, Exception e, int id) {
+                    protected void onFilterError(Call call, Exception e, int id) {
+                        mUserInfo = DataSupport.findFirst(UserInfo.class);
+                        updateUseInfo();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        try {
-                            mBasicInfo = new Gson().fromJson(response, UserBasicInfo.class);
-                            if (mBasicInfo != null) {
-                                // 更新个人基本信息
-
-                                L.i("服务读取的生日是：" + DateUtil.parseMysqlDateToString(mBasicInfo.getBirthday()));
-                                UserUtil.saveBasicInfo(mBasicInfo);
-                                updateBasicInfo();
+                        UserInfoResult userInfoResult = new Gson().fromJson(response, UserInfoResult.class);
+                        if (userInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            mUserInfo = userInfoResult.getBody();
+                            if (mUserInfo != null) {
+                                DataSupport.deleteAll(UserInfo.class);
+                                mUserInfo.save();
+                                updateUseInfo();
+                            } else {
+                                mUserInfo = DataSupport.findFirst(UserInfo.class);
+                                updateUseInfo();
                             }
-                        } catch (JsonSyntaxException e) {
+                        } else {
+                            T.showShort(PersonalInfoActivity.this, "获取基本信息失败");
                             L.i("获取基本信息失败");
-                            e.printStackTrace();
                         }
                     }
                 });
+    }
+
+    /**
+     * 更新界面信息
+     */
+    private void updateUseInfo() {
+        if (!TextUtils.isEmpty(mLoginInfo.getAvatar())) {
+            if (mUserInfo.getAvatar().startsWith("http")) {
+                Glide.with(this).load(mUserInfo.getAvatar()).into(mAvatarView);
+            } else {
+                Glide.with(this).load(AVATAR_ADDRESS + mUserInfo.getAvatar()).into(mAvatarView);
+            }
+        }
+
+        mNameTextView.setText(mUserInfo.getName());
+        mNicknameTextView.setText(mUserInfo.getNickName());
+        mSexTextView.setText(mUserInfo.getSex());
+        mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mUserInfo.getBirthday()));
+
+        mProfessionalCertificateTextView.setText(getAuditString(mUserInfo.getPVerifyStatus()));
+        mPractisingCertificateTextView.setText(getAuditString(mUserInfo.getQVerifyStatus()));
+        if (mUserInfo.getPVerifyStatus() == AUDIT_SUCCESS &&
+                mUserInfo.getQVerifyStatus() == AUDIT_SUCCESS) {
+            String nursingAge = getWorkingTime(mUserInfo.getFirstJobTime());
+            mNursingAgeTextView.setText(nursingAge);
+        }
+
+        mHospitalTextView.setText(mUserInfo.getHospitalName());
+        mOfficeTextView.setText(mUserInfo.getDepartmentName());
+        mJobNumberTextView.setText(mUserInfo.getEmployeeId());
     }
 
     /**
@@ -218,7 +265,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
                             if (mProfessionalCertificateInfo != null) {
                                 // 更新个人执业证信息
-                                UserUtil.saveProfessionalCertificateInfo(mProfessionalCertificateInfo);
+//                                LitePalUtil.saveProfessionalCertificateInfo(mProfessionalCertificateInfo);
                                 updateProfessionalCertificateInfo();
                             }
                         } catch (JsonSyntaxException e) {
@@ -252,7 +299,7 @@ public class PersonalInfoActivity extends BaseActivity {
                             mPractisingCertificateInfo = new Gson().fromJson(response, UserPractisingCertificateInfo.class);
                             if (mPractisingCertificateInfo != null) {
                                 // 更新个人专业技术资格证信息
-                                UserUtil.savePractisingCertificateInfo(mPractisingCertificateInfo);
+//                                LitePalUtil.savePractisingCertificateInfo(mPractisingCertificateInfo);
                                 updatePractisingCertificateInfo();
                             }
                         } catch (JsonSyntaxException e) {
@@ -285,7 +332,7 @@ public class PersonalInfoActivity extends BaseActivity {
                             mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
                             if (mHospitalInfo != null) {
                                 // 更新个人医院信息
-                                UserUtil.saveHospitalInfo(mHospitalInfo);
+//                                LitePalUtil.saveHospitalInfo(mHospitalInfo);
                                 updateHospitalInfo();
                             }
                         } catch (JsonSyntaxException e) {
@@ -358,7 +405,7 @@ public class PersonalInfoActivity extends BaseActivity {
                             L.i("设置头像成功");
                             mAvatarView.setImageBitmap(mAvatarBitmap);
                             // 设置成功后更新数据库
-                            UserUtil.saveRegisterInfo(PersonalInfoActivity.this, mRegisterInfo);
+//                            LitePalUtil.saveRegisterInfo(PersonalInfoActivity.this, mRegisterInfo);
                             updateRegisterInfo();
                         } else {
                             L.i("设置头像失败");
@@ -573,7 +620,7 @@ public class PersonalInfoActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置生日成功");
                             // 设置成功后更新数据库
-                            UserUtil.saveBasicInfo(mBasicInfo);
+//                            LitePalUtil.saveBasicInfo(mBasicInfo);
                             updateBasicInfo();
                         } else {
                             L.i("设置生日失败");

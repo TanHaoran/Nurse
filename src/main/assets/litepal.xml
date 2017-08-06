@@ -5,10 +5,9 @@
     <version value="1"></version>
 
     <list>
-        <mapping class="com.jerry.nurse.model.UserRegisterInfo"></mapping>
-        <mapping class="com.jerry.nurse.model.UserBasicInfo"></mapping>
-        <mapping class="com.jerry.nurse.model.UserProfessionalCertificateInfo"></mapping>
-        <mapping class="com.jerry.nurse.model.UserPractisingCertificateInfo"></mapping>
-        <mapping class="com.jerry.nurse.model.UserHospitalInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.LoginInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.Banner"></mapping>
+        <mapping class="com.jerry.nurse.model.Announcement"></mapping>
+        <mapping class="com.jerry.nurse.model.UserInfo"></mapping>
     </list>
 </litepal>

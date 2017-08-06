@@ -1,69 +1,74 @@
 package com.jerry.nurse.model;
 
 public class ChatMessage {
-    private int icon;
-    private String name;
-    private String content;
-    private String createDate;
-    private boolean isComMeg;
+    private int mAvatar;
+    private String mName;
+    private String mContent;
+    private String mTime;
+    private boolean mIsSend;
 
-    public final static int RECIEVE_MSG = 0;
-    public final static int SEND_MSG = 1;
+    public final static int MSG_SEND = 0;
+    public final static int MSG_RECEIVE = 1;
 
-    public ChatMessage(int icon, String name, String content,
-                       String createDate, boolean isComMeg) {
-        this.icon = icon;
-        this.name = name;
-        this.content = content;
-        this.createDate = createDate;
-        this.isComMeg = isComMeg;
+    public ChatMessage() {
     }
 
-    public boolean isComMeg() {
-        return isComMeg;
+    public ChatMessage(int avatar, String name, String content, String time, boolean isSend) {
+        mAvatar = avatar;
+        mName = name;
+        mContent = content;
+        mTime = time;
+        mIsSend = isSend;
     }
 
-    public void setComMeg(boolean isComMeg) {
-        this.isComMeg = isComMeg;
+    public int getAvatar() {
+        return mAvatar;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public int getIcon() {
-        return icon;
-    }
-
-    public void setIcon(int icon) {
-        this.icon = icon;
+    public void setAvatar(int avatar) {
+        mAvatar = avatar;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        mName = name;
     }
 
-    public String getCreateDate() {
-        return createDate;
+    public String getContent() {
+        return mContent;
     }
 
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
+    public void setContent(String content) {
+        mContent = content;
+    }
+
+    public String getTime() {
+        return mTime;
+    }
+
+    public void setTime(String time) {
+        mTime = time;
+    }
+
+    public boolean isSend() {
+        return mIsSend;
+    }
+
+    public void setSend(boolean send) {
+        mIsSend = send;
     }
 
     @Override
     public String toString() {
-        return "ChatMessage [icon=" + icon + ", name=" + name + ", content="
-                + content + ", createDate=" + createDate + ", isComing = " + isComMeg() + "]";
+        return "ChatMessage{" +
+                "mAvatar=" + mAvatar +
+                ", mName='" + mName + '\'' +
+                ", mContent='" + mContent + '\'' +
+                ", mTime='" + mTime + '\'' +
+                ", mIsSend=" + mIsSend +
+                '}';
     }
-
-
 }

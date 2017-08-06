@@ -16,7 +16,7 @@ public class DeviceUtil {
      * @return
      */
     public static String getDeviceId(Context context) {
-        TelephonyManager tm = (TelephonyManager)
+        final TelephonyManager tm = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = tm.getDeviceId();
         return deviceId;

@@ -8,6 +8,7 @@ public class ServiceConstant {
 
     // 请求返回类型
     public static final String REQUEST_SUCCESS = "0";
+    public static final int RESPONSE_SUCCESS = 0;
     public static final String USER_COLON = ":";
     public static final String USER_REGISTER_ID = "Id:";
     public static final String USER_PHONE = "Phone:";
@@ -37,6 +38,7 @@ public class ServiceConstant {
     public static final String PROFESSIONAL_ADDRESS = "http://192.168.0.100:9400/QC/";
     public static final String PRACTISING_ADDRESS = "http://192.168.0.100:9400/PC/";
     public static final String QR_CODE_ADDRESS = "http://192.168.0.100:9400/QRCode/";
+    public static final String BANNER_ADDRESS = "http://192.168.0.100:9400/Banner/";
 
     /**
      * 获取验证码
@@ -83,7 +85,7 @@ public class ServiceConstant {
     /**
      * 通过注册ID获取用户注册信息
      */
-    public static final String GET_USER_REGISTER_INFO_BY_ID = IP + "GetUserReginfoById";
+    public static final String GET_USER_REGISTER_INFO_BY_REGISTER_ID = IP + "GetUserReginfoById";
 
     /**
      * 通过手机号获取用户注册信息
@@ -116,9 +118,9 @@ public class ServiceConstant {
     public static final String UPLOAD_FILE = IP + "ImgHandler.ashx";
 
     /**
-     * 获取用户基本信息
+     * 获取用户信息
      */
-    public static final String GET_USER_BASIC_INFO = IP + "GetUserBasicinfoById";
+    public static final String GET_USER_INFO = IP + "GetUserInfo";
 
     /**
      * 获取专业资格证书
@@ -128,7 +130,7 @@ public class ServiceConstant {
     /**
      * 获取QQ昵称
      */
-    public static final String GET_QQ_NICKNAME = IP + "GetQQNickNameById";
+    public static final String GET_BIND_INFO = IP + "GetUserBindInfo";
 
     /**
      * 获取护士职业证书
@@ -195,4 +197,21 @@ public class ServiceConstant {
      * 根据科室查询所有联系人
      */
     public static final String GET_CONTACT_LIST_BY_OFFICE_ID = IP + "GetContactByHopDepId";
+
+    /**
+     * 获取公告的方法
+     */
+    public static final String GET_ANNOUNCEMENT = IP + "GetNotice";
+
+    /**
+     * 获取Banner的方法
+     */
+    public static final String GET_BANNER = IP + "GetBanner";
+
+    /**
+     * 获取用户登陆信息
+     */
+    public static final String GET_USER_LOGIN_INFO = IP + "GetUserFirstInfoById";
+
+
 }

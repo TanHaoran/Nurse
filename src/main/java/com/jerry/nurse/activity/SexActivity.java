@@ -13,7 +13,6 @@ import com.jerry.nurse.model.UserBasicInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
-import com.jerry.nurse.util.UserUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -112,7 +111,7 @@ public class SexActivity extends BaseActivity {
                         mProgressDialog.dismiss();
                         if (response.equals(REQUEST_SUCCESS)) {
                             // 首先更新UI界面
-                            UserUtil.saveBasicInfo(userBasicInfo);
+//                            LitePalUtil.saveBasicInfo(userBasicInfo);
                             setResult(RESULT_OK);
                         } else {
                             L.i("修改性别信息失败");

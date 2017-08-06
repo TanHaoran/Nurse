@@ -1,25 +1,22 @@
 package com.jerry.nurse.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CountriesResult;
 import com.jerry.nurse.model.Country;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -30,6 +27,9 @@ import java.util.List;
 import butterknife.Bind;
 import okhttp3.Call;
 
+/**
+ * 选择国家编码界面
+ */
 public class CountryActivity extends BaseActivity {
 
     public static final String EXTRA_COUNTRY_NAME = "extra_country_name";
@@ -43,7 +43,7 @@ public class CountryActivity extends BaseActivity {
     private List<Country> mCountries;
 
     private String mCountryCode;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, String countryCode) {
         Intent intent = new Intent(context, CountryActivity.class);
@@ -58,14 +58,7 @@ public class CountryActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         mCountryCode = getIntent().getStringExtra(EXTRA_COUNTRY_CODE);
         getCountries();
@@ -75,33 +68,36 @@ public class CountryActivity extends BaseActivity {
      * 获取国家信息
      */
     private void getCountries() {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_COUNTRIES)
                 .build()
-                .execute(new FilterStringCallback() {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        try {
-                            mCountries = new Gson().fromJson(response,
-                                    new TypeToken<List<Country>>() {
-                                    }.getType());
-                            setData();
-                        } catch (JsonSyntaxException e) {
-                            e.printStackTrace();
-                            L.i("获取国家信息失败");
+                        CountriesResult countriesResult = new Gson().fromJson(response, CountriesResult.class);
+                        if (countriesResult.getCode() == 0) {
+                            mCountries = countriesResult.getBody();
+                            if (mCountries.size() > 0) {
+                                setCountriesData();
+                            } else {
+                                T.showShort(CountryActivity.this, "国家列表为空");
+                            }
+                        } else {
+                            T.showShort(CountryActivity.this, "读取国家列表失败");
                         }
                     }
                 });
     }
 
-    private void setData() {
+    /**
+     * 设置国家代码数据
+     */
+    private void setCountriesData() {
         mAdapter = new CountryAdapter(this, R.layout.item_string, mCountries);
         // 设置间隔线
         mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
@@ -120,8 +116,7 @@ public class CountryActivity extends BaseActivity {
         @Override
         protected void convert(final ViewHolder holder, final Country country, final int position) {
 
-            ((TextView) holder.getView(R.id.tv_string)).setText(country.getCountryName()
-                    + " " + country.getCountryCode());
+            holder.setText(R.id.tv_string, country.getCountryName() + " " + country.getCountryCode());
             if (country.getCountryCode().equals(mCountryCode)) {
                 holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
             } else {
@@ -137,8 +132,8 @@ public class CountryActivity extends BaseActivity {
                     bundle.putString(EXTRA_COUNTRY_CODE, country.getCountryCode());
                     intent.putExtras(bundle);
 
-                    ActivityCollector.getTopActivity().setResult(Activity.RESULT_OK, intent);
-                    ActivityCollector.getTopActivity().finish();
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
                 }
             });
         }

@@ -14,18 +14,19 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.QQUserInfo;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginUtil;
-import com.jerry.nurse.util.UserUtil;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -36,10 +37,9 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_FORGET_PASSWORD;
-import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_REGISTER;
-import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_VERIFICATION_CODE;
-import static com.jerry.nurse.constant.ServiceConstant.EASE_MOB_PASSWORD;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_FORGET_PASSWORD;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_REGISTER;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_VERIFICATION_CODE;
 import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
 import static com.jerry.nurse.constant.ServiceConstant.USER_REGISTER_ID;
 
@@ -75,7 +75,8 @@ public class LoginActivity extends BaseActivity {
             switch (msg.what) {
                 case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
                     String cellphone = mCellphoneEditText.getText().toString();
-                    getUserInfoByPhone(cellphone);
+                    LoginManager loginUtil = new LoginManager(LoginActivity.this, mProgressDialogManager);
+//                    loginUtil.getLoginInfoByCellphone(cellphone);
                     break;
                 case MESSAGE_EASE_MOB_LOGIN_FAILED:
                     onLoginFailed();
@@ -115,14 +116,12 @@ public class LoginActivity extends BaseActivity {
         String password = mPasswordEditText.getText().toString();
 
         //验证用户名和密码格式是否符合
-        if (!localValidate(cellphone, password)) {
-            if (mErrorMessage != null) {
-                T.showShort(this, mErrorMessage);
-            }
+        String errorMessage = localValidate(cellphone, password);
+        if (errorMessage != null) {
+            T.showShort(this, errorMessage);
             return;
         }
 
-        mLoginButton.setEnabled(false);
 
         mProgressDialogManager.setMessage("登录中...");
 
@@ -134,42 +133,30 @@ public class LoginActivity extends BaseActivity {
     /**
      * 本地验证登陆
      */
-    private boolean localValidate(String cellphone, String password) {
+    private String localValidate(String cellphone, String password) {
 
         if (cellphone.isEmpty()) {
-            mErrorMessage = "手机号不能为空";
-            return false;
-        } else {
-            mErrorMessage = null;
+            return "手机号不能为空";
         }
-
         if (!AccountValidatorUtil.isMobile(cellphone)) {
-            mErrorMessage = "手机号不合法";
-            return false;
+            return "手机号不合法";
         }
 
         if (password.isEmpty()) {
-            mErrorMessage = "密码不能为空";
-            return false;
-        } else {
-            mErrorMessage = null;
+            return "密码不能为空";
         }
 
         // 密码的长度要介于4和10之间
         if (password.length() < 4 || password.length() > 10) {
-            mErrorMessage = mStringPasswordInvalid;
-            return false;
-        } else {
-            mErrorMessage = null;
+            return mStringPasswordInvalid;
         }
-
-        return true;
+        return null;
     }
 
     private void onLoginSuccess() {
         resetUI();
         // 登陆成功后，保存用户数据信息
-        UserUtil.saveRegisterInfo(this, mUserRegisterInfo);
+//        LitePalUtil.saveRegisterInfo(this, mUserRegisterInfo);
 
         Intent intent = MainActivity.getIntent(this);
         startActivity(intent);
@@ -178,7 +165,6 @@ public class LoginActivity extends BaseActivity {
 
     private void resetUI() {
         mProgressDialogManager.dismiss();
-        mLoginButton.setEnabled(true);
     }
 
 
@@ -237,73 +223,13 @@ public class LoginActivity extends BaseActivity {
                 .content(StringUtil.addModelWithJson(register))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        onLoginFailed();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        // 判断登陆是否成功
-                        if (response.startsWith(USER_REGISTER_ID)) {
-                            if (response.split(":").length == 2) {
-                                String registerId = response.split(":")[1];
-                                easeMobLogin(registerId, EASE_MOB_PASSWORD);
-                            } else {
-                                L.i("护士通登录失败");
-                                T.showShort(LoginActivity.this, response);
-                                onLoginFailed();
-                            }
-                        } else {
-                            L.i("护士通登录失败");
-                            T.showShort(LoginActivity.this, response);
-                            onLoginFailed();
-                        }
-                    }
-                });
-    }
-
-    /**
-     * 获取用户信息
-     */
-    private void getUserInfoByPhone(final String cellphone) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_PHONE)
-                .addParams("Phone", cellphone)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        onLoginFailed();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mUserRegisterInfo = new Gson().fromJson(response, UserRegisterInfo.class);
-                        onLoginSuccess();
-                    }
-                });
-    }
-
-    /**
-     * 获取用户信息
-     */
-    private void getUserInfoByRegisterId(final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_ID)
-                .addParams("RegisterId", registerId)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        onLoginFailed();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mUserRegisterInfo = new Gson().fromJson(response, UserRegisterInfo.class);
-                        onLoginSuccess();
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        LoginManager loginManager = new LoginManager(LoginActivity.this, null);
+                        loginManager.saveAndEnter(loginInfoResult);
                     }
                 });
     }
@@ -322,7 +248,7 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_forget_password)
     void onForgetPassword(View view) {
-        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_FORGET_PASSWORD);
+        Intent intent = SignupActivity.getIntent(this, TYPE_FORGET_PASSWORD);
         startActivity(intent);
     }
 
@@ -333,18 +259,18 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_verification_code_login)
     void onVerificationCodeLogin(View view) {
-        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_VERIFICATION_CODE);
+        Intent intent = SignupActivity.getIntent(this, TYPE_VERIFICATION_CODE);
         startActivity(intent);
     }
 
     /**
-     * 注册按钮
+     * 注册点击事件
      *
      * @param view
      */
     @OnClick(R.id.tv_signup)
     void onSignup(View view) {
-        Intent intent = SignupActivity.getIntent(this, EXTRA_TYPE_REGISTER);
+        Intent intent = SignupActivity.getIntent(this, TYPE_REGISTER);
         startActivity(intent);
     }
 
@@ -392,7 +318,8 @@ public class LoginActivity extends BaseActivity {
                             L.i("qq授权应用注册成功");
                             if (response.split(USER_COLON).length == 2) {
                                 String registerId = response.split(USER_COLON)[1];
-                                getUserInfoByRegisterId(registerId);
+                                LoginManager loginUtil = new LoginManager(LoginActivity.this, mProgressDialogManager);
+                                loginUtil.getLoginInfoByRegisterId(registerId);
                             } else {
                                 T.showShort(LoginActivity.this, response);
                             }

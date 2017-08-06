@@ -14,7 +14,6 @@ import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.ClearEditText;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -131,7 +130,7 @@ public class InputActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置昵称成功");
                             // 设置成功后更新数据库
-                            UserUtil.saveRegisterInfo(InputActivity.this, mUserRegisterInfo);
+//                            LitePalUtil.saveRegisterInfo(InputActivity.this, mUserRegisterInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {
@@ -166,7 +165,7 @@ public class InputActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置工号成功");
                             // 设置成功后更新数据库
-                            UserUtil.saveHospitalInfo(mUserHospitalInfo);
+//                            LitePalUtil.saveHospitalInfo(mUserHospitalInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {

@@ -17,7 +17,7 @@ public class UserPractisingCertificateInfo extends DataSupport {
      * BirthDate : /Date(-2209017600000+0800)/
      * CertificateAuthority :
      * CertificateDate : /Date(-2209017600000+0800)/
-     * Country :
+     * CountryResult :
      * FirstRegisterDate : /Date(-2209017600000+0800)/
      * IDCard :
      * LastRegisterDate : /Date(-2209017600000+0800)/

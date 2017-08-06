@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,31 +17,27 @@ import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AppVersion;
+import com.jerry.nurse.model.BindInfoResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.QQUserInfo;
-import com.jerry.nurse.model.ThirdPartInfo;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.AppUtil;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginUtil;
-import com.jerry.nurse.util.UserUtil;
-import com.tencent.connect.common.Constants;
-import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.ChangeCellphoneActivity.TYPE_BIND;
-import static com.jerry.nurse.activity.ChangeCellphoneActivity.TYPE_CHANGE_CELLPHONE;
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_BIND_CELLPHONE;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class SettingActivity extends BaseActivity {
 
@@ -58,13 +53,14 @@ public class SettingActivity extends BaseActivity {
     @Bind(R.id.tv_microblog)
     TextView mMicroblogTextView;
 
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialog;
 
-    private UserRegisterInfo mUserRegisterInfo;
+    private LoginInfo mLoginInfo;
 
     private TencentLoginUtil mTencentLoginUtil;
 
-    private QQUserInfo mQQUserInfo;
+    private BindInfoResult.BindInfo mBindInfo;
+
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SettingActivity.class);
@@ -79,40 +75,24 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialog = new ProgressDialogManager(this);
 
-        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        if (mUserRegisterInfo.getPhone() != null) {
-            updateCellphoneInfo(mUserRegisterInfo.getPhone());
-
-        }
-
-        getQQInfo(mUserRegisterInfo.getRegisterId());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateCellphoneInfo(mUserRegisterInfo.getPhone());
+        // 获取用户所有绑定信息
+        getBindInfo(mLoginInfo.getRegisterId());
     }
 
     @OnClick(R.id.rl_qq)
     void onQQ(View view) {
-        if (mQQUserInfo != null && mQQUserInfo.getOpenId() != null) {
+        if (mBindInfo != null && mBindInfo.getQQOpenId() != null) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
-                    .setMessage("确定解除绑定 " + mQQUserInfo.getNickName() + " 吗?")
+                    .setMessage("确定解除绑定 " + mBindInfo.getQQNickName() + " 吗?")
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            unBindQQ(mQQUserInfo);
+//                            unBindQQ(mQQUserInfo);
                         }
                     })
                     .setNegativeButton(R.string.cancel, null)
@@ -131,11 +111,11 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_cellphone)
     void onCellphone(View view) {
-        if (!TextUtils.isEmpty(mUserRegisterInfo.getPhone())) {
+        if (!TextUtils.isEmpty(mBindInfo.getPhone())) {
             Intent intent = ChangeCellphoneActivity.getIntent(this, TYPE_CHANGE_CELLPHONE);
             startActivity(intent);
         } else {
-            Intent intent = ChangeCellphoneActivity.getIntent(this, TYPE_BIND);
+            Intent intent = ChangeCellphoneActivity.getIntent(this, TYPE_BIND_CELLPHONE);
             startActivity(intent);
         }
     }
@@ -164,16 +144,11 @@ public class SettingActivity extends BaseActivity {
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_APP_VERSION)
                 .build()
-                .execute(new FilterStringCallback() {
+                .execute(new FilterStringCallback(mProgressDialog) {
 
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
                             AppVersion appVersion = new Gson().fromJson(response, AppVersion.class);
                             String localVersion = AppUtil.getVersionName(SettingActivity.this);
@@ -254,7 +229,7 @@ public class SettingActivity extends BaseActivity {
 
             @Override
             public void onSuccess() {
-                UserUtil.deleteAllInfo(SettingActivity.this);
+                LitePalUtil.deleteAllInfo(SettingActivity.this);
                 try {
                     ActivityCollector.removeAllActivity();
                 } catch (Exception e) {
@@ -277,65 +252,38 @@ public class SettingActivity extends BaseActivity {
     }
 
     /**
-     * 获取用户QQ资料
+     * 获取用户所有绑定信息
      */
-    private void getQQInfo(final String registerId) {
+    private void getBindInfo(final String registerId) {
         mProgressDialog.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_QQ_NICKNAME)
+        OkHttpUtils.get().url(ServiceConstant.GET_BIND_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                        updateQQInfo(null);
-                    }
+                .execute(new FilterStringCallback(mProgressDialog) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        try {
-                            mQQUserInfo = new Gson().fromJson(response, QQUserInfo.class);
-                            if (mQQUserInfo != null) {
-                                updateQQInfo(mQQUserInfo);
-                            } else {
-                                updateQQInfo(null);
-                            }
-                        } catch (JsonSyntaxException e) {
-                            L.i("获取QQ信息信息失败");
-                            updateQQInfo(null);
-                            e.printStackTrace();
+                        BindInfoResult bindInfoResult = new Gson().fromJson(response, BindInfoResult.class);
+                        if (bindInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            mBindInfo = bindInfoResult.getBody();
+                            // 更新界面显示绑定信息
+                            updateBindInfo();
                         }
                     }
                 });
     }
 
-
     /**
-     * 更新手机显示
+     * 更新界面显示绑定信息
      *
-     * @param cellphone
      */
-    private void updateCellphoneInfo(String cellphone) {
-        if (cellphone != null) {
-            cellphone = cellphone.substring(0, 2) + "*******" + cellphone.substring(9);
+    private void updateBindInfo() {
+        if (!TextUtils.isEmpty(mBindInfo.getPhone())) {
+            String cellphone = mBindInfo.getPhone().substring(0, 2) + "*******" + mBindInfo.getPhone().substring(9);
             mCellphoneTextView.setText(cellphone);
-        } else {
-            mCellphoneTextView.setText("");
         }
-    }
-
-    /**
-     * 更新qq显示信息
-     *
-     * @param qqUserInfo
-     */
-    private void updateQQInfo(QQUserInfo qqUserInfo) {
-        if (qqUserInfo != null) {
-            mQQTextView.setText(qqUserInfo.getNickName());
-        } else {
-            mQQTextView.setText("");
+        if (!TextUtils.isEmpty(mBindInfo.getQQOpenId())) {
+            mQQTextView.setText(mBindInfo.getQQNickName());
         }
     }
 
@@ -345,33 +293,33 @@ public class SettingActivity extends BaseActivity {
      * @param qqUserInfo
      */
     private void bindQQ(final QQUserInfo qqUserInfo) {
-        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
-        thirdPartInfo.setOpenId(qqUserInfo.getOpenId());
-        mProgressDialog.show();
-        OkHttpUtils.postString()
-                .url(ServiceConstant.BIND_QQ)
-                .content(StringUtil.addModelWithJson(thirdPartInfo))
-                .mediaType(MediaType.parse("application/json; charset=utf-8"))
-                .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
-                            T.showShort(SettingActivity.this, "QQ绑定成功");
-                            L.i("qq绑定成功");
-                            updateQQInfo(qqUserInfo);
-                        } else {
-                            T.showShort(SettingActivity.this, response);
-                        }
-                    }
-                });
+//        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
+//        thirdPartInfo.setOpenId(qqUserInfo.getOpenId());
+//        mProgressDialog.show();
+//        OkHttpUtils.postString()
+//                .url(ServiceConstant.BIND_QQ)
+//                .content(StringUtil.addModelWithJson(thirdPartInfo))
+//                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+//                .build()
+//                .execute(new FilterStringCallback() {
+//                    @Override
+//                    public void onFilterError(Call call, Exception e, int id) {
+//                        mProgressDialog.dismiss();
+//                    }
+//
+//                    @Override
+//                    public void onFilterResponse(String response, int id) {
+//                        mProgressDialog.dismiss();
+//                        if (response.equals(REQUEST_SUCCESS)) {
+//                            T.showShort(SettingActivity.this, "QQ绑定成功");
+//                            L.i("qq绑定成功");
+//                            updateQQInfo(qqUserInfo);
+//                        } else {
+//                            T.showShort(SettingActivity.this, response);
+//                        }
+//                    }
+//                });
     }
 
 
@@ -381,33 +329,33 @@ public class SettingActivity extends BaseActivity {
      * @param qqUserInfo
      */
     private void unBindQQ(QQUserInfo qqUserInfo) {
-        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
-        thirdPartInfo.setOpenId(qqUserInfo.getOpenId());
-        mProgressDialog.show();
-        OkHttpUtils.postString()
-                .url(ServiceConstant.UN_BIND_QQ)
-                .content(StringUtil.addModelWithJson(thirdPartInfo))
-                .mediaType(MediaType.parse("application/json; charset=utf-8"))
-                .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
-                            T.showShort(SettingActivity.this, "QQ解绑成功");
-                            L.i("qq解绑成功");
-                            updateQQInfo(null);
-                        } else {
-                            T.showShort(SettingActivity.this, response);
-                        }
-                    }
-                });
+//        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
+//        thirdPartInfo.setOpenId(qqUserInfo.getOpenId());
+//        mProgressDialog.show();
+//        OkHttpUtils.postString()
+//                .url(ServiceConstant.UN_BIND_QQ)
+//                .content(StringUtil.addModelWithJson(thirdPartInfo))
+//                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+//                .build()
+//                .execute(new FilterStringCallback() {
+//                    @Override
+//                    public void onFilterError(Call call, Exception e, int id) {
+//                        mProgressDialog.dismiss();
+//                    }
+//
+//                    @Override
+//                    public void onFilterResponse(String response, int id) {
+//                        mProgressDialog.dismiss();
+//                        if (response.equals(REQUEST_SUCCESS)) {
+//                            T.showShort(SettingActivity.this, "QQ解绑成功");
+//                            L.i("qq解绑成功");
+//                            updateBindInfo();
+//                        } else {
+//                            T.showShort(SettingActivity.this, response);
+//                        }
+//                    }
+//                });
     }
 
     /**
@@ -416,41 +364,42 @@ public class SettingActivity extends BaseActivity {
      * @param cellphone
      */
     private void unBindCellphone(String cellphone) {
-        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
-        thirdPartInfo.setPhone(cellphone);
-        mProgressDialog.show();
-        OkHttpUtils.postString()
-                .url(ServiceConstant.UN_BIND_QQ)
-                .content(StringUtil.addModelWithJson(thirdPartInfo))
-                .mediaType(MediaType.parse("application/json; charset=utf-8"))
-                .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
-                            T.showShort(SettingActivity.this, "手机解绑成功");
-                            L.i("手机解绑成功");
-                            updateCellphoneInfo(null);
-                        } else {
-                            T.showShort(SettingActivity.this, response);
-                        }
-                    }
-                });
+//        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
+//        thirdPartInfo.setPhone(cellphone);
+//        mProgressDialog.show();
+//        OkHttpUtils.postString()
+//                .url(ServiceConstant.UN_BIND_QQ)
+//                .content(StringUtil.addModelWithJson(thirdPartInfo))
+//                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+//                .build()
+//                .execute(new FilterStringCallback() {
+//                    @Override
+//                    public void onFilterError(Call call, Exception e, int id) {
+//                        mProgressDialog.dismiss();
+//                    }
+//
+//                    @Override
+//                    public void onFilterResponse(String response, int id) {
+//                        mProgressDialog.dismiss();
+//                        if (response.equals(REQUEST_SUCCESS)) {
+//                            T.showShort(SettingActivity.this, "手机解绑成功");
+//                            L.i("手机解绑成功");
+//                            updateCellphoneInfo(null);
+//                        } else {
+//                            T.showShort(SettingActivity.this, response);
+//                        }
+//                    }
+//                });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // 腾讯的第三方登陆
-        if (requestCode == Constants.REQUEST_LOGIN) {
-            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+//        // 腾讯的第三方登陆
+//        if (requestCode == Constants.REQUEST_LOGIN) {
+//            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
+//        }
+//        updateCellphoneInfo(mUserRegisterInfo.getPhone());
+//        super.onActivityResult(requestCode, resultCode, data);
     }
 }

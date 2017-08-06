@@ -36,6 +36,7 @@ dependencies {
     compile files('libs/open_sdk_r5793_lite.jar')
     compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
     compile files('libs/BaiduLBS_Android.jar')
+    // ~80KB
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -52,6 +53,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.android.support:support-v4:25.0.0'
     compile 'com.android.support:cardview-v7:25.3.1'
-    compile 'com.github.promeg:tinypinyin:1.0.0' // ~80KB
+    compile 'com.github.promeg:tinypinyin:1.0.0'
+    compile 'com.jcodecraeer:xrecyclerview:1.3.2'
     testCompile 'junit:junit:4.12'
 }

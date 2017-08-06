@@ -25,7 +25,7 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
+import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.view.TitleBar;
 import com.jerry.nurse.view.ToggleButton;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -487,7 +487,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置专业资格证成功");
                             // 设置成功后更新数据库
-                            UserUtil.saveProfessionalCertificateInfo(mInfo);
+//                            LitePalUtil.saveProfessionalCertificateInfo(mInfo);
                             T.showShort(ProfessionalCertificateActivity.this,
                                     R.string.submit_success_please_wait);
                             setResult(RESULT_OK);

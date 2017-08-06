@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +18,12 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactTopHeaderBean;
-import com.jerry.nurse.model.UserHospitalInfo;
-import com.jerry.nurse.model.UserPractisingCertificateInfo;
-import com.jerry.nurse.model.UserProfessionalCertificateInfo;
-import com.jerry.nurse.model.UserRegisterInfo;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
-import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -42,8 +37,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import okhttp3.Call;
-
-import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 
 
 /**
@@ -77,8 +70,7 @@ public class ContactFragment extends BaseFragment {
 
     private SuspensionDecoration mDecoration;
 
-    private UserRegisterInfo mUserRegisterInfo;
-    private UserHospitalInfo mUserHospitalInfo;
+    private LoginInfo mLoginInfo;
 
     public static ContactFragment newInstance() {
 
@@ -94,16 +86,14 @@ public class ContactFragment extends BaseFragment {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(getActivity());
-
-        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-
-        updateView();
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        updateView(false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getHospitalInfo(mUserRegisterInfo.getRegisterId());
+        getHospitalInfo(mLoginInfo.getRegisterId());
     }
 
     /**
@@ -114,21 +104,19 @@ public class ContactFragment extends BaseFragment {
         OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
-                .execute(new FilterStringCallback() {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialogManager.dismiss();
+                        updateView(true);
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialogManager.dismiss();
                         try {
-                            mUserHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
-                            UserUtil.saveHospitalInfo(mUserHospitalInfo);
+                            mLoginInfo = new Gson().fromJson(response, LoginInfo.class);
                             // 更新界面
-                            updateView2();
+                            updateView(true);
                         } catch (JsonSyntaxException e) {
                             L.i("获取医院信息失败");
                             e.printStackTrace();
@@ -137,7 +125,12 @@ public class ContactFragment extends BaseFragment {
                 });
     }
 
-    private void updateView2() {
+    /**
+     * 填充数据
+     *
+     * @param isUpdate 是否是更新界面
+     */
+    private void updateView(boolean isUpdate) {
 
         mRv.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
 
@@ -151,7 +144,7 @@ public class ContactFragment extends BaseFragment {
         collections.add(contact);
         collections.add(contact2);
 
-        mHeaderDatas.add(new ContactHeaderBean(collections, "收藏联系人", "收"));
+        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "收"));
         mSourceDatas.addAll(mHeaderDatas);
 
         mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mBodyDatas);
@@ -204,131 +197,23 @@ public class ContactFragment extends BaseFragment {
             }
         };
 
-        UserProfessionalCertificateInfo userProfessionalCertificateInfo =
-                DataSupport.findFirst(UserProfessionalCertificateInfo.class);
+        // 如果都通过审核了就可以显示医院和科室的信息
+        if (OfficeFragment.checkPermission()) {
 
-        UserPractisingCertificateInfo userPractisingCertificateInfo =
-                DataSupport.findFirst(UserPractisingCertificateInfo.class);
-        if (userProfessionalCertificateInfo != null &&
-                userProfessionalCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS &&
-                userPractisingCertificateInfo != null &&
-                userPractisingCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS) {
-            if (!TextUtils.isEmpty(mUserHospitalInfo.getDepartmentName())) {
-                mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
-                        new ContactTopHeaderBean(mUserHospitalInfo.getDepartmentName()));
-            }
-            if (!TextUtils.isEmpty(mUserHospitalInfo.getHospitalName())) {
-                mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
-                        new ContactTopHeaderBean(mUserHospitalInfo.getHospitalName()));
-            }
+            mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
+                    new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
+            mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
+                    new ContactTopHeaderBean(mLoginInfo.getHospitalName()));
         }
 
         mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
 
         mRv.setAdapter(mHeaderAdapter);
 
-        mIndexBar.setmPressedShowTextView(mTvSideBarHint)//设置HintTextView
-                .setNeedRealIndex(true)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
-                .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
-
-        initDatas(getResources().getStringArray(R.array.provinces));
-    }
-
-    private void updateView() {
-
-        mRv.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
-
-        mSourceDatas = new ArrayList<>();
-        mHeaderDatas = new ArrayList<>();
-        List<Contact> collections = new ArrayList<>();
-        Contact contact = new Contact();
-        contact.setNickName("联系人1");
-        Contact contact2 = new Contact();
-        contact2.setNickName("联系人2");
-        collections.add(contact);
-        collections.add(contact2);
-
-        mHeaderDatas.add(new ContactHeaderBean(collections, "收藏联系人", "收"));
-        mSourceDatas.addAll(mHeaderDatas);
-
-        mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mBodyDatas);
-
-        mHeaderAdapter = new HeaderRecyclerAndFooterWrapperAdapter(mAdapter) {
-
-            @Override
-            protected void onBindHeaderHolder(com.jerry.nurse.util.ViewHolder holder, int headerPos, int layoutId, Object o) {
-                switch (layoutId) {
-                    case R.layout.item_contact_header:
-                        final ContactHeaderBean contactHeaderBean = (ContactHeaderBean) o;
-
-                        RecyclerView recyclerView = holder.getView(R.id.rv_collection);
-                        recyclerView.setAdapter(
-                                new CommonAdapter<Contact>(getActivity(), R.layout.meituan_item_header_item, contactHeaderBean.getCityList()) {
-                                    @Override
-                                    public void convert(ViewHolder holder, final Contact contact) {
-                                        holder.setText(R.id.tv_nickname, contact.getNickName());
-                                        holder.getConvertView().setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Toast.makeText(mContext, "昵称:" + contact.getNickName(),
-                                                        Toast.LENGTH_SHORT).show();
-                                                Intent intent = ChatActivity.getIntent(getActivity());
-                                                startActivity(intent);
-                                            }
-                                        });
-                                    }
-                                });
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        break;
-                    case R.layout.item_contact_header_top:
-                        final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
-                        holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
-                        holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (contactTopHeaderBean.getTxt().equals("当前科室")) {
-                                    Intent intent = ContactListActivity.getIntent(getActivity());
-                                    startActivity(intent);
-                                }
-                                Toast.makeText(getActivity(), contactTopHeaderBean.getTxt(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-
-        UserProfessionalCertificateInfo userProfessionalCertificateInfo =
-                DataSupport.findFirst(UserProfessionalCertificateInfo.class);
-
-        UserPractisingCertificateInfo userPractisingCertificateInfo =
-                DataSupport.findFirst(UserPractisingCertificateInfo.class);
-        if (userProfessionalCertificateInfo != null &&
-                userProfessionalCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS &&
-                userPractisingCertificateInfo != null &&
-                userPractisingCertificateInfo.getVerifyStatus() == AUDIT_SUCCESS) {
-            if (!TextUtils.isEmpty(mUserHospitalInfo.getDepartmentName())) {
-                mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
-                        new ContactTopHeaderBean(mUserHospitalInfo.getDepartmentName()));
-            }
-            if (!TextUtils.isEmpty(mUserHospitalInfo.getHospitalName())) {
-                mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
-                        new ContactTopHeaderBean(mUserHospitalInfo.getHospitalName()));
-            }
+        if (!isUpdate) {
+            mRv.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mSourceDatas)
+                    .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
         }
-
-        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
-
-        mRv.setAdapter(mHeaderAdapter);
-
-        L.i("计算数量：" + (mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
-        mRv.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mSourceDatas)
-                .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
-
         mIndexBar.setmPressedShowTextView(mTvSideBarHint)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager

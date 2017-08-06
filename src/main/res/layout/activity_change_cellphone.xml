@@ -9,7 +9,7 @@
     tools:context="com.jerry.nurse.activity.ChangeCellphoneActivity">
 
     <com.jerry.nurse.view.TitleBar
-        android:id="@+id/tb_setting"
+        android:id="@+id/tb_change_cellphone"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
         app:show_back="true"
@@ -43,6 +43,7 @@
             android:clickable="false">
 
             <TextView
+                android:id="@+id/tv_origin_cellphone"
                 style="@style/PersonalInfoLineLeftTextStyle"
                 android:layout_marginLeft="@dimen/signup_text_marginLeft"
                 android:text="@string/origin_cellphone_number"/>

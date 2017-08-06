@@ -19,7 +19,6 @@ import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -30,7 +29,8 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.SignupActivity.EXTRA_TYPE_CHANGE_CELLPHONE;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_NEW_CELLPHONE;
 import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
 
 public class NewCellphoneActivity extends BaseActivity {
@@ -126,7 +126,7 @@ public class NewCellphoneActivity extends BaseActivity {
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                 .addParams("Phone", cellphone)
-                .addParams("Type", String.valueOf(EXTRA_TYPE_CHANGE_CELLPHONE))
+                .addParams("Type", String.valueOf(TYPE_NEW_CELLPHONE))
                 .build()
                 .execute(new FilterStringCallback() {
 
@@ -178,7 +178,7 @@ public class NewCellphoneActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
         ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, EXTRA_TYPE_CHANGE_CELLPHONE);
+                mUserRegisterInfo.getRegisterId(), cellphone, code, TYPE_CHANGE_CELLPHONE);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -229,7 +229,7 @@ public class NewCellphoneActivity extends BaseActivity {
                         if (response.equals(REQUEST_SUCCESS)) {
                             L.i("设置手机号成功");
                             // 设置成功后更新数据库
-                            UserUtil.saveRegisterInfo(NewCellphoneActivity.this, userRegisterInfo);
+//                            LitePalUtil.saveRegisterInfo(NewCellphoneActivity.this, userRegisterInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {

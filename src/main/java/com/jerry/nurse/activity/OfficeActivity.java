@@ -21,7 +21,6 @@ import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.UserUtil;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -177,7 +176,7 @@ public class OfficeActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
                         if (response.equals(REQUEST_SUCCESS)) {
-                            UserUtil.saveHospitalInfo(userHospitalInfo);
+//                            LitePalUtil.saveHospitalInfo(userHospitalInfo);
                             T.showShort(OfficeActivity.this, R.string.submit_success);
                             setResult(RESULT_OK);
                             finish();

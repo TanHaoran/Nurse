@@ -1,5 +1,6 @@
 package com.jerry.nurse.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class MainActivity extends BaseActivity
     private OfficeFragment mOfficeFragment;
     private ContactFragment mContactFragment;
     private MeFragment mMeFragment;
+    private ProgressDialog mProgressDialogManager;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -43,6 +45,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mProgressDialogManager = new ProgressDialog(this);
         // 设置导航栏按钮数据
         BottomNavigationItem messageItem = new BottomNavigationItem(
                 R.drawable.ic_action_message,

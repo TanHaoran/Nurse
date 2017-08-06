@@ -61,6 +61,7 @@
     <dimen name="indicator_height">20dp</dimen>
     <dimen name="announcement_height">55dp</dimen>
     <dimen name="plugin_divider_line_marginLeft">70dp</dimen>
+    <dimen name="announcement_line_height">65dp</dimen>
 
     <!--联系人-->
     <dimen name="contact_item_height">56dp</dimen>
@@ -86,6 +87,15 @@
     <dimen name="chat_edit_marginTop">8dp</dimen>
     <dimen name="chat_layout_paddingLeft">5dp</dimen>
     <dimen name="chat_edit_padding">4dp</dimen>
+    <dimen name="chat_avatar_width">40dp</dimen>
+    <dimen name="chat_line_paddingTop">7dp</dimen>
+    <dimen name="chat_line_paddingLeft">70dp</dimen>
+    <dimen name="chat_line_paddingRight">12dp</dimen>
+    <dimen name="chat_avatar_marginLeft">5dp</dimen>
+    <dimen name="chat_text_minHeight">40dp</dimen>
+    <dimen name="chat_line_space_height">2dp</dimen>
+    <dimen name="chat_time_height">20dp</dimen>
+    <dimen name="chat_time_paddingLeft">7dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>
