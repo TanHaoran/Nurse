@@ -7,10 +7,15 @@ import android.provider.ContactsContract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactNumberUtil {
+public class CellphoneContactUtil {
 
-    public static List<PhoneInfo> getPhoneNumberFromMobile(Context context) {
-        List<PhoneInfo> list = new ArrayList<PhoneInfo>();
+    /**
+     * 获取手机通讯录所有联系人
+     * @param context
+     * @return
+     */
+    public static List<CellphoneContact> getPhoneNumberFromMobile(Context context) {
+        List<CellphoneContact> list = new ArrayList<CellphoneContact>();
         Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null, null, null, null);  
         //moveToNext方法返回的是一个boolean类型的数据  
@@ -21,7 +26,7 @@ public class ContactNumberUtil {
             //读取通讯录的号码  
             String number = cursor.getString(cursor  
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            PhoneInfo phoneInfo = new PhoneInfo(name, number);  
+            CellphoneContact phoneInfo = new CellphoneContact(name, number);
             list.add(phoneInfo);  
         }  
         return list;  

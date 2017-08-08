@@ -95,6 +95,12 @@
     <string name="scan_qr_code">扫描二维码名片</string>
     <string name="cellphone_contact">手机联系人</string>
     <string name="add_or_invite_cellphone_contact">添加或邀请通讯录中的好友</string>
+    <string name="already_add">已添加</string>
+    <string name="add">添加</string>
+    <string name="invite">邀请</string>
+    <string name="group_name">群名称</string>
+    <string name="group_qr_code">群二维码</string>
+    <string name="message_ignore">消息免打扰</string>
 
     <!--我的-->
     <string name="mine">我的</string>
@@ -210,6 +216,11 @@
     <string name="please_certificate_number">请输入证书编号</string>
 
     <string name="confirm_logout">确定退出登录吗？</string>
+
+    <string name="encode_qrcode">生成二维码</string>
+    <string name="dencode_qrcode">扫描二维码</string>
+    <string name="code_text">请输入生成二维码的文本信息</string>
+    <string name="qrcodetext">这里显示扫描结果</string>
 
 
 </resources>

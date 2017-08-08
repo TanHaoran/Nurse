@@ -52,7 +52,6 @@ import okhttp3.MediaType;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
-import static org.litepal.crud.DataSupport.findFirst;
 
 public class PersonalInfoActivity extends BaseActivity {
 
@@ -131,7 +130,7 @@ public class PersonalInfoActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
-        mLoginInfo = findFirst(LoginInfo.class);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
         initData();
 
@@ -196,11 +195,8 @@ public class PersonalInfoActivity extends BaseActivity {
                             if (mUserInfo != null) {
                                 DataSupport.deleteAll(UserInfo.class);
                                 mUserInfo.save();
-                                updateUseInfo();
-                            } else {
-                                mUserInfo = DataSupport.findFirst(UserInfo.class);
-                                updateUseInfo();
                             }
+                            updateUseInfo();
                         } else {
                             T.showShort(PersonalInfoActivity.this, "获取基本信息失败");
                             L.i("获取基本信息失败");

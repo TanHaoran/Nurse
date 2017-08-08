@@ -234,7 +234,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             mMessageEditText.setVisibility(View.VISIBLE);
             mRecordButton.setVisibility(View.GONE);
         } else {
-            mTypeButton.setBackgroundResource(R.drawable.icon_keybord);
+            mTypeButton.setBackgroundResource(R.drawable.icon_keyboard);
             mRecordButton.setVisibility(View.VISIBLE);
             mMessageEditText.setVisibility(View.GONE);
         }
@@ -279,6 +279,13 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         public void setFilePath(String filePath) {
             this.filePath = filePath;
         }
+    }
+
+    @OnClick(R.id.ib_create_group)
+    void onCreateGroup(View view) {
+//        Intent intent = CreateGroupActivity.getIntent(this);
+        Intent intent = ChatGroupInfoActivity.getIntent(this);
+        startActivity(intent);
     }
 
 

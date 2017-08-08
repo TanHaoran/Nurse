@@ -52,7 +52,7 @@
         </android.support.v7.widget.RecyclerView>
 
         <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
-            android:id="@+id/indexBar"
+            android:id="@+id/ib_index"
             android:layout_width="24dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
@@ -62,7 +62,7 @@
             app:indexBarTextSize="@dimen/small_textSize"/>
 
         <TextView
-            android:id="@+id/tvSideBarHint"
+            android:id="@+id/tv_side_bar_hint"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"

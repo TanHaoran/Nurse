@@ -201,7 +201,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     calendar.setTime(origin);
                 }
                 // 然后判断是否需要往前退20年
-                if (nowYear - calendar.get(Calendar.YEAR) > 20) {
+                if (nowYear - calendar.get(Calendar.YEAR) >50) {
 
                     if (isBirthday) {
                         calendar.set(Calendar.YEAR, nowYear - 20);

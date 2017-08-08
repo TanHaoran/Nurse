@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_announcement"
@@ -7,36 +7,44 @@
     android:layout_height="@dimen/announcement_line_height"
     android:background="@drawable/plugin_line_selector"
     android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/line_paddingLeft">
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:textColor="@color/normal_textColor"
         android:textSize="@dimen/normal_textSize"
-        tools:text="中国大陆"/>
+        tools:text="公告的标题"/>
 
-    <TextView
-        android:id="@+id/tv_institution"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/gray_textColor"
-        android:textSize="@dimen/small_textSize"
-        tools:text="中国大陆"/>
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/iv_arrow_enter"
-        style="@style/ArrowEnterStyle"/>
+        <TextView
+            android:id="@+id/tv_institution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/small_textSize"
+            tools:text="中国大陆"/>
 
-    <TextView
-        android:id="@+id/tv_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/iv_arrow_enter"
-        android:text="2017-8-5 15:12:01"/>
-</RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/announcement_line_time_marginLeft"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/small_textSize"
+            tools:text="2017-8-5 15:12:01"/>
+
+    </LinearLayout>
+
+</LinearLayout>

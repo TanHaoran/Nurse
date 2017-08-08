@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.AddContactActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/block_marinTop"/>
+
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_group_name"
+        style="@style/PersonalInfoLineStyle"
+        android:layout_height="@dimen/contact_group_line_height">
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:text="@string/group_name"/>
+
+        <ImageView
+            android:id="@+id/iv_group_name"
+            style="@style/ArrowEnterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_group_name"
+            style="@style/personal_info_line_right_text_style"
+            android:layout_toLeftOf="@id/iv_group_name"
+            tools:text="实习护士组"/>
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+    <RelativeLayout
+        android:id="@+id/rl_group_qr_code"
+        style="@style/PersonalInfoLineStyle"
+        android:layout_height="@dimen/contact_group_line_height">
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:text="@string/group_qr_code"/>
+
+        <ImageView
+            android:id="@+id/iv_group_qr_code"
+            style="@style/ArrowEnterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_group_qr_code"
+            style="@style/personal_info_line_right_text_style"
+            android:layout_toLeftOf="@id/iv_group_qr_code"
+            tools:text="女"/>
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+
+    <View
+        android:layout_marginTop="@dimen/block_marinTop"
+        style="@style/DividerLineStyle"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_message_ignore"
+        style="@style/PersonalInfoLineStyle"
+        android:layout_height="@dimen/contact_group_line_height">
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:text="@string/message_ignore"/>
+
+        <ImageView
+            android:id="@+id/iv_message_ignore"
+            style="@style/ArrowEnterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_message_ignore"
+            style="@style/personal_info_line_right_text_style"
+            android:layout_toLeftOf="@id/iv_message_ignore"
+            tools:text="女"/>
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+</LinearLayout>

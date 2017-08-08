@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_input"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:button_textSize="@dimen/normal_textSize"
+        app:right_text="@string/ok"
+        app:show_back="true"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
+            android:id="@+id/ib_index"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:paddingBottom="120dp"
+            android:paddingTop="120dp"
+            app:indexBarPressBackground="@color/partTranslucent"
+            app:indexBarTextSize="@dimen/small_textSize"/>
+
+        <TextView
+            android:id="@+id/tv_side_bar_hint"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_side_bar_bg"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="48sp"
+            android:visibility="gone"
+            tools:text="A"
+            tools:visibility="visible"/>
+    </FrameLayout>
+
+
+</LinearLayout>

@@ -92,6 +92,7 @@ public class InputActivity extends BaseActivity {
         });
 
         mUserInfo = DataSupport.findFirst(UserInfo.class);
+
         if (mTitle.equals(NICKNAME)) {
             mInputEditText.setText(mUserInfo.getNickName());
         } else if (mTitle.equals(JOB_NUMBER)) {

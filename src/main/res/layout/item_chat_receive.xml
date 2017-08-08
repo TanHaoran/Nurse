@@ -4,6 +4,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:background="@color/background"
               android:orientation="vertical"
               android:paddingBottom="@dimen/chat_line_paddingTop"
               android:paddingTop="@dimen/chat_line_paddingTop">
@@ -50,14 +51,16 @@
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:background="@drawable/chat_receive_normal"
             android:layout_toRightOf="@id/cv_avatar"
-            android:background="@drawable/chat_send_bg_normal"
             android:clickable="true"
             android:focusable="true"
+            android:minHeight="@dimen/chat_avatar_width"
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/chat_line_space_height"
-            android:minHeight="@dimen/chat_text_minHeight"
-            android:textColor="@color/white"
+            android:padding="@dimen/chat_text_padding"
+            android:textColor="@color/normal_textColor"
             android:textSize="@dimen/normal_textSize"
             tools:text="那你有大吗？。。。"/>
 

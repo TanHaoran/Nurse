@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.google.gson.Gson;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.fragment.OfficeFragment;
@@ -38,7 +38,7 @@ import static com.jerry.nurse.fragment.OfficeFragment.DEFAULT_PAGE;
 public class AnnouncementActivity extends BaseActivity {
 
     @Bind(R.id.rv_announcement)
-    RecyclerView mRecyclerView;
+    XRecyclerView mRecyclerView;
 
     private AnnouncementAdapter mAdapter;
 

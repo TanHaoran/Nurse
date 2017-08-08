@@ -14,49 +14,117 @@
         app:show_back="true"
         app:title_text="@string/add_contact"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:hint="@string/please_input_cellphone"/>
-
     <LinearLayout
-        android:id="@+id/ll_scan"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/plugin_line_selector"
-        android:clickable="true"
-        android:orientation="vertical">
+        android:layout_height="@dimen/search_edit_height"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_keyword"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/edit_up_down_bg"
+            android:drawableLeft="@drawable/contact_search"
+            android:drawablePadding="@dimen/line_paddingLeft"
+            android:hint="@string/please_input_cellphone"
+            android:imeOptions="actionSearch"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:singleLine="true"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
 
         <TextView
+            android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/scan_and_scan"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/scan_qr_code"/>
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:paddingRight="@dimen/line_paddingLeft"
+            android:text="@string/cancel"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
+
     <LinearLayout
-        android:id="@+id/ll_cellphone_contact"
+        android:id="@+id/ll_add_way"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/plugin_line_selector"
-        android:clickable="true"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cellphone_contact"/>
+        <LinearLayout
+            android:id="@+id/ll_scan"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/contact_item_height"
+            android:background="@drawable/plugin_line_selector"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/line_paddingLeft">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_or_invite_cellphone_contact"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_and_scan"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_qr_code"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
+
+        </LinearLayout>
+
+        <View
+            style="@style/DividerLineStyle"
+            android:paddingLeft="@dimen/line_paddingLeft"/>
+
+        <LinearLayout
+            android:id="@+id/ll_cellphone_contact"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/contact_item_height"
+            android:background="@drawable/plugin_line_selector"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/line_paddingLeft">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cellphone_contact"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_or_invite_cellphone_contact"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
+
+        </LinearLayout>
+
+        <View
+            style="@style/DividerLineStyle"/>
+
 
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 </LinearLayout>

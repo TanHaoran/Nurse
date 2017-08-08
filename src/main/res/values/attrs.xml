@@ -35,4 +35,17 @@
         <attr name="indexBarTextSize" format="dimension"/>
         <attr name="indexBarPressBackground" format="color"/>
     </declare-styleable>
+
+    <!--二维码扫描框-->
+    <declare-styleable name="ViewfinderView">
+        <attr name="corner_color" format="color"/>
+        <attr name="laser_color" format="color"/>
+        <attr name="frame_color" format="color" />
+        <attr name="mask_color" format="color" />
+        <attr name="result_point_color" format="color"/>
+        <attr name="result_color" format="color" />
+        <attr name="label_text_color" format="color"/>
+        <attr name="label_text" format="string"/>
+        <attr name="label_text_size" format="float"/>
+    </declare-styleable>
 </resources>

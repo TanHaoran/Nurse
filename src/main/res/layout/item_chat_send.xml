@@ -24,10 +24,10 @@
 
 
     <RelativeLayout
-        android:layout_marginBottom="@dimen/chat_line_paddingTop"
-        android:layout_marginTop="@dimen/chat_line_paddingTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/chat_line_paddingTop"
+        android:layout_marginTop="@dimen/chat_line_paddingTop"
         android:paddingLeft="@dimen/chat_line_paddingLeft"
         android:paddingRight="@dimen/chat_line_paddingRight">
 
@@ -54,12 +54,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/cv_avatar"
-            android:background="@drawable/chat_send_bg_normal"
+            android:background="@drawable/chat_send_normal"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/chat_line_space_height"
-            android:minHeight="@dimen/chat_text_minHeight"
+            android:minHeight="@dimen/chat_avatar_width"
+            android:padding="@dimen/chat_text_padding"
             android:textColor="@color/white"
             android:textSize="@dimen/normal_textSize"
             tools:text="有大吗。。。"/>

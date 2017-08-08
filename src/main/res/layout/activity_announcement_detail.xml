@@ -18,12 +18,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:padding="@dimen/line_paddingLeft"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <TextView
+                android:gravity="center"
+                android:paddingTop="@dimen/block_marinTop"
+                android:paddingBottom="@dimen/block_marinTop"
                 android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/normal_textColor"
                 android:textSize="@dimen/big_textSize"
@@ -32,7 +36,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
@@ -40,25 +43,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/smaller_textSize"
+                    android:textSize="@dimen/small_textSize"
                     tools:text="发布机构"/>
 
                 <TextView
+                    android:layout_marginLeft="@dimen/announcement_line_time_marginLeft"
                     android:id="@+id/tv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/smaller_textSize"
+                    android:textSize="@dimen/small_textSize"
                     tools:text="2017-8-5 14:26:14"/>
             </LinearLayout>
 
             <TextView
+                android:layout_marginTop="@dimen/block_marinTop"
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="内容很长很长老看见爱丽丝爱上对方"
                 android:textColor="@color/normal_textColor"
-                android:textSize="@dimen/small_textSize"/>
+                android:textSize="@dimen/normal_textSize"/>
 
         </LinearLayout>
     </ScrollView>

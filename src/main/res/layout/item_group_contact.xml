@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/line_paddingRight"
+        android:layout_toLeftOf="@id/iv_avatar"
+        android:layout_width="@dimen/personal_Info_avatar_width"
+        app:cardElevation="0dp"
+        android:layout_height="@dimen/personal_Info_avatar_width"
+        app:cardCornerRadius="@dimen/image_round_radius">
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:id="@+id/civ_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_avatar_default"/>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

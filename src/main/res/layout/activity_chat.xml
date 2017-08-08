@@ -8,10 +8,30 @@
     android:orientation="vertical"
     tools:context="com.jerry.nurse.activity.ChatActivity">
 
-    <com.jerry.nurse.view.TitleBar
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:show_back="true"/>
+        android:background="@color/primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/contact"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_textSize"/>
+
+        <ImageView
+            android:id="@+id/ib_create_group"
+            android:layout_width="@dimen/contact_action_button_width"
+            android:layout_height="@dimen/contact_action_button_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/contact_action_button__padding"
+            android:src="@drawable/top_ql"/>
+
+
+    </RelativeLayout>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/rv_content"

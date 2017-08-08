@@ -1,6 +1,5 @@
 package com.jerry.nurse.fragment;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AddContactActivity;
-import com.jerry.nurse.activity.BaseActivity;
-import com.jerry.nurse.activity.ChatActivity;
 import com.jerry.nurse.activity.ContactDetailActivity;
 import com.jerry.nurse.activity.ContactListActivity;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactTopHeaderBean;
@@ -52,12 +48,12 @@ import okhttp3.Call;
 public class ContactFragment extends BaseFragment {
 
     @Bind(R.id.rv)
-    RecyclerView mRv;
+    RecyclerView mRecyclerView;
 
-    @Bind(R.id.tvSideBarHint)
-    TextView mTvSideBarHint;
+    @Bind(R.id.tv_side_bar_hint)
+    TextView mHintTextView;
 
-    @Bind(R.id.indexBar)
+    @Bind(R.id.ib_index)
     IndexBar mIndexBar;
 
     private LinearLayoutManager mManager;
@@ -68,7 +64,7 @@ public class ContactFragment extends BaseFragment {
     private List<BaseIndexPinyinBean> mSourceDatas;
     //头部数据源
     private List<ContactHeaderBean> mHeaderDatas;
-    //主体部分数据源（城市数据）
+    //主体部分数据源（城联系人据）
     private List<Contact> mBodyDatas;
 
     private ContactAdapter mAdapter;
@@ -138,7 +134,7 @@ public class ContactFragment extends BaseFragment {
      */
     private void updateView(boolean isUpdate) {
 
-        mRv.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
 
         mSourceDatas = new ArrayList<>();
         mHeaderDatas = new ArrayList<>();
@@ -172,9 +168,7 @@ public class ContactFragment extends BaseFragment {
                                         holder.getConvertView().setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Toast.makeText(mContext, "昵称:" + contact.getNickName(),
-                                                        Toast.LENGTH_SHORT).show();
-                                                Intent intent = ChatActivity.getIntent(getActivity());
+                                                Intent intent = ContactDetailActivity.getIntent(getActivity(), "");
                                                 startActivity(intent);
                                             }
                                         });
@@ -214,13 +208,13 @@ public class ContactFragment extends BaseFragment {
 
         mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
 
-        mRv.setAdapter(mHeaderAdapter);
+        mRecyclerView.setAdapter(mHeaderAdapter);
 
         if (!isUpdate) {
-            mRv.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mSourceDatas)
+            mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mSourceDatas)
                     .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
         }
-        mIndexBar.setmPressedShowTextView(mTvSideBarHint)//设置HintTextView
+        mIndexBar.setmPressedShowTextView(mHintTextView)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
                 .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
@@ -255,6 +249,7 @@ public class ContactFragment extends BaseFragment {
         mDecoration.setmDatas(mSourceDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
+
     }
 
     class ContactAdapter extends CommonAdapter<Contact> {
@@ -282,18 +277,7 @@ public class ContactFragment extends BaseFragment {
 
     @OnClick(R.id.ib_add)
     void onAdd(View view) {
-        BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.READ_CONTACTS},
-                new PermissionListener() {
-                    @Override
-                    public void onGranted() {
-                        Intent intent = AddContactActivity.getIntent(getActivity());
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onDenied(List<String> deniedPermission) {
-
-                    }
-                });
+        Intent intent = AddContactActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 }

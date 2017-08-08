@@ -5,15 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.util.ContactNumberUtil;
-import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.PhoneInfo;
-import com.jerry.nurse.view.RecycleViewDivider;
-import com.zhy.adapter.recyclerview.CommonAdapter;
-import com.zhy.adapter.recyclerview.base.ViewHolder;
+import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.util.CellphoneContact;
+import com.jerry.nurse.util.CellphoneContactUtil;
+import com.jerry.nurse.util.CommonAdapter;
+import com.jerry.nurse.util.OnItemClickListener;
+import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.ViewHolder;
+import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
+import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
+import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
 
+import org.litepal.crud.DataSupport;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -22,6 +32,28 @@ public class CellphoneContactActivity extends BaseActivity {
 
     @Bind(R.id.rv_contact)
     RecyclerView mRecyclerView;
+
+    @Bind(R.id.tv_side_bar_hint)
+    TextView mTvSideBarHint;
+
+    @Bind(R.id.ib_index)
+    IndexBar mIndexBar;
+
+    private LinearLayoutManager mManager;
+
+    private ProgressDialogManager mProgressDialogManager;
+
+    //设置给InexBar、ItemDecoration的完整数据集
+    private List<BaseIndexPinyinBean> mSourceDatas;
+
+    //主体部分数据源（城联系人据）
+    private List<CellphoneContact> mBodyDatas;
+
+    private CellphoneContactAdapter mAdapter;
+
+    private SuspensionDecoration mDecoration;
+
+    private LoginInfo mLoginInfo;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, CellphoneContactActivity.class);
@@ -35,30 +67,97 @@ public class CellphoneContactActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mProgressDialogManager = new ProgressDialogManager(this);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        List<PhoneInfo> phoneNumberFromMobile = ContactNumberUtil.getPhoneNumberFromMobile(this);
-        // 设置间隔线
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
-
-        CellphoneContactAdapter mAdapter = new CellphoneContactAdapter(this, R.layout.item_string, phoneNumberFromMobile);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.setAdapter(mAdapter);
+        // 读取手机通讯录联系人
+        loadCellphoneContact();
+        updateView(false);
     }
 
-    class CellphoneContactAdapter extends CommonAdapter<PhoneInfo> {
+    /**
+     * 读取手机通讯录联系人
+     */
+    private void loadCellphoneContact() {
+        mBodyDatas = CellphoneContactUtil.getPhoneNumberFromMobile(this);
+    }
 
-        public CellphoneContactAdapter(Context context, int layoutId, List<PhoneInfo> datas) {
+    /**
+     * 填充数据
+     *
+     * @param isUpdate 是否是更新界面
+     */
+    private void updateView(boolean isUpdate) {
+
+        mRecyclerView.setLayoutManager(mManager = new LinearLayoutManager(this));
+
+        mSourceDatas = new ArrayList<>();
+
+        mAdapter = new CellphoneContactAdapter(this, R.layout.item_cellphone_contact, mBodyDatas);
+
+        mRecyclerView.setAdapter(mAdapter);
+
+        if (!isUpdate) {
+            mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(this, mSourceDatas));
+        }
+        mIndexBar.setmPressedShowTextView(mTvSideBarHint)//设置HintTextView
+                .setNeedRealIndex(true)//设置需要真实的索引
+                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
+        ;
+
+        initDatas(getResources().getStringArray(R.array.provinces));
+    }
+
+
+    /**
+     * 组织数据源
+     *
+     * @param data
+     * @return
+     */
+    private void initDatas(final String[] data) {
+        //先排序
+        mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
+
+        mAdapter.setDatas(mBodyDatas);
+        mSourceDatas.addAll(mBodyDatas);
+
+
+        mIndexBar.setmSourceDatas(mSourceDatas)//设置数据
+                .invalidate();
+        mDecoration.setmDatas(mSourceDatas);
+
+        mAdapter.notifyDataSetChanged();
+
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(ViewGroup parent, View view, Object o, int position) {
+                Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this, "");
+                startActivity(intent);
+            }
+
+            @Override
+            public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
+                return false;
+            }
+        });
+    }
+
+    class CellphoneContactAdapter extends CommonAdapter<CellphoneContact> {
+        public CellphoneContactAdapter(Context context, int layoutId, List<CellphoneContact> datas) {
             super(context, layoutId, datas);
         }
 
         @Override
-        protected void convert(ViewHolder holder, PhoneInfo phoneInfo, int position) {
-            holder.setText(R.id.tv_string, phoneInfo.getName() + phoneInfo.getNumber());
+        public void convert(ViewHolder holder, final CellphoneContact cellphoneContact) {
+            holder.setText(R.id.tv_nickname, cellphoneContact.getName());
+            holder.setText(R.id.tv_cellphone, cellphoneContact.getNumber());
+            holder.getView(R.id.ll_cellphone_contact).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 
