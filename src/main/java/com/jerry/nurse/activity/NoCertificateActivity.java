@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.model.UserPractisingCertificateInfo;
-import com.jerry.nurse.model.UserProfessionalCertificateInfo;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.view.TitleBar;
 
 import org.litepal.crud.DataSupport;
@@ -43,27 +42,21 @@ public class NoCertificateActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
+        mTitleBar.setTitle(mTitle);
+        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
         if (PROFESSIONAL_CERTIFICATE.equals(mTitle)) {
-            UserProfessionalCertificateInfo professionalCertificateInfo =
-                    DataSupport.findFirst(UserProfessionalCertificateInfo.class);
-            if (professionalCertificateInfo != null &&
-                    professionalCertificateInfo.getVerifyStatus() != AUDIT_EMPTY) {
+            if (loginInfo.getQStatus() != AUDIT_EMPTY) {
                 Intent intent = ProfessionalCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();
             }
         } else if (PRACTISING_CERTIFICATE.equals(mTitle)) {
-            UserPractisingCertificateInfo practisingCertificateInfo =
-                    DataSupport.findFirst(UserPractisingCertificateInfo.class);
-            if (practisingCertificateInfo != null &&
-                    practisingCertificateInfo.getVerifyStatus() != AUDIT_EMPTY) {
+            if (loginInfo.getPStatus() != AUDIT_EMPTY) {
                 Intent intent = PractisingCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();
             }
         }
-
-        mTitleBar.setTitle(mTitle);
     }
 
     @OnClick(R.id.acb_go_certificate)

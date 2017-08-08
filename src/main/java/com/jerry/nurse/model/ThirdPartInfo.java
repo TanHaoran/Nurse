@@ -8,7 +8,7 @@ public class ThirdPartInfo {
 
     private String RegisterId;
     private String Phone;
-    private String OpenId;
+    private Qq QQData;
 
     public String getRegisterId() {
         return RegisterId;
@@ -26,11 +26,11 @@ public class ThirdPartInfo {
         Phone = phone;
     }
 
-    public String getOpenId() {
-        return OpenId;
+    public Qq getQQData() {
+        return QQData;
     }
 
-    public void setOpenId(String openId) {
-        OpenId = openId;
+    public void setQQData(Qq QQData) {
+        this.QQData = QQData;
     }
 }

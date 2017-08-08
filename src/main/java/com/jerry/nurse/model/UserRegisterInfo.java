@@ -18,12 +18,12 @@ public class UserRegisterInfo extends DataSupport {
      * RegisterId : 0000000012
      */
 
+    private String RegisterId;
     private String Avatar;
     private String Name;
     private String NickName;
     private String Password;
     private String Phone;
-    private String RegisterId;
 
     public String getAvatar() {
         return Avatar;

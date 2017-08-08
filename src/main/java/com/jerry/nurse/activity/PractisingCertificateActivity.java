@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,10 +18,18 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
 import com.jerry.nurse.listener.OnPhotoSelectListener;
-import com.jerry.nurse.model.UserPractisingCertificateInfo;
+import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.PractisingResult;
+import com.jerry.nurse.model.UploadResult;
+import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
+import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -38,7 +45,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_EMPTY;
@@ -46,9 +52,7 @@ import static com.jerry.nurse.constant.ServiceConstant.AUDIT_FAILED;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_ING;
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
 import static com.jerry.nurse.constant.ServiceConstant.PRACTISING_ADDRESS;
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
-import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
-import static com.jerry.nurse.constant.ServiceConstant.USER_FILE;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 public class PractisingCertificateActivity extends BaseActivity {
@@ -181,10 +185,9 @@ public class PractisingCertificateActivity extends BaseActivity {
     private Bitmap mBitmap3;
 
 
-    private UserPractisingCertificateInfo mInfo;
-
     private String mErrorMessage;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
+    private PractisingResult.Practising mPractising;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PractisingCertificateActivity.class);
@@ -198,58 +201,80 @@ public class PractisingCertificateActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mProgressDialogManager = new ProgressDialogManager(this);
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        getPractisingCertificateInfo(registerId);
 
-        mInfo = DataSupport.findFirst(UserPractisingCertificateInfo.class);
+    }
 
-        if (mInfo != null) {
-            mNameEditText.setText(mInfo.getName());
-            mSexTextView.setText(mInfo.getSex());
-            mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getBirthDate()));
-            mCountryNationEditText.setText(mInfo.getCountry());
-            mPractisingLocationEditText.setText(mInfo.getPracticeAddress());
-            mCertificateNumberEditText.setText(mInfo.getCertificateId());
-            mIdCardNumberEditText.setText(mInfo.getIDCard());
-            mFirstSignDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getFirstRegisterDate()));
-            mLastSignDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getLastRegisterDate()));
-            mLastSignDateValidTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getRegisterToDate()));
-            mSignDepartmentTextView.setText(mInfo.getRegisterAuthority());
-            mCertificateOrganizationTextView.setText(mInfo.getCertificateAuthority());
-            mCertificateDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getCertificateDate()));
-            mFirstWorkDateTextView.setText(DateUtil.parseMysqlDateToString(mInfo.getFirstJobTime()));
+    private void setPractisingData() {
+        if (mPractising != null) {
+            mNameEditText.setText(mPractising.getName());
+            mSexTextView.setText(mPractising.getSex());
+            mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getBirthDate()));
+            mCountryNationEditText.setText(mPractising.getCountry());
+            mPractisingLocationEditText.setText(mPractising.getPracticeAddress());
+            mCertificateNumberEditText.setText(mPractising.getCertificateId());
+            mIdCardNumberEditText.setText(mPractising.getIDCard());
+            mFirstSignDateTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getFirstRegisterDate()));
+            mLastSignDateTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getLastRegisterDate()));
+            mLastSignDateValidTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getRegisterToDate()));
+            mSignDepartmentTextView.setText(mPractising.getRegisterAuthority());
+            mCertificateOrganizationTextView.setText(mPractising.getCertificateAuthority());
+            mCertificateDateTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getCertificateDate()));
+            mFirstWorkDateTextView.setText(DateUtil.parseMysqlDateToString(mPractising.getFirstJobTime()));
 
-            if (mInfo.getVerifyStatus() != AUDIT_EMPTY) {
+            if (mPractising.getVerifyStatus() != AUDIT_EMPTY) {
                 makeUneditable();
 
 
                 // 审核中
-                if (mInfo.getVerifyStatus() == AUDIT_ING) {
+                if (mPractising.getVerifyStatus() == AUDIT_ING) {
                     setStatus(AUDIT_ING);
                 }
                 // 审核失败
-                else if (mInfo.getVerifyStatus() == AUDIT_FAILED) {
+                else if (mPractising.getVerifyStatus() == AUDIT_FAILED) {
                     setStatus(AUDIT_FAILED);
                 }
                 // 审核通过
-                else if (mInfo.getVerifyStatus() == AUDIT_SUCCESS) {
+                else if (mPractising.getVerifyStatus() == AUDIT_SUCCESS) {
                     setStatus(AUDIT_SUCCESS);
                 }
 
                 // 加载图片显示
-                Glide.with(this).load(PRACTISING_ADDRESS + mInfo.getPicture1()).into(mPicture1ImageView);
-                Glide.with(this).load(PRACTISING_ADDRESS + mInfo.getPicture2()).into(mPicture2ImageView);
-                Glide.with(this).load(PRACTISING_ADDRESS + mInfo.getPicture2()).into(mPicture3ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture1()).into(mPicture1ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2()).into(mPicture2ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2()).into(mPicture3ImageView);
             } else {
                 makeEditable();
             }
         }
+    }
+
+
+    /**
+     * 获取用户执业证信息
+     */
+    private void getPractisingCertificateInfo(final String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_PRACTISING_CERTIFICATE_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        PractisingResult practisingResult = new GUtil().fromJson(response, PractisingResult.class);
+                        if (practisingResult.getCode() == RESPONSE_SUCCESS) {
+                            mPractising = practisingResult.getBody();
+                            setPractisingData();
+                        } else {
+                            T.showShort(PractisingCertificateActivity.this, "获取执业证失败");
+                        }
+                    }
+                });
     }
 
     /**
@@ -277,7 +302,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mAuditAgainTextView.setVisibility(View.VISIBLE);
             mFailedMessageLayout.setVisibility(View.VISIBLE);
             mFailedMessageTextView.setVisibility(View.VISIBLE);
-            mFailedMessageTextView.setText(mInfo.getVerifyView());
+            mFailedMessageTextView.setText(mPractising.getVerifyView());
             mTitleBar.setRightText("认证").setOnRightClickListener(new TitleBar.OnRightClickListener() {
                 @Override
                 public void onRightClick(View view) {
@@ -354,31 +379,31 @@ public class PractisingCertificateActivity extends BaseActivity {
                 mBirthdayTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mFirstSignDateLayout, null, false,new OnDateSelectListener() {
+        setDateSelectListener(mFirstSignDateLayout, null, false, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mLastSignDateLayout, null,false, new OnDateSelectListener() {
+        setDateSelectListener(mLastSignDateLayout, null, false, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mLastSignDateValidLayout, null,false, new OnDateSelectListener() {
+        setDateSelectListener(mLastSignDateValidLayout, null, false, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mCertificateDateLayout, null,false, new OnDateSelectListener() {
+        setDateSelectListener(mCertificateDateLayout, null, false, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mFirstWordDateLayout, null,false, new OnDateSelectListener() {
+        setDateSelectListener(mFirstWordDateLayout, null, false, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));
@@ -418,25 +443,25 @@ public class PractisingCertificateActivity extends BaseActivity {
         }
 
         // 组装数据
-        mInfo.setName(mNameEditText.getText().toString());
-        mInfo.setBirthDate(DateUtil.parseStringToMysqlDate(mBirthdayTextView.getText().toString()));
+        mPractising.setName(mNameEditText.getText().toString());
+        mPractising.setBirthDate(DateUtil.parseStringToMysqlDate(mBirthdayTextView.getText().toString()));
         if (mSexButton.getSex() == 0) {
-            mInfo.setSex("男");
+            mPractising.setSex("男");
         } else {
-            mInfo.setSex("女");
+            mPractising.setSex("女");
         }
-        mInfo.setCountry(mCountryNationEditText.getText().toString());
-        mInfo.setPracticeAddress(mPractisingLocationEditText.getText().toString());
-        mInfo.setCertificateId(mCertificateNumberEditText.getText().toString());
-        mInfo.setIDCard(mIdCardNumberEditText.getText().toString());
-        mInfo.setFirstRegisterDate(DateUtil.parseStringToMysqlDate(mFirstSignDateTextView.getText().toString()));
-        mInfo.setLastRegisterDate(DateUtil.parseStringToMysqlDate(mLastSignDateTextView.getText().toString()));
-        mInfo.setRegisterToDate(DateUtil.parseStringToMysqlDate(mLastSignDateValidTextView.getText().toString()));
-        mInfo.setRegisterAuthority(mSignDepartmentTextView.getText().toString());
-        mInfo.setCertificateAuthority(mCertificateOrganizationTextView.getText().toString());
-        mInfo.setCertificateDate(DateUtil.parseStringToMysqlDate(mCertificateDateTextView.getText().toString()));
-        mInfo.setFirstJobTime(DateUtil.parseStringToMysqlDate(mFirstWorkDateTextView.getText().toString()));
-        mInfo.setVerifyStatus(1);
+        mPractising.setCountry(mCountryNationEditText.getText().toString());
+        mPractising.setPracticeAddress(mPractisingLocationEditText.getText().toString());
+        mPractising.setCertificateId(mCertificateNumberEditText.getText().toString());
+        mPractising.setIDCard(mIdCardNumberEditText.getText().toString());
+        mPractising.setFirstRegisterDate(DateUtil.parseStringToMysqlDate(mFirstSignDateTextView.getText().toString()));
+        mPractising.setLastRegisterDate(DateUtil.parseStringToMysqlDate(mLastSignDateTextView.getText().toString()));
+        mPractising.setRegisterToDate(DateUtil.parseStringToMysqlDate(mLastSignDateValidTextView.getText().toString()));
+        mPractising.setRegisterAuthority(mSignDepartmentTextView.getText().toString());
+        mPractising.setCertificateAuthority(mCertificateOrganizationTextView.getText().toString());
+        mPractising.setCertificateDate(DateUtil.parseStringToMysqlDate(mCertificateDateTextView.getText().toString()));
+        mPractising.setFirstJobTime(DateUtil.parseStringToMysqlDate(mFirstWorkDateTextView.getText().toString()));
+        mPractising.setVerifyStatus(1);
 
         postProfessionalCertificate();
     }
@@ -496,17 +521,17 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "首次工作日期为空！";
             return false;
         }
-        if (TextUtils.isEmpty(mInfo.getPicture1())) {
+        if (TextUtils.isEmpty(mPractising.getPicture1())) {
             mErrorMessage = "证件页1为空！";
             return false;
         }
 
-        if (TextUtils.isEmpty(mInfo.getPicture2())) {
+        if (TextUtils.isEmpty(mPractising.getPicture2())) {
             mErrorMessage = "证件页2为空！";
             return false;
         }
 
-        if (TextUtils.isEmpty(mInfo.getPicture3())) {
+        if (TextUtils.isEmpty(mPractising.getPicture3())) {
             mErrorMessage = "证件页3为空！";
             return false;
         }
@@ -521,7 +546,7 @@ public class PractisingCertificateActivity extends BaseActivity {
      * @param index
      */
     private void postPicture(File file, final int index) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "*/*");
         OkHttpUtils.post()
@@ -529,31 +554,25 @@ public class PractisingCertificateActivity extends BaseActivity {
                 .url(ServiceConstant.UPLOAD_PRACTISING_PICTURE)
                 .headers(headers)
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    protected void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.startsWith(USER_FILE)) {
-                            if (response.split(USER_COLON).length == 2) {
-                                String name = response.split(USER_COLON)[1];
-                                if (index == 0) {
-                                    mInfo.setPicture1(name);
-                                    mPicture1ImageView.setImageBitmap(mBitmap1);
-                                } else if (index == 1) {
-                                    mInfo.setPicture2(name);
-                                    mPicture2ImageView.setImageBitmap(mBitmap2);
-                                } else if (index == 2) {
-                                    mInfo.setPicture3(name);
-                                    mPicture3ImageView.setImageBitmap(mBitmap3);
-                                }
+                        UploadResult uploadResult = new GUtil().fromJson(response, UploadResult.class);
+                        if (uploadResult.getCode() == RESPONSE_SUCCESS) {
+                            String fileName = uploadResult.getBody().getFilename();
+                            if (index == 0) {
+                                mPractising.setPicture1(fileName);
+                                mPicture1ImageView.setImageBitmap(mBitmap1);
+                            } else if (index == 1) {
+                                mPractising.setPicture2(fileName);
+                                mPicture2ImageView.setImageBitmap(mBitmap2);
+                            } else if (index == 2) {
+                                mPractising.setPicture3(fileName);
+                                mPicture3ImageView.setImageBitmap(mBitmap3);
                             }
                         } else {
-                            L.i("上传专业资格证失败");
+                            L.i("上传执业证照片失败");
                             T.showShort(PractisingCertificateActivity.this, R.string.upload_failed);
                         }
                     }
@@ -561,27 +580,30 @@ public class PractisingCertificateActivity extends BaseActivity {
     }
 
     private void postProfessionalCertificate() {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_PRACTISING_CERTIFICATE_INFO)
-                .content(StringUtil.addModelWithJson(mInfo))
+                .content(StringUtil.addModelWithJson(mPractising))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置执业证成功");
+                            // 设置成功后更新数据库
+                            LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+                            loginInfo.setPStatus(AUDIT_ING);
+                            LitePalUtil.updateLoginInfo(PractisingCertificateActivity.this, loginInfo);
+
+                            UserInfo userInfo = DataSupport.findFirst(UserInfo.class);
+                            userInfo.setPVerifyStatus(AUDIT_ING);
+                            LitePalUtil.updateUserInfo(PractisingCertificateActivity.this, userInfo);
+
                             T.showShort(PractisingCertificateActivity.this,
                                     R.string.submit_success_please_wait);
-                            // 设置成功后更新数据库
-//                            LitePalUtil.savePractisingCertificateInfo(mInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {

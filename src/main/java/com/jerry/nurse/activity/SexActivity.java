@@ -1,17 +1,21 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.UserBasicInfo;
+import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -19,10 +23,9 @@ import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class SexActivity extends BaseActivity {
 
@@ -38,8 +41,8 @@ public class SexActivity extends BaseActivity {
 
     private String mSex;
 
-    private UserBasicInfo userBasicInfo;
-    private ProgressDialog mProgressDialog;
+    private UserInfo mUserInfo;
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, String sex) {
         Intent intent = new Intent(context, SexActivity.class);
@@ -54,16 +57,9 @@ public class SexActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mProgressDialogManager = new ProgressDialogManager(this);
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
-
-        userBasicInfo = DataSupport.findLast(UserBasicInfo.class);
+        mUserInfo = DataSupport.findLast(UserInfo.class);
         mSex = getIntent().getStringExtra(EXTRA_SEX);
         if (SEX_MALE.equals(mSex)) {
             mMaleChooseImageView.setVisibility(View.VISIBLE);
@@ -91,32 +87,30 @@ public class SexActivity extends BaseActivity {
      *
      * @param sex
      */
-    private void setSex(String sex) {
-        mProgressDialog.show();
+    private void setSex(final String sex) {
+        mProgressDialogManager.show();
+        UserBasicInfo userBasicInfo = new UserBasicInfo();
+        userBasicInfo.setRegisterId(mUserInfo.getRegisterId());
         userBasicInfo.setSex(sex);
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_BASIC_INFO)
                 .content(StringUtil.addModelWithJson(userBasicInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                        finish();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
-                            // 首先更新UI界面
-//                            LitePalUtil.saveBasicInfo(userBasicInfo);
-                            setResult(RESULT_OK);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            L.i("设置性别成功");
+                            // 更新数据库
+                            mUserInfo.setSex(sex);
+                            LitePalUtil.updateUserInfo(SexActivity.this, mUserInfo);
+                            finish();
                         } else {
-                            L.i("修改性别信息失败");
+                            L.i("设置性别失败");
                         }
-                        finish();
                     }
                 });
     }

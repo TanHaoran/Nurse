@@ -69,7 +69,10 @@ public abstract class EaseMobManager {
     /**
      * 环信登录成功
      */
-    protected abstract void onLoginFailed();
+    protected void onLoginFailed() {
+        T.showShort(ActivityCollector.getTopActivity(), "通讯模块初始化失败");
+    }
+
 
     /**
      * 环信登录成功

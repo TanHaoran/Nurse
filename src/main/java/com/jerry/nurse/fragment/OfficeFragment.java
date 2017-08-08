@@ -247,7 +247,6 @@ public class OfficeFragment extends BaseFragment {
 
     /**
      * 判断权限进行消息展示
-     *
      */
     public static boolean checkPermission() {
         // 两证同时通过验证才可以进行院务内的消息展示
@@ -273,7 +272,8 @@ public class OfficeFragment extends BaseFragment {
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = HtmlActivity.getIntent(getActivity(), mBanners.get(index).getBannerToUrl());
+                        Intent intent = HtmlActivity.getIntent(getActivity(), mBanners.get(index).getBannerToUrl()
+                                , mBanners.get(index).getBannerId());
                         startActivity(intent);
                     }
                 });
@@ -335,13 +335,13 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL);
+        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL, null);
         startActivity(intent);
     }
 
     @OnClick(R.id.ll_nurse_class)
     void onNurseClass(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL);
+        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL, null);
         startActivity(intent);
     }
 

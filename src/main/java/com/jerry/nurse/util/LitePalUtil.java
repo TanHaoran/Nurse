@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.jerry.nurse.model.Announcement;
 import com.jerry.nurse.model.Banner;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.UserInfo;
 
 import org.litepal.crud.DataSupport;
 
@@ -15,6 +16,12 @@ import org.litepal.crud.DataSupport;
 
 public class LitePalUtil {
 
+    /**
+     * 保存用户登录信息
+     *
+     * @param context
+     * @param loginInfo
+     */
     public static void saveLoginInfo(Context context, LoginInfo loginInfo) {
         // 保存到SP
         updateSP(context, loginInfo);
@@ -22,6 +29,48 @@ public class LitePalUtil {
         DataSupport.deleteAll(LoginInfo.class);
         loginInfo.save();
     }
+
+    /**
+     * 更新用户登录信息
+     * @param context
+     * @param loginInfo
+     */
+    public static void updateLoginInfo(Context context, LoginInfo loginInfo) {
+        // 保存到SP
+        updateSP(context, loginInfo);
+
+        loginInfo.save();
+    }
+
+
+    /**
+     * 保存用户个人信息
+     *
+     * @param context
+     * @param userInfo
+     */
+    public static void saveUserInfo(Context context, UserInfo userInfo) {
+        // 保存到SP
+        updateSP(context, userInfo);
+
+        DataSupport.deleteAll(UserInfo.class);
+        userInfo.save();
+    }
+
+    /**
+     * 更新用户个人信息
+     * @param context
+     * @param userInfo
+     */
+    public static void updateUserInfo(Context context, UserInfo userInfo) {
+        // 保存到SP
+        updateSP(context, userInfo);
+        userInfo.save();
+    }
+
+
+
+
 
     /**
      * 更新SP中的数据
@@ -38,6 +87,24 @@ public class LitePalUtil {
         }
         if (!TextUtils.isEmpty(loginInfo.getNickName())) {
             SPUtil.put(context, SPUtil.NICKNAME, loginInfo.getNickName());
+        }
+    }
+
+    /**
+     * 更新SP中的数据
+     *
+     * @param context
+     * @param userInfo
+     */
+    private static void updateSP(Context context, UserInfo userInfo) {
+        if (!TextUtils.isEmpty(userInfo.getRegisterId())) {
+            SPUtil.put(context, SPUtil.REGISTER_ID, userInfo.getRegisterId());
+        }
+        if (!TextUtils.isEmpty(userInfo.getName())) {
+            SPUtil.put(context, SPUtil.NAME, userInfo.getName());
+        }
+        if (!TextUtils.isEmpty(userInfo.getNickName())) {
+            SPUtil.put(context, SPUtil.NICKNAME, userInfo.getNickName());
         }
     }
 

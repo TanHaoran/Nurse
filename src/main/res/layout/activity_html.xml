@@ -5,11 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.jerry.nurse.activity.HtmlActivity">
 
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_html"
+        app:show_back="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"/>
 
     <WebView
-        android:id="@+id/wv_plugin"
+        android:id="@+id/wv_html"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

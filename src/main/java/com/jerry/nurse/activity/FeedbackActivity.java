@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,22 +9,21 @@ import android.widget.EditText;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Feedback;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.GUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import org.litepal.crud.DataSupport;
-
 import butterknife.Bind;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class FeedbackActivity extends BaseActivity {
 
@@ -34,7 +32,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @Bind(R.id.et_feedback)
     EditText mFeedbackEditText;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, FeedbackActivity.class);
@@ -48,14 +46,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -76,28 +67,24 @@ public class FeedbackActivity extends BaseActivity {
      * @param content
      */
     void sendFeedback(final String content) {
-        mProgressDialog.show();
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        Feedback feedback = new Feedback(userRegisterInfo.getRegisterId(), content);
+        mProgressDialogManager.show();
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        Feedback feedback = new Feedback(registerId, content);
         OkHttpUtils.postString()
                 .url(ServiceConstant.SEND_FEEDBACK)
                 .content(StringUtil.addModelWithJson(feedback))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(FeedbackActivity.this, R.string.submit_success);
                             finish();
                         } else {
-                            L.i("提交失败");
+                            T.showShort(FeedbackActivity.this, commonResult.getMsg());
                         }
                     }
                 });

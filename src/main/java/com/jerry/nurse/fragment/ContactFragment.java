@@ -1,5 +1,6 @@
 package com.jerry.nurse.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +13,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
+import com.jerry.nurse.activity.AddContactActivity;
+import com.jerry.nurse.activity.BaseActivity;
 import com.jerry.nurse.activity.ChatActivity;
+import com.jerry.nurse.activity.ContactDetailActivity;
 import com.jerry.nurse.activity.ContactListActivity;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactTopHeaderBean;
@@ -36,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import okhttp3.Call;
 
 
@@ -262,10 +268,32 @@ public class ContactFragment extends BaseFragment {
             holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ChatActivity.getIntent(getActivity());
+                    Intent intent = ContactDetailActivity.getIntent(getActivity(), "");
                     startActivity(intent);
                 }
             });
         }
+    }
+
+    @OnClick(R.id.ib_search)
+    void onSearch(View view) {
+
+    }
+
+    @OnClick(R.id.ib_add)
+    void onAdd(View view) {
+        BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.READ_CONTACTS},
+                new PermissionListener() {
+                    @Override
+                    public void onGranted() {
+                        Intent intent = AddContactActivity.getIntent(getActivity());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onDenied(List<String> deniedPermission) {
+
+                    }
+                });
     }
 }

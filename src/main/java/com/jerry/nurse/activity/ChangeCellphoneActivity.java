@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.AppCompatButton;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -12,11 +13,13 @@ import android.widget.TextView;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.BindInfoResult;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.ThirdPartInfo;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
@@ -24,22 +27,21 @@ import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import org.litepal.crud.DataSupport;
-
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.SignupActivity.EXTRA_ENTER_TYPE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_BIND_CELLPHONE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ChangeCellphoneActivity extends BaseActivity {
 
-
     private static final int REQUEST_CHANGE_CELLPHONE = 0x101;
+
+    private static final String EXTRA_BIND_INFO = "extra_bind_info";
+
     @Bind(R.id.tb_change_cellphone)
     TitleBar mTitleBar;
 
@@ -70,7 +72,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
 
-    private UserRegisterInfo mUserRegisterInfo;
+    private BindInfoResult.BindInfo mBindInfo;
 
     private int mType;
 
@@ -101,9 +103,9 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     private Handler mHandler = new Handler();
 
-    public static Intent getIntent(Context context, int enterType) {
+    public static Intent getIntent(Context context, BindInfoResult.BindInfo bindInfo) {
         Intent intent = new Intent(context, ChangeCellphoneActivity.class);
-        intent.putExtra(EXTRA_ENTER_TYPE, enterType);
+        intent.putExtra(EXTRA_BIND_INFO, bindInfo);
         return intent;
     }
 
@@ -114,27 +116,38 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mType = getIntent().getIntExtra(EXTRA_ENTER_TYPE, TYPE_CHANGE_CELLPHONE);
-
         mProgressDialogManager = new ProgressDialogManager(this);
 
-        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        mBindInfo = (BindInfoResult.BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
 
-        if (mType == TYPE_CHANGE_CELLPHONE) {
-            String cellphone = mUserRegisterInfo.getPhone();
-            if (cellphone == null) {
-                mCellphoneTextView.setText(R.string.cellphone_not_exist);
-                mContentLayout.setVisibility(View.INVISIBLE);
-            } else {
-                mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
-                mGetVerificationCodeTextView.setEnabled(true);
-                mNextButton.setEnabled(true);
-            }
-        } else {
+        String cellphone = mBindInfo.getPhone();
+
+        L.i("获取到的值是：" + mBindInfo.toString());
+
+        // 绑定数量是1，就是修改手机号
+        if (mBindInfo.getBindCount() == 1 && !TextUtils.isEmpty(cellphone)) {
+            L.i("修改手机");
+            mType = TYPE_CHANGE_CELLPHONE;
+            mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
+            mGetVerificationCodeTextView.setEnabled(true);
+        }
+        // 绑定数量大于1，手机为空，就是绑定手机号
+        else if (mBindInfo.getBindCount() > 1 && TextUtils.isEmpty(cellphone)) {
+            L.i("绑定手机号");
+            mType = TYPE_BIND_CELLPHONE;
             mTitleBar.setTitle("绑定手机");
             mOriginCellphoneTextView.setText("手机号码");
             mCellphoneTextView.setVisibility(View.GONE);
             mNextButton.setText("绑定");
+        }
+        // 绑定数量大于1，手机不为空，就是解绑手机号
+        else if (mBindInfo.getBindCount() > 1 && !TextUtils.isEmpty(cellphone)) {
+            L.i("解绑手机号");
+            mType = TYPE_BIND_CELLPHONE;
+            mTitleBar.setTitle("解绑手机");
+            mOriginCellphoneTextView.setText("手机号码");
+            mCellphoneTextView.setVisibility(View.GONE);
+            mNextButton.setText("解绑");
         }
     }
 
@@ -150,30 +163,24 @@ public class ChangeCellphoneActivity extends BaseActivity {
             T.showLong(this, R.string.cellphone_invalid);
             return;
         }
-        if (mType == TYPE_CHANGE_CELLPHONE) {
-            if (!mUserRegisterInfo.getPhone().equals(cellphone)) {
+        if (!TextUtils.isEmpty(mBindInfo.getPhone())) {
+            if (!mBindInfo.getPhone().equals(cellphone)) {
                 T.showShort(this, R.string.cellphone_dismatch);
                 return;
             }
         }
 
-        int type;
-        if (mType == TYPE_CHANGE_CELLPHONE) {
-            type = TYPE_CHANGE_CELLPHONE;
-        } else {
-            type = TYPE_BIND_CELLPHONE;
-        }
-
         mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                 .addParams("Phone", cellphone)
-                .addParams("Type", String.valueOf(type))
+                .addParams("Type", String.valueOf(mType))
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.equals(ServiceConstant.REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             // 控制发送验证码的状态
                             mGetVerificationCodeTextView.setEnabled(false);
                             mGetVerificationCodeTextView.setTextColor(mGrayColor);
@@ -200,25 +207,30 @@ public class ChangeCellphoneActivity extends BaseActivity {
             return;
         }
 
-        mNextButton.setEnabled(false);
-
         // 远端服务验证
         validateVerificationCode(cellphone, verificationCode);
     }
 
 
     /**
-     * 绑定手机
+     * 绑定/解绑 手机号
      *
      * @param cellphone
+     * @param isBind
      */
-    private void bindCellphone(final String cellphone) {
+    private void bind(final String cellphone, boolean isBind) {
+        String url;
+        if (isBind) {
+            url = ServiceConstant.BIND;
+        } else {
+            url = ServiceConstant.UNBIND;
+        }
         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mUserRegisterInfo.getRegisterId());
+        thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
         thirdPartInfo.setPhone(cellphone);
         mProgressDialogManager.show();
         OkHttpUtils.postString()
-                .url(ServiceConstant.BIND_CELLPHONE)
+                .url(url)
                 .content(StringUtil.addModelWithJson(thirdPartInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
@@ -226,13 +238,13 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.equals(REQUEST_SUCCESS)) {
-                            T.showShort(ChangeCellphoneActivity.this, "手机绑定成功");
-                            L.i("手机绑定成功");
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            T.showShort(ChangeCellphoneActivity.this, "操作成功");
                             finish();
                         } else {
-                            L.i("手机绑定失败");
-                            T.showShort(ChangeCellphoneActivity.this, response);
+                            L.i("操作失败");
+                            T.showShort(ChangeCellphoneActivity.this, commonResult.getMsg());
                         }
                     }
                 });
@@ -246,14 +258,8 @@ public class ChangeCellphoneActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
 
-        ShortMessage shortMessage;
-        if (mType == TYPE_CHANGE_CELLPHONE) {
-            shortMessage = new ShortMessage(
-                    mUserRegisterInfo.getRegisterId(), cellphone, code, TYPE_CHANGE_CELLPHONE);
-        } else {
-            shortMessage = new ShortMessage(
-                    mUserRegisterInfo.getRegisterId(), cellphone, code, TYPE_BIND_CELLPHONE);
-        }
+        ShortMessage shortMessage = new ShortMessage(mBindInfo.getRegisterId(),
+                cellphone, code, mType);
 
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
@@ -264,17 +270,24 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             if (mType == TYPE_CHANGE_CELLPHONE) {
                                 Intent intent = NewCellphoneActivity.getIntent(ChangeCellphoneActivity.this);
                                 startActivityForResult(intent, REQUEST_CHANGE_CELLPHONE);
-                            } else {
-                                bindCellphone(cellphone);
+                            } else if (mType == TYPE_BIND_CELLPHONE) {
+                                // 绑定手机
+                                if (!TextUtils.isEmpty(mBindInfo.getPhone())) {
+                                    bind(cellphone, false);
+                                }
+                                // 解绑手机
+                                else {
+                                    bind(cellphone, true);
+                                }
                             }
                         } else {
-                            T.showShort(ChangeCellphoneActivity.this, R.string.validate_failed);
+                            T.showShort(ChangeCellphoneActivity.this, commonResult.getMsg());
                         }
-                        mNextButton.setEnabled(true);
                     }
                 });
     }

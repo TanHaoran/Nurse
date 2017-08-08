@@ -68,19 +68,24 @@ public class ServiceConstant {
     public static final String LOGIN_BY_QQ = IP + "ThirdPartLoginQQ";
 
     /**
-     * 绑定qq
-     */
-    public static final String BIND_QQ = IP + "SetQQBing";
-
-    /**
      * 绑定手机号
      */
-    public static final String BIND_CELLPHONE = IP + "QQBindPhone";
+    public static final String BIND_CELLPHONE = IP + "SetQQBing";
 
     /**
-     * 解绑qq
+     * 解绑手机号
      */
-    public static final String UN_BIND_QQ = IP + "QQUnBind";
+    public static final String UNBIND_CELLPHONE = IP + "SetQQBing";
+
+    /**
+     * 绑定手机号、QQ
+     */
+    public static final String BIND = IP + "Bind";
+
+    /**
+     * 解绑手机号、qq
+     */
+    public static final String UNBIND = IP + "UnBind";
 
     /**
      * 通过注册ID获取用户注册信息

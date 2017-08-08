@@ -185,7 +185,8 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 给一个View设置日期选择控件
      *
      * @param view
-     * @param origin
+     * @param origin               初始日期
+     * @param isBirthday           是否是生日控件
      * @param onDateSelectListener
      */
     public void setDateSelectListener(View view, final Date origin, final boolean isBirthday, final OnDateSelectListener onDateSelectListener) {

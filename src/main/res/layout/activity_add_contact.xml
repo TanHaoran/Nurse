@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.AddContactActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="@string/add_contact"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="@string/please_input_cellphone"/>
+
+    <LinearLayout
+        android:id="@+id/ll_scan"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_and_scan"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_qr_code"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_cellphone_contact"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/plugin_line_selector"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cellphone_contact"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_or_invite_cellphone_contact"/>
+
+    </LinearLayout>
+
+</LinearLayout>

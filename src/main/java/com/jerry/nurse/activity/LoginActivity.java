@@ -15,11 +15,12 @@ import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfoResult;
-import com.jerry.nurse.model.QQUserInfo;
+import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -34,14 +35,12 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.SignupActivity.TYPE_FORGET_PASSWORD;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_REGISTER;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_VERIFICATION_CODE;
-import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
-import static com.jerry.nurse.constant.ServiceConstant.USER_REGISTER_ID;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
 
@@ -104,11 +103,31 @@ public class LoginActivity extends BaseActivity {
         // 入口处判断用户是否已经登陆
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
         if (!registerId.equals("-1")) {
-            Intent intent = MainActivity.getIntent(this);
-            startActivity(intent);
-            finish();
+            goToMainActivity();
+            // 登陆环信
+            EaseMobManager easeMobManager = new EaseMobManager() {
+                @Override
+                protected void onLoginFailed() {
+                    super.onLoginFailed();
+                }
+
+                @Override
+                protected void onLoginSuccess() {
+                }
+            };
+            easeMobManager.login(registerId);
         }
     }
+
+    /**
+     * 跳转到主页面
+     */
+    private void goToMainActivity() {
+        Intent intent = MainActivity.getIntent(LoginActivity.this);
+        startActivity(intent);
+        finish();
+    }
+
 
     @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
@@ -151,16 +170,6 @@ public class LoginActivity extends BaseActivity {
             return mStringPasswordInvalid;
         }
         return null;
-    }
-
-    private void onLoginSuccess() {
-        resetUI();
-        // 登陆成功后，保存用户数据信息
-//        LitePalUtil.saveRegisterInfo(this, mUserRegisterInfo);
-
-        Intent intent = MainActivity.getIntent(this);
-        startActivity(intent);
-        finish();
     }
 
     private void resetUI() {
@@ -216,7 +225,7 @@ public class LoginActivity extends BaseActivity {
      * @param password
      */
     private void login(final String cellphone, final String password) {
-
+        mProgressDialogManager.show();
         Register register = new Register(cellphone, password);
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN)
@@ -227,9 +236,13 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-                        LoginManager loginManager = new LoginManager(LoginActivity.this, null);
-                        loginManager.saveAndEnter(loginInfoResult);
+                        final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            LoginManager loginManager = new LoginManager(LoginActivity.this, null);
+                            loginManager.saveAndEnter(loginInfoResult.getBody());
+                        } else {
+                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
+                        }
                     }
                 });
     }
@@ -237,7 +250,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "");
+        Intent intent = HtmlActivity.getIntent(this, "", "保密协议");
         startActivity(intent);
     }
 
@@ -286,7 +299,7 @@ public class LoginActivity extends BaseActivity {
         mTencentLoginUtil = new TencentLoginUtil(this) {
 
             @Override
-            public void loginComplete(QQUserInfo info) {
+            public void loginComplete(Qq info) {
                 postQQLogin(info);
             }
         };
@@ -298,31 +311,23 @@ public class LoginActivity extends BaseActivity {
      *
      * @param info
      */
-    private void postQQLogin(QQUserInfo info) {
+    private void postQQLogin(Qq info) {
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN_BY_QQ)
                 .content(StringUtil.addModelWithJson(info))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialogManager.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialogManager.dismiss();
-                        if (response.startsWith(USER_REGISTER_ID)) {
-                            L.i("qq授权应用注册成功");
-                            if (response.split(USER_COLON).length == 2) {
-                                String registerId = response.split(USER_COLON)[1];
-                                LoginManager loginUtil = new LoginManager(LoginActivity.this, mProgressDialogManager);
-                                loginUtil.getLoginInfoByRegisterId(registerId);
-                            } else {
-                                T.showShort(LoginActivity.this, response);
-                            }
+                        final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            LoginManager loginManager = new LoginManager(LoginActivity.this, mProgressDialogManager);
+                            loginManager.saveAndEnter(loginInfoResult.getBody());
+                        } else {
+                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
                         }
                     }
                 });

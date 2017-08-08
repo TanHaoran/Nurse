@@ -96,6 +96,8 @@
     <dimen name="chat_line_space_height">2dp</dimen>
     <dimen name="chat_time_height">20dp</dimen>
     <dimen name="chat_time_paddingLeft">7dp</dimen>
+    <dimen name="contact_action_button_width">40dp</dimen>
+    <dimen name="contact_action_button__padding">11dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>

@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,22 +9,21 @@ import android.widget.EditText;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Password;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.GUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import org.litepal.crud.DataSupport;
-
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ChangePasswordActivity extends BaseActivity {
 
@@ -34,7 +32,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @Bind(R.id.et_new_password)
     EditText mNewPasswordEditText;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
 
     public static Intent getIntent(Context context) {
@@ -49,14 +47,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
     }
 
     @OnClick(R.id.acb_change_password)
@@ -88,28 +79,24 @@ public class ChangePasswordActivity extends BaseActivity {
      * @param newPassword
      */
     private void changePassword(String originPassword, String newPassword) {
-        mProgressDialog.show();
-        UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        Password password = new Password(userRegisterInfo.getRegisterId(), originPassword, newPassword);
+        mProgressDialogManager.show();
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        Password password = new Password(registerId, originPassword, newPassword);
         OkHttpUtils.postString()
                 .url(ServiceConstant.CHANGE_PASSWORD)
                 .content(StringUtil.addModelWithJson(password))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(ChangePasswordActivity.this, R.string.password_change_success);
                             finish();
                         } else {
-                            L.i("密码修改失败");
+                            T.showShort(ChangePasswordActivity.this, commonResult.getMsg());
                         }
                     }
                 });

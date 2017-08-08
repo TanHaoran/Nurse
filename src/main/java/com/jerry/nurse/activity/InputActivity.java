@@ -1,17 +1,23 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.ClearEditText;
@@ -21,10 +27,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class InputActivity extends BaseActivity {
 
@@ -41,9 +46,8 @@ public class InputActivity extends BaseActivity {
 
     private String mTitle;
 
-    private UserRegisterInfo mUserRegisterInfo;
-    private UserHospitalInfo mUserHospitalInfo;
-    private ProgressDialog mProgressDialog;
+    private UserInfo mUserInfo;
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, String title) {
         Intent intent = new Intent(context, InputActivity.class);
@@ -63,19 +67,11 @@ public class InputActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
 
         mTitleBar.setTitle(mTitle);
-        mInputEditText.setHint("请输入" + mTitle);
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -95,14 +91,17 @@ public class InputActivity extends BaseActivity {
             }
         });
 
+        mUserInfo = DataSupport.findFirst(UserInfo.class);
         if (mTitle.equals(NICKNAME)) {
-            mUserRegisterInfo = DataSupport.findLast(UserRegisterInfo.class);
-            mInputEditText.setText(mUserRegisterInfo.getNickName());
+            mInputEditText.setText(mUserInfo.getNickName());
         } else if (mTitle.equals(JOB_NUMBER)) {
-            mUserHospitalInfo = DataSupport.findLast(UserHospitalInfo.class);
-            mInputEditText.setText(mUserHospitalInfo.getEmployeeId());
+            mInputEditText.setText(mUserInfo.getEmployeeId());
         }
 
+        // 如果内容为空，就给显示提示输入框
+        if (!TextUtils.isEmpty(mInputEditText.getText().toString())) {
+            mInputEditText.setHint("请输入" + mTitle);
+        }
     }
 
     /**
@@ -111,27 +110,29 @@ public class InputActivity extends BaseActivity {
      * @param nickname
      */
     void postNickname(final String nickname) {
-        mProgressDialog.show();
-        mUserRegisterInfo.setNickName(nickname);
+        mProgressDialogManager.show();
+        UserRegisterInfo userRegisterInfo = new UserRegisterInfo();
+        userRegisterInfo.setRegisterId(mUserInfo.getRegisterId());
+        userRegisterInfo.setNickName(nickname);
+
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_REGISTER_INFO)
-                .content(StringUtil.addModelWithJson(mUserRegisterInfo))
+                .content(StringUtil.addModelWithJson(userRegisterInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置昵称成功");
-                            // 设置成功后更新数据库
-//                            LitePalUtil.saveRegisterInfo(InputActivity.this, mUserRegisterInfo);
-                            setResult(RESULT_OK);
+                            // 更新数据库
+                            LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+                            loginInfo.setNickName(nickname);
+                            LitePalUtil.updateLoginInfo(InputActivity.this, loginInfo);
+                            mUserInfo.setNickName(nickname);
+                            LitePalUtil.updateUserInfo(InputActivity.this, mUserInfo);
                             finish();
                         } else {
                             L.i("设置昵称失败");
@@ -146,30 +147,28 @@ public class InputActivity extends BaseActivity {
      * @param jobNumber
      */
     void postJobNumber(final String jobNumber) {
-        mProgressDialog.show();
-        mUserHospitalInfo.setEmployeeId(jobNumber);
+        mProgressDialogManager.show();
+        UserHospitalInfo userHospitalInfo = new UserHospitalInfo();
+        userHospitalInfo.setRegisterId(mUserInfo.getRegisterId());
+        userHospitalInfo.setEmployeeId(jobNumber);
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_HOSPITAL_INFO)
-                .content(StringUtil.addModelWithJson(mUserHospitalInfo))
+                .content(StringUtil.addModelWithJson(userHospitalInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置工号成功");
-                            // 设置成功后更新数据库
-//                            LitePalUtil.saveHospitalInfo(mUserHospitalInfo);
+                            // 保存到数据库
+                            mUserInfo.setEmployeeId(jobNumber);
+                            LitePalUtil.updateUserInfo(InputActivity.this, mUserInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {
-                            T.showShort(InputActivity.this, "设置工号失败");
                             L.i("设置工号失败");
                         }
                     }

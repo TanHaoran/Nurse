@@ -68,6 +68,7 @@
 
         <android.support.v7.widget.AppCompatButton
             android:layout_width="0dp"
+            android:id="@+id/acb_call"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/contact_detail_option_padding"
             android:layout_weight="1"
@@ -78,6 +79,7 @@
 
         <android.support.v7.widget.AppCompatButton
             android:layout_width="0dp"
+            android:id="@+id/acb_send_message"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/send_message_button"

@@ -114,6 +114,7 @@ public class MeFragment extends BaseFragment {
             mNicknameTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
         }
 
+        // 判断权限，是否显示已认证
         if (OfficeFragment.checkPermission()) {
             mValidatedView.setVisibility(View.VISIBLE);
         }
@@ -177,7 +178,7 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), EVENT_REPORT_URL);
+        Intent intent = HtmlActivity.getIntent(getActivity(), EVENT_REPORT_URL, null);
         startActivity(intent);
     }
 

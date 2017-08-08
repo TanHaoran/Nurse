@@ -15,6 +15,7 @@ import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.ArrayList;
@@ -75,6 +76,18 @@ public class MessageFragment extends BaseFragment {
 
         mAdapter = new MessageAdapter(getActivity(), R.layout.item_chat, mContacts);
         mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                return false;
+            }
+        });
     }
 
     class MessageAdapter extends CommonAdapter<Contact> {
@@ -91,7 +104,7 @@ public class MessageFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     T.showShort(ActivityCollector.getTopActivity(), "点击了" + position);
-                    Intent intent = ChatActivity.getIntent(ActivityCollector.getTopActivity());
+                    Intent intent = ChatActivity.getIntent(getActivity());
                     ActivityCollector.getTopActivity().startActivity(intent);
                 }
             });

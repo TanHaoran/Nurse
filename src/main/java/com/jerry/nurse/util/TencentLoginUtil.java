@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.jerry.nurse.activity.BaseActivity;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.QQOriginUserInfo;
-import com.jerry.nurse.model.QQUserInfo;
+import com.jerry.nurse.model.Qq;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQToken;
 import com.tencent.tauth.IUiListener;
@@ -122,7 +122,7 @@ public abstract class TencentLoginUtil {
 
     private void makeUpUserInfo(Object response, String deviceId, String openID, String accessToken, String expires) {
         QQOriginUserInfo originInfo = new Gson().fromJson(response.toString(), QQOriginUserInfo.class);
-        QQUserInfo info = new QQUserInfo();
+        Qq info = new Qq();
         info.setOpenId(openID);
         info.setFigureUrl(originInfo.getFigureurl_qq_2());
         info.setNickName(originInfo.getNickname());
@@ -136,5 +136,5 @@ public abstract class TencentLoginUtil {
         loginComplete(info);
     }
 
-    public abstract void loginComplete(QQUserInfo info);
+    public abstract void loginComplete(Qq info);
 }

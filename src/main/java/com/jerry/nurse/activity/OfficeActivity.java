@@ -1,26 +1,27 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.Office;
+import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.OfficeResult;
 import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
+import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
-import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -30,14 +31,14 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 public class OfficeActivity extends BaseActivity {
@@ -52,11 +53,13 @@ public class OfficeActivity extends BaseActivity {
     String mTitle;
 
     private OfficeAdapter mAdapter;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
     private UserHospitalInfo mUserHospitalInfo;
 
-    private List<Office> mOffices;
+    private List<OfficeResult.Office> mOffices;
+
+    private LoginInfo mLoginInfo;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, OfficeActivity.class);
@@ -70,13 +73,7 @@ public class OfficeActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
         mTitleBar.setTitle(mTitle);
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
@@ -86,9 +83,9 @@ public class OfficeActivity extends BaseActivity {
             }
         });
 
-        mUserHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        getOfficeList(mUserHospitalInfo.getHospitalId());
+        getOfficeList(mLoginInfo.getHospitalId());
 
     }
 
@@ -98,30 +95,23 @@ public class OfficeActivity extends BaseActivity {
      * @param hospitalId
      */
     private void getOfficeList(String hospitalId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_OFFICE_LIST)
                 .addParams("HospitalId", hospitalId)
                 .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        try {
-                            mOffices = new Gson().fromJson(response,
-                                    new TypeToken<List<Office>>() {
-                                    }.getType());
-                            if (mOffices != null) {
-                                setOfficeData();
+                        OfficeResult officeResult = new GUtil().fromJson(response, OfficeResult.class);
+                        if (officeResult.getCode() == RESPONSE_SUCCESS) {
+                            mOffices = officeResult.getBody();
+                            if (mOffices == null) {
+                                mOffices = new ArrayList<>();
                             }
-                        } catch (JsonSyntaxException e) {
+                            setOfficeData();
+                        } else {
                             L.i("获取科室信息失败");
-                            e.printStackTrace();
                         }
                     }
                 });
@@ -141,7 +131,7 @@ public class OfficeActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                postHospital(mOffices.get(position));
+                postOffice(mOffices.get(position));
             }
 
             @Override
@@ -156,46 +146,56 @@ public class OfficeActivity extends BaseActivity {
      *
      * @param office
      */
-    private void postHospital(Office office) {
-        final UserHospitalInfo userHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
+    private void postOffice(final OfficeResult.Office office) {
+        UserHospitalInfo userHospitalInfo = new UserHospitalInfo();
         userHospitalInfo.setDepartmentName(office.getName());
         userHospitalInfo.setDepartmentId(office.getDepartmentId());
-        mProgressDialog.show();
+        userHospitalInfo.setRegisterId(mLoginInfo.getRegisterId());
+        mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_HOSPITAL_INFO)
                 .content(StringUtil.addModelWithJson(userHospitalInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
-//                            LitePalUtil.saveHospitalInfo(userHospitalInfo);
-                            T.showShort(OfficeActivity.this, R.string.submit_success);
-                            setResult(RESULT_OK);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            L.i("设置医院信息成功");
+                            // 更新数据库
+                            mLoginInfo.setDepartmentId(office.getDepartmentId());
+                            mLoginInfo.setDepartmentName(office.getName());
+                            LitePalUtil.updateLoginInfo(OfficeActivity.this, mLoginInfo);
+
+                            UserInfo userInfo = DataSupport.findFirst(UserInfo.class);
+                            userInfo.setDepartmentId(office.getDepartmentId());
+                            userInfo.setDepartmentName(office.getName());
+                            LitePalUtil.updateUserInfo(OfficeActivity.this, userInfo);
+
                             finish();
                         } else {
-                            L.i("保存失败");
+                            L.i("设置医院信息失败");
                         }
                     }
                 });
     }
 
-    class OfficeAdapter extends CommonAdapter<Office> {
+    class OfficeAdapter extends CommonAdapter<OfficeResult.Office> {
 
-        public OfficeAdapter(Context context, int layoutId, List<Office> datas) {
+        public OfficeAdapter(Context context, int layoutId, List<OfficeResult.Office> datas) {
             super(context, layoutId, datas);
         }
 
         @Override
-        protected void convert(ViewHolder holder, Office office, int position) {
-            ((TextView) holder.getView(R.id.tv_string)).setText(office.getName());
+        protected void convert(ViewHolder holder, OfficeResult.Office office, int position) {
+            holder.setText(R.id.tv_string, office.getName());
+            if (office.getDepartmentId().equals(mLoginInfo.getDepartmentId())) {
+                holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
+            }else {
+                holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
+            }
         }
     }
 }

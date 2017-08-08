@@ -12,16 +12,17 @@ import android.widget.TextView;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.BindColor;
@@ -29,9 +30,8 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_NEW_CELLPHONE;
-import static com.jerry.nurse.constant.ServiceConstant.REQUEST_SUCCESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class NewCellphoneActivity extends BaseActivity {
     @Bind(R.id.cet_cellphone)
@@ -56,8 +56,6 @@ public class NewCellphoneActivity extends BaseActivity {
      * 验证码获取间隔
      */
     private int mValidateCountDown = 60;
-
-    private UserRegisterInfo mUserRegisterInfo;
 
     private Runnable mValidateRunnable = new Runnable() {
         @Override
@@ -101,12 +99,6 @@ public class NewCellphoneActivity extends BaseActivity {
         mProgressDialog.setCancelable(false);
         mProgressDialog.setMessage("请稍后...");
 
-        mUserRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
-        String cellphone = mUserRegisterInfo.getPhone();
-        if (cellphone == null) {
-            mGetVerificationCodeTextView.setEnabled(false);
-            mNextButton.setEnabled(false);
-        }
     }
 
     @OnClick(R.id.tv_send_verification_code)
@@ -138,7 +130,8 @@ public class NewCellphoneActivity extends BaseActivity {
                     @Override
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
-                        if (response.equals(ServiceConstant.REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             // 控制发送验证码的状态
                             mGetVerificationCodeTextView.setEnabled(false);
                             mGetVerificationCodeTextView.setTextColor(mGrayColor);
@@ -146,7 +139,7 @@ public class NewCellphoneActivity extends BaseActivity {
                             mHandler.postDelayed(mValidateRunnable, 1000);
                             T.showLong(NewCellphoneActivity.this, R.string.get_verification_finished);
                         } else {
-                            T.showLong(NewCellphoneActivity.this, R.string.get_verification_code_failed);
+                            T.showLong(NewCellphoneActivity.this, commonResult.getMsg());
                         }
                     }
                 });
@@ -177,8 +170,9 @@ public class NewCellphoneActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         ShortMessage shortMessage = new ShortMessage(
-                mUserRegisterInfo.getRegisterId(), cellphone, code, TYPE_CHANGE_CELLPHONE);
+                registerId, cellphone, code, TYPE_NEW_CELLPHONE);
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))
@@ -192,7 +186,8 @@ public class NewCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             String cellphone = mCellphoneEditText.getText().toString();
                             postNewCellphone(cellphone);
                         } else {
@@ -210,8 +205,10 @@ public class NewCellphoneActivity extends BaseActivity {
      */
     void postNewCellphone(String cellphone) {
         mProgressDialog.show();
-        final UserRegisterInfo userRegisterInfo = DataSupport.findFirst(UserRegisterInfo.class);
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        UserRegisterInfo userRegisterInfo = new UserRegisterInfo();
         userRegisterInfo.setPhone(cellphone);
+        userRegisterInfo.setRegisterId(registerId);
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_REGISTER_INFO)
                 .content(StringUtil.addModelWithJson(userRegisterInfo))
@@ -225,11 +222,9 @@ public class NewCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
-                        if (response.equals(REQUEST_SUCCESS)) {
+                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置手机号成功");
-                            // 设置成功后更新数据库
-//                            LitePalUtil.saveRegisterInfo(NewCellphoneActivity.this, userRegisterInfo);
                             setResult(RESULT_OK);
                             finish();
                         } else {

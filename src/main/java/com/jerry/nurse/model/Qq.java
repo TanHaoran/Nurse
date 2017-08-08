@@ -4,7 +4,7 @@ package com.jerry.nurse.model;
  * Created by Jerry on 2017/8/2.
  */
 
-public class QQUserInfo {
+public class Qq {
 
     private String RegisterId;
     private String OpenId;

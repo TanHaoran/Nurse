@@ -14,7 +14,6 @@ public class ChatAdapter extends MultiItemTypeAdapter<ChatMessage> {
     public ChatAdapter(Context context, List<ChatMessage> datas) {
         super(context, datas);
 
-
         addItemViewDelegate(new SendItemDelagate());
         addItemViewDelegate(new ReceiveItemDelagate());
     }

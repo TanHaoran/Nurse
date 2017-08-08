@@ -297,19 +297,7 @@ public class SignupActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
-        ShortMessage shortMessage;
-        switch (mType) {
-            // 注册
-            // 验证码登陆
-            case TYPE_REGISTER:
-            case TYPE_VERIFICATION_CODE:
-            case TYPE_FORGET_PASSWORD:
-                shortMessage = new ShortMessage("", cellphone, code, mType);
-                break;
-            default:
-                shortMessage = new ShortMessage("", cellphone, code, mType);
-                break;
-        }
+        ShortMessage shortMessage = new ShortMessage("", cellphone, code, mType);
 
         // 发送请求
         mProgressDialogManager.setMessage("请稍后...");

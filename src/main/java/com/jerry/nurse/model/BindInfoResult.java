@@ -1,15 +1,18 @@
 package com.jerry.nurse.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Jerry on 2017/8/6.
  */
 
 public class BindInfoResult {
 
+
     /**
-     * body : {"Phone":"13227726101","QQNickName":"","QQOpenId":"","RegisterId":""}
+     * body : {"BindCount":0,"Phone":"13227726101","QQNickName":"","QQOpenId":"","RegisterId":""}
      * code : 0
-     * msg : 暂无qq绑定
+     * msg :
      */
 
     private BindInfo body;
@@ -40,18 +43,28 @@ public class BindInfoResult {
         this.msg = msg;
     }
 
-    public static class BindInfo {
+    public static class BindInfo implements Serializable {
         /**
+         * BindCount : 0
          * Phone : 13227726101
          * QQNickName :
          * QQOpenId :
          * RegisterId :
          */
 
+        private int BindCount;
         private String Phone;
         private String QQNickName;
         private String QQOpenId;
         private String RegisterId;
+
+        public int getBindCount() {
+            return BindCount;
+        }
+
+        public void setBindCount(int BindCount) {
+            this.BindCount = BindCount;
+        }
 
         public String getPhone() {
             return Phone;
@@ -83,6 +96,17 @@ public class BindInfoResult {
 
         public void setRegisterId(String RegisterId) {
             this.RegisterId = RegisterId;
+        }
+
+        @Override
+        public String toString() {
+            return "BindInfo{" +
+                    "BindCount=" + BindCount +
+                    ", Phone='" + Phone + '\'' +
+                    ", QQNickName='" + QQNickName + '\'' +
+                    ", QQOpenId='" + QQOpenId + '\'' +
+                    ", RegisterId='" + RegisterId + '\'' +
+                    '}';
         }
     }
 }

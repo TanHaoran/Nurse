@@ -89,6 +89,12 @@
     <string name="voice_too_short">录音时间过短</string>
     <string name="make_call">打电话</string>
     <string name="send_message">发消息</string>
+    <string name="add_contact">添加联系人</string>
+    <string name="please_input_cellphone">请输入手机号</string>
+    <string name="scan_and_scan">扫一扫</string>
+    <string name="scan_qr_code">扫描二维码名片</string>
+    <string name="cellphone_contact">手机联系人</string>
+    <string name="add_or_invite_cellphone_contact">添加或邀请通讯录中的好友</string>
 
     <!--我的-->
     <string name="mine">我的</string>

@@ -6,10 +6,38 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.jerry.nurse.view.TitleBar
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:title_text="@string/contact"/>
+        android:background="@color/primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/contact"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_textSize"/>
+
+        <ImageView
+            android:id="@+id/ib_add"
+            android:layout_width="@dimen/contact_action_button_width"
+            android:layout_height="@dimen/contact_action_button_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/contact_action_button__padding"
+            android:src="@drawable/top_add"/>
+
+        <ImageView
+            android:id="@+id/ib_search"
+            android:layout_width="@dimen/contact_action_button_width"
+            android:layout_height="@dimen/contact_action_button_width"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/ib_add"
+            android:padding="@dimen/contact_action_button__padding"
+            android:src="@drawable/top_search"/>
+
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

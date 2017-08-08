@@ -2,7 +2,6 @@ package com.jerry.nurse.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.activity.MainActivity;
@@ -48,8 +47,13 @@ public class LoginManager {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        // 保存登陆信息并跳转页面
-                        saveAndEnter(response);
+                        // 如果登陆成功保存登陆信息并跳转页面
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            saveAndEnter(loginInfoResult.getBody());
+                        } else {
+                            T.showShort(mContext, "登录失败");
+                        }
                     }
                 });
     }
@@ -58,37 +62,15 @@ public class LoginManager {
     /**
      * 保存登陆信息并跳转页面
      *
-     * @param response
+     * @param loginInfo
      */
-    private void saveAndEnter(String response) {
-        if (!TextUtils.isEmpty(response)) {
-            LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-            if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
-                LoginInfo loginInfo = loginInfoResult.getBody();
-//                loginInfo= new LoginInfo();
-//                loginInfo.setAvatar(loginInfoResult.getBody().getAvatar());
-//                loginInfo.setDepartmentId(loginInfoResult.getBody().getDepartmentId());
-//                loginInfo.setDepartmentName(loginInfoResult.getBody().getDepartmentName());
-//                loginInfo.setHospitalId(loginInfoResult.getBody().getHospitalName());
-//                loginInfo.setHospitalName(loginInfoResult.getBody().getAvatar());
-//                loginInfo.setName(loginInfoResult.getBody().getName());
-//                loginInfo.setNickName(loginInfoResult.getBody().getNickName());
-//                loginInfo.setPStatus(loginInfoResult.getBody().getPStatus());
-//                loginInfo.setQStatus(loginInfoResult.getBody().getQStatus());
-//                loginInfo.setRegisterId(loginInfoResult.getBody().getRegisterId());
+    public void saveAndEnter(LoginInfo loginInfo) {
 
-                // 保存登陆信息到数据库
-                LitePalUtil.saveLoginInfo(mContext, loginInfo);
+        // 保存登陆信息到数据库
+        LitePalUtil.saveLoginInfo(mContext, loginInfo);
 
-                Intent intent = MainActivity.getIntent(ActivityCollector.getTopActivity());
-                ActivityCollector.removeAllActivity();
-                mContext.startActivity(intent);
-            } else {
-                T.showShort(mContext, "登录失败");
-            }
-        } else {
-            T.showShort(mContext, "登录失败");
-        }
+        easeMobLogin(loginInfo);
+
     }
 
     /**
@@ -98,26 +80,49 @@ public class LoginManager {
      */
     public void saveAndEnter(LoginInfoResult loginInfoResult) {
         if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
-            LoginInfo loginInfo = new LoginInfo();
-            loginInfo.setAvatar(loginInfoResult.getBody().getAvatar());
-            loginInfo.setDepartmentId(loginInfoResult.getBody().getDepartmentId());
-            loginInfo.setDepartmentName(loginInfoResult.getBody().getDepartmentName());
-            loginInfo.setHospitalId(loginInfoResult.getBody().getHospitalName());
-            loginInfo.setHospitalName(loginInfoResult.getBody().getAvatar());
-            loginInfo.setName(loginInfoResult.getBody().getName());
-            loginInfo.setNickName(loginInfoResult.getBody().getNickName());
-            loginInfo.setPStatus(loginInfoResult.getBody().getPStatus());
-            loginInfo.setQStatus(loginInfoResult.getBody().getQStatus());
-            loginInfo.setRegisterId(loginInfoResult.getBody().getRegisterId());
+            LoginInfo loginInfo = loginInfoResult.getBody();
 
             // 保存登陆信息到数据库
             LitePalUtil.saveLoginInfo(mContext, loginInfo);
 
-            Intent intent = MainActivity.getIntent(ActivityCollector.getTopActivity());
-            ActivityCollector.removeAllActivity();
-            mContext.startActivity(intent);
+            easeMobLogin(loginInfo);
+
         } else {
             T.showShort(mContext, "登录失败");
         }
     }
+
+
+    /**
+     * 登录环信
+     *
+     * @param loginInfo
+     */
+    private void easeMobLogin(LoginInfo loginInfo) {
+        // 登陆环信
+        EaseMobManager easeMobManager = new EaseMobManager() {
+            @Override
+            protected void onLoginFailed() {
+                super.onLoginFailed();
+                goToMainActivity();
+            }
+
+            @Override
+            protected void onLoginSuccess() {
+                goToMainActivity();
+            }
+        };
+        easeMobManager.login(loginInfo.getRegisterId());
+    }
+
+
+    /**
+     * 跳转到主页面
+     */
+    private void goToMainActivity() {
+        Intent intent = MainActivity.getIntent(ActivityCollector.getTopActivity());
+        ActivityCollector.removeAllActivity();
+        mContext.startActivity(intent);
+    }
+
 }
