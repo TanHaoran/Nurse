@@ -1,10 +1,16 @@
 package com.jerry.nurse.model;
 
-public class ChatMessage {
-    private int mAvatar;
+import org.litepal.crud.DataSupport;
+
+import java.io.Serializable;
+
+public class ChatMessage extends DataSupport implements Serializable {
+    private String mAvatar;
     private String mName;
     private String mContent;
-    private String mTime;
+    private long mTime;
+    private String from;
+    private String to;
     private boolean mIsSend;
 
     public final static int MSG_SEND = 0;
@@ -13,7 +19,7 @@ public class ChatMessage {
     public ChatMessage() {
     }
 
-    public ChatMessage(int avatar, String name, String content, String time, boolean isSend) {
+    public ChatMessage(String avatar, String name, String content, long time, boolean isSend) {
         mAvatar = avatar;
         mName = name;
         mContent = content;
@@ -21,11 +27,11 @@ public class ChatMessage {
         mIsSend = isSend;
     }
 
-    public int getAvatar() {
+    public String getAvatar() {
         return mAvatar;
     }
 
-    public void setAvatar(int avatar) {
+    public void setAvatar(String avatar) {
         mAvatar = avatar;
     }
 
@@ -45,11 +51,11 @@ public class ChatMessage {
         mContent = content;
     }
 
-    public String getTime() {
+    public long getTime() {
         return mTime;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         mTime = time;
     }
 
@@ -61,13 +67,31 @@ public class ChatMessage {
         mIsSend = send;
     }
 
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
     @Override
     public String toString() {
         return "ChatMessage{" +
-                "mAvatar=" + mAvatar +
+                "mAvatar='" + mAvatar + '\'' +
                 ", mName='" + mName + '\'' +
                 ", mContent='" + mContent + '\'' +
-                ", mTime='" + mTime + '\'' +
+                ", mTime=" + mTime +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
                 ", mIsSend=" + mIsSend +
                 '}';
     }

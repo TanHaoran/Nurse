@@ -1,11 +1,16 @@
 package com.jerry.nurse.activity;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -14,6 +19,11 @@ import com.jerry.nurse.fragment.ContactFragment;
 import com.jerry.nurse.fragment.MeFragment;
 import com.jerry.nurse.fragment.MessageFragment;
 import com.jerry.nurse.fragment.OfficeFragment;
+import com.jerry.nurse.model.ChatMessage;
+import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.util.EaseMobManager;
+import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.SPUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +32,14 @@ import butterknife.Bind;
 
 public class MainActivity extends BaseActivity
         implements BottomNavigationBar.OnTabSelectedListener {
+
+    public static final String ACTION_CHAT_MESSAGE_RECEIVE = "chat_message_receive";
+    public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
+
+    public static final String EXTRA_CHAT_MESSAGE = "extra_chat_message";
+
+    public static final String EXTRA_FRIEND_APPLY_CONTACT = "extra_friend_apply";
+    public static final String EXTRA_FRIEND_APPLY_REASON = "extra_chat_message";
 
     @Bind(R.id.bnb_main)
     BottomNavigationBar mNavigationBar;
@@ -32,6 +50,11 @@ public class MainActivity extends BaseActivity
     private ContactFragment mContactFragment;
     private MeFragment mMeFragment;
     private ProgressDialog mProgressDialogManager;
+
+    private EaseMobManager mEaseMobManager;
+    private MessageReceiver mMessageReceiver;
+
+    private String mRegisterId;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -45,6 +68,11 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        // 环信登陆
+        mEaseMobManager = new EaseMobManager(this);
+        mEaseMobManager.login(mRegisterId);
+
         mProgressDialogManager = new ProgressDialog(this);
         // 设置导航栏按钮数据
         BottomNavigationItem messageItem = new BottomNavigationItem(
@@ -75,6 +103,13 @@ public class MainActivity extends BaseActivity
 
         // 设置起始页
         setDefaultFragment();
+
+        // 开启广播监听
+        mMessageReceiver = new MessageReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_CHAT_MESSAGE_RECEIVE);
+        intentFilter.addAction(ACTION_FRIEND_APPLY_RECEIVE);
+        registerReceiver(mMessageReceiver, intentFilter);
     }
 
     /**
@@ -146,4 +181,73 @@ public class MainActivity extends BaseActivity
         intent.addCategory("android.intent.category.HOME");
         startActivity(intent);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mEaseMobManager.logout();
+        unregisterReceiver(mMessageReceiver);
+    }
+
+
+    class MessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 收到消息
+            if (ACTION_CHAT_MESSAGE_RECEIVE.equals(intent.getAction())) {
+                L.i("接收到消息广播");
+                ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
+                Contact contact = new Contact();
+                contact.setAvatar(chatMessage.getAvatar());
+                contact.setFriendId(chatMessage.getFrom());
+                contact.setName(chatMessage.getName());
+
+                // 发出Notification
+                Intent newIntent = ChatActivity.getIntent(context, contact);
+                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Notification notification = null;
+                notification = new Notification.Builder(MainActivity.this)
+                        .setTicker("新消息")
+                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                        .setContentTitle(chatMessage.getName())
+                        .setContentText(chatMessage.getContent())
+                        .setContentIntent(pi)
+                        .setAutoCancel(true)
+                        .build();
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(0, notification);
+            }
+            // 收到好友申请
+            else if (ACTION_FRIEND_APPLY_RECEIVE.equals(intent.getAction())) {
+                if (mMessageFragment.isVisible()) {
+                    mMessageFragment.refresh();
+                    return;
+                }
+                L.i("接收到好友申请广播");
+                Contact contact = (Contact) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
+                String reason = intent.getStringExtra(EXTRA_FRIEND_APPLY_REASON);
+
+                // 发出Notification
+                Intent newIntent = AddContactApplyActivity.getIntent(context);
+                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, 0);
+
+                Notification notification = new Notification.Builder(MainActivity.this)
+                        .setTicker("新消息")
+                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                        .setContentTitle(contact.getFriendId())
+                        .setContentText(reason)
+                        .setContentIntent(pi)
+                        .setAutoCancel(true)
+                        .build();
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(0, notification);
+            }
+        }
+    }
+
+
 }

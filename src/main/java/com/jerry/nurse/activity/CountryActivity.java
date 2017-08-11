@@ -8,13 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CountriesResult;
 import com.jerry.nurse.model.Country;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
@@ -79,7 +79,7 @@ public class CountryActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CountriesResult countriesResult = new GUtil().fromJson(response, CountriesResult.class);
+                        CountriesResult countriesResult = new Gson().fromJson(response, CountriesResult.class);
                         if (countriesResult.getCode() == 0) {
                             mCountries = countriesResult.getBody();
                             if (mCountries.size() > 0) {

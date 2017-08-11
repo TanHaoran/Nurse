@@ -32,7 +32,7 @@
             app:cardElevation="0dp">
 
             <ImageView
-                android:id="@+id/civ_avatar"
+                android:id="@+id/iv_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/icon_avatar_default"
@@ -61,14 +61,15 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_contact_option"
         android:layout_width="match_parent"
         android:layout_height="@dimen/contact_detail_option_height"
         android:orientation="horizontal"
         android:padding="@dimen/contact_detail_option_padding">
 
         <android.support.v7.widget.AppCompatButton
-            android:layout_width="0dp"
             android:id="@+id/acb_call"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/contact_detail_option_padding"
             android:layout_weight="1"
@@ -78,8 +79,8 @@
             android:textSize="@dimen/normal_textSize"/>
 
         <android.support.v7.widget.AppCompatButton
-            android:layout_width="0dp"
             android:id="@+id/acb_send_message"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/send_message_button"
@@ -101,6 +102,7 @@
             android:text="@string/nickname"/>
 
         <TextView
+            android:id="@+id/tv_nickname"
             style="@style/Contact_Info_Line_Right_Text"
             tools:text="喵喵"/>
 
@@ -116,26 +118,10 @@
 
         <TextView
             style="@style/Contact_Info_Line_Left_Text"
-            android:text="@string/name"/>
-
-        <TextView
-            style="@style/Contact_Info_Line_Right_Text"
-            tools:text="刘小护"/>
-
-    </LinearLayout>
-
-    <View
-        style="@style/DividerLineStyle"
-        android:layout_marginLeft="@dimen/line_paddingLeft"/>
-
-    <LinearLayout
-        style="@style/Contact_Info_Line">
-
-        <TextView
-            style="@style/Contact_Info_Line_Left_Text"
             android:text="@string/sex"/>
 
         <TextView
+            android:id="@+id/tv_sex"
             style="@style/Contact_Info_Line_Right_Text"
             tools:text="女"/>
 
@@ -153,8 +139,24 @@
             android:text="@string/cellphone"/>
 
         <TextView
+            android:id="@+id/tv_cellphone"
             style="@style/Contact_Info_Line_Right_Text"
             tools:text="13577878958"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_hospital"
+        style="@style/Contact_Info_Line">
+
+        <TextView
+            style="@style/Contact_Info_Line_Left_Text"
+            android:text="@string/hospital"/>
+
+        <TextView
+            android:id="@+id/tv_hospital"
+            style="@style/Contact_Info_Line_Right_Text"
+            tools:text="交大一附院"/>
 
     </LinearLayout>
 
@@ -162,7 +164,12 @@
         style="@style/DividerLineStyle"
         android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
     <LinearLayout
+        android:id="@+id/ll_office"
         style="@style/Contact_Info_Line">
 
         <TextView
@@ -170,6 +177,7 @@
             android:text="@string/office"/>
 
         <TextView
+            android:id="@+id/tv_office"
             style="@style/Contact_Info_Line_Right_Text"
             tools:text="儿科"/>
 
@@ -178,6 +186,18 @@
 
     <View
         style="@style/DividerLineStyle"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/acb_add_friend"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/add_friend_button_height"
+        android:layout_marginLeft="@dimen/line_paddingLeft"
+        android:layout_marginRight="@dimen/contact_detail_option_padding"
+        android:layout_marginTop="@dimen/block_marinTop"
+        android:background="@drawable/make_call_button"
+        android:text="@string/add_friend"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_textSize"/>
 
 
 </LinearLayout>

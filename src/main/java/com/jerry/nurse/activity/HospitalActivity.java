@@ -22,7 +22,6 @@ import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -117,7 +116,7 @@ public class HospitalActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        HospitalResult hospitalResult = new GUtil().fromJson(response, HospitalResult.class);
+                        HospitalResult hospitalResult = new Gson().fromJson(response, HospitalResult.class);
                         if (hospitalResult.getCode() == RESPONSE_SUCCESS) {
                             mHospitals = hospitalResult.getBody();
                             if (mHospitals == null) {

@@ -50,6 +50,7 @@ public class OfficeFragment extends BaseFragment {
     public static final int DEFAULT_PAGE = 1;
 
     private static final String REPORT_EVENT_URL = "http://192.168.0.49:3300?Ruid=ru00000002";
+//    private static final String REPORT_EVENT_URL = "http://192.168.0.49:5600?Ruid=ru00000002";
 
     private static final String NURSE_CLASS_URL = "http://192.168.0.100:8100";
 

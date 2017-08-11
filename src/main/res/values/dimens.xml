@@ -104,6 +104,8 @@
     <dimen name="contact_add_button_height">33dp</dimen>
     <dimen name="contact_nickname_marginLeft">3dp</dimen>
     <dimen name="contact_group_line_height">44dp</dimen>
+    <dimen name="add_friend_button_height">44dp</dimen>
+    <dimen name="delete_button_width">60dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>

@@ -2,6 +2,8 @@ package com.jerry.nurse.app;
 
 import android.app.ActivityManager;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
@@ -30,6 +32,9 @@ public class MyApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
 
+        // 设置字体大小不随系统而变化
+        initFontSize();
+
         // 初始化LitePal        
         initLitePal();
 
@@ -39,6 +44,16 @@ public class MyApplication extends LitePalApplication {
         initEaseMob();
         // 初始化OkHttp封装类
         initOkHttp();
+    }
+
+    /**
+     * 设置字体大小不随系统而变化
+     */
+    private void initFontSize() {
+        Resources res = super.getResources();
+        Configuration config = new Configuration();
+        config.setToDefaults();
+        res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
     /**
@@ -123,4 +138,5 @@ public class MyApplication extends LitePalApplication {
 
         OkHttpUtils.initClient(okHttpClient);
     }
+
 }

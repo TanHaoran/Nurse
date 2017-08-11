@@ -10,6 +10,7 @@
               android:paddingTop="@dimen/chat_line_paddingTop">
 
     <TextView
+        android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/chat_time_height"
         android:layout_gravity="center_horizontal"

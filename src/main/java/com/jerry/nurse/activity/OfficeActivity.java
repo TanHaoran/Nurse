@@ -17,7 +17,6 @@ import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -103,7 +102,7 @@ public class OfficeActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        OfficeResult officeResult = new GUtil().fromJson(response, OfficeResult.class);
+                        OfficeResult officeResult = new Gson().fromJson(response, OfficeResult.class);
                         if (officeResult.getCode() == RESPONSE_SUCCESS) {
                             mOffices = officeResult.getBody();
                             if (mOffices == null) {

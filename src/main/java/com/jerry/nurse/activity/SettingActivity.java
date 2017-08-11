@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.BindInfoResult;
@@ -24,7 +22,7 @@ import com.jerry.nurse.model.VersionResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.AppUtil;
-import com.jerry.nurse.util.GUtil;
+import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -144,7 +142,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_help)
     void onHelp(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", "帮助");
+        Intent intent = HtmlActivity.getIntent(this, "https://www.baidu.com", "帮助");
         startActivity(intent);
     }
 
@@ -165,7 +163,7 @@ public class SettingActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        VersionResult versionResult = new GUtil().fromJson(response, VersionResult.class);
+                        VersionResult versionResult = new Gson().fromJson(response, VersionResult.class);
                         if (versionResult.getCode() == RESPONSE_SUCCESS) {
                             VersionResult.Version version = versionResult.getBody();
 
@@ -240,10 +238,9 @@ public class SettingActivity extends BaseActivity {
      * 退出环信登陆
      */
     private void EaseMobLogout() {
-        EMClient.getInstance().logout(true, new EMCallBack() {
-
+        EaseMobManager easeMobManager = new EaseMobManager(this) {
             @Override
-            public void onSuccess() {
+            protected void onLogoutSuccess() {
                 LitePalUtil.deleteAllInfo(SettingActivity.this);
                 try {
                     ActivityCollector.removeAllActivity();
@@ -253,17 +250,8 @@ public class SettingActivity extends BaseActivity {
                 Intent intent = LoginActivity.getIntent(SettingActivity.this);
                 startActivity(intent);
             }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-
-            }
-        });
+        };
+        easeMobManager.logout();
     }
 
     /**
@@ -324,7 +312,7 @@ public class SettingActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(SettingActivity.this, "QQ绑定成功");
                             L.i("qq绑定成功");
@@ -360,7 +348,7 @@ public class SettingActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(SettingActivity.this, "QQ解绑成功");
                             L.i("qq解绑成功");

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
@@ -28,7 +29,6 @@ import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -189,18 +189,17 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        UserInfoResult userInfoResult = new GUtil().fromJson(response, UserInfoResult.class);
+                        UserInfoResult userInfoResult = new Gson().fromJson(response, UserInfoResult.class);
                         if (userInfoResult.getCode() == RESPONSE_SUCCESS) {
                             mUserInfo = userInfoResult.getBody();
                             if (mUserInfo != null) {
-                                DataSupport.deleteAll(UserInfo.class);
-                                mUserInfo.save();
+                                LitePalUtil.saveUserInfo(PersonalInfoActivity.this, mUserInfo);
                             }
-                            updateUseInfo();
                         } else {
                             T.showShort(PersonalInfoActivity.this, "获取基本信息失败");
                             L.i("获取基本信息失败");
                         }
+                        updateUseInfo();
                     }
                 });
     }
@@ -287,7 +286,7 @@ public class PersonalInfoActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         mProgressDialogManager.dismiss();
                         try {
-                            mHospitalInfo = new GUtil().fromJson(response, UserHospitalInfo.class);
+                            mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
                             if (mHospitalInfo != null) {
                                 // 更新个人医院信息
 //                                LitePalUtil.saveHospitalInfo(mHospitalInfo);
@@ -319,7 +318,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        UploadResult uploadResult = new GUtil().fromJson(response, UploadResult.class);
+                        UploadResult uploadResult = new Gson().fromJson(response, UploadResult.class);
                         if (uploadResult.getCode() == RESPONSE_SUCCESS) {
                             String fileName = uploadResult.getBody().getFilename();
                             postAvatar(fileName);
@@ -350,7 +349,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置头像成功");
                             mAvatarView.setImageBitmap(mAvatarBitmap);
@@ -365,59 +364,6 @@ public class PersonalInfoActivity extends BaseActivity {
                         }
                     }
                 });
-    }
-
-
-    /**
-     * 更新用户专业技术资格证信息
-     */
-    private void updateProfessionalCertificateInfo() {
-
-        mProfessionalCertificateInfo = DataSupport.
-                findLast(UserProfessionalCertificateInfo.class);
-
-        if (mProfessionalCertificateInfo != null) {
-            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
-            mProfessionalCertificateTextView.
-                    setText(getAuditString(professionalStatus));
-        }
-
-        if (mProfessionalCertificateInfo != null && mPractisingCertificateInfo != null) {
-            // 显示认证情况
-            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
-            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
-            // 如果两证都审核通过，就计算工龄
-            if (professionalStatus == AUDIT_SUCCESS && practisingStatus == AUDIT_SUCCESS) {
-                String nursingAge = getWorkingTime(mPractisingCertificateInfo.getFirstJobTime());
-                mNursingAgeTextView.setText(nursingAge);
-            }
-        }
-    }
-
-    /**
-     * 更新用户执业证信息
-     */
-    private void updatePractisingCertificateInfo() {
-        mPractisingCertificateInfo = DataSupport.
-                findLast(UserPractisingCertificateInfo.class);
-
-        if (mPractisingCertificateInfo != null) {
-            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
-            mPractisingCertificateTextView.
-                    setText(getAuditString(practisingStatus));
-        }
-
-        if (mPractisingCertificateInfo != null && mProfessionalCertificateInfo != null) {
-            // 显示认证情况
-            int professionalStatus = mProfessionalCertificateInfo.getVerifyStatus();
-            int practisingStatus = mPractisingCertificateInfo.getVerifyStatus();
-            // 如果两证都审核通过，就计算工龄
-            if (professionalStatus == AUDIT_SUCCESS && practisingStatus == AUDIT_SUCCESS) {
-                String nursingAge = getWorkingTime(mPractisingCertificateInfo.getFirstJobTime());
-                mNursingAgeTextView.setText(nursingAge);
-            }
-
-        }
     }
 
     /**
@@ -509,7 +455,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置生日成功");
                             // 更新数据库

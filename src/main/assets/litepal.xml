@@ -9,5 +9,9 @@
         <mapping class="com.jerry.nurse.model.Banner"></mapping>
         <mapping class="com.jerry.nurse.model.Announcement"></mapping>
         <mapping class="com.jerry.nurse.model.UserInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.ChatMessage"></mapping>
+        <mapping class="com.jerry.nurse.model.Message"></mapping>
+        <mapping class="com.jerry.nurse.model.AddFriendApply"></mapping>
+        <mapping class="com.jerry.nurse.model.ContactInfo"></mapping>
     </list>
 </litepal>

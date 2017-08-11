@@ -145,8 +145,6 @@ public class ContactListActivity extends BaseActivity {
             holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ChatActivity.getIntent(ContactListActivity.this);
-                    startActivity(intent);
                 }
             });
         }

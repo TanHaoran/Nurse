@@ -7,12 +7,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Password;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
@@ -91,7 +91,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(ChangePasswordActivity.this, R.string.password_change_success);
                             finish();

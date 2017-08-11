@@ -1,21 +1,28 @@
 package com.jerry.nurse.util;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.jerry.nurse.service.EaseMobService;
 
 /**
  * Created by Jerry on 2017/8/6.
  */
 
-public abstract class EaseMobManager {
+public class EaseMobManager {
+
+    private ProgressDialogManager mProgressDialogManager;
 
     private static final String PASSWORD = "WAJB357";
 
     private static final int MESSAGE_EASE_MOB_LOGIN_FAILED = 2;
     private static final int MESSAGE_EASE_MOB_LOGIN_SUCCESS = 3;
+
+    private Context mContext;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -23,10 +30,12 @@ public abstract class EaseMobManager {
             switch (msg.what) {
                 // 环信登陆成功
                 case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
+                    mProgressDialogManager.dismiss();
                     onLoginSuccess();
                     break;
                 // 环信登陆失败
                 case MESSAGE_EASE_MOB_LOGIN_FAILED:
+                    mProgressDialogManager.dismiss();
                     onLoginFailed();
                     break;
                 default:
@@ -35,7 +44,9 @@ public abstract class EaseMobManager {
         }
     };
 
-    public EaseMobManager() {
+    public EaseMobManager(Context context) {
+        mContext = context;
+        mProgressDialogManager = new ProgressDialogManager(context);
     }
 
 
@@ -45,6 +56,8 @@ public abstract class EaseMobManager {
      * @param registerId
      */
     public void login(String registerId) {
+        mProgressDialogManager.setMessage("初始化中");
+        mProgressDialogManager.show();
         EMClient.getInstance().login(registerId, PASSWORD, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -63,19 +76,54 @@ public abstract class EaseMobManager {
 
             }
         });
-
     }
 
     /**
-     * 环信登录成功
+     * 注销方法
+     */
+    public void logout() {
+        EMClient.getInstance().logout(true, new EMCallBack() {
+
+            @Override
+            public void onSuccess() {
+                onLogoutSuccess();
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+
+            }
+        });
+    }
+
+
+    /**
+     * 登录成功
+     */
+    protected void onLoginSuccess() {
+        Intent intent = new Intent(mContext, EaseMobService.class);
+        mContext.startService(intent);
+    }
+
+    /**
+     * 登录失败
      */
     protected void onLoginFailed() {
         T.showShort(ActivityCollector.getTopActivity(), "通讯模块初始化失败");
     }
 
-
     /**
-     * 环信登录成功
+     * 注销成功
      */
-    protected abstract void onLoginSuccess();
+    protected void onLogoutSuccess() {
+        Intent intent = new Intent(mContext, EaseMobService.class);
+        mContext.stopService(intent);
+    }
+
+
 }

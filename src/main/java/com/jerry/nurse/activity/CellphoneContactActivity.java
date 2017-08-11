@@ -9,17 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CellphoneContact;
 import com.jerry.nurse.util.CellphoneContactUtil;
 import com.jerry.nurse.util.CommonAdapter;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.OnItemClickListener;
 import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
 import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -27,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import okhttp3.MediaType;
+
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class CellphoneContactActivity extends BaseActivity {
 
@@ -72,7 +82,7 @@ public class CellphoneContactActivity extends BaseActivity {
 
         // 读取手机通讯录联系人
         loadCellphoneContact();
-        updateView(false);
+        //      updateView(false);
     }
 
     /**
@@ -80,6 +90,31 @@ public class CellphoneContactActivity extends BaseActivity {
      */
     private void loadCellphoneContact() {
         mBodyDatas = CellphoneContactUtil.getPhoneNumberFromMobile(this);
+        postCellphoneContact();
+    }
+
+    /**
+     *
+     */
+    private void postCellphoneContact() {
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.GET_CELLPHONE_CONTACT)
+                .content(StringUtil.addModelWithJson(mBodyDatas))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+
+                        } else {
+                            L.i(commonResult.getMsg());
+                        }
+                    }
+                });
     }
 
     /**
@@ -151,7 +186,7 @@ public class CellphoneContactActivity extends BaseActivity {
         @Override
         public void convert(ViewHolder holder, final CellphoneContact cellphoneContact) {
             holder.setText(R.id.tv_nickname, cellphoneContact.getName());
-            holder.setText(R.id.tv_cellphone, cellphoneContact.getNumber());
+            holder.setText(R.id.tv_cellphone, cellphoneContact.getPhone());
             holder.getView(R.id.ll_cellphone_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -20,7 +20,6 @@ import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -104,18 +103,6 @@ public class LoginActivity extends BaseActivity {
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
         if (!registerId.equals("-1")) {
             goToMainActivity();
-            // 登陆环信
-            EaseMobManager easeMobManager = new EaseMobManager() {
-                @Override
-                protected void onLoginFailed() {
-                    super.onLoginFailed();
-                }
-
-                @Override
-                protected void onLoginSuccess() {
-                }
-            };
-            easeMobManager.login(registerId);
         }
     }
 

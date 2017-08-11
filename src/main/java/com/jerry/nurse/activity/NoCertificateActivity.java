@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.view.TitleBar;
 
 import org.litepal.crud.DataSupport;
@@ -43,15 +43,15 @@ public class NoCertificateActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
         mTitleBar.setTitle(mTitle);
-        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+        UserInfo userInfo = DataSupport.findFirst(UserInfo.class);
         if (PROFESSIONAL_CERTIFICATE.equals(mTitle)) {
-            if (loginInfo.getQStatus() != AUDIT_EMPTY) {
+            if (userInfo.getQVerifyStatus() != AUDIT_EMPTY) {
                 Intent intent = ProfessionalCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();
             }
         } else if (PRACTISING_CERTIFICATE.equals(mTitle)) {
-            if (loginInfo.getPStatus() != AUDIT_EMPTY) {
+            if (userInfo.getPVerifyStatus() != AUDIT_EMPTY) {
                 Intent intent = PractisingCertificateActivity.getIntent(this);
                 startActivity(intent);
                 finish();

@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
@@ -25,7 +26,6 @@ import com.jerry.nurse.model.UploadResult;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -183,6 +183,31 @@ public class ProfessionalCertificateActivity extends BaseActivity {
     }
 
     /**
+     * 获取用户专业技术资格证信息
+     */
+    private void getProfessionalCertificateInfo(final String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_PROFESSIONAL_CERTIFICATE_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        ProfessionalResult professionalResult = new Gson().fromJson(response, ProfessionalResult.class);
+                        if (professionalResult.getCode() == RESPONSE_SUCCESS) {
+                            mProfessional = professionalResult.getBody();
+                            L.i("服务读取的认证状态是：" + mProfessional.getVerifyStatus());
+                            setProfessionalData();
+                        } else {
+                            T.showShort(ProfessionalCertificateActivity.this, "获取资格证失败");
+                        }
+                    }
+                });
+    }
+
+
+    /**
      * 设置数据
      */
     private void setProfessionalData() {
@@ -199,6 +224,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mSignOrganizationEditText.setText(mProfessional.getIssuingAgency());
             mSignDateTextView.setText(DateUtil.parseMysqlDateToString(mProfessional.getIssuingDate()));
 
+            L.i("认证状态是：" + mProfessional.getVerifyStatus());
             if (mProfessional.getVerifyStatus() != AUDIT_EMPTY) {
                 makeUneditable();
 
@@ -220,29 +246,6 @@ public class ProfessionalCertificateActivity extends BaseActivity {
                 makeEditable();
             }
         }
-    }
-
-    /**
-     * 获取用户专业技术资格证信息
-     */
-    private void getProfessionalCertificateInfo(final String registerId) {
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_PROFESSIONAL_CERTIFICATE_INFO)
-                .addParams("RegisterId", registerId)
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        ProfessionalResult professionalResult = new GUtil().fromJson(response, ProfessionalResult.class);
-                        if (professionalResult.getCode() == RESPONSE_SUCCESS) {
-                            mProfessional = professionalResult.getBody();
-                            setProfessionalData();
-                        } else {
-                            T.showShort(ProfessionalCertificateActivity.this, "获取资格证失败");
-                        }
-                    }
-                });
     }
 
 
@@ -469,7 +472,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        UploadResult uploadResult = new GUtil().fromJson(response, UploadResult.class);
+                        UploadResult uploadResult = new Gson().fromJson(response, UploadResult.class);
                         if (uploadResult.getCode() == RESPONSE_SUCCESS) {
                             String fileName = uploadResult.getBody().getFilename();
                             if (index == 0) {
@@ -500,7 +503,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置专业资格证成功");
                             // 设置成功后更新数据库

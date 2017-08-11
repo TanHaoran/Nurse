@@ -339,31 +339,6 @@ public class SignupActivity extends BaseActivity {
                                 break;
 
                         }
-//                        if (response.contains(ServiceConstant.USER_PHONE)) {
-//                            L.i("用户已存在，客户端准备环信登录");
-//                            if (response.split(USER_COLON).length == 4) {
-//                                mRegisterId = response.split(USER_COLON)[3];
-//                                // 环信登录
-//                                easeMobLogin(mRegisterId, EASE_MOB_PASSWORD);
-//                            } else {
-//                                onSignupFailed();
-//                            }
-//                        }
-//                        // 第二种情况，用户不存在，需要先在护士通注册，然后在环信注册
-//                        else if (response.startsWith(ServiceConstant.USER_REGISTER_ID)) {
-//                            L.i("用户不存在，服务端准备环信注册");
-//                            // 用户不存在，服务端自动进行护士通注册
-//                            if (response.split(USER_COLON).length == 2) {
-//                                mRegisterId = response.split(USER_COLON)[1];
-//                                // 环信登陆
-//                                easeMobLogin(mRegisterId, EASE_MOB_PASSWORD);
-//                            } else {
-//                                onSignupFailed();
-//                            }
-//                        } else {
-//                            onSignupFailed();
-//                            T.showShort(SignupActivity.this, response);
-//                        }
                     }
                 });
     }

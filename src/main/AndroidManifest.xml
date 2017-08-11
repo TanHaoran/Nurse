@@ -16,10 +16,6 @@
     <uses-feature android:name="android.hardware.camera"/> <!-- 使用照相机权限 -->
     <uses-feature android:name="android.hardware.camera.autofocus"/> <!-- 自动聚焦权限 -->
 
-    作者：Happy_M
-    链接：http://www.jianshu.com/p/e80a85b17920
-    來源：简书
-    著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
     <!-- 友盟 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -248,6 +244,11 @@
         <activity android:name=".activity.ChatGroupInfoActivity">
         </activity>
         <activity android:name=".activity.CreateGroupActivity">
+        </activity>
+
+        <service android:name=".service.EaseMobService"/>
+
+        <activity android:name=".activity.AddContactApplyActivity">
         </activity>
     </application>
 

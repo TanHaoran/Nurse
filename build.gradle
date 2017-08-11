@@ -4,9 +4,12 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
+    dexOptions {
+        jumboMode true
+    }
     defaultConfig {
         applicationId "com.jerry.nurse"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "0.5"
@@ -36,7 +39,6 @@ dependencies {
     compile files('libs/open_sdk_r5793_lite.jar')
     compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
     compile files('libs/BaiduLBS_Android.jar')
-    // ~80KB
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'

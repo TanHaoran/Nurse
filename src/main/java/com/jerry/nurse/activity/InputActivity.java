@@ -29,12 +29,14 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.ContactDetailActivity.EXTRA_VALIDATE_MESSAGE;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class InputActivity extends BaseActivity {
 
     public static final String NICKNAME = "昵称";
     public static final String JOB_NUMBER = "工号";
+    public static final String VALIDATE_MESSAGE = "验证消息";
 
     public static final String EXTRA_TITLE = "title";
 
@@ -87,6 +89,8 @@ public class InputActivity extends BaseActivity {
                 } else if (mTitle.equals(JOB_NUMBER)) {
                     String jobNumber = mInputEditText.getText().toString();
                     postJobNumber(jobNumber);
+                } else if (mTitle.equals(VALIDATE_MESSAGE)) {
+                    sendValidateMessage(content);
                 }
             }
         });
@@ -103,6 +107,18 @@ public class InputActivity extends BaseActivity {
         if (!TextUtils.isEmpty(mInputEditText.getText().toString())) {
             mInputEditText.setHint("请输入" + mTitle);
         }
+    }
+
+    /**
+     * 发送好友申请
+     *
+     * @param message
+     */
+    private void sendValidateMessage(String message) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_VALIDATE_MESSAGE, message);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     /**

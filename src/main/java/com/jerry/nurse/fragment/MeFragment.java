@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.QrCodeResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -25,12 +27,10 @@ import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
 
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.QR_CODE_ADDRESS;
-import static com.jerry.nurse.constant.ServiceConstant.USER_COLON;
-import static com.jerry.nurse.constant.ServiceConstant.USER_NAME;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 /**
@@ -140,14 +140,10 @@ public class MeFragment extends BaseFragment {
                 .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                    }
-
-                    @Override
                     public void onFilterResponse(String response, int id) {
-                        if (response.startsWith(USER_NAME)) {
-                            String name = response.split(USER_COLON)[1];
-                            showQrCode(name);
+                        QrCodeResult qrCodeResult = new Gson().fromJson(response, QrCodeResult.class);
+                        if (qrCodeResult.getCode() == RESPONSE_SUCCESS) {
+                            showQrCode(qrCodeResult.getBody().getName());
                         }
                     }
                 });

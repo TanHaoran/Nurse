@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AddContactActivity;
 import com.jerry.nurse.activity.ContactDetailActivity;
@@ -18,7 +19,9 @@ import com.jerry.nurse.activity.ContactListActivity;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
+import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.ContactTopHeaderBean;
+import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
@@ -39,6 +42,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.Call;
+
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 /**
@@ -88,23 +94,20 @@ public class ContactFragment extends BaseFragment {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(getActivity());
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        mBodyDatas = new ArrayList<>();
         updateView(false);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        getFriendList(mLoginInfo.getRegisterId());
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        getHospitalInfo(mLoginInfo.getRegisterId());
-    }
 
     /**
-     * 获取用户医院信息
+     * 获取用户好友资料
      */
-    private void getHospitalInfo(final String registerId) {
+    private void getFriendList(final String registerId) {
         mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
-                .addParams("RegisterId", registerId)
+        OkHttpUtils.get().url(ServiceConstant.GET_FRIEND_LIST)
+                .addParams("MyId", registerId)
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {
 
@@ -115,16 +118,42 @@ public class ContactFragment extends BaseFragment {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        try {
-                            mLoginInfo = new Gson().fromJson(response, LoginInfo.class);
-                            // 更新界面
+                        FriendListResult friendListResult = new Gson().fromJson(response, FriendListResult.class);
+                        if (friendListResult.getCode() == RESPONSE_SUCCESS) {
+                            mBodyDatas = friendListResult.getBody();
+                            L.i("读取到了" + mBodyDatas.size());
+                            if (mBodyDatas == null) {
+                                mBodyDatas = new ArrayList();
+                            } else {
+                                updateContactInfoData(mBodyDatas);
+                            }
                             updateView(true);
-                        } catch (JsonSyntaxException e) {
-                            L.i("获取医院信息失败");
-                            e.printStackTrace();
                         }
                     }
                 });
+    }
+
+    /**
+     * 更新本地联系人数据
+     *
+     * @param bodyDatas
+     */
+    private void updateContactInfoData(List<Contact> bodyDatas) {
+        try {
+            DataSupport.deleteAll(ContactInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (Contact contact : bodyDatas) {
+            ContactInfo info = new ContactInfo();
+            info.setAvatar(contact.getAvatar());
+            info.setName(contact.getName());
+            info.setNickName(contact.getNickName());
+            info.setCellphone(contact.getPhone());
+            info.setRemark(contact.getRemark());
+            info.setRegisterId(contact.getFriendId());
+            info.save();
+        }
     }
 
     /**
@@ -138,19 +167,21 @@ public class ContactFragment extends BaseFragment {
 
         mSourceDatas = new ArrayList<>();
         mHeaderDatas = new ArrayList<>();
+        // 构造收藏联系人
         List<Contact> collections = new ArrayList<>();
-        Contact contact = new Contact();
-        contact.setNickName("联系人1");
-        Contact contact2 = new Contact();
-        contact2.setNickName("联系人2");
-        collections.add(contact);
-        collections.add(contact2);
+//        Contact contact = new Contact();
+//        contact.setNickName("联系人1");
+//        Contact contact2 = new Contact();
+//        contact2.setNickName("联系人2");
+//        collections.add(contact);
+//        collections.add(contact2);
 
-        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "收"));
+        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "☆"));
         mSourceDatas.addAll(mHeaderDatas);
 
         mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mBodyDatas);
 
+        // 头部适配器
         mHeaderAdapter = new HeaderRecyclerAndFooterWrapperAdapter(mAdapter) {
 
             @Override
@@ -199,7 +230,6 @@ public class ContactFragment extends BaseFragment {
 
         // 如果都通过审核了就可以显示医院和科室的信息
         if (OfficeFragment.checkPermission()) {
-
             mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
                     new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
             mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
@@ -219,23 +249,15 @@ public class ContactFragment extends BaseFragment {
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
                 .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
 
-        initDatas(getResources().getStringArray(R.array.provinces));
+        initDatas();
     }
 
 
     /**
      * 组织数据源
-     *
-     * @param data
-     * @return
      */
-    private void initDatas(final String[] data) {
-        mBodyDatas = new ArrayList<>();
-        for (int i = 0; i < data.length; i++) {
-            Contact cityBean = new Contact();
-            cityBean.setNickName(data[i]);//设置昵称
-            mBodyDatas.add(cityBean);
-        }
+    private void initDatas() {
+
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 
@@ -249,7 +271,6 @@ public class ContactFragment extends BaseFragment {
         mDecoration.setmDatas(mSourceDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
-
     }
 
     class ContactAdapter extends CommonAdapter<Contact> {
@@ -258,12 +279,18 @@ public class ContactFragment extends BaseFragment {
         }
 
         @Override
-        public void convert(ViewHolder holder, final Contact cityBean) {
-            holder.setText(R.id.tv_nickname, cityBean.getNickName());
+        public void convert(ViewHolder holder, final Contact contact) {
+            ImageView imageView = holder.getView(R.id.iv_avatar);
+            if (contact.getAvatar().startsWith("http")) {
+                Glide.with(getActivity()).load(contact.getAvatar()).into(imageView);
+            } else {
+                Glide.with(getActivity()).load(AVATAR_ADDRESS + contact.getAvatar()).into(imageView);
+            }
+            holder.setText(R.id.tv_nickname, contact.getNickName());
             holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ContactDetailActivity.getIntent(getActivity(), "");
+                    Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId());
                     startActivity(intent);
                 }
             });

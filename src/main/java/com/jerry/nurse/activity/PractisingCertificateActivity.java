@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
@@ -25,7 +26,6 @@ import com.jerry.nurse.model.UploadResult;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -228,7 +228,6 @@ public class PractisingCertificateActivity extends BaseActivity {
             if (mPractising.getVerifyStatus() != AUDIT_EMPTY) {
                 makeUneditable();
 
-
                 // 审核中
                 if (mPractising.getVerifyStatus() == AUDIT_ING) {
                     setStatus(AUDIT_ING);
@@ -245,7 +244,7 @@ public class PractisingCertificateActivity extends BaseActivity {
                 // 加载图片显示
                 Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture1()).into(mPicture1ImageView);
                 Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2()).into(mPicture2ImageView);
-                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2()).into(mPicture3ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture3()).into(mPicture3ImageView);
             } else {
                 makeEditable();
             }
@@ -266,7 +265,7 @@ public class PractisingCertificateActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        PractisingResult practisingResult = new GUtil().fromJson(response, PractisingResult.class);
+                        PractisingResult practisingResult = new Gson().fromJson(response, PractisingResult.class);
                         if (practisingResult.getCode() == RESPONSE_SUCCESS) {
                             mPractising = practisingResult.getBody();
                             setPractisingData();
@@ -558,7 +557,7 @@ public class PractisingCertificateActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        UploadResult uploadResult = new GUtil().fromJson(response, UploadResult.class);
+                        UploadResult uploadResult = new Gson().fromJson(response, UploadResult.class);
                         if (uploadResult.getCode() == RESPONSE_SUCCESS) {
                             String fileName = uploadResult.getBody().getFilename();
                             if (index == 0) {
@@ -590,7 +589,7 @@ public class PractisingCertificateActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置执业证成功");
                             // 设置成功后更新数据库

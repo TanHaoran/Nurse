@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
@@ -17,7 +18,6 @@ import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.GUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
@@ -130,7 +130,7 @@ public class NewCellphoneActivity extends BaseActivity {
                     @Override
                     public void onFilterResponse(String response, int id) {
                         mProgressDialog.dismiss();
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             // 控制发送验证码的状态
                             mGetVerificationCodeTextView.setEnabled(false);
@@ -186,7 +186,7 @@ public class NewCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             String cellphone = mCellphoneEditText.getText().toString();
                             postNewCellphone(cellphone);
@@ -222,7 +222,7 @@ public class NewCellphoneActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new GUtil().fromJson(response, CommonResult.class);
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置手机号成功");
                             setResult(RESULT_OK);

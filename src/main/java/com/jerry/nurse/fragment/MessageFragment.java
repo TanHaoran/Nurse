@@ -8,17 +8,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.activity.ChatActivity;
-import com.jerry.nurse.model.Contact;
-import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.activity.AddContactApplyActivity;
+import com.jerry.nurse.model.Message;
+import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.T;
+import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
-import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -29,18 +32,15 @@ import butterknife.Bind;
 
 public class MessageFragment extends BaseFragment {
 
-
     @Bind(R.id.rv_message)
     RecyclerView mRecyclerView;
 
     private MessageAdapter mAdapter;
 
-    private List<Contact> mContacts;
+    private List<Message> mMessages;
 
-    private String[] mNames = {"RyanGosling", "RussellCrowe", "EvaGreen",
-            "JenniferLawrence", "KateWinslet", "JuliaRoberts", "BlakeLively",
-            "DianeKruger", "Kate", "JayChou", "Catherine", "Jolin", "Jay", "Haha",
-            "TanHaoran", "YanMing", "Jerry", "doomthr",};
+    private String mRegisterId;
+
 
     /**
      * 实例化方法
@@ -60,12 +60,23 @@ public class MessageFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mContacts = new ArrayList<>();
-        for (int i = 0; i < mNames.length; i++) {
-            Contact c = new Contact();
-            c.setNickName(mNames[i]);
-            mContacts.add(c);
-        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 刷新界面
+        refresh();
+    }
+
+    /**
+     * 刷新界面
+     */
+    public void refresh() {
+        mRegisterId = (String) SPUtil.get(getActivity(), SPUtil.REGISTER_ID, "");
+
+        // 加载本地数据库中的消息
+        loadLocalMessage();
 
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -74,41 +85,61 @@ public class MessageFragment extends BaseFragment {
                 LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f),
                 getResources().getColor(R.color.divider_line)));
 
-        mAdapter = new MessageAdapter(getActivity(), R.layout.item_chat, mContacts);
+        mAdapter = new MessageAdapter(getActivity(), R.layout.item_message, mMessages);
         mRecyclerView.setAdapter(mAdapter);
-
-        mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-
-            }
-
-            @Override
-            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
-                return false;
-            }
-        });
     }
 
-    class MessageAdapter extends CommonAdapter<Contact> {
+    /**
+     * 加载本地数据库中的消息
+     */
+    private void loadLocalMessage() {
+        try {
+            mMessages = DataSupport.where("mRegisterId=?", mRegisterId).order("mTime desc").find(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (mMessages == null) {
+            mMessages = new ArrayList<>();
+        }
+    }
 
 
-        public MessageAdapter(Context context, int layoutId, List<Contact> datas) {
+    class MessageAdapter extends CommonAdapter<Message> {
+
+        public MessageAdapter(Context context, int layoutId, List<Message> datas) {
             super(context, layoutId, datas);
         }
 
         @Override
-        protected void convert(ViewHolder holder, Contact contact, final int position) {
-            holder.setText(R.id.tv_nickname, contact.getNickName());
-            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
+        protected void convert(ViewHolder holder, final Message message, final int position) {
+            final int type = message.getType();
+            if (type == Message.TYPE_ADD_FRIEND_APPLY) {
+                holder.setImageResource(R.id.iv_image, message.getImageResource());
+            }
+            holder.setText(R.id.tv_title, message.getTitle());
+            holder.setText(R.id.tv_content, message.getContent());
+            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+
+            holder.getView(R.id.rl_message).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    T.showShort(ActivityCollector.getTopActivity(), "点击了" + position);
-                    Intent intent = ChatActivity.getIntent(getActivity());
-                    ActivityCollector.getTopActivity().startActivity(intent);
+                    if (type == Message.TYPE_ADD_FRIEND_APPLY) {
+                        Intent intent = AddContactApplyActivity.getIntent(getActivity());
+                        startActivity(intent);
+                    }
+                }
+            });
+
+            // 删除这条记录
+            holder.getView(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    L.i("执行删除");
+                    mMessages.remove(message);
+                    message.delete();
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
     }
-
 }

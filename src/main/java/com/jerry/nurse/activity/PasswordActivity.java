@@ -12,7 +12,6 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -116,21 +115,11 @@ public class PasswordActivity extends BaseActivity {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             L.i("设置密码成功");
-                            EaseMobManager easeMobManager = new EaseMobManager() {
-                                @Override
-                                protected void onLoginFailed() {
-                                    T.showShort(PasswordActivity.this, "登录失败");
-                                }
 
-                                @Override
-                                protected void onLoginSuccess() {
-                                    // 调用登陆管理器登陆并保存登陆信息
-                                    LoginManager loginManager = new LoginManager(PasswordActivity.this,
-                                            mProgressDialogManager);
-                                    loginManager.getLoginInfoByRegisterId(mRegisterId);
-                                }
-                            };
-                            easeMobManager.login(mRegisterId);
+                            // 调用登陆管理器登陆并保存登陆信息
+                            LoginManager loginManager = new LoginManager(PasswordActivity.this,
+                                    mProgressDialogManager);
+                            loginManager.getLoginInfoByRegisterId(mRegisterId);
                         } else {
                             L.i("设置密码失败");
                         }

@@ -51,7 +51,7 @@
             android:layout_toRightOf="@id/cv_avatar"
             android:textColor="@color/normal_textColor"
             android:textEditSideNoPasteWindowLayout="@dimen/normal_textSize"
-            android:textSize="@dimen/contact_item_nickname_textSize"
+            android:textSize="@dimen/normal_textSize"
             tools:text="紫萱"/>
 
         <ImageView

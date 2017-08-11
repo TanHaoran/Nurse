@@ -66,6 +66,7 @@
 
     <!--消息-->
     <string name="message">消息</string>
+    <string name="add_friend_apply">好友申请</string>
 
     <!--院务-->
     <string name="office">科室</string>
@@ -90,6 +91,7 @@
     <string name="make_call">打电话</string>
     <string name="send_message">发消息</string>
     <string name="add_contact">添加联系人</string>
+    <string name="add_friend">加为好友</string>
     <string name="please_input_cellphone">请输入手机号</string>
     <string name="scan_and_scan">扫一扫</string>
     <string name="scan_qr_code">扫描二维码名片</string>
@@ -101,6 +103,8 @@
     <string name="group_name">群名称</string>
     <string name="group_qr_code">群二维码</string>
     <string name="message_ignore">消息免打扰</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
 
     <!--我的-->
     <string name="mine">我的</string>

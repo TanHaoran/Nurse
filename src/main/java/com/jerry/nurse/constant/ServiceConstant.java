@@ -7,12 +7,8 @@ package com.jerry.nurse.constant;
 public class ServiceConstant {
 
     // 请求返回类型
-    public static final String REQUEST_SUCCESS = "0";
     public static final int RESPONSE_SUCCESS = 0;
     public static final String USER_COLON = ":";
-    public static final String USER_REGISTER_ID = "Id:";
-    public static final String USER_PHONE = "Phone:";
-    public static final String USER_FILE = "File:";
     public static final String USER_NAME = "Name:";
 
     /**
@@ -26,9 +22,6 @@ public class ServiceConstant {
     public static final int AUDIT_FAILED = 2;
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
-
-    // 环信注册密码
-    public static final String EASE_MOB_PASSWORD = "WAJB357";
 
     public static final String IP = "http://192.168.0.100:9400/UserService.svc/";
 
@@ -68,16 +61,6 @@ public class ServiceConstant {
     public static final String LOGIN_BY_QQ = IP + "ThirdPartLoginQQ";
 
     /**
-     * 绑定手机号
-     */
-    public static final String BIND_CELLPHONE = IP + "SetQQBing";
-
-    /**
-     * 解绑手机号
-     */
-    public static final String UNBIND_CELLPHONE = IP + "SetQQBing";
-
-    /**
      * 绑定手机号、QQ
      */
     public static final String BIND = IP + "Bind";
@@ -91,11 +74,6 @@ public class ServiceConstant {
      * 通过注册ID获取用户注册信息
      */
     public static final String GET_USER_REGISTER_INFO_BY_REGISTER_ID = IP + "GetUserReginfoById";
-
-    /**
-     * 通过手机号获取用户注册信息
-     */
-    public static final String GET_USER_REGISTER_INFO_BY_PHONE = IP + "GetUserReginfoByPhone";
 
     /**
      * 获取二维码
@@ -217,6 +195,36 @@ public class ServiceConstant {
      * 获取用户登陆信息
      */
     public static final String GET_USER_LOGIN_INFO = IP + "GetUserFirstInfoById";
+
+    /**
+     * 根据关键字搜索用户
+     */
+    public static final String SEARCH_USER_BY_KEY_WORD = IP + "GetFriendsList";
+
+    /**
+     * 查询用户详细信息
+     */
+    public static final String GET_USER_DETAIL_INFO = IP + "GetFriendInfo";
+
+    /**
+     * 获取好友列表
+     */
+    public static final String GET_FRIEND_LIST = IP + "GetEMFriend";
+
+    /**
+     * 成为好友
+     */
+    public static final String ADD_AS_FRIEND = IP + "AddEMFriend";
+
+    /**
+     * 删除好友
+     */
+    public static final String DELETE_FRIEND = IP + "DeleteEMFriend";
+
+    /**
+     * 获取手机联系人信息
+     */
+    public static final String GET_CELLPHONE_CONTACT = IP + "GetContactInfo";
 
 
 }

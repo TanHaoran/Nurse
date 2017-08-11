@@ -30,6 +30,7 @@ public class ActivityCollector {
      * @param activity
      */
     public static void removeActivity(Activity activity) {
+        activity.finish();
         mActivities.remove(activity);
     }
 
@@ -50,7 +51,7 @@ public class ActivityCollector {
      * 移除栈内所有Activity
      */
     public static void removeAllActivity() {
-        for(Activity activity: mActivities) {
+        for (Activity activity : mActivities) {
             activity.finish();
         }
     }

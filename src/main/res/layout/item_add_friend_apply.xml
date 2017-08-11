@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/contact_item_height"
+    app:ios="false"
+    app:leftSwipe="true"
+    app:swipeEnable="true">
+
+    <RelativeLayout
+        android:id="@+id/rl_apply"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/plugin_line_selector"
+        android:paddingBottom="@dimen/contact_item_paddingTop"
+        android:paddingLeft="@dimen/contact_item_paddingLeft"
+        android:paddingRight="@dimen/contact_item_paddingLeft"
+        android:paddingTop="@dimen/contact_item_paddingTop">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="@dimen/contact_item_avatar_width"
+            android:layout_height="@dimen/contact_item_avatar_width"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_avatar_default"/>
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/contact_item_nickname_textSize"
+            tools:text="紫萱"/>
+
+        <TextView
+            android:visibility="gone"
+            tools:text="我是你"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_nickname"
+            android:id="@+id/tv_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/small_textSize"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/acb_agree"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="@string/agree"
+                android:textColor="@color/white"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/acb_refuse"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="@string/refuse"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:id="@+id/tv_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/contact_item_time_textSize"
+                tools:text="已添加"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="@dimen/delete_button_width"
+        android:layout_height="match_parent"
+        android:background="@color/delete"
+        android:text="删除"
+        android:textColor="@android:color/white"/>
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>
