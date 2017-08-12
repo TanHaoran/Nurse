@@ -1,13 +1,22 @@
 package com.jerry.nurse.app;
 
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
+import com.hyphenate.EMContactListener;
+import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.chat.EMTextMessageBody;
+import com.jerry.nurse.model.AddFriendApply;
+import com.jerry.nurse.model.ChatMessage;
+import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.MessageManager;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.log.LoggerInterceptor;
@@ -21,12 +30,18 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
+import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_RECEIVE;
+import static com.jerry.nurse.activity.MainActivity.ACTION_FRIEND_APPLY_RECEIVE;
+import static com.jerry.nurse.activity.MainActivity.EXTRA_CHAT_MESSAGE;
+import static com.jerry.nurse.activity.MainActivity.EXTRA_FRIEND_APPLY_CONTACT;
+
 
 /**
  * Created by Jerry on 2017/7/17.
  */
 
 public class MyApplication extends LitePalApplication {
+
 
     @Override
     public void onCreate() {
@@ -78,6 +93,8 @@ public class MyApplication extends LitePalApplication {
         EMOptions options = new EMOptions();
         // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
+        // 自动登录
+        options.setAutoLogin(true);
 
         // 初始化前要验证
         int pid = android.os.Process.myPid();
@@ -87,7 +104,7 @@ public class MyApplication extends LitePalApplication {
         // 默认的APP会在以包名为默认的process name下运行，如果查到的process name不是APP的process name就立即返回
 
         if (processAppName == null || !processAppName.equalsIgnoreCase(this.getPackageName())) {
-            L.e("enter the service process!");
+            L.i("enter the service process!");
 
             // 则此application::onCreate 是被service 调用的，直接返回
             return;
@@ -97,6 +114,114 @@ public class MyApplication extends LitePalApplication {
         EMClient.getInstance().init(this, options);
         //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+
+        // 开启消息监听和申请好友监听
+        startMessageListener();
+        startContactListener();
+    }
+
+
+    /**
+     * 消息监听
+     */
+    private void startMessageListener() {
+        EMMessageListener emMessageListener = new EMMessageListener() {
+            @Override
+            public void onMessageReceived(List<EMMessage> messages) {
+                String name = ActivityCollector.getTopActivity().getLocalClassName();
+                if (name.equals("activity.ChatActivity")) {
+                    return;
+                }
+                for (final EMMessage emMessage : messages) {
+                    L.i(emMessage.toString());
+                    EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
+                    String msg = messageBody.getMessage();
+                    L.i("消息内容：" + msg);
+
+                    // 将消息数据保存在本地数据库
+                    ChatMessage chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
+
+                    Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
+                    intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
+                    getContext().sendBroadcast(intent);
+                }
+            }
+
+            @Override
+            public void onCmdMessageReceived(List<EMMessage> messages) {
+                L.i("收到透传消息");
+            }
+
+            @Override
+            public void onMessageRead(List<EMMessage> messages) {
+                L.i("收到已读回执");
+            }
+
+            @Override
+            public void onMessageDelivered(List<EMMessage> messages) {
+                L.i("收到已送达回执");
+            }
+
+            @Override
+            public void onMessageChanged(EMMessage message, Object change) {
+                L.i("消息状态变动");
+            }
+        };
+        EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+    }
+
+    /**
+     * 监听好友状态
+     */
+    private void startContactListener() {
+        EMContactListener emContactListener = new EMContactListener() {
+            //增加了联系人时回调此方法
+            @Override
+            public void onContactAdded(String username) {
+                L.i("增加了联系人时回调此方法");
+            }
+
+            //被删除时回调此方法
+            @Override
+            public void onContactDeleted(String username) {
+                L.i("被删除时回调此方法：" + username);
+
+            }
+
+            //收到好友邀请
+            @Override
+            public void onContactInvited(String username, String reason) {
+                L.i("收到好友邀请：" + username);
+                // 保存好友申请到数据库
+                AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(username, reason);
+
+                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                getContext().sendBroadcast(intent);
+            }
+
+            //好友请求被同意
+            @Override
+            public void onFriendRequestAccepted(String username) {
+                L.i("好友请求被同意：" + username);
+                AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(username, true);
+
+                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+            }
+
+            //好友请求被拒绝
+            @Override
+            public void onFriendRequestDeclined(String username) {
+                L.i("好友请求被拒绝：" + username);
+                AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(username, false);
+
+                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+
+            }
+        };
+        EMClient.getInstance().contactManager().setContactListener(emContactListener);
     }
 
     /**

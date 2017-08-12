@@ -5,13 +5,22 @@ import org.litepal.crud.DataSupport;
 import java.io.Serializable;
 
 public class ChatMessage extends DataSupport implements Serializable {
-    private String mAvatar;
-    private String mName;
-    private String mContent;
     private long mTime;
-    private String from;
-    private String to;
+    private String mFrom;
+    private String mTo;
     private boolean mIsSend;
+    /**
+     * 如果是文字消息，这个属性才有值
+     */
+    private String mContent;
+    /**
+     * 如果是语音消息，这个属性才有值
+     */
+    private float mSecond;
+    /**
+     * 如果是语音消息或者图片消息，这个属性才有值
+     */
+    private String path;
 
     public final static int MSG_SEND = 0;
     public final static int MSG_RECEIVE = 1;
@@ -19,36 +28,14 @@ public class ChatMessage extends DataSupport implements Serializable {
     public ChatMessage() {
     }
 
-    public ChatMessage(String avatar, String name, String content, long time, boolean isSend) {
-        mAvatar = avatar;
-        mName = name;
-        mContent = content;
+    public ChatMessage(long time, String from, String to, boolean isSend, String content, float second, String path) {
         mTime = time;
+        mFrom = from;
+        mTo = to;
         mIsSend = isSend;
-    }
-
-    public String getAvatar() {
-        return mAvatar;
-    }
-
-    public void setAvatar(String avatar) {
-        mAvatar = avatar;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public String getContent() {
-        return mContent;
-    }
-
-    public void setContent(String content) {
         mContent = content;
+        mSecond = second;
+        this.path = path;
     }
 
     public long getTime() {
@@ -59,6 +46,22 @@ public class ChatMessage extends DataSupport implements Serializable {
         mTime = time;
     }
 
+    public String getFrom() {
+        return mFrom;
+    }
+
+    public void setFrom(String from) {
+        mFrom = from;
+    }
+
+    public String getTo() {
+        return mTo;
+    }
+
+    public void setTo(String to) {
+        mTo = to;
+    }
+
     public boolean isSend() {
         return mIsSend;
     }
@@ -67,32 +70,27 @@ public class ChatMessage extends DataSupport implements Serializable {
         mIsSend = send;
     }
 
-    public String getFrom() {
-        return from;
+    public float getSecond() {
+        return mSecond;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setSecond(float second) {
+        mSecond = second;
     }
 
-    public String getTo() {
-        return to;
+    public String getPath() {
+        return path;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "mAvatar='" + mAvatar + '\'' +
-                ", mName='" + mName + '\'' +
-                ", mContent='" + mContent + '\'' +
-                ", mTime=" + mTime +
-                ", from='" + from + '\'' +
-                ", to='" + to + '\'' +
-                ", mIsSend=" + mIsSend +
-                '}';
+    public String getContent() {
+        return mContent;
+    }
+
+    public void setContent(String content) {
+        mContent = content;
     }
 }

@@ -7,28 +7,50 @@ import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
  */
 public class CellphoneContact extends BaseIndexPinyinBean {
     private String Avatar;
-    private String NickName;
-    private  int status;
-    private String Phone;
     private String Name;
-
-    public CellphoneContact() {
-    }
+    private String NickName;
+    private String Phone;
+    private String RegisterId;
+    private int status;
 
     public String getAvatar() {
         return Avatar;
     }
 
-    public void setAvatar(String avatar) {
-        Avatar = avatar;
+    public void setAvatar(String Avatar) {
+        this.Avatar = Avatar;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String Name) {
+        this.Name = Name;
     }
 
     public String getNickName() {
         return NickName;
     }
 
-    public void setNickName(String nickName) {
-        NickName = nickName;
+    public void setNickName(String NickName) {
+        this.NickName = NickName;
+    }
+
+    public String getPhone() {
+        return Phone;
+    }
+
+    public void setPhone(String Phone) {
+        this.Phone = Phone;
+    }
+
+    public String getRegisterId() {
+        return RegisterId;
+    }
+
+    public void setRegisterId(String RegisterId) {
+        this.RegisterId = RegisterId;
     }
 
     public int getStatus() {
@@ -39,24 +61,11 @@ public class CellphoneContact extends BaseIndexPinyinBean {
         this.status = status;
     }
 
-    public String getPhone() {
-        return Phone;
-    }
-
-    public void setPhone(String phone) {
-        Phone = phone;
-    }
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
     @Override
     public String getTarget() {
+        if (Name == null) {
+            return " ";
+        }
         return Name;
     }
 }

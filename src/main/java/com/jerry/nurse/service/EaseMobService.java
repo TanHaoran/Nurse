@@ -34,7 +34,6 @@ import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.ACTION_FRIEND_APPLY_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.EXTRA_CHAT_MESSAGE;
 import static com.jerry.nurse.activity.MainActivity.EXTRA_FRIEND_APPLY_CONTACT;
-import static com.jerry.nurse.activity.MainActivity.EXTRA_FRIEND_APPLY_REASON;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 /**
@@ -211,7 +210,6 @@ public class EaseMobService extends Service {
 
                                 Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
                                 intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, contact);
-                                intent.putExtra(EXTRA_FRIEND_APPLY_REASON, reason);
 
                                 // 发送广播
                                 sendBroadcast(intent);

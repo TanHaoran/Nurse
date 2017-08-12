@@ -11,31 +11,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactDetailResult;
-import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import org.litepal.crud.DataSupport;
-
-import java.util.Date;
-
 import butterknife.Bind;
 import butterknife.OnClick;
 
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ContactDetailActivity extends BaseActivity {
@@ -158,11 +151,6 @@ public class ContactDetailActivity extends BaseActivity {
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 设置头像
-        if (contact.getAvatar().startsWith("http")) {
-            Glide.with(this).load(contact.getAvatar()).into(mAvatarImageView);
-        } else {
-            Glide.with(this).load(AVATAR_ADDRESS + contact.getAvatar()).into(mAvatarImageView);
-        }
 
         mNameTextView.setText(contact.getName());
         mNicknameTextView.setText(contact.getNickName());
@@ -180,7 +168,7 @@ public class ContactDetailActivity extends BaseActivity {
 
     @OnClick(R.id.acb_send_message)
     void onSendMessage() {
-        Intent intent = ChatActivity.getIntent(this, mContact);
+        Intent intent = ChatActivity.getIntent(this, mContact.getFriendId());
         startActivity(intent);
     }
 
@@ -257,43 +245,7 @@ public class ContactDetailActivity extends BaseActivity {
         try {
             EMClient.getInstance().contactManager().addContact(mToAddRegisterId, reason);
             T.showShort(this, "已发送好友申请");
-            // 构建首页消息
-            Message message = null;
-            try {
-                message = DataSupport.where("mType=?", "0").findFirst(Message.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (message == null) {
-                message = new Message();
-            }
-            message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-            message.setImageResource(R.drawable.icon_xzhy);
-            message.setTitle("好友申请");
-            message.setTime(new Date().getTime());
-            message.setRegisterId(mRegisterId);
-            message.setContactId(mContact.getFriendId());
-            message.setContent("申请添加" + mContact.getNickName() + "为好友");
-            message.save();
-
-            // 构建添加好友消息
-            AddFriendApply apply = null;
-            try {
-                apply = DataSupport.where("mRegisterId=? and mContactId=?",
-                        mRegisterId, mContact.getFriendId()).findFirst(AddFriendApply.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (apply == null) {
-                apply = new AddFriendApply();
-            }
-            apply.setAvatar(mContact.getAvatar());
-            apply.setNickname(mContact.getNickName());
-            apply.setStatus(AddFriendApply.STATUS_SEND_ING);
-            apply.setContactId(mContact.getFriendId());
-            apply.setRegisterId(mRegisterId);
-            apply.setTime(new Date().getTime());
-            apply.save();
+            MessageManager.saveSendAddFriendApplyLocalData(mToAddRegisterId, reason);
 
         } catch (HyphenateException e) {
             T.showShort(this, "发送申请失败");

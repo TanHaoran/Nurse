@@ -27,8 +27,13 @@ public class CellphoneContactUtil {
             //读取通讯录的号码  
             String number = cursor.getString(cursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            number = number.replace(" ", "");
+            if (number.length() >= 11) {
+                number = number.substring(number.length() - 11);
+            }
             CellphoneContact phoneInfo = new CellphoneContact();
             phoneInfo.setName(name);
+            phoneInfo.setNickName(name);
             phoneInfo.setPhone(number);
             list.add(phoneInfo);
         }

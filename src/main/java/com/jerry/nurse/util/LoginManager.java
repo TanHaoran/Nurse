@@ -68,7 +68,7 @@ public class LoginManager {
 
         // 保存登陆信息到数据库
         LitePalUtil.saveLoginInfo(mContext, loginInfo);
-        easeMobLogin(loginInfo);
+        goToMainActivity();
     }
 
     /**
@@ -85,30 +85,6 @@ public class LoginManager {
         } else {
             T.showShort(mContext, "登录失败");
         }
-    }
-
-
-    /**
-     * 登录环信
-     *
-     * @param loginInfo
-     */
-    private void easeMobLogin(LoginInfo loginInfo) {
-        // 登陆环信
-        EaseMobManager easeMobManager = new EaseMobManager(mContext) {
-            @Override
-            protected void onLoginFailed() {
-                super.onLoginFailed();
-                goToMainActivity();
-            }
-
-            @Override
-            protected void onLoginSuccess() {
-                super.onLoginSuccess();
-                goToMainActivity();
-            }
-        };
-        easeMobManager.login(loginInfo.getRegisterId());
     }
 
 

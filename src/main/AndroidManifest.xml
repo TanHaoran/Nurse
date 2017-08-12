@@ -246,10 +246,10 @@
         <activity android:name=".activity.CreateGroupActivity">
         </activity>
 
-        <service android:name=".service.EaseMobService"/>
-
         <activity android:name=".activity.AddContactApplyActivity">
         </activity>
+
+        <service android:name=".service.EaseMobService"/>
     </application>
 
 </manifest>

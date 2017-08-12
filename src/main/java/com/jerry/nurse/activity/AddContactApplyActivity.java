@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -35,7 +34,6 @@ import java.util.List;
 
 import butterknife.Bind;
 
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class AddContactApplyActivity extends BaseActivity {
@@ -131,11 +129,6 @@ public class AddContactApplyActivity extends BaseActivity {
             }
             holder.setText(R.id.tv_nickname, apply.getNickname());
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            if (apply.getAvatar().startsWith("http")) {
-                Glide.with(AddContactApplyActivity.this).load(apply.getAvatar()).into(imageView);
-            } else {
-                Glide.with(AddContactApplyActivity.this).load(AVATAR_ADDRESS + apply.getAvatar()).into(imageView);
-            }
 
             // 点击同意好友申请
             holder.setOnClickListener(R.id.acb_agree, new View.OnClickListener() {

@@ -2,11 +2,13 @@ package com.jerry.nurse.model;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
+
 /**
  * Created by Jerry on 2017/8/11.
  */
 
-public class AddFriendApply extends DataSupport {
+public class AddFriendApply extends DataSupport implements Serializable {
 
     public static final int STATUS_SEND_ING = 0;
     public static final int STATUS_RECEIVE_ING = 1;

@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -25,11 +24,11 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.model.ChatMessage;
-import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.AudioRecordButton;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
@@ -45,12 +44,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
-
 
 public class ChatActivity extends BaseActivity implements EMMessageListener {
 
-    public static final String EXTRA_CONTACT = "extra_contact";
+    public static final String EXTRA_CONTACT_ID = "extra_contact_id";
 
     @Bind(R.id.rv_content)
     XRecyclerView mRecyclerView;
@@ -79,7 +76,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private ChatAdapter mAdapter;
 
     private LoginInfo mLoginInfo;
-    private Contact mContact;
+    private String mContactId;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -96,12 +93,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 L.i("消息内容：" + message);
 
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setFrom(mContact.getFriendId());
                 chatMessage.setTo(mLoginInfo.getRegisterId());
                 chatMessage.setSend(false);
                 chatMessage.setContent(message);
                 chatMessage.setTime(emMessage.getMsgTime());
-                chatMessage.setAvatar(mContact.getAvatar());
 
                 mChatMessages.add(chatMessage);
                 mAdapter.notifyDataSetChanged();
@@ -113,9 +108,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         }
     };
 
-    public static Intent getIntent(Context context, Contact contact) {
+    public static Intent getIntent(Context context, String contactId) {
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(EXTRA_CONTACT, contact);
+        intent.putExtra(EXTRA_CONTACT_ID, contactId);
         return intent;
     }
 
@@ -127,9 +122,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     public void init(Bundle savedInstanceState) {
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        mContact = (Contact) getIntent().getSerializableExtra(EXTRA_CONTACT);
-        L.i("联系人的Id是：" + mContact.getFriendId());
-        mNameTextView.setText(mContact.getNickName());
+        mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
+        L.i("联系人的Id是：" + mContactId);
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -169,9 +163,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 L.i(cm.toString());
             }
 
-            mChatMessages = DataSupport.where("(from=? and to=?) or (from=? and to=?)",
-                    mLoginInfo.getRegisterId(), mContact.getFriendId(),
-                    mContact.getFriendId(), mLoginInfo.getRegisterId()).find(ChatMessage.class);
+            mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                    mLoginInfo.getRegisterId(), mContactId,
+                    mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,31 +192,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         mMessageEditText.setText("");
 
-        // 本地发送消息
-        localSend(message);
-
         // 发送环信消息
         easeMobSend(message);
     }
 
-    /**
-     * 本地发送消息
-     *
-     * @param message
-     */
-    private void localSend(String message) {
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setSend(true);
-        chatMessage.setTime(new Date().getTime());
-        chatMessage.setAvatar(mLoginInfo.getAvatar());
-        chatMessage.setContent(message);
-        chatMessage.setFrom(mLoginInfo.getRegisterId());
-        chatMessage.setTo(mContact.getFriendId());
-        mChatMessages.add(chatMessage);
-        mAdapter.notifyDataSetChanged();
-        mRecyclerView.scrollToPosition(mAdapter.getItemCount());
-        chatMessage.save();
-    }
 
     /**
      * 发送环信消息
@@ -231,7 +204,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     private void easeMobSend(String message) {
         // 创建消息
-        EMMessage emMessage = EMMessage.createTxtSendMessage(message, mContact.getFriendId());
+        EMMessage emMessage = EMMessage.createTxtSendMessage(message, mContactId);
         emMessage.setChatType(EMMessage.ChatType.Chat);
         // 发送消息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
@@ -251,6 +224,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             }
         });
+        ChatMessage chatMessage = MessageManager.saveSendChatMessageLocalData(emMessage, message);
+
+        mChatMessages.add(chatMessage);
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+        chatMessage.save();
     }
 
     @OnClick(R.id.ib_left)
@@ -338,8 +317,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @OnClick(R.id.iv_create_group)
     void onCreateGroup(View view) {
-//        Intent intent = CreateGroupActivity.getIntent(this);
-        Intent intent = ChatGroupInfoActivity.getIntent(this);
+        Intent intent = CreateGroupActivity.getIntent(this);
+//        Intent intent = ChatGroupInfoActivity.getIntent(this);
         startActivity(intent);
     }
 
@@ -369,13 +348,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             holder.setText(R.id.tv_message, chatMessage.getContent());
             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            if (!TextUtils.isEmpty(chatMessage.getAvatar())) {
-                if (chatMessage.getAvatar().startsWith("http")) {
-                    Glide.with(ChatActivity.this).load(chatMessage.getAvatar()).into(imageView);
-                } else {
-                    Glide.with(ChatActivity.this).load(AVATAR_ADDRESS + chatMessage.getAvatar()).into(imageView);
-                }
-            }
+
         }
     }
 
@@ -396,13 +369,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             holder.setText(R.id.tv_message, chatMessage.getContent());
             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            if (!TextUtils.isEmpty(chatMessage.getAvatar())) {
-                if (chatMessage.getAvatar().startsWith("http")) {
-                    Glide.with(ChatActivity.this).load(chatMessage.getAvatar()).into(imageView);
-                } else {
-                    Glide.with(ChatActivity.this).load(AVATAR_ADDRESS + chatMessage.getAvatar()).into(imageView);
-                }
-            }
+
         }
     }
 

@@ -19,8 +19,8 @@ import com.jerry.nurse.fragment.ContactFragment;
 import com.jerry.nurse.fragment.MeFragment;
 import com.jerry.nurse.fragment.MessageFragment;
 import com.jerry.nurse.fragment.OfficeFragment;
+import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
-import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
@@ -30,16 +30,17 @@ import java.util.List;
 
 import butterknife.Bind;
 
+import static com.jerry.nurse.R.string.contact;
+
 public class MainActivity extends BaseActivity
         implements BottomNavigationBar.OnTabSelectedListener {
 
-    public static final String ACTION_CHAT_MESSAGE_RECEIVE = "chat_message_receive";
+    public static final String ACTION_CHAT_MESSAGE_RECEIVE = "action_chat_message_receive";
     public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
 
     public static final String EXTRA_CHAT_MESSAGE = "extra_chat_message";
 
     public static final String EXTRA_FRIEND_APPLY_CONTACT = "extra_friend_apply";
-    public static final String EXTRA_FRIEND_APPLY_REASON = "extra_chat_message";
 
     @Bind(R.id.bnb_main)
     BottomNavigationBar mNavigationBar;
@@ -83,7 +84,7 @@ public class MainActivity extends BaseActivity
                 .ic_action_office, R.string.business);
 
         BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
-                .ic_action_contact, R.string.contact);
+                .ic_action_contact, contact);
 
         BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
                 .string.mine);
@@ -198,20 +199,15 @@ public class MainActivity extends BaseActivity
             if (ACTION_CHAT_MESSAGE_RECEIVE.equals(intent.getAction())) {
                 L.i("接收到消息广播");
                 ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
-                Contact contact = new Contact();
-                contact.setAvatar(chatMessage.getAvatar());
-                contact.setFriendId(chatMessage.getFrom());
-                contact.setName(chatMessage.getName());
 
                 // 发出Notification
-                Intent newIntent = ChatActivity.getIntent(context, contact);
+                Intent newIntent = ChatActivity.getIntent(context, chatMessage.getFrom());
                 PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Notification notification = null;
-                notification = new Notification.Builder(MainActivity.this)
+                Notification notification = new Notification.Builder(MainActivity.this)
                         .setTicker("新消息")
                         .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                        .setContentTitle(chatMessage.getName())
+                        .setContentTitle("新消息提示")
                         .setContentText(chatMessage.getContent())
                         .setContentIntent(pi)
                         .setAutoCancel(true)
@@ -227,18 +223,17 @@ public class MainActivity extends BaseActivity
                     return;
                 }
                 L.i("接收到好友申请广播");
-                Contact contact = (Contact) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
-                String reason = intent.getStringExtra(EXTRA_FRIEND_APPLY_REASON);
+                AddFriendApply apply = (AddFriendApply) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
 
                 // 发出Notification
                 Intent newIntent = AddContactApplyActivity.getIntent(context);
-                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, 0);
+                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Notification notification = new Notification.Builder(MainActivity.this)
                         .setTicker("新消息")
                         .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                        .setContentTitle(contact.getFriendId())
-                        .setContentText(reason)
+                        .setContentTitle("好友申请")
+                        .setContentText(apply.getReason())
                         .setContentIntent(pi)
                         .setAutoCancel(true)
                         .build();

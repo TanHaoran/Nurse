@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfoResult;
@@ -20,7 +18,6 @@ import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
@@ -128,7 +125,6 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-
         mProgressDialogManager.setMessage("登录中...");
 
         // 第一步：登陆护士通账号
@@ -176,33 +172,6 @@ public class LoginActivity extends BaseActivity {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * 环信的登陆方法，是一个异步方法
-     *
-     * @param cellphone
-     * @param password
-     */
-    private void easeMobLogin(String cellphone, String password) {
-        EMClient.getInstance().login(cellphone, password, new EMCallBack() {
-            @Override
-            public void onSuccess() {
-                L.i("环信登陆成功");
-                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_SUCCESS);
-            }
-
-            @Override
-            public void onError(int code, String error) {
-                L.e("环信登陆失败，错误码：" + code + "，错误信息：" + error);
-                mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_FAILED);
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-        });
     }
 
     /**

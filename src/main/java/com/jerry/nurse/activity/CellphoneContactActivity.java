@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.CellphoneContactResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CellphoneContact;
@@ -21,6 +21,7 @@ import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.OnItemClickListener;
 import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
@@ -57,7 +58,7 @@ public class CellphoneContactActivity extends BaseActivity {
     private List<BaseIndexPinyinBean> mSourceDatas;
 
     //主体部分数据源（城联系人据）
-    private List<CellphoneContact> mBodyDatas;
+    private List<CellphoneContact> mBodyDatas = new ArrayList<>();
 
     private CellphoneContactAdapter mAdapter;
 
@@ -80,18 +81,16 @@ public class CellphoneContactActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
+        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+        CellphoneContact me = new CellphoneContact();
+        me.setRegisterId(registerId);
+        mBodyDatas.add(me);
         // 读取手机通讯录联系人
-        loadCellphoneContact();
-        //      updateView(false);
-    }
-
-    /**
-     * 读取手机通讯录联系人
-     */
-    private void loadCellphoneContact() {
-        mBodyDatas = CellphoneContactUtil.getPhoneNumberFromMobile(this);
+        List<CellphoneContact> cellphoneContacts = CellphoneContactUtil.getPhoneNumberFromMobile(this);
+        mBodyDatas.addAll(cellphoneContacts);
         postCellphoneContact();
     }
+
 
     /**
      *
@@ -107,11 +106,12 @@ public class CellphoneContactActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
-
+                        CellphoneContactResult result = new Gson().fromJson(response, CellphoneContactResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
+                            mBodyDatas = result.getBody();
+                            updateView(false);
                         } else {
-                            L.i(commonResult.getMsg());
+                            L.i(result.getMsg());
                         }
                     }
                 });
@@ -190,7 +190,9 @@ public class CellphoneContactActivity extends BaseActivity {
             holder.getView(R.id.ll_cellphone_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this,
+                            cellphoneContact.getRegisterId());
+                    startActivity(intent);
                 }
             });
         }

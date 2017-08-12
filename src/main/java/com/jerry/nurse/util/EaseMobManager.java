@@ -1,13 +1,11 @@
 package com.jerry.nurse.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import com.jerry.nurse.service.EaseMobService;
 
 /**
  * Created by Jerry on 2017/8/6.
@@ -61,7 +59,7 @@ public class EaseMobManager {
         EMClient.getInstance().login(registerId, PASSWORD, new EMCallBack() {
             @Override
             public void onSuccess() {
-                L.i("环信登陆成功");
+                L.i("环信登陆成功!!!");
                 mHandler.sendEmptyMessage(MESSAGE_EASE_MOB_LOGIN_SUCCESS);
             }
 
@@ -89,6 +87,7 @@ public class EaseMobManager {
                 onLogoutSuccess();
             }
 
+
             @Override
             public void onProgress(int progress, String status) {
 
@@ -106,8 +105,6 @@ public class EaseMobManager {
      * 登录成功
      */
     protected void onLoginSuccess() {
-        Intent intent = new Intent(mContext, EaseMobService.class);
-        mContext.startService(intent);
     }
 
     /**
@@ -121,9 +118,6 @@ public class EaseMobManager {
      * 注销成功
      */
     protected void onLogoutSuccess() {
-        Intent intent = new Intent(mContext, EaseMobService.class);
-        mContext.stopService(intent);
+        L.i("环信已注销");
     }
-
-
 }
