@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -15,6 +16,7 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
@@ -127,8 +129,15 @@ public class AddContactApplyActivity extends BaseActivity {
                     holder.setText(R.id.tv_reason, apply.getReason());
                     break;
             }
-            holder.setText(R.id.tv_nickname, apply.getNickname());
-            ImageView imageView = holder.getView(R.id.iv_avatar);
+            ContactInfo info = DataSupport.where("mRegisterId=?",
+                    apply.getContactId()).findFirst(ContactInfo.class);
+
+            if (info != null) {
+                holder.setText(R.id.tv_nickname, info.getNickName());
+                ImageView imageView = holder.getView(R.id.iv_avatar);
+                Glide.with(AddContactApplyActivity.this).load(info.getAvatar()).into(imageView);
+                holder.setText(R.id.tv_reason, apply.getReason());
+            }
 
             // 点击同意好友申请
             holder.setOnClickListener(R.id.acb_agree, new View.OnClickListener() {

@@ -1,6 +1,10 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
 import org.litepal.crud.DataSupport;
+
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 /**
  * Created by Jerry on 2017/8/11.
@@ -16,7 +20,14 @@ public class ContactInfo extends DataSupport {
     private String mRegisterId;
 
     public String getAvatar() {
-        return mAvatar;
+        if (!TextUtils.isEmpty(mAvatar)) {
+            if (mAvatar.startsWith("http")) {
+                return mAvatar;
+            } else {
+                return AVATAR_ADDRESS + mAvatar;
+            }
+        }
+        return "";
     }
 
     public void setAvatar(String avatar) {

@@ -82,6 +82,7 @@ public class LoginManager {
 
             // 保存登陆信息到数据库
             LitePalUtil.saveLoginInfo(mContext, loginInfo);
+            goToMainActivity();
         } else {
             T.showShort(mContext, "登录失败");
         }

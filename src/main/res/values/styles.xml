@@ -190,5 +190,13 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="SelectView_Style">
+        <item name="android:layout_width">@dimen/select_view_width</item>
+        <item name="android:layout_height">@dimen/select_view_width</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">@dimen/select_view_marginLeft</item>
+        <item name="android:layout_marginRight">@dimen/select_view_marginRight</item>
+    </style>
+
 
 </resources>

@@ -105,6 +105,8 @@
     <string name="message_ignore">消息免打扰</string>
     <string name="agree">同意</string>
     <string name="refuse">拒绝</string>
+    <string name="close">关闭</string>
+    <string name="open">打开</string>
 
     <!--我的-->
     <string name="mine">我的</string>

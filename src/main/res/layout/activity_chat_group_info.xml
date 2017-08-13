@@ -64,11 +64,14 @@
             android:id="@+id/iv_group_qr_code"
             style="@style/ArrowEnterStyle"/>
 
-        <TextView
-            android:id="@+id/tv_group_qr_code"
-            style="@style/personal_info_line_right_text_style"
-            android:layout_toLeftOf="@id/iv_group_qr_code"
-            tools:text="女"/>
+        <ImageView
+            android:id="@+id/iv_qr_code"
+            android:layout_width="@dimen/qr_code_width"
+            android:layout_height="@dimen/qr_code_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/qr_code_marginRight"
+            android:src="@drawable/erm"/>
     </RelativeLayout>
 
     <View
@@ -92,11 +95,15 @@
             android:id="@+id/iv_message_ignore"
             style="@style/ArrowEnterStyle"/>
 
-        <TextView
-            android:id="@+id/tv_message_ignore"
-            style="@style/personal_info_line_right_text_style"
-            android:layout_toLeftOf="@id/iv_message_ignore"
-            tools:text="女"/>
+        <com.jerry.nurse.view.ToggleButton
+            android:id="@+id/tb_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:close_text="@string/close"
+            app:open_text="@string/open"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/line_paddingLeft"/>
     </RelativeLayout>
 
     <View

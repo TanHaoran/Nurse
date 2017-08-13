@@ -36,7 +36,7 @@ public class SelectView extends android.support.v7.widget.AppCompatImageView {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                toggle();
             }
         });
     }
@@ -44,5 +44,22 @@ public class SelectView extends android.support.v7.widget.AppCompatImageView {
     @Override
     public boolean isSelected() {
         return mIsSelected;
+    }
+
+    public void toggle() {
+        if (!mIsSelected) {
+            setBackgroundResource(R.drawable.select_view_selected);
+        } else {
+            setBackgroundResource(R.drawable.select_view_normal);
+        }
+        mIsSelected = !mIsSelected;
+    }
+
+    public void setSelected(boolean select) {
+        if (select) {
+            setBackgroundResource(R.drawable.select_view_selected);
+        } else {
+            setBackgroundResource(R.drawable.select_view_normal);
+        }
     }
 }

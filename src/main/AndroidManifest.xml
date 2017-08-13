@@ -245,11 +245,15 @@
         </activity>
         <activity android:name=".activity.CreateGroupActivity">
         </activity>
-
         <activity android:name=".activity.AddContactApplyActivity">
         </activity>
 
         <service android:name=".service.EaseMobService"/>
+
+        <activity android:name=".activity.ChatGroupActivity">
+        </activity>
+        <activity android:name=".activity.GroupListActivity">
+        </activity>
     </application>
 
 </manifest>

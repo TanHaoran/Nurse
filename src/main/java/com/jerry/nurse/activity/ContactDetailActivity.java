@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -18,6 +19,7 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactDetailResult;
+import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
@@ -25,6 +27,8 @@ import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -122,6 +126,14 @@ public class ContactDetailActivity extends BaseActivity {
                         if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
                             if (contactDetailResult.getBody() != null) {
                                 mContact = contactDetailResult.getBody();
+                                ContactInfo info = new ContactInfo();
+                                info.setAvatar(mContact.getAvatar());
+                                info.setName(mContact.getName());
+                                info.setNickName(mContact.getNickName());
+                                info.setCellphone(mContact.getPhone());
+                                info.setRemark(mContact.getRemark());
+                                info.setRegisterId(mContact.getFriendId());
+                                info.save();
                                 setUserData(mContact);
                             }
                         } else {
@@ -151,7 +163,7 @@ public class ContactDetailActivity extends BaseActivity {
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 设置头像
-
+        Glide.with(this).load(contact.getAvatar()).into(mAvatarImageView);
         mNameTextView.setText(contact.getName());
         mNicknameTextView.setText(contact.getNickName());
         mRemarkTextView.setText(contact.getRemark());
@@ -206,6 +218,9 @@ public class ContactDetailActivity extends BaseActivity {
 
                         @Override
                         public void onFilterResponse(String response, int id) {
+                            ContactInfo info = DataSupport.where("mRegisterId=?",
+                                    mContact.getFriendId()).findFirst(ContactInfo.class);
+                            info.delete();
                             ContactDetailResult contactDetailResult = new Gson().fromJson(response, ContactDetailResult.class);
                             if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
                                 if (contactDetailResult.getBody() != null) {

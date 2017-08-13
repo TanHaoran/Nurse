@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.ChatActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        android:background="@color/primary">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/contact_action_button_width"
+            android:layout_height="@dimen/contact_action_button_width"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/contact_action_button__padding"
+            android:src="@drawable/arrow_back"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            tools:text="群聊"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_textSize"/>
+
+        <ImageView
+            android:id="@+id/iv_group_info"
+            android:layout_width="@dimen/contact_action_button_width"
+            android:layout_height="@dimen/contact_action_button_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/contact_action_button__padding"
+            android:src="@drawable/top_ql"/>
+
+
+    </RelativeLayout>
+
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/rv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:textColor="@color/black"/>
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/chat_line_height"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/chat_layout_paddingLeft"
+        android:paddingRight="@dimen/chat_layout_paddingLeft">
+
+        <ImageButton
+            android:id="@+id/ib_left"
+            android:layout_width="@dimen/chat_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_record"/>
+
+        <EditText
+            android:id="@+id/et_message"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/chat_edit_marginTop"
+            android:layout_weight="1"
+            android:background="@drawable/chat_edit_bg"
+            android:padding="@dimen/chat_edit_padding"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <com.jerry.nurse.view.AudioRecordButton
+            android:id="@+id/arb_record"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/chat_edit_marginTop"
+            android:layout_weight="1"
+            android:background="@drawable/chat_record_bg"
+            android:gravity="center"
+            android:text="@string/press_and_record"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/ib_add"
+            android:layout_width="@dimen/chat_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_add"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/acb_send"
+            android:layout_width="@dimen/chat_send_button_width"
+            android:layout_height="@dimen/chat_button_width"
+            android:background="@drawable/icon_send"
+            android:gravity="center"
+            android:text="@string/send"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

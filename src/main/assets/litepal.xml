@@ -13,5 +13,6 @@
         <mapping class="com.jerry.nurse.model.Message"></mapping>
         <mapping class="com.jerry.nurse.model.AddFriendApply"></mapping>
         <mapping class="com.jerry.nurse.model.ContactInfo"></mapping>
+        <mapping class="com.jerry.nurse.model.GroupInfo"></mapping>
     </list>
 </litepal>

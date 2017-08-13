@@ -212,6 +212,11 @@ public class ServiceConstant {
     public static final String GET_FRIEND_LIST = IP + "GetEMFriend";
 
     /**
+     * 获取群信息
+     */
+    public static final String GET_GROUP_LIST = IP + "GetXHGroupInfoList";
+
+    /**
      * 成为好友
      */
     public static final String ADD_AS_FRIEND = IP + "AddEMFriend";
@@ -225,6 +230,11 @@ public class ServiceConstant {
      * 获取手机联系人信息
      */
     public static final String GET_CELLPHONE_CONTACT = IP + "GetContactInfo";
+
+    /**
+     * 创建群组
+     */
+    public static final String CREATE_GROUP = IP + "CreateGroup";
 
 
 }

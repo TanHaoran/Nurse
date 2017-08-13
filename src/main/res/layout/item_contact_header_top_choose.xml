@@ -1,40 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_contact"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/contact_item_height"
-    android:paddingLeft="@dimen/line_paddingLeft"
-    android:background="@drawable/plugin_line_selector"
-    android:orientation="vertical"
-    app:ios="false"
-    app:leftSwipe="true"
-    app:swipeEnable="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/ll_group"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/contact_item_height"
+              android:background="@android:color/white"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/line_paddingLeft">
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/contact_item_divider_line_marginLef"/>
 
     <RelativeLayout
-        android:id="@+id/rl_contact"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@drawable/plugin_line_selector"
         android:paddingBottom="@dimen/contact_item_paddingBottom"
         android:paddingTop="@dimen/contact_item_paddingTop">
+
+
+        <com.jerry.nurse.view.SelectView
+            android:id="@+id/sv_choose"
+            style="@style/SelectView_Style"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/cv_avatar"
             android:layout_width="@dimen/contact_item_avatar_width"
             android:layout_height="@dimen/contact_item_avatar_width"
+            android:layout_toRightOf="@id/sv_choose"
             android:layout_centerVertical="true"
             app:cardCornerRadius="@dimen/image_round_radius"
             app:cardElevation="0dp">
+
             <ImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="@dimen/contact_item_avatar_width"
-                android:layout_height="@dimen/contact_item_avatar_width"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 android:src="@drawable/icon_avatar_default"/>
+
             </android.support.v7.widget.CardView>
+
 
         <TextView
             android:id="@+id/tv_nickname"
@@ -46,14 +55,13 @@
             android:layout_toRightOf="@id/cv_avatar"
             android:textColor="@color/normal_textColor"
             android:textEditSideNoPasteWindowLayout="@dimen/normal_textSize"
-            android:textSize="@dimen/contact_item_nickname_textSize"
+            android:textSize="@dimen/normal_textSize"
             tools:text="紫萱"/>
+
+        <ImageView
+            style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
 
-
-    <View
-        style="@style/DividerLineStyle"
-        android:layout_marginLeft="@dimen/contact_item_divider_line_marginLef"/>
 
 </LinearLayout>

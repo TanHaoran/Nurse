@@ -5,7 +5,7 @@
               android:id="@+id/ll_group"
               android:layout_width="match_parent"
               android:layout_height="@dimen/contact_item_height"
-              android:background="@android:color/white"
+              android:background="@drawable/plugin_line_selector"
               android:orientation="vertical"
               android:paddingLeft="@dimen/line_paddingLeft">
 
@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/plugin_line_selector"
         android:paddingBottom="@dimen/contact_item_paddingBottom"
         android:paddingTop="@dimen/contact_item_paddingTop">
 
@@ -25,8 +24,6 @@
             android:id="@+id/cv_avatar"
             android:layout_width="@dimen/contact_item_avatar_width"
             android:layout_height="@dimen/contact_item_avatar_width"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             app:cardCornerRadius="@dimen/image_round_radius"
             app:cardElevation="0dp">

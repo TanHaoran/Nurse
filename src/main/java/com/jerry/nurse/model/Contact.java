@@ -1,8 +1,12 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 
 import java.io.Serializable;
+
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 public class Contact extends BaseIndexPinyinBean implements Serializable {
         /**
@@ -29,9 +33,17 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
         private int Role;
         private String Sex;
         private String FriendId;
+        private boolean isChoose;
 
         public String getAvatar() {
-            return Avatar;
+            if (!TextUtils.isEmpty(Avatar)) {
+                if (Avatar.startsWith("http")) {
+                    return Avatar;
+                } else {
+                    return AVATAR_ADDRESS + Avatar;
+                }
+            }
+            return "";
         }
 
         public void setAvatar(String Avatar) {
@@ -129,6 +141,14 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
     @Override
     public String getTarget() {
         return NickName;
+    }
+
+    public boolean isChoose() {
+        return isChoose;
+    }
+
+    public void setChoose(boolean choose) {
+        isChoose = choose;
     }
 
     @Override

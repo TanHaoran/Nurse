@@ -6,9 +6,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AddContactApplyActivity;
+import com.jerry.nurse.activity.ChatActivity;
+import com.jerry.nurse.activity.ChatGroupActivity;
+import com.jerry.nurse.model.ChatMessage;
+import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.DensityUtil;
@@ -113,19 +120,68 @@ public class MessageFragment extends BaseFragment {
         @Override
         protected void convert(ViewHolder holder, final Message message, final int position) {
             final int type = message.getType();
-            if (type == Message.TYPE_ADD_FRIEND_APPLY) {
-                holder.setImageResource(R.id.iv_image, message.getImageResource());
+            switch (type) {
+                case Message.TYPE_ADD_FRIEND_APPLY:
+                    holder.setImageResource(R.id.iv_avatar, message.getImageResource());
+                    holder.setText(R.id.tv_title, message.getTitle());
+                    holder.setText(R.id.tv_content, message.getContent());
+                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+                    break;
+                case Message.TYPE_CHAT:
+                    ContactInfo info = DataSupport.where("mRegisterId=?",
+                            message.getContactId()).findFirst(ContactInfo.class);
+                    ChatMessage chatMessage = null;
+                    try {
+                        chatMessage = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                                mRegisterId, message.getContactId(),
+                                message.getContactId(), mRegisterId).findLast(ChatMessage.class);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    ImageView imageView = holder.getView(R.id.iv_avatar);
+                    Glide.with(getActivity()).load(info.getAvatar()).into(imageView);
+                    holder.setText(R.id.tv_title, info.getNickName());
+                    if (chatMessage != null) {
+                        holder.setText(R.id.tv_content, chatMessage.getContent());
+                    }
+                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+                    break;
+                case Message.TYPE_CHAT_GROUP:
+                    holder.setImageResource(R.id.iv_avatar, message.getImageResource());
+                    GroupInfo groupInfo = DataSupport.where("HXGroupId=?",
+                            message.getContactId()).findFirst(GroupInfo.class);
+                    ChatMessage groupMessage = null;
+                    try {
+                        groupMessage = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                                mRegisterId, message.getContactId(),
+                                message.getContactId(), mRegisterId).findLast(ChatMessage.class);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    holder.setText(R.id.tv_title, groupInfo.getHXNickName());
+                    if (groupMessage != null) {
+                        holder.setText(R.id.tv_content, groupMessage.getContent());
+                    }
+                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+
             }
-            holder.setText(R.id.tv_title, message.getTitle());
-            holder.setText(R.id.tv_content, message.getContent());
-            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
 
             holder.getView(R.id.rl_message).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (type == Message.TYPE_ADD_FRIEND_APPLY) {
-                        Intent intent = AddContactApplyActivity.getIntent(getActivity());
-                        startActivity(intent);
+                    switch (type) {
+                        case Message.TYPE_ADD_FRIEND_APPLY:
+                            Intent applyIntent = AddContactApplyActivity.getIntent(getActivity());
+                            startActivity(applyIntent);
+                            break;
+                        case Message.TYPE_CHAT:
+                            Intent chatIntent = ChatActivity.getIntent(getActivity(), message.getContactId());
+                            startActivity(chatIntent);
+                            break;
+                        case Message.TYPE_CHAT_GROUP:
+                            Intent chatGroupIntent = ChatGroupActivity.getIntent(getActivity(), message.getContactId());
+                            startActivity(chatGroupIntent);
+                            break;
                     }
                 }
             });

@@ -16,6 +16,7 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AddContactActivity;
 import com.jerry.nurse.activity.ContactDetailActivity;
 import com.jerry.nurse.activity.ContactListActivity;
+import com.jerry.nurse.activity.GroupListActivity;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
@@ -216,6 +217,9 @@ public class ContactFragment extends BaseFragment {
                                 if (contactTopHeaderBean.getTxt().equals("当前科室")) {
                                     Intent intent = ContactListActivity.getIntent(getActivity());
                                     startActivity(intent);
+                                } else if (contactTopHeaderBean.getTxt().equals("我的群")) {
+                                    Intent intent = GroupListActivity.getIntent(getActivity());
+                                    startActivity(intent);
                                 }
                                 Toast.makeText(getActivity(), contactTopHeaderBean.getTxt(),
                                         Toast.LENGTH_SHORT).show();
@@ -236,7 +240,10 @@ public class ContactFragment extends BaseFragment {
                     new ContactTopHeaderBean(mLoginInfo.getHospitalName()));
         }
 
-        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
+        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header_top,
+                new ContactTopHeaderBean("我的群"));
+
+        mHeaderAdapter.setHeaderView(3, R.layout.item_contact_header, mHeaderDatas.get(0));
 
         mRecyclerView.setAdapter(mHeaderAdapter);
 

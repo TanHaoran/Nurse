@@ -200,12 +200,13 @@
                     style="@style/PersonalInfoLineLeftTextStyle"
                     android:layout_marginLeft="@dimen/signup_text_marginLeft"
                     android:text="@string/sex"/>
-                0
 
                 <com.jerry.nurse.view.ToggleButton
                     android:id="@+id/tb_sex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:close_text="@string/male"
+                    app:open_text="@string/female"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/line_paddingLeft"/>

@@ -2,7 +2,6 @@ package com.jerry.nurse.activity;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,16 +13,28 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.fragment.ContactFragment;
 import com.jerry.nurse.fragment.MeFragment;
 import com.jerry.nurse.fragment.MessageFragment;
 import com.jerry.nurse.fragment.OfficeFragment;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
+import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.FriendListResult;
+import com.jerry.nurse.model.GroupInfo;
+import com.jerry.nurse.model.GroupListResult;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +42,7 @@ import java.util.List;
 import butterknife.Bind;
 
 import static com.jerry.nurse.R.string.contact;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class MainActivity extends BaseActivity
         implements BottomNavigationBar.OnTabSelectedListener {
@@ -50,7 +62,7 @@ public class MainActivity extends BaseActivity
     private OfficeFragment mOfficeFragment;
     private ContactFragment mContactFragment;
     private MeFragment mMeFragment;
-    private ProgressDialog mProgressDialogManager;
+    private ProgressDialogManager mProgressDialogManager;
 
     private EaseMobManager mEaseMobManager;
     private MessageReceiver mMessageReceiver;
@@ -74,7 +86,7 @@ public class MainActivity extends BaseActivity
         mEaseMobManager = new EaseMobManager(this);
         mEaseMobManager.login(mRegisterId);
 
-        mProgressDialogManager = new ProgressDialog(this);
+        mProgressDialogManager = new ProgressDialogManager(this);
         // 设置导航栏按钮数据
         BottomNavigationItem messageItem = new BottomNavigationItem(
                 R.drawable.ic_action_message,
@@ -111,7 +123,11 @@ public class MainActivity extends BaseActivity
         intentFilter.addAction(ACTION_CHAT_MESSAGE_RECEIVE);
         intentFilter.addAction(ACTION_FRIEND_APPLY_RECEIVE);
         registerReceiver(mMessageReceiver, intentFilter);
+
+        getFriendList(mRegisterId);
+        getGroupList(mRegisterId);
     }
+
 
     /**
      * 初始化Fragment
@@ -198,10 +214,19 @@ public class MainActivity extends BaseActivity
             // 收到消息
             if (ACTION_CHAT_MESSAGE_RECEIVE.equals(intent.getAction())) {
                 L.i("接收到消息广播");
+                if (mMessageFragment.isVisible()) {
+                    mMessageFragment.refresh();
+                    return;
+                }
                 ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
 
                 // 发出Notification
-                Intent newIntent = ChatActivity.getIntent(context, chatMessage.getFrom());
+                Intent newIntent;
+                if (chatMessage.isGroup()) {
+                    newIntent = ChatGroupActivity.getIntent(context, chatMessage.getFrom());
+                } else {
+                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom());
+                }
                 PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Notification notification = new Notification.Builder(MainActivity.this)
@@ -218,11 +243,11 @@ public class MainActivity extends BaseActivity
             }
             // 收到好友申请
             else if (ACTION_FRIEND_APPLY_RECEIVE.equals(intent.getAction())) {
+                L.i("接收好友申请广播");
                 if (mMessageFragment.isVisible()) {
                     mMessageFragment.refresh();
                     return;
                 }
-                L.i("接收到好友申请广播");
                 AddFriendApply apply = (AddFriendApply) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
 
                 // 发出Notification
@@ -244,5 +269,143 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    /**
+     * 获取用户好友资料
+     */
+    private void getFriendList(final String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_FRIEND_LIST)
+                .addParams("MyId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        FriendListResult friendListResult = new Gson().fromJson(response, FriendListResult.class);
+                        if (friendListResult.getCode() == RESPONSE_SUCCESS) {
+                            List<Contact> contacts = friendListResult.getBody();
+                            L.i("初始化读取到了" + contacts.size() + "个好友");
+                            if (contacts == null) {
+                                contacts = new ArrayList();
+                            }
+                            updateContactInfoData(contacts);
+
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 更新本地联系人数据
+     *
+     * @param bodyDatas
+     */
+    private void updateContactInfoData(List<Contact> bodyDatas) {
+
+        List<ContactInfo> infos = null;
+        try {
+            infos = DataSupport.findAll(ContactInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (infos == null) {
+            infos = new ArrayList<>();
+        }
+        for (Contact contact : bodyDatas) {
+            int i = 0;
+            for (i = 0; i < infos.size(); i++) {
+                // 如果两个信息相同就更新
+                ContactInfo info = infos.get(i);
+                if (contact.getFriendId().equals(info.getRegisterId())) {
+                    info.setAvatar(contact.getAvatar());
+                    info.setName(contact.getName());
+                    info.setNickName(contact.getNickName());
+                    info.setCellphone(contact.getPhone());
+                    info.setRemark(contact.getRemark());
+                    info.setRegisterId(contact.getFriendId());
+                    info.save();
+                    break;
+                }
+            }
+            // 如果本地数据库没有就创建保存
+            if (i == infos.size()) {
+                ContactInfo info = new ContactInfo();
+                info.setAvatar(contact.getAvatar());
+                info.setName(contact.getName());
+                info.setNickName(contact.getNickName());
+                info.setCellphone(contact.getPhone());
+                info.setRemark(contact.getRemark());
+                info.setRegisterId(contact.getFriendId());
+                info.save();
+            }
+        }
+    }
+
+
+    /**
+     * 获取群信息
+     *
+     * @param registerId
+     */
+    private void getGroupList(String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_GROUP_LIST)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        GroupListResult result = new Gson().fromJson(response, GroupListResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
+                            List<GroupInfo> groupInfo = result.getBody();
+                            L.i("初始化读取到了" + groupInfo.size() + "个群");
+                            if (groupInfo == null) {
+                                groupInfo = new ArrayList();
+                            }
+                            updateGroupInfoData(groupInfo);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 更新本地群信息数据
+     *
+     * @param bodyDatas
+     */
+    public static void updateGroupInfoData(List<GroupInfo> bodyDatas) {
+
+        List<GroupInfo> infos = null;
+        try {
+            infos = DataSupport.findAll(GroupInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (infos == null) {
+            infos = new ArrayList<>();
+        }
+        for (GroupInfo group : bodyDatas) {
+            int i;
+            for (i = 0; i < infos.size(); i++) {
+                // 如果两个信息相同就更新
+                GroupInfo info = infos.get(i);
+                if (group.getHXGroupId().equals(info.getHXGroupId())) {
+                    info.setHXGroupId(info.getHXGroupId());
+                    info.setHXNickName(info.getHXNickName());
+                    info.setGroupList(info.getGroupList());
+                    info.save();
+                    break;
+                }
+            }
+            // 如果本地数据库没有就创建保存
+            if (i == infos.size()) {
+                GroupInfo info = new GroupInfo();
+                info.setHXGroupId(group.getHXGroupId());
+                info.setHXNickName(group.getHXNickName());
+                info.setGroupList(group.getGroupList());
+                info.save();
+            }
+        }
+    }
 }

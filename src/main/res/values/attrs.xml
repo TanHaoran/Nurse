@@ -40,12 +40,17 @@
     <declare-styleable name="ViewfinderView">
         <attr name="corner_color" format="color"/>
         <attr name="laser_color" format="color"/>
-        <attr name="frame_color" format="color" />
-        <attr name="mask_color" format="color" />
+        <attr name="frame_color" format="color"/>
+        <attr name="mask_color" format="color"/>
         <attr name="result_point_color" format="color"/>
-        <attr name="result_color" format="color" />
+        <attr name="result_color" format="color"/>
         <attr name="label_text_color" format="color"/>
         <attr name="label_text" format="string"/>
         <attr name="label_text_size" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="ToggleButton">
+        <attr name="open_text" format="string"/>
+        <attr name="close_text" format="string"/>
     </declare-styleable>
 </resources>

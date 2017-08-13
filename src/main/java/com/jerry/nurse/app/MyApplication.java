@@ -6,14 +6,20 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.hyphenate.EMContactListener;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
+import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.model.ContactDetailResult;
+import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
@@ -23,6 +29,7 @@ import com.zhy.http.okhttp.log.LoggerInterceptor;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
+import org.litepal.crud.DataSupport;
 
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +41,7 @@ import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.ACTION_FRIEND_APPLY_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.EXTRA_CHAT_MESSAGE;
 import static com.jerry.nurse.activity.MainActivity.EXTRA_FRIEND_APPLY_CONTACT;
+import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 /**
@@ -128,22 +136,30 @@ public class MyApplication extends LitePalApplication {
         EMMessageListener emMessageListener = new EMMessageListener() {
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
+                L.i("收到消息");
                 String name = ActivityCollector.getTopActivity().getLocalClassName();
                 if (name.equals("activity.ChatActivity")) {
                     return;
                 }
                 for (final EMMessage emMessage : messages) {
                     L.i(emMessage.toString());
+                    L.i("收到消息的类型是：" + emMessage.getType());
+                    L.i("收到消息的Id是：" + emMessage.getFrom());
                     EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
                     String msg = messageBody.getMessage();
                     L.i("消息内容：" + msg);
 
-                    // 将消息数据保存在本地数据库
-                    ChatMessage chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
+                    ChatMessage chatMessage = null;
+                    if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                        chatMessage =MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
+                    } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                        chatMessage = MessageManager.saveReceiveChatGroupMessageLocalData(emMessage, msg);
+                    }
 
                     Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
                     intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
                     getContext().sendBroadcast(intent);
+
                 }
             }
 
@@ -195,9 +211,17 @@ public class MyApplication extends LitePalApplication {
                 // 保存好友申请到数据库
                 AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(username, reason);
 
-                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
-                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
-                getContext().sendBroadcast(intent);
+                ContactInfo mInfo = DataSupport.where("mRegisterId=?",
+                        username).findFirst(ContactInfo.class);
+                // 如果从数据库中能找到这个联系人就直接发送广播
+                if (mInfo == null) {
+                    getContactDetail(EMClient.getInstance().getCurrentUser(), username, apply);
+                } else {
+                    Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                    intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                    getContext().sendBroadcast(intent);
+                }
+
             }
 
             //好友请求被同意
@@ -248,6 +272,44 @@ public class MyApplication extends LitePalApplication {
             }
         }
         return processName;
+    }
+
+    /**
+     * 查询用户资料
+     *
+     * @param registerId
+     * @param userRegisterId
+     * @param apply
+     */
+    private void getContactDetail(String registerId, String userRegisterId, final AddFriendApply apply) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_DETAIL_INFO)
+                .addParams("MyId", registerId)
+                .addParams("FriendId", userRegisterId)
+                .build()
+                .execute(new FilterStringCallback() {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        ContactDetailResult contactDetailResult = new Gson().fromJson(response, ContactDetailResult.class);
+                        if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
+                            if (contactDetailResult.getBody() != null) {
+                                Contact contact = contactDetailResult.getBody();
+                                ContactInfo info = new ContactInfo();
+                                info.setAvatar(contact.getAvatar());
+                                info.setName(contact.getName());
+                                info.setNickName(contact.getNickName());
+                                info.setCellphone(contact.getPhone());
+                                info.setRemark(contact.getRemark());
+                                info.setRegisterId(contact.getFriendId());
+                                info.save();
+                                // 联系人信息存入数据库并发送广播
+                                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                                getContext().sendBroadcast(intent);
+                            }
+                        }
+                    }
+                });
     }
 
     /**

@@ -9,6 +9,7 @@ public class ChatMessage extends DataSupport implements Serializable {
     private String mFrom;
     private String mTo;
     private boolean mIsSend;
+    private boolean mIsGroup;
     /**
      * 如果是文字消息，这个属性才有值
      */
@@ -92,5 +93,13 @@ public class ChatMessage extends DataSupport implements Serializable {
 
     public void setContent(String content) {
         mContent = content;
+    }
+
+    public boolean isGroup() {
+        return mIsGroup;
+    }
+
+    public void setGroup(boolean group) {
+        mIsGroup = group;
     }
 }

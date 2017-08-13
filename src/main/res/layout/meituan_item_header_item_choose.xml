@@ -21,10 +21,15 @@
         android:paddingBottom="@dimen/contact_item_paddingBottom"
         android:paddingTop="@dimen/contact_item_paddingTop">
 
+        <com.jerry.nurse.view.SelectView
+            android:id="@+id/sv_choose"
+            style="@style/SelectView_Style"/>
+
         <android.support.v7.widget.CardView
             android:id="@+id/cv_avatar"
             android:layout_width="@dimen/contact_item_avatar_width"
             android:layout_height="@dimen/contact_item_avatar_width"
+            android:layout_toRightOf="@id/sv_choose"
             android:layout_centerVertical="true"
             app:cardCornerRadius="@dimen/image_round_radius"
             app:cardElevation="0dp">

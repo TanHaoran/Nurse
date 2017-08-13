@@ -55,6 +55,7 @@ public class MessageManager {
         chatMessage.setFrom(emMessage.getFrom());
         chatMessage.setTo(emMessage.getTo());
         chatMessage.setSend(false);
+        chatMessage.setGroup(false);
         chatMessage.setContent(msg);
         chatMessage.setTime(emMessage.getMsgTime());
         chatMessage.save();
@@ -91,6 +92,7 @@ public class MessageManager {
         chatMessage.setFrom(emMessage.getFrom());
         chatMessage.setTo(emMessage.getTo());
         chatMessage.setSend(true);
+        chatMessage.setGroup(false);
         chatMessage.setContent(msg);
         chatMessage.setTime(emMessage.getMsgTime());
         chatMessage.save();
@@ -119,7 +121,7 @@ public class MessageManager {
             message = new Message();
         }
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-        message.setImageResource(R.drawable.icon_pb);
+        message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
@@ -166,7 +168,7 @@ public class MessageManager {
             message = new Message();
         }
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-        message.setImageResource(R.drawable.icon_pb);
+        message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
@@ -242,5 +244,112 @@ public class MessageManager {
         apply.setTime(new Date().getTime());
         apply.setReason(reason);
         apply.save();
+    }
+
+    /**
+     * 创建群：
+     * 保存本地群数据
+     *
+     * @param groupId
+     * @param name
+     */
+    public static void saveCreateGroupLocalData(String groupId, String name) {
+        // 构建首页消息
+        Message message = null;
+        try {
+            message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                    EMClient.getInstance().getCurrentUser(), groupId, "2").findFirst(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (message == null) {
+            message = new Message();
+        }
+
+        message.setType(Message.TYPE_CHAT_GROUP);
+        message.setImageResource(R.drawable.icon_nurse_class);
+        message.setTitle(name);
+        message.setTime(new Date().getTime());
+        message.setRegisterId(EMClient.getInstance().getCurrentUser());
+        message.setContactId(groupId);
+        message.save();
+    }
+
+    /**
+     * 收到消息：群
+     * 将消息数据保存在本地数据库
+     *
+     * @param emMessage
+     * @param msg
+     * @return
+     */
+    @NonNull
+    public static ChatMessage saveReceiveChatGroupMessageLocalData(EMMessage emMessage, String msg) {
+        // 保存首页消息
+        Message message = null;
+        try {
+            message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                    emMessage.getTo(), emMessage.getFrom(), "2").findFirst(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (message == null) {
+            message = new Message();
+        }
+        message.setType(Message.TYPE_CHAT_GROUP);
+        message.setTime(emMessage.getMsgTime());
+        message.setRegisterId(emMessage.getTo());
+        message.setContactId(emMessage.getFrom());
+        message.save();
+
+        // 保存聊天消息
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setFrom(emMessage.getFrom());
+        chatMessage.setTo(emMessage.getTo());
+        chatMessage.setSend(false);
+        chatMessage.setGroup(true);
+        chatMessage.setContent(msg);
+        chatMessage.setTime(emMessage.getMsgTime());
+        chatMessage.save();
+        L.i("读取到一群条消息，并存入数据库");
+        return chatMessage;
+    }
+
+    /**
+     * 发送消息：群
+     * 将消息数据保存在本地数据库
+     *
+     * @param msg
+     */
+    public static ChatMessage saveSendChatGroupMessageLocalData(EMMessage emMessage, String msg) {
+        // 保存首页消息
+        Message message = null;
+        try {
+            message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                    emMessage.getFrom(), emMessage.getTo(), "2").findFirst(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (message == null) {
+            message = new Message();
+        }
+        message.setType(Message.TYPE_CHAT_GROUP);
+        message.setTime(emMessage.getMsgTime());
+        message.setRegisterId(emMessage.getFrom());
+        message.setContactId(emMessage.getTo());
+        message.save();
+
+        // 保存聊天消息
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setFrom(emMessage.getFrom());
+        chatMessage.setTo(emMessage.getTo());
+        chatMessage.setSend(true);
+        chatMessage.setGroup(true);
+        chatMessage.setContent(msg);
+        chatMessage.setTime(emMessage.getMsgTime());
+        chatMessage.save();
+        L.i("发送出一条消息，并存入数据库");
+
+        return chatMessage;
     }
 }

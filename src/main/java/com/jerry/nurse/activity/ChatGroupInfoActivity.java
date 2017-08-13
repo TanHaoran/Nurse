@@ -18,7 +18,6 @@ import butterknife.Bind;
 
 public class ChatGroupInfoActivity extends BaseActivity {
 
-
     @Bind(R.id.rv_group)
     RecyclerView mRecyclerView;
 

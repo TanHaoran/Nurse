@@ -25,7 +25,7 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.model.ChatMessage;
-import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
@@ -47,7 +47,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 
-public class ChatActivity extends BaseActivity implements EMMessageListener {
+public class ChatGroupActivity extends BaseActivity implements EMMessageListener {
 
     public static final String EXTRA_CONTACT_ID = "extra_contact_id";
 
@@ -80,8 +80,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private LoginInfo mLoginInfo;
     private String mContactId;
 
-    // 从数据库中读取的联系人资料
-    private ContactInfo mInfo;
+    // 从数据库中读取的群资料
+    private GroupInfo mInfo;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -114,26 +114,26 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     };
 
     public static Intent getIntent(Context context, String contactId) {
-        Intent intent = new Intent(context, ChatActivity.class);
+        Intent intent = new Intent(context, ChatGroupActivity.class);
         intent.putExtra(EXTRA_CONTACT_ID, contactId);
         return intent;
     }
 
     @Override
     public int getContentViewResId() {
-        return R.layout.activity_chat;
+        return R.layout.activity_chat_group;
     }
 
     @Override
     public void init(Bundle savedInstanceState) {
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
-        L.i("联系人的Id是：" + mContactId);
+        L.i("群Id是：" + mContactId);
 
-        mInfo = DataSupport.where("mRegisterId=?",
-                mContactId).findFirst(ContactInfo.class);
+        mInfo = DataSupport.where("HXGroupId=?",
+                mContactId).findFirst(GroupInfo.class);
 
-        mNameTextView.setText(mInfo.getNickName());
+        mNameTextView.setText(mInfo.getHXNickName());
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -216,7 +216,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private void easeMobSend(String message) {
         // 创建消息
         EMMessage emMessage = EMMessage.createTxtSendMessage(message, mContactId);
-        emMessage.setChatType(EMMessage.ChatType.Chat);
+        emMessage.setChatType(EMMessage.ChatType.GroupChat);
         // 发送消息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
         emMessage.setMessageStatusCallback(new EMCallBack() {
@@ -235,7 +235,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             }
         });
-        ChatMessage chatMessage = MessageManager.saveSendChatMessageLocalData(emMessage, message);
+        ChatMessage chatMessage = MessageManager.saveSendChatGroupMessageLocalData(emMessage, message);
 
         mChatMessages.add(chatMessage);
         mAdapter.notifyDataSetChanged();
@@ -326,9 +326,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         finish();
     }
 
-    @OnClick(R.id.iv_create_group)
-    void onCreateGroup(View view) {
-        Intent intent = CreateGroupActivity.getIntent(this);
+    @OnClick(R.id.iv_group_info)
+    void onGroupInfo(View view) {
+        Intent intent = ChatGroupInfoActivity.getIntent(this);
         startActivity(intent);
     }
 
@@ -358,7 +358,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             holder.setText(R.id.tv_message, chatMessage.getContent());
             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar()).into(imageView);
+            Glide.with(ChatGroupActivity.this).load(mLoginInfo.getAvatar()).into(imageView);
         }
     }
 
@@ -379,7 +379,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             holder.setText(R.id.tv_message, chatMessage.getContent());
             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            Glide.with(ChatActivity.this).load(mInfo.getAvatar()).into(imageView);
+            //   Glide.with(ChatGroupActivity.this).load(mInfo.getAvatar()).into(imageView);
 
         }
     }

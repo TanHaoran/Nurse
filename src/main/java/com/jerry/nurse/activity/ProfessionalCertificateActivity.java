@@ -382,7 +382,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
         mProfessional.setManageId(mManagementNumberEditText.getText().toString());
         mProfessional.setName(mNameEditText.getText().toString());
         mProfessional.setDateBirth(DateUtil.parseStringToMysqlDate(mBirthdayTextView.getText().toString()));
-        if (mSexButton.getSex() == 0) {
+        if (mSexButton.getOpen() == 0) {
             mProfessional.setSex("男");
         } else {
             mProfessional.setSex("女");

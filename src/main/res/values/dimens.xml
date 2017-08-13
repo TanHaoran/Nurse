@@ -106,6 +106,9 @@
     <dimen name="contact_group_line_height">44dp</dimen>
     <dimen name="add_friend_button_height">44dp</dimen>
     <dimen name="delete_button_width">60dp</dimen>
+    <dimen name="select_view_marginLeft">10dp</dimen>
+    <dimen name="select_view_marginRight">20dp</dimen>
+    <dimen name="select_view_width">20dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>
