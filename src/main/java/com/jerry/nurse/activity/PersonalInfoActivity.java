@@ -154,11 +154,8 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     private void initData() {
         if (!TextUtils.isEmpty(mLoginInfo.getAvatar())) {
-            if (mLoginInfo.getAvatar().startsWith("http")) {
-                Glide.with(this).load(mLoginInfo.getAvatar()).into(mAvatarView);
-            } else {
-                Glide.with(this).load(AVATAR_ADDRESS + mLoginInfo.getAvatar()).into(mAvatarView);
-            }
+            Glide.with(this).load(mLoginInfo.getAvatar()).placeholder(R.drawable.icon_avatar_default)
+                    .into(mAvatarView);
         }
         mNameTextView.setText(mLoginInfo.getName());
         mNicknameTextView.setText(mLoginInfo.getNickName());

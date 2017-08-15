@@ -20,6 +20,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
+import com.jerry.nurse.util.GetContactInfoUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
@@ -104,20 +105,17 @@ public class AddContactApplyActivity extends BaseActivity {
                     holder.setVisible(R.id.acb_agree, false);
                     holder.setVisible(R.id.acb_refuse, false);
                     holder.setVisible(R.id.tv_result, true);
-                    holder.setVisible(R.id.tv_reason, false);
                     holder.setText(R.id.tv_result, "已发出申请");
                     break;
                 case AddFriendApply.STATUS_REFUSE:
                     holder.setVisible(R.id.acb_agree, false);
                     holder.setVisible(R.id.acb_refuse, false);
-                    holder.setVisible(R.id.tv_reason, false);
                     holder.setVisible(R.id.tv_result, true);
                     holder.setText(R.id.tv_result, "已拒绝");
                     break;
                 case AddFriendApply.STATUS_AGREE:
                     holder.setVisible(R.id.acb_agree, false);
                     holder.setVisible(R.id.acb_refuse, false);
-                    holder.setVisible(R.id.tv_reason, false);
                     holder.setVisible(R.id.tv_result, true);
                     holder.setText(R.id.tv_result, "已同意");
                     break;
@@ -125,18 +123,16 @@ public class AddContactApplyActivity extends BaseActivity {
                     holder.setVisible(R.id.acb_agree, true);
                     holder.setVisible(R.id.acb_refuse, true);
                     holder.setVisible(R.id.tv_result, false);
-                    holder.setVisible(R.id.tv_reason, true);
-                    holder.setText(R.id.tv_reason, apply.getReason());
                     break;
             }
             ContactInfo info = DataSupport.where("mRegisterId=?",
                     apply.getContactId()).findFirst(ContactInfo.class);
 
             if (info != null) {
-                holder.setText(R.id.tv_nickname, info.getNickName());
+                holder.setText(R.id.tv_title, apply.getNickname());
+                holder.setText(R.id.tv_content, apply.getReason());
                 ImageView imageView = holder.getView(R.id.iv_avatar);
-                Glide.with(AddContactApplyActivity.this).load(info.getAvatar()).into(imageView);
-                holder.setText(R.id.tv_reason, apply.getReason());
+                Glide.with(AddContactApplyActivity.this).load(apply.getAvatar()).into(imageView);
             }
 
             // 点击同意好友申请
@@ -149,8 +145,24 @@ public class AddContactApplyActivity extends BaseActivity {
                         holder.setVisible(R.id.acb_refuse, false);
                         holder.setVisible(R.id.tv_result, true);
                         holder.setText(R.id.tv_result, "已同意");
-                        updateLocalData(apply, true);
-                        addAsFriend(mRegisterId, apply.getContactId());
+                        ContactInfo ci = DataSupport.where("mRegisterId=?", apply.getContactId()).findFirst(ContactInfo.class);
+                        if (ci == null) {
+                            GetContactInfoUtil getContactInfoUtil = new GetContactInfoUtil();
+                            getContactInfoUtil.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
+                                @Override
+                                public void onLoadSuccess(ContactInfo ci) {
+                                    updateLocalData(apply, true);
+                                    addAsFriend(mRegisterId, apply.getContactId());
+                                }
+                            });
+                            getContactInfoUtil.getContactDetail(EMClient.getInstance().getCurrentUser(),
+                                    apply.getContactId());
+                        } else {
+                            ci.setFriend(true);
+                            ci.save();
+                            updateLocalData(apply, true);
+                            addAsFriend(mRegisterId, apply.getContactId());
+                        }
                     } catch (HyphenateException e) {
                         L.i("同意好友申请失败");
                         e.printStackTrace();

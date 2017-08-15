@@ -126,15 +126,10 @@ public class ContactDetailActivity extends BaseActivity {
                         if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
                             if (contactDetailResult.getBody() != null) {
                                 mContact = contactDetailResult.getBody();
-                                ContactInfo info = new ContactInfo();
-                                info.setAvatar(mContact.getAvatar());
-                                info.setName(mContact.getName());
-                                info.setNickName(mContact.getNickName());
-                                info.setCellphone(mContact.getPhone());
-                                info.setRemark(mContact.getRemark());
-                                info.setRegisterId(mContact.getFriendId());
-                                info.save();
-                                setUserData(mContact);
+                                if (mContact != null) {
+                                    setUserData(mContact);
+                                    MainActivity.updateContactInfoData(mContact);
+                                }
                             }
                         } else {
                             T.showShort(ContactDetailActivity.this, contactDetailResult.getMsg());
@@ -152,14 +147,22 @@ public class ContactDetailActivity extends BaseActivity {
         L.i("联系人信息是：" + contact.toString());
         // 如果不是好友
         if (!contact.isIsFriend()) {
-            mOptionLayout.setVisibility(View.GONE);
             mHospitalLayout.setVisibility(View.GONE);
             mOfficeLayout.setVisibility(View.GONE);
             mNameTextView.setVisibility(View.INVISIBLE);
             String cellphone = contact.getPhone().substring(0, 2) + "*******" + contact.getPhone().substring(9);
             mCellphoneTextView.setText(cellphone);
+            mAddFriendButton.setVisibility(View.VISIBLE);
+            mAddFriendButton.setText(R.string.add_friend);
+            mAddFriendButton.setTextColor(getResources().getColor(R.color.white));
+            mAddFriendButton.setBackgroundResource(R.drawable.make_call_button);
         } else {
-            mAddFriendButton.setText("删除好友");
+            mOptionLayout.setVisibility(View.VISIBLE);
+            mNameTextView.setVisibility(View.INVISIBLE);
+            mAddFriendButton.setText(R.string.delete_friend);
+            mAddFriendButton.setVisibility(View.VISIBLE);
+            mAddFriendButton.setTextColor(getResources().getColor(R.color.delete));
+            mAddFriendButton.setBackgroundResource(R.drawable.delete_friend);
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 设置头像
@@ -180,7 +183,7 @@ public class ContactDetailActivity extends BaseActivity {
 
     @OnClick(R.id.acb_send_message)
     void onSendMessage() {
-        Intent intent = ChatActivity.getIntent(this, mContact.getFriendId());
+        Intent intent = ChatActivity.getIntent(this, mContact.getFriendId(), false);
         startActivity(intent);
     }
 
@@ -208,6 +211,11 @@ public class ContactDetailActivity extends BaseActivity {
      * 删除好友
      */
     private void deleteFriend() {
+        ContactInfo ci = DataSupport.where("mRegisterId=?", mContact.getFriendId()).findFirst(ContactInfo.class);
+        if (ci != null) {
+            ci.setFriend(false);
+            ci.save();
+        }
         try {
             EMClient.getInstance().contactManager().deleteContact(mContact.getFriendId());
             OkHttpUtils.get().url(ServiceConstant.DELETE_FRIEND)
@@ -260,7 +268,15 @@ public class ContactDetailActivity extends BaseActivity {
         try {
             EMClient.getInstance().contactManager().addContact(mToAddRegisterId, reason);
             T.showShort(this, "已发送好友申请");
-            MessageManager.saveSendAddFriendApplyLocalData(mToAddRegisterId, reason);
+            ContactInfo ci = new ContactInfo();
+            ci.setAvatar(mContact.getAvatar());
+            ci.setName(mContact.getName());
+            ci.setNickName(mContact.getNickName());
+            ci.setCellphone(mContact.getPhone());
+            ci.setRemark(mContact.getRemark());
+            ci.setRegisterId(mContact.getFriendId());
+            ci.setFriend(mContact.isFriend());
+            MessageManager.saveSendAddFriendApplyLocalData(ci, reason);
 
         } catch (HyphenateException e) {
             T.showShort(this, "发送申请失败");

@@ -35,21 +35,23 @@
     <string name="press_login">点击登录，表示您同意</string>
     <string name="forget_password">忘记密码</string>
     <string name="verification_code_login">手机验证码登录</string>
-    <string name="third_party_login">第三方登陆</string>
+    <string name="third_party_login">第三方登录</string>
     <string name="wechat">微信</string>
     <string name="in_hospital">院内</string>
     <string name="qq">QQ</string>
     <string name="microblog">微博</string>
     <string name="setup_password">设置密码</string>
+    <string name="user_account_and_password_login">使用账号密码登录</string>
+    <string name="hospital_account_login">院内账号登录</string>
 
-
-    <!--登陆-->
+    <!--登录-->
     <string name="cellphone">手机</string>
     <string name="login">登录</string>
     <string name="login_failed">登录失败</string>
     <string name="please_input_password">请输入密码</string>
-    <string name="login_success">登陆成功</string>
-
+    <string name="login_success">登录成功</string>
+    <string name="account">账号</string>
+    <string name="please_input_account">请输入账号</string>
 
     <string name="signup_success">注册成功</string>
     <string name="signup_failed">注册失败</string>
@@ -61,7 +63,7 @@
     <string name="cellphone_dismatch">手机号不匹配</string>
     <string name="verification_code_invalid">验证码不正确</string>
     <string name="verification_code_length_invalid">验证码长度不正确</string>
-    <string name="password_length_invalid">密码长度应在4和10之间</string>
+    <string name="password_length_invalid">密码长度应在4和12之间</string>
     <string name="set_password_failed">设置密码失败</string>
 
     <!--消息-->
@@ -92,6 +94,7 @@
     <string name="send_message">发消息</string>
     <string name="add_contact">添加联系人</string>
     <string name="add_friend">加为好友</string>
+    <string name="delete_friend">删除好友</string>
     <string name="please_input_cellphone">请输入手机号</string>
     <string name="scan_and_scan">扫一扫</string>
     <string name="scan_qr_code">扫描二维码名片</string>
@@ -107,6 +110,8 @@
     <string name="refuse">拒绝</string>
     <string name="close">关闭</string>
     <string name="open">打开</string>
+    <string name="my_group">我的群</string>
+    <string name="visiting_card">名片</string>
 
     <!--我的-->
     <string name="mine">我的</string>
@@ -193,6 +198,7 @@
 
     <string name="change_avatar">修改头像</string>
     <string name="photograph">拍照</string>
+    <string name="photo">照片</string>
     <string name="sdcard_disabled">SD卡不可用</string>
     <string name="photograph_failed">拍照失败</string>
     <string name="select_from_album">从相册选择</string>

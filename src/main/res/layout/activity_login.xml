@@ -29,7 +29,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/login_avatar_marginTop"
                 android:layout_marginTop="@dimen/login_avatar_marginTop"
-                android:src="@drawable/icon_avatar_default"/>
+                android:src="@drawable/logo"/>
 
             <RelativeLayout
                 android:id="@+id/rl_cellphone"
@@ -43,6 +43,7 @@
                     android:text="@string/cellphone_number"/>
 
                 <com.jerry.nurse.view.ClearEditText
+                    android:maxLength="11"
                     android:id="@+id/cet_cellphone"
                     android:layout_marginRight="@dimen/line_paddingLeft"
                     android:layout_width="match_parent"
@@ -87,6 +88,7 @@
                     app:passwordToggleDrawable="@drawable/login_eye">
 
                     <EditText
+                        android:maxLength="12"
                         android:id="@+id/et_password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

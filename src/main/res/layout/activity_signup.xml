@@ -65,6 +65,7 @@
                     android:text="@string/cellphone_number"/>
 
                 <com.jerry.nurse.view.ClearEditText
+                    android:maxLength="11"
                     android:id="@+id/cet_cellphone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -111,6 +112,7 @@
                     android:textSize="@dimen/normal_textSize"/>
 
                 <EditText
+                    android:maxLength="6"
                     android:id="@+id/et_verification_code"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

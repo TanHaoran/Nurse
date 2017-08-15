@@ -23,15 +23,19 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String IP = "http://192.168.0.100:9400/UserService.svc/";
-
+//    public static final String UPLOAD_IP = "http://125.76.225.7:9400/";
     public static final String UPLOAD_IP = "http://192.168.0.100:9400/";
 
-    public static final String AVATAR_ADDRESS = "http://192.168.0.100:9400/Avatar/";
-    public static final String PROFESSIONAL_ADDRESS = "http://192.168.0.100:9400/QC/";
-    public static final String PRACTISING_ADDRESS = "http://192.168.0.100:9400/PC/";
-    public static final String QR_CODE_ADDRESS = "http://192.168.0.100:9400/QRCode/";
-    public static final String BANNER_ADDRESS = "http://192.168.0.100:9400/Banner/";
+    public static final String EVENT_REPORT_IP = "http://192.168.0.49:3300";
+
+    public static final String IP = UPLOAD_IP + "UserService.svc/";
+
+
+    public static final String AVATAR_ADDRESS = UPLOAD_IP + "Avatar/";
+    public static final String PROFESSIONAL_ADDRESS = UPLOAD_IP + "QC/";
+    public static final String PRACTISING_ADDRESS = UPLOAD_IP + "PC/";
+    public static final String QR_CODE_ADDRESS = UPLOAD_IP + "QRCode/";
+    public static final String BANNER_ADDRESS = UPLOAD_IP + "Banner/";
 
     /**
      * 获取验证码
@@ -54,6 +58,11 @@ public class ServiceConstant {
      * http://192.168.0.100:9400/UserService.svc/Login?Phone={Phone}&Password={Password}
      */
     public static final String LOGIN = IP + "Login";
+
+    /**
+     * 使用院内账号登录
+     */
+    public static final String HOSPITAL_LOGIN = IP + "ThirdPartLoginHospital";
 
     /**
      * QQ第三方登陆

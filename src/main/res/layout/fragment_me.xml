@@ -78,7 +78,7 @@
             android:layout_marginLeft="@dimen/validated_marginLeft"
             android:layout_toRightOf="@id/ll_name"
             android:visibility="invisible"
-            app:text="已验证"/>
+            app:text="已认证"/>
 
         <ImageView
             style="@style/ArrowEnterStyle"/>

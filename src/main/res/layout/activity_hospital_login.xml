@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_login"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:right_text="@string/cancel"
+        app:title_text="@string/hospital_account_login"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/account"/>
+
+                <EditText
+                    android:id="@+id/et_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:background="@drawable/edit_no_border"
+                    android:gravity="center_vertical"
+                    android:hint="@string/please_input_account"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textColorHint="@color/gray_textColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/password"/>
+
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:background="@drawable/edit_no_border"
+                    android:gravity="center_vertical"
+                    android:hint="@string/please_input_password"
+                    android:inputType="textPassword"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textColorHint="@color/gray_textColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/acb_login"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/signup_button_height"
+                android:layout_marginLeft="@dimen/signup_button_marginLeft"
+                android:layout_marginRight="@dimen/signup_button_marginLeft"
+                android:layout_marginTop="@dimen/block_marinTop"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:id="@+id/tv_account_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right"
+                android:layout_marginTop="@dimen/block_marinTop"
+                android:paddingRight="@dimen/signup_button_marginLeft"
+                android:text="@string/user_account_and_password_login"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/small_textSize"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -250,9 +250,9 @@
 
         <service android:name=".service.EaseMobService"/>
 
-        <activity android:name=".activity.ChatGroupActivity">
-        </activity>
         <activity android:name=".activity.GroupListActivity">
+        </activity>
+        <activity android:name=".activity.HospitalLoginActivity">
         </activity>
     </application>
 

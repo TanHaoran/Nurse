@@ -475,7 +475,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/iv_picture2"
                         android:layout_centerHorizontal="true"
-                        android:text="@string/certificate_page_1"
+                        android:text="@string/certificate_page_2"
                         android:textColor="@color/gray_textColor"
                         android:textSize="@dimen/normal_textSize"/>
 

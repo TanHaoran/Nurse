@@ -28,7 +28,6 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.QR_CODE_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
@@ -39,7 +38,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class MeFragment extends BaseFragment {
 
-    private static final String EVENT_REPORT_URL = "http://192.168.0.49:3300?Ruid=ru00000002&from=103";
+    private static final String EVENT_REPORT_URL = ServiceConstant.EVENT_REPORT_IP + "?from=103&Ruid=";
 
     @Bind(R.id.civ_avatar)
     ImageView mAvatarImageView;
@@ -91,11 +90,8 @@ public class MeFragment extends BaseFragment {
 
         // 设置头像
         if (!TextUtils.isEmpty(mLoginInfo.getAvatar())) {
-            if (mLoginInfo.getAvatar().startsWith("http")) {
-                Glide.with(this).load(mLoginInfo.getAvatar()).into(mAvatarImageView);
-            } else {
-                Glide.with(this).load(AVATAR_ADDRESS + mLoginInfo.getAvatar()).into(mAvatarImageView);
-            }
+            Glide.with(this).load(mLoginInfo.getAvatar()).placeholder(R.drawable.icon_avatar_default)
+                    .into(mAvatarImageView);
         }
         if (mLoginInfo.getName() != null) {
             mNameTextView.setText(mLoginInfo.getName());
@@ -174,7 +170,16 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), EVENT_REPORT_URL, null);
+        if (TextUtils.isEmpty(mLoginInfo.getReguserId())) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.tips)
+                    .setMessage("抱歉，你没有开通这个业务")
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+            return;
+        }
+        Intent intent = HtmlActivity.getIntent(getActivity(),
+                EVENT_REPORT_URL + mLoginInfo.getReguserId(), null);
         startActivity(intent);
     }
 

@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
@@ -96,7 +98,22 @@ public class CreateGroupActivity extends BaseActivity {
         mBodyDatas = new ArrayList<>();
         updateView(false);
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        getFriendList(mLoginInfo.getRegisterId());
+//        getFriendList(mLoginInfo.getRegisterId());
+
+        List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
+        for (ContactInfo info : infos) {
+            Contact c = new Contact();
+            c.setAvatar(info.getAvatar());
+            c.setName(info.getName());
+            c.setNickName(info.getNickName());
+            c.setPhone(info.getCellphone());
+            c.setRemark(info.getRemark());
+            c.setFriendId(info.getRegisterId());
+            c.setFriend(info.isFriend());
+            mBodyDatas.add(c);
+        }
+        updateView(true);
+
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
@@ -328,6 +345,9 @@ public class CreateGroupActivity extends BaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
+            ImageView imageView = holder.getView(R.id.iv_avatar);
+            Glide.with(CreateGroupActivity.this).load(contact.getAvatar())
+                    .placeholder(R.drawable.icon_avatar_default).into(imageView);
             final SelectView selectView = holder.getView(R.id.sv_choose);
             selectView.setSelected(contact.isChoose());
             holder.setText(R.id.tv_nickname, contact.getNickName());

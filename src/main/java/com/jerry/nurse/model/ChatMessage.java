@@ -11,6 +11,10 @@ public class ChatMessage extends DataSupport implements Serializable {
     private boolean mIsSend;
     private boolean mIsGroup;
     /**
+     * 消息类型：0，文字消息；1，图片消息；2，语音消息
+     */
+    private int mType;
+    /**
      * 如果是文字消息，这个属性才有值
      */
     private String mContent;
@@ -25,6 +29,10 @@ public class ChatMessage extends DataSupport implements Serializable {
 
     public final static int MSG_SEND = 0;
     public final static int MSG_RECEIVE = 1;
+
+    public static final int TYPE_TXT = 0;
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_VOICE = 2;
 
     public ChatMessage() {
     }
@@ -101,5 +109,28 @@ public class ChatMessage extends DataSupport implements Serializable {
 
     public void setGroup(boolean group) {
         mIsGroup = group;
+    }
+
+    public int getType() {
+        return mType;
+    }
+
+    public void setType(int type) {
+        mType = type;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "mTime=" + mTime +
+                ", mFrom='" + mFrom + '\'' +
+                ", mTo='" + mTo + '\'' +
+                ", mIsSend=" + mIsSend +
+                ", mIsGroup=" + mIsGroup +
+                ", mType=" + mType +
+                ", mContent='" + mContent + '\'' +
+                ", mSecond=" + mSecond +
+                ", path='" + path + '\'' +
+                '}';
     }
 }

@@ -223,9 +223,9 @@ public class MainActivity extends BaseActivity
                 // 发出Notification
                 Intent newIntent;
                 if (chatMessage.isGroup()) {
-                    newIntent = ChatGroupActivity.getIntent(context, chatMessage.getFrom());
+                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), true);
                 } else {
-                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom());
+                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), false);
                 }
                 PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -300,7 +300,7 @@ public class MainActivity extends BaseActivity
      *
      * @param bodyDatas
      */
-    private void updateContactInfoData(List<Contact> bodyDatas) {
+    private static void updateContactInfoData(List<Contact> bodyDatas) {
 
         List<ContactInfo> infos = null;
         try {
@@ -312,7 +312,7 @@ public class MainActivity extends BaseActivity
             infos = new ArrayList<>();
         }
         for (Contact contact : bodyDatas) {
-            int i = 0;
+            int i;
             for (i = 0; i < infos.size(); i++) {
                 // 如果两个信息相同就更新
                 ContactInfo info = infos.get(i);
@@ -323,7 +323,9 @@ public class MainActivity extends BaseActivity
                     info.setCellphone(contact.getPhone());
                     info.setRemark(contact.getRemark());
                     info.setRegisterId(contact.getFriendId());
+                    info.setFriend(contact.isFriend());
                     info.save();
+                    L.i("更新一条联系人信息");
                     break;
                 }
             }
@@ -336,9 +338,57 @@ public class MainActivity extends BaseActivity
                 info.setCellphone(contact.getPhone());
                 info.setRemark(contact.getRemark());
                 info.setRegisterId(contact.getFriendId());
+                info.setFriend(contact.isFriend());
                 info.save();
+                L.i("新增一条联系人信息");
             }
         }
+    }
+
+    /**
+     * 更新本地联系人数据
+     *
+     * @param contact
+     */
+    public static ContactInfo updateContactInfoData(Contact contact) {
+
+        List<ContactInfo> infos = null;
+        try {
+            infos = DataSupport.findAll(ContactInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (infos == null) {
+            infos = new ArrayList<>();
+        }
+        int i;
+        for (i = 0; i < infos.size(); i++) {
+            // 如果两个信息相同就更新
+            ContactInfo info = infos.get(i);
+            if (contact.getFriendId().equals(info.getRegisterId())) {
+                info.setAvatar(contact.getAvatar());
+                info.setName(contact.getName());
+                info.setNickName(contact.getNickName());
+                info.setCellphone(contact.getPhone());
+                info.setRemark(contact.getRemark());
+                info.setRegisterId(contact.getFriendId());
+                info.setFriend(contact.isFriend());
+                info.save();
+                L.i("更新一条联系人信息");
+                return info;
+            }
+        }
+        ContactInfo info = new ContactInfo();
+        info.setAvatar(contact.getAvatar());
+        info.setName(contact.getName());
+        info.setNickName(contact.getNickName());
+        info.setCellphone(contact.getPhone());
+        info.setRemark(contact.getRemark());
+        info.setRegisterId(contact.getFriendId());
+        info.save();
+        L.i("新增一条联系人信息");
+        return info;
+
     }
 
 
@@ -391,9 +441,12 @@ public class MainActivity extends BaseActivity
                 // 如果两个信息相同就更新
                 GroupInfo info = infos.get(i);
                 if (group.getHXGroupId().equals(info.getHXGroupId())) {
-                    info.setHXGroupId(info.getHXGroupId());
-                    info.setHXNickName(info.getHXNickName());
-                    info.setGroupList(info.getGroupList());
+                    info.setHXGroupId(group.getHXGroupId());
+                    info.setHXNickName(group.getHXNickName());
+                    info.setRegisterId(group.getRegisterId());
+                    L.i("更新的群成员数量：" + group.getGroupMemberList().size());
+                    // 更新联系人信息
+                    updateContactInfoData(group.getGroupMemberList());
                     info.save();
                     break;
                 }
@@ -403,7 +456,10 @@ public class MainActivity extends BaseActivity
                 GroupInfo info = new GroupInfo();
                 info.setHXGroupId(group.getHXGroupId());
                 info.setHXNickName(group.getHXNickName());
-                info.setGroupList(group.getGroupList());
+                info.setRegisterId(group.getRegisterId());
+                L.i("更新的群成员数量：" + group.getGroupMemberList().size());
+                // 更新联系人信息
+                updateContactInfoData(group.getGroupMemberList());
                 info.save();
             }
         }

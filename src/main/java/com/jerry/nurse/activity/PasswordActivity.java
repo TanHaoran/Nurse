@@ -68,7 +68,7 @@ public class PasswordActivity extends BaseActivity {
                     T.showLong(PasswordActivity.this, errorMessage);
                     return;
                 }
-                String password = mPasswordEditText.getText().toString();
+                String password = mPasswordEditText.getText().toString().trim();
                 // 设置密码
                 setPassword(mRegisterId, mCellphone, password);
             }
@@ -81,11 +81,11 @@ public class PasswordActivity extends BaseActivity {
      * @return
      */
     private String localValidate() {
-        String password = mPasswordEditText.getText().toString();
+        String password = mPasswordEditText.getText().toString().trim();
         // 本地验证密码
         if (password.isEmpty() || password.length() < 4 || password
-                .length() > 10) {
-            return "密码长度应在4和10之间";
+                .length() > 12) {
+            return "密码长度应在4和12之间";
         }
         return null;
     }

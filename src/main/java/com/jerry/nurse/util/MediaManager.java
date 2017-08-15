@@ -50,7 +50,7 @@ public class MediaManager {
     /**
      * 暂停播放
      */
-    public void pause() {
+    public static void pause() {
         if (sMediaPlayer != null && sMediaPlayer.isPlaying()) {
             sMediaPlayer.pause();
             sIsPause = true;
@@ -60,7 +60,7 @@ public class MediaManager {
     /**
      * 继续播放
      */
-    public void resume() {
+    public  static void resume() {
         if (sMediaPlayer != null && sIsPause) {
             sMediaPlayer.start();
             sIsPause = false;
@@ -70,7 +70,7 @@ public class MediaManager {
     /**
      * 释放资源
      */
-    public void release() {
+    public  static void release() {
         if (sMediaPlayer != null) {
             sMediaPlayer.release();
             sMediaPlayer = null;

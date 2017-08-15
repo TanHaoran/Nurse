@@ -60,7 +60,7 @@ public class SignupActivity extends BaseActivity {
 
     // 进入类型：注册
     public static final int TYPE_REGISTER = 0;
-    // 进入类型：验证码登陆
+    // 进入类型：验证码登录
     public static final int TYPE_VERIFICATION_CODE = 1;
     // 进入类型：忘记密码
     public static final int TYPE_FORGET_PASSWORD = 2;
@@ -182,9 +182,9 @@ public class SignupActivity extends BaseActivity {
             case TYPE_REGISTER:
                 mTitleBar.setTitle("新用户注册");
                 break;
-            // 验证码登陆
+            // 验证码登录
             case TYPE_VERIFICATION_CODE:
-                mTitleBar.setTitle("验证码登陆");
+                mTitleBar.setTitle("验证码登录");
                 mCountryLayout.setVisibility(View.GONE);
                 mProtocolLayout.setVisibility(View.GONE);
                 mSignupButton.setText(R.string.login);
@@ -329,7 +329,7 @@ public class SignupActivity extends BaseActivity {
                                     T.showShort(SignupActivity.this, signupResult.getMsg());
                                 }
                                 break;
-                            // 验证码登陆
+                            // 验证码登录
                             case TYPE_VERIFICATION_CODE:
                                 LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
                                 LoginManager loginManager = new LoginManager(SignupActivity.this, null);
@@ -401,7 +401,7 @@ public class SignupActivity extends BaseActivity {
                     @Override
                     public void onFilterResponse(String response, int id) {
                         mProgressDialogManager.dismiss();
-                        L.e("获取用户信息成功，护士通登陆");
+                        L.e("获取用户信息成功，护士通登录");
                         UserRegisterInfo userRegisterInfo = new Gson()
                                 .fromJson(response, UserRegisterInfo.class);
 

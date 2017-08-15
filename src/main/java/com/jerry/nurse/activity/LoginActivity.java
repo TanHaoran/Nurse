@@ -96,7 +96,7 @@ public class LoginActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
-        // 入口处判断用户是否已经登陆
+        // 入口处判断用户是否已经登录
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
         if (!registerId.equals("-1")) {
             goToMainActivity();
@@ -116,7 +116,7 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
         String cellphone = mCellphoneEditText.getText().toString();
-        String password = mPasswordEditText.getText().toString();
+        String password = mPasswordEditText.getText().toString().trim();
 
         //验证用户名和密码格式是否符合
         String errorMessage = localValidate(cellphone, password);
@@ -127,13 +127,13 @@ public class LoginActivity extends BaseActivity {
 
         mProgressDialogManager.setMessage("登录中...");
 
-        // 第一步：登陆护士通账号
+        // 第一步：登录护士通账号
         login(cellphone, password);
     }
 
 
     /**
-     * 本地验证登陆
+     * 本地验证登录
      */
     private String localValidate(String cellphone, String password) {
 
@@ -149,7 +149,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         // 密码的长度要介于4和10之间
-        if (password.length() < 4 || password.length() > 10) {
+        if (password.length() < 4 || password.length() > 12) {
             return mStringPasswordInvalid;
         }
         return null;
@@ -167,7 +167,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // 腾讯的第三方登陆
+        // 腾讯的第三方登录
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
         }
@@ -222,7 +222,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 验证码登陆
+     * 验证码登录
      *
      * @param view
      */
@@ -243,7 +243,15 @@ public class LoginActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    /********************************QQ第三方登陆********************************************
+    /********************************使用院内账号登录***************************************/
+    @OnClick(R.id.ll_in_hospital)
+    void onHospitalLogin(View view) {
+        Intent intent = HospitalLoginActivity.getIntent(this);
+        startActivity(intent);
+    }
+
+
+    /********************************QQ第三方登录******************************************/
 
      /**
      * 使用qq登录
@@ -263,7 +271,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 使用qq登陆
+     * 使用qq登录
      *
      * @param info
      */

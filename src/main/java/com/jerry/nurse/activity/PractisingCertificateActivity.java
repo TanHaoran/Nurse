@@ -242,9 +242,12 @@ public class PractisingCertificateActivity extends BaseActivity {
                 }
 
                 // 加载图片显示
-                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture1()).into(mPicture1ImageView);
-                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2()).into(mPicture2ImageView);
-                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture3()).into(mPicture3ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture1())
+                        .error(R.drawable.default_rz).into(mPicture1ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture2())
+                        .error(R.drawable.default_rz).into(mPicture2ImageView);
+                Glide.with(this).load(PRACTISING_ADDRESS + mPractising.getPicture3())
+                        .error(R.drawable.default_rz).into(mPicture3ImageView);
             } else {
                 makeEditable();
             }
@@ -470,6 +473,10 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "姓名为空！";
             return false;
         }
+        if (mNameEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "姓名过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mBirthdayTextView.getText().toString())) {
             mErrorMessage = "生日为空！";
             return false;
@@ -478,16 +485,32 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "国籍为空！";
             return false;
         }
+        if (mCountryNationEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "国籍名称过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mPractisingLocationEditText.getText().toString())) {
             mErrorMessage = "执业地点为空！";
+            return false;
+        }
+        if (mPractisingLocationEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "执业地点名称过长！";
             return false;
         }
         if (TextUtils.isEmpty(mCertificateNumberEditText.getText().toString())) {
             mErrorMessage = "执业编号为空！";
             return false;
         }
+        if (mCertificateNumberEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "执业编号名称过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mIdCardNumberEditText.getText().toString())) {
             mErrorMessage = "身份证为空！";
+            return false;
+        }
+        if (mIdCardNumberEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "身份证过长！";
             return false;
         }
         if (TextUtils.isEmpty(mFirstSignDateTextView.getText().toString())) {
@@ -506,8 +529,16 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "注册机关为空！";
             return false;
         }
+        if (mSignDepartmentTextView.getText().toString().length() >= 15) {
+            mErrorMessage = "注册机关名称过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mCertificateOrganizationTextView.getText().toString())) {
             mErrorMessage = "发证机关为空！";
+            return false;
+        }
+        if (mCertificateOrganizationTextView.getText().toString().length() >= 15) {
+            mErrorMessage = "发证机关名称过长！";
             return false;
         }
 

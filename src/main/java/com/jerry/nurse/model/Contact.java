@@ -140,6 +140,9 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
 
     @Override
     public String getTarget() {
+        if (TextUtils.isEmpty(NickName))  {
+            return " ";
+        }
         return NickName;
     }
 

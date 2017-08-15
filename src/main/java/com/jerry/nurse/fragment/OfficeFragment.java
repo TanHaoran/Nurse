@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,8 +51,7 @@ public class OfficeFragment extends BaseFragment {
 
     public static final int DEFAULT_PAGE = 1;
 
-    private static final String REPORT_EVENT_URL = "http://192.168.0.49:3300?Ruid=ru00000002";
-//    private static final String REPORT_EVENT_URL = "http://192.168.0.49:5600?Ruid=ru00000002";
+    private static final String REPORT_EVENT_URL = ServiceConstant.EVENT_REPORT_IP + "?Ruid=";
 
     private static final String NURSE_CLASS_URL = "http://192.168.0.100:8100";
 
@@ -336,7 +337,17 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), REPORT_EVENT_URL, null);
+        LoginInfo info = DataSupport.findFirst(LoginInfo.class);
+        if (TextUtils.isEmpty(info.getReguserId())) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.tips)
+                    .setMessage("抱歉，你没有开通这个业务")
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+            return;
+        }
+        Intent intent = HtmlActivity.getIntent(getActivity(),
+                REPORT_EVENT_URL + info.getReguserId(), null);
         startActivity(intent);
     }
 

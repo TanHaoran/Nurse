@@ -13,6 +13,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.hyphenate.chat.EMVoiceMessageBody;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
@@ -21,6 +22,7 @@ import com.jerry.nurse.model.ContactDetailResult;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.GetContactInfoUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
 import com.umeng.analytics.MobclickAgent;
@@ -144,21 +146,24 @@ public class MyApplication extends LitePalApplication {
                 for (final EMMessage emMessage : messages) {
                     L.i(emMessage.toString());
                     L.i("收到消息的类型是：" + emMessage.getType());
-                    L.i("收到消息的Id是：" + emMessage.getFrom());
-                    EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
-                    String msg = messageBody.getMessage();
-                    L.i("消息内容：" + msg);
+                    L.i("收到消息的Chat类型是：" + emMessage.getChatType());
+                    L.i("收到消息的发出者是：" + emMessage.getFrom());
+                    L.i("收到消息的接收者是：" + emMessage.getTo());
 
-                    ChatMessage chatMessage = null;
-                    if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
-                        chatMessage =MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
-                    } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
-                        chatMessage = MessageManager.saveReceiveChatGroupMessageLocalData(emMessage, msg);
+                    ContactInfo ci = DataSupport.where("mRegisterId=?", emMessage.getFrom()).findFirst(ContactInfo.class);
+                    if (ci == null) {
+                        GetContactInfoUtil getContactInfoUtil = new GetContactInfoUtil();
+                        getContactInfoUtil.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
+                            @Override
+                            public void onLoadSuccess(ContactInfo ci) {
+                                saveMessageDataAndSendBroadcast(emMessage);
+                            }
+                        });
+                        getContactInfoUtil.getContactDetail(EMClient.getInstance().getCurrentUser(),
+                                emMessage.getFrom());
+                    } else {
+                        saveMessageDataAndSendBroadcast(emMessage);
                     }
-
-                    Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
-                    intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
-                    getContext().sendBroadcast(intent);
 
                 }
             }
@@ -187,6 +192,43 @@ public class MyApplication extends LitePalApplication {
     }
 
     /**
+     * 保存聊天信息并发送广播
+     *
+     * @param emMessage
+     */
+    private void saveMessageDataAndSendBroadcast(EMMessage emMessage) {
+
+        ChatMessage chatMessage = null;
+        if (emMessage.getType() == EMMessage.Type.TXT) {
+            EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
+            String msg = messageBody.getMessage();
+            L.i("文字消息内容：" + msg);
+
+            if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
+            } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                chatMessage = MessageManager.saveReceiveChatGroupMessageLocalData(emMessage, msg);
+            }
+        } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+            EMVoiceMessageBody messageBody = (EMVoiceMessageBody) emMessage.getBody();
+            L.i("音频时长：" + messageBody.getLength());
+            L.i("音频路径：" + messageBody.getLocalUrl());
+
+            if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage,
+                        messageBody.getLength(), messageBody.getLocalUrl());
+            } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                // TODO
+            }
+        }
+
+
+        Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
+        intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
+        getContext().sendBroadcast(intent);
+    }
+
+    /**
      * 监听好友状态
      */
     private void startContactListener() {
@@ -206,49 +248,99 @@ public class MyApplication extends LitePalApplication {
 
             //收到好友邀请
             @Override
-            public void onContactInvited(String username, String reason) {
+            public void onContactInvited(final String username, final String reason) {
                 L.i("收到好友邀请：" + username);
-                // 保存好友申请到数据库
-                AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(username, reason);
-
-                ContactInfo mInfo = DataSupport.where("mRegisterId=?",
+                ContactInfo ci = DataSupport.where("mRegisterId=?",
                         username).findFirst(ContactInfo.class);
-                // 如果从数据库中能找到这个联系人就直接发送广播
-                if (mInfo == null) {
-                    getContactDetail(EMClient.getInstance().getCurrentUser(), username, apply);
+                if (ci == null) {
+                    GetContactInfoUtil util = new GetContactInfoUtil();
+                    util.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
+                        @Override
+                        public void onLoadSuccess(final ContactInfo info) {
+                            // 保存好友申请到数据库
+                            AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(info, reason);
+                            Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                            intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                            getContext().sendBroadcast(intent);
+                        }
+                    });
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
                 } else {
+                    // 保存好友申请到数据库
+                    AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(ci, reason);
                     Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
                     intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                     getContext().sendBroadcast(intent);
                 }
-
             }
 
             //好友请求被同意
             @Override
             public void onFriendRequestAccepted(String username) {
                 L.i("好友请求被同意：" + username);
-                AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(username, true);
 
-                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
-                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                ContactInfo ci = DataSupport.where("mRegisterId=?",
+                        username).findFirst(ContactInfo.class);
+                if (ci == null) {
+                    GetContactInfoUtil util = new GetContactInfoUtil();
+                    util.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
+                        @Override
+                        public void onLoadSuccess(final ContactInfo info) {
+                            // 保存好友申请到数据库
+                            info.setFriend(true);
+                            info.save();
+                            AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(info, true);
+                            Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                            intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                            getContext().sendBroadcast(intent);
+                        }
+                    });
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
+                } else {
+                    // 保存好友申请到数据库
+                    ci.setFriend(true);
+                    ci.save();
+                    AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(ci, true);
+                    Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                    intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                    getContext().sendBroadcast(intent);
+                }
             }
 
             //好友请求被拒绝
             @Override
             public void onFriendRequestDeclined(String username) {
                 L.i("好友请求被拒绝：" + username);
-                AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(username, false);
 
-                Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
-                intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                ContactInfo ci = DataSupport.where("mRegisterId=?",
+                        username).findFirst(ContactInfo.class);
+                if (ci == null) {
+                    GetContactInfoUtil util = new GetContactInfoUtil();
+                    util.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
+                        @Override
+                        public void onLoadSuccess(final ContactInfo info) {
+                            // 保存好友申请到数据库
+                            AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(info, false);
+                            Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                            intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                            getContext().sendBroadcast(intent);
+                        }
+                    });
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
+                } else {
+                    // 保存好友申请到数据库
+                    AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(ci, false);
+                    Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
+                    intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
+                    getContext().sendBroadcast(intent);
+                }
 
             }
         };
         EMClient.getInstance().contactManager().setContactListener(emContactListener);
     }
 
-    /**
+       /**
      * 获取app名称
      *
      * @param pID
@@ -301,6 +393,7 @@ public class MyApplication extends LitePalApplication {
                                 info.setCellphone(contact.getPhone());
                                 info.setRemark(contact.getRemark());
                                 info.setRegisterId(contact.getFriendId());
+                                info.setFriend(contact.isFriend());
                                 info.save();
                                 // 联系人信息存入数据库并发送广播
                                 Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);

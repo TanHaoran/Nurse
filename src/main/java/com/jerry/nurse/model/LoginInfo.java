@@ -34,6 +34,7 @@ public class LoginInfo extends DataSupport {
     private int PStatus;
     private int QStatus;
     private String RegisterId;
+    private String ReguserId;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(Avatar)) {
@@ -128,5 +129,13 @@ public class LoginInfo extends DataSupport {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getReguserId() {
+        return ReguserId;
+    }
+
+    public void setReguserId(String reguserId) {
+        ReguserId = reguserId;
     }
 }

@@ -43,6 +43,7 @@
             android:gravity="center_vertical"
             android:inputType="number"
             android:lines="1"
+            android:maxLength="11"
             android:paddingLeft="@dimen/line_paddingLeft"
             android:paddingRight="@dimen/line_paddingLeft"
             android:textColor="@color/normal_textColor"
@@ -78,6 +79,7 @@
             android:textSize="@dimen/normal_textSize"/>
 
         <EditText
+            android:maxLength="6"
             android:id="@+id/et_verification_code"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

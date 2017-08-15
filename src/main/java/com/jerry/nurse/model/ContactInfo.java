@@ -18,6 +18,7 @@ public class ContactInfo extends DataSupport {
     private String mCellphone;
     private String mRemark;
     private String mRegisterId;
+    private boolean mIsFriend;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(mAvatar)) {
@@ -72,5 +73,13 @@ public class ContactInfo extends DataSupport {
 
     public void setRegisterId(String registerId) {
         mRegisterId = registerId;
+    }
+
+    public boolean isFriend() {
+        return mIsFriend;
+    }
+
+    public void setFriend(boolean friend) {
+        mIsFriend = friend;
     }
 }

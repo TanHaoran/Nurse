@@ -159,8 +159,21 @@ public class AddContactActivity extends BaseActivity {
 
     @OnClick(R.id.ll_scan)
     void onScan(View view) {
-        Intent intent = new Intent(this, CaptureActivity.class);
-        startActivityForResult(intent, REQUEST_SCAN_QR_CODE);
+        BaseActivity.requestRuntimePermission(new String[]{Manifest
+                        .permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new PermissionListener() {
+                    @Override
+                    public void onGranted() {
+                        Intent intent = new Intent(AddContactActivity.this, CaptureActivity.class);
+                        startActivityForResult(intent, REQUEST_SCAN_QR_CODE);
+                    }
+
+                    @Override
+                    public void onDenied(List<String> deniedPermission) {
+
+                    }
+                });
 
     }
 
@@ -168,10 +181,17 @@ public class AddContactActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SCAN_QR_CODE && resultCode == RESULT_CODE_QR_SCAN) {
             Bundle bundle = data.getExtras();
-            String registerId = bundle.getString(INTENT_EXTRA_KEY_QR_SCAN);
-            L.i("扫描结果是：" + registerId);
+            String result = bundle.getString(INTENT_EXTRA_KEY_QR_SCAN);
+            L.i("扫描结果是：" + result);
+            String register = String.valueOf((Integer.parseInt(result) + 1) / 3);
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < 10 - register.length();i++) {
+                sb.append("0");
+            }
+            sb.append(register);
+            L.i("解码后是：" + sb.toString());
 
-            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, registerId);
+            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString());
             startActivity(intent);
 
         }

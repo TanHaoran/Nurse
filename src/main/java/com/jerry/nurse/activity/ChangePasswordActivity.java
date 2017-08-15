@@ -52,8 +52,8 @@ public class ChangePasswordActivity extends BaseActivity {
 
     @OnClick(R.id.acb_change_password)
     void onChangePassword(View view) {
-        String originPassword = mOriginPasswordEditText.getText().toString();
-        String newPassword = mNewPasswordEditText.getText().toString();
+        String originPassword = mOriginPasswordEditText.getText().toString().trim();
+        String newPassword = mNewPasswordEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(originPassword)) {
             T.showShort(this, R.string.origin_password_empty);
@@ -62,6 +62,16 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(newPassword)) {
             T.showShort(this, R.string.new_password_empty);
+            return;
+        }
+
+        if (originPassword.length() < 4 || originPassword.length() > 12) {
+            T.showShort(this, "原密码长度应在4和12之间");
+            return;
+        }
+
+        if (newPassword.length() < 4 || newPassword.length() > 12) {
+            T.showShort(this, "新密码长度应在4和12之间");
             return;
         }
 

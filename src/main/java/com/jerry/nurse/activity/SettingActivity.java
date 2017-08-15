@@ -271,6 +271,8 @@ public class SettingActivity extends BaseActivity {
                             mBindInfo = bindInfoResult.getBody();
                             // 更新界面显示绑定信息
                             updateBindInfo(mBindInfo);
+                        } else {
+                            T.showShort(SettingActivity.this, bindInfoResult.getMsg());
                         }
                     }
                 });

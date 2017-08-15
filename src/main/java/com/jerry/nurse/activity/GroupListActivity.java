@@ -23,6 +23,8 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +64,13 @@ public class GroupListActivity extends BaseActivity {
 
         mProgressDialogManager = new ProgressDialogManager(this);
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
-        getGroupList(mRegisterId);
+
+//        getGroupList(mRegisterId);
+        mGroupInfos = DataSupport.where("RegisterId=?", mRegisterId).find(GroupInfo.class);
+        if (mGroupInfos == null) {
+            mGroupInfos = new ArrayList<>();
+        }
+        setListData();
     }
 
 
@@ -114,12 +122,13 @@ public class GroupListActivity extends BaseActivity {
 
         @Override
         protected void convert(ViewHolder holder, final GroupInfo groupInfo, int position) {
-            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_nurse_class);
+            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
             holder.setText(R.id.tv_nickname, groupInfo.getHXNickName());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ChatGroupActivity.getIntent(GroupListActivity.this, groupInfo.getHXGroupId());
+                    Intent intent = ChatActivity.getIntent(GroupListActivity.this,
+                            groupInfo.getHXGroupId(), true);
                     startActivity(intent);
                 }
             });

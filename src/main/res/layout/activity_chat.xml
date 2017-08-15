@@ -110,6 +110,102 @@
             android:textSize="@dimen/small_textSize"
             android:visibility="gone"/>
 
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_option"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/add_option_height"
+        android:orientation="vertical">
+
+        <View
+            style="@style/DividerLineStyle"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/add_option_paddingTop"
+            android:paddingLeft="@dimen/add_option_paddingLeft"
+            android:paddingRight="@dimen/add_option_paddingLeft"
+            android:paddingTop="@dimen/add_option_paddingTop">
+
+            <LinearLayout
+                android:id="@+id/ll_photo"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/add_option_item_width"
+                    android:layout_height="@dimen/add_option_item_width"
+                    android:src="@drawable/talk_photo"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/add_option_item_text_marginTop"
+                    android:text="@string/photo"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_photograph"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/add_option_item_width"
+                    android:layout_height="@dimen/add_option_item_width"
+                    android:src="@drawable/talk_camera"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/add_option_item_text_marginTop"
+                    android:text="@string/photograph"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_visiting_card"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/add_option_item_width"
+                    android:layout_height="@dimen/add_option_item_width"
+                    android:src="@drawable/talk_mp"/>
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/add_option_item_text_marginTop"
+                    android:text="@string/visiting_card"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            style="@style/DividerLineStyle"/>
 
     </LinearLayout>
 

@@ -240,8 +240,10 @@ public class ProfessionalCertificateActivity extends BaseActivity {
                 else if (mProfessional.getVerifyStatus() == AUDIT_SUCCESS) {
                     setStatus(AUDIT_SUCCESS);
                 }
-                Glide.with(this).load(PROFESSIONAL_ADDRESS + mProfessional.getPicture1()).into(mPicture1ImageView);
-                Glide.with(this).load(PROFESSIONAL_ADDRESS + mProfessional.getPicture2()).into(mPicture2ImageView);
+                Glide.with(this).load(PROFESSIONAL_ADDRESS + mProfessional.getPicture1())
+                        .error(R.drawable.default_rz).into(mPicture1ImageView);
+                Glide.with(this).load(PROFESSIONAL_ADDRESS + mProfessional.getPicture2())
+                        .error(R.drawable.default_rz).into(mPicture2ImageView);
             } else {
                 makeEditable();
             }
@@ -404,28 +406,53 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "编号为空！";
             return false;
         }
+        if (mIdNumberEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "编号长度过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mManagementNumberEditText.getText().toString())) {
             mErrorMessage = "管理号为空！";
+            return false;
+        }
+        if (mManagementNumberEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "管理号长度过长！";
             return false;
         }
         if (TextUtils.isEmpty(mNameEditText.getText().toString())) {
             mErrorMessage = "姓名为空！";
             return false;
         }
+        if (mNameEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "姓名长度过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mBirthdayTextView.getText().toString())) {
             mErrorMessage = "生日为空！";
             return false;
         }
+
         if (TextUtils.isEmpty(mProfessionNameEditText.getText().toString())) {
             mErrorMessage = "专业名称为空！";
+            return false;
+        }
+        if (mProfessionNameEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "专业名称过长！";
             return false;
         }
         if (TextUtils.isEmpty(mCertificateLevelEditText.getText().toString())) {
             mErrorMessage = "资格级别为空！";
             return false;
         }
+        if (mCertificateLevelEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "资格级别名称过长！";
+            return false;
+        }
         if (TextUtils.isEmpty(mTypeEditText.getText().toString())) {
             mErrorMessage = "类别为空！";
+            return false;
+        }
+        if (mTypeEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "类别名称过长！";
             return false;
         }
         if (TextUtils.isEmpty(mApproveDateTextView.getText().toString())) {
@@ -434,6 +461,10 @@ public class ProfessionalCertificateActivity extends BaseActivity {
         }
         if (TextUtils.isEmpty(mSignOrganizationEditText.getText().toString())) {
             mErrorMessage = "签发单位为空！";
+            return false;
+        }
+        if (mSignOrganizationEditText.getText().toString().length() >= 15) {
+            mErrorMessage = "签发单位名称过长！";
             return false;
         }
         if (TextUtils.isEmpty(mSignDateTextView.getText().toString())) {

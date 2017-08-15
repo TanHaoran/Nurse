@@ -11,29 +11,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AddContactActivity;
 import com.jerry.nurse.activity.ContactDetailActivity;
 import com.jerry.nurse.activity.ContactListActivity;
 import com.jerry.nurse.activity.GroupListActivity;
-import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.ContactTopHeaderBean;
-import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.LoginInfo;
-import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
 import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
-import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -42,10 +36,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
-
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
-import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 /**
@@ -95,66 +85,31 @@ public class ContactFragment extends BaseFragment {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(getActivity());
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         mBodyDatas = new ArrayList<>();
         updateView(false);
+        //        getFriendList(mLoginInfo.getRegisterId());
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        getFriendList(mLoginInfo.getRegisterId());
-    }
-
-
-    /**
-     * 获取用户好友资料
-     */
-    private void getFriendList(final String registerId) {
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_FRIEND_LIST)
-                .addParams("MyId", registerId)
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        updateView(true);
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        FriendListResult friendListResult = new Gson().fromJson(response, FriendListResult.class);
-                        if (friendListResult.getCode() == RESPONSE_SUCCESS) {
-                            mBodyDatas = friendListResult.getBody();
-                            L.i("读取到了" + mBodyDatas.size());
-                            if (mBodyDatas == null) {
-                                mBodyDatas = new ArrayList();
-                            } else {
-                                updateContactInfoData(mBodyDatas);
-                            }
-                            updateView(true);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * 更新本地联系人数据
-     *
-     * @param bodyDatas
-     */
-    private void updateContactInfoData(List<Contact> bodyDatas) {
-        try {
-            DataSupport.deleteAll(ContactInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+        mBodyDatas = new ArrayList<>();
+        List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
+        for (ContactInfo info : infos) {
+            Contact c = new Contact();
+            c.setAvatar(info.getAvatar());
+            c.setName(info.getName());
+            c.setNickName(info.getNickName());
+            c.setPhone(info.getCellphone());
+            c.setRemark(info.getRemark());
+            c.setFriendId(info.getRegisterId());
+            c.setFriend(info.isFriend());
+            mBodyDatas.add(c);
         }
-        for (Contact contact : bodyDatas) {
-            ContactInfo info = new ContactInfo();
-            info.setAvatar(contact.getAvatar());
-            info.setName(contact.getName());
-            info.setNickName(contact.getNickName());
-            info.setCellphone(contact.getPhone());
-            info.setRemark(contact.getRemark());
-            info.setRegisterId(contact.getFriendId());
-            info.save();
-        }
+        updateView(true);
     }
 
     /**
@@ -210,6 +165,9 @@ public class ContactFragment extends BaseFragment {
                         break;
                     case R.layout.item_contact_header_top:
                         final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
+                        if (contactTopHeaderBean.getTxt().equals("我的群")) {
+                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
+                        }
                         holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
                         holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -288,11 +246,8 @@ public class ContactFragment extends BaseFragment {
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            if (contact.getAvatar().startsWith("http")) {
-                Glide.with(getActivity()).load(contact.getAvatar()).into(imageView);
-            } else {
-                Glide.with(getActivity()).load(AVATAR_ADDRESS + contact.getAvatar()).into(imageView);
-            }
+            Glide.with(getActivity()).load(contact.getAvatar())
+                    .placeholder(R.drawable.icon_avatar_default).into(imageView);
             holder.setText(R.id.tv_nickname, contact.getNickName());
             holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
                 @Override

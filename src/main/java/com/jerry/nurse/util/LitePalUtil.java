@@ -5,6 +5,8 @@ import android.text.TextUtils;
 
 import com.jerry.nurse.model.Announcement;
 import com.jerry.nurse.model.Banner;
+import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.UserInfo;
 
@@ -32,6 +34,7 @@ public class LitePalUtil {
 
     /**
      * 更新用户登录信息
+     *
      * @param context
      * @param loginInfo
      */
@@ -59,6 +62,7 @@ public class LitePalUtil {
 
     /**
      * 更新用户个人信息
+     *
      * @param context
      * @param userInfo
      */
@@ -67,9 +71,6 @@ public class LitePalUtil {
         updateSP(context, userInfo);
         userInfo.save();
     }
-
-
-
 
 
     /**
@@ -118,6 +119,8 @@ public class LitePalUtil {
             DataSupport.deleteAll(LoginInfo.class);
             DataSupport.deleteAll(Banner.class);
             DataSupport.deleteAll(Announcement.class);
+            DataSupport.deleteAll(ContactInfo.class);
+            DataSupport.deleteAll(GroupInfo.class);
             L.i("用户所有信息表删除成功");
         } catch (Exception e) {
             L.i("用户所有信息表删除异常");
