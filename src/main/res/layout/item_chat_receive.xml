@@ -57,7 +57,7 @@
             android:background="@drawable/chat_receive_normal"
             android:minHeight="@dimen/chat_avatar_width"
             android:padding="@dimen/chat_text_padding"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <View
                 android:id="@+id/v_anim"
@@ -77,11 +77,23 @@
             android:layout_toRightOf="@id/fl_anim"
             android:textColor="@color/gray_textColor"
             android:textSize="@dimen/normal_textSize"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:text="34'"/>
+
 
         <TextView
             android:visibility="gone"
+            android:textSize="@dimen/smaller_textSize"
+            tools:text="天使"
+            android:layout_marginLeft="6dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@id/cv_avatar"
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_below="@id/tv_nickname"
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,6 +109,19 @@
             android:textColor="@color/normal_textColor"
             android:textSize="@dimen/normal_textSize"
             tools:text="那你有大吗？。。。"/>
+
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/cv_avatar"
+            android:background="@drawable/chat_receive_normal"
+            android:gravity="center_vertical"
+            android:maxHeight="300dp"
+            android:minHeight="@dimen/chat_avatar_width"
+            android:padding="@dimen/chat_text_padding"
+            android:scaleType="fitXY"/>
 
     </RelativeLayout>
 

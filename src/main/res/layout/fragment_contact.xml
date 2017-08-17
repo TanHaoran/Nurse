@@ -35,9 +35,46 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/ib_add"
             android:padding="@dimen/contact_action_button__padding"
-            android:src="@drawable/top_search"/>
+            android:src="@drawable/top_search"
+            android:visibility="gone"/>
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_edit_height"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_keyword"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/edit_up_down_bg"
+            android:drawableLeft="@drawable/contact_search"
+            android:drawablePadding="@dimen/line_paddingLeft"
+            android:hint="@string/please_input_cellphone"
+            android:imeOptions="actionSearch"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:singleLine="true"
+            android:textColor="@color/normal_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:paddingRight="@dimen/line_paddingLeft"
+            android:text="@string/cancel"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/small_textSize"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

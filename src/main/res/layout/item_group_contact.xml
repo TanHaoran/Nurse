@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:id="@+id/ll_contact"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/line_paddingRight"
+        android:layout_width="@dimen/group_info_user_avatar_width"
+        android:layout_height="@dimen/group_info_user_avatar_width"
         android:layout_toLeftOf="@id/iv_avatar"
-        android:layout_width="@dimen/personal_Info_avatar_width"
-        app:cardElevation="0dp"
-        android:layout_height="@dimen/personal_Info_avatar_width"
-        app:cardCornerRadius="@dimen/image_round_radius">
+        app:cardCornerRadius="@dimen/image_round_radius"
+        app:cardElevation="0dp">
 
         <ImageView
-            android:scaleType="fitXY"
-            android:id="@+id/civ_avatar"
+            android:id="@+id/iv_avatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/icon_avatar_default"/>
+            android:background="@drawable/icon_avatar_default"
+            android:scaleType="fitXY"/>
     </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/normal_textColor"
+        android:textSize="@dimen/small_textSize"
+        tools:text="天使"/>
 </LinearLayout>

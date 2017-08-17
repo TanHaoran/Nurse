@@ -21,7 +21,9 @@ import android.widget.DatePicker;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnDateSelectListener;
+import com.jerry.nurse.listener.OnSelectFromAlbumListener;
 import com.jerry.nurse.listener.OnPhotoSelectListener;
+import com.jerry.nurse.listener.OnPhotographFinishListener;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
@@ -59,6 +61,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static final int REQUEST_PHOTOGRAPH_4 = 0x00001008;
     public static final int REQUEST_SELECT_FROM_ALBUM_4 = 0x00001009;
 
+    public static final int REQUEST_CHAT_SELECT_FROM_ALBUM = 0x00001101;
+    public static final int REQUEST_CHAT_PHOTOGRAPH = 0x00001102;
+
     private static final int[] REQUEST_PHOTOGRAPHS = {REQUEST_PHOTOGRAPH_1, REQUEST_PHOTOGRAPH_2,
             REQUEST_PHOTOGRAPH_3, REQUEST_PHOTOGRAPH_4};
 
@@ -69,6 +74,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static PermissionListener sPermissionListener;
 
     private List<OnPhotoSelectListener> mOnPhotoSelectListeners;
+
+    private OnSelectFromAlbumListener mOnSelectFromAlbumListener;
+    private OnPhotographFinishListener mOnPhotographFinishListener;
 
 
     /**
@@ -201,7 +209,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     calendar.setTime(origin);
                 }
                 // 然后判断是否需要往前退20年
-                if (nowYear - calendar.get(Calendar.YEAR) >50) {
+                if (nowYear - calendar.get(Calendar.YEAR) > 50) {
 
                     if (isBirthday) {
                         calendar.set(Calendar.YEAR, nowYear - 20);
@@ -290,12 +298,79 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
+     * 设置从相册选择照片监听
+     *
+     * @param view
+     * @param onSelectFromAlbumListener
+     */
+    public void setSelectFromAlbumListener(View view, OnSelectFromAlbumListener onSelectFromAlbumListener) {
+        mOnSelectFromAlbumListener = onSelectFromAlbumListener;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestRuntimePermission(new String[]{
+                                Manifest.permission.READ_EXTERNAL_STORAGE},
+                        new PermissionListener() {
+                            @Override
+                            public void onGranted() {
+                                Intent intent = new Intent(Intent.ACTION_PICK);
+                                intent.setType("image/*");//相片类型
+                                startActivityForResult(intent, REQUEST_CHAT_SELECT_FROM_ALBUM);
+                            }
+
+                            @Override
+                            public void onDenied(List<String> deniedPermissions) {
+
+                            }
+                        });
+            }
+        });
+    }
+
+    /**
+     * 设置拍照监听
+     *
+     * @param view
+     * @param onPhotographFinishListener
+     */
+    public void setPhotographListener(View view, OnPhotographFinishListener onPhotographFinishListener) {
+        mOnPhotographFinishListener = onPhotographFinishListener;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestRuntimePermission(new String[]{Manifest
+                                .permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new PermissionListener() {
+                            @Override
+                            public void onGranted() {
+                                //拿到sdcard是否可用的状态码
+                                String state = Environment.getExternalStorageState();
+                                if (state.equals(Environment.MEDIA_MOUNTED)) {
+                                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                                    startActivityForResult(intent, REQUEST_CHAT_PHOTOGRAPH);
+                                } else {
+                                    T.showLong(ActivityCollector.getTopActivity(),
+                                            R.string.sdcard_disabled);
+                                }
+                            }
+
+                            @Override
+                            public void onDenied(List<String> deniedPermissions) {
+
+                            }
+                        });
+            }
+        });
+    }
+
+    /**
      * 调用照相机拍照
      *
      * @param index
      */
     private void photograph(final int index) {
-        BaseActivity.requestRuntimePermission(new String[]{Manifest
+        requestRuntimePermission(new String[]{Manifest
                         .permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 new PermissionListener() {
@@ -326,7 +401,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param index
      */
     private void selectFromAlbum(final int index) {
-        BaseActivity.requestRuntimePermission(new String[]{
+        requestRuntimePermission(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE},
                 new PermissionListener() {
                     @Override
@@ -364,6 +439,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             dealPhotograph(data, 3);
         } else if (requestCode == REQUEST_SELECT_FROM_ALBUM_4) {
             dealAlbum(data, 3);
+        } else if (requestCode == REQUEST_CHAT_SELECT_FROM_ALBUM) {
+            dealAlbum(data);
+        } else if (requestCode == REQUEST_CHAT_PHOTOGRAPH) {
+            dealPhotograph(data);
         }
     }
 
@@ -387,6 +466,28 @@ public abstract class BaseActivity extends AppCompatActivity {
         file = new File(realFilePath);
         if (mOnPhotoSelectListeners.size() >= index + 1) {
             mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
+        }
+    }
+
+    /**
+     * 处理相册选择的图片
+     *
+     * @param data
+     */
+    private void dealAlbum(Intent data) {
+        Bitmap photoBitmap;
+        File file;
+        Uri uri = null;
+        if (data != null) {
+            uri = data.getData();
+        }
+        String realFilePath = FileUtil.getRealFilePath(this, uri);
+        // 压缩图片
+        photoBitmap = PictureUtil.getScaleBitmap
+                (realFilePath, this);
+        file = new File(realFilePath);
+        if (mOnSelectFromAlbumListener != null) {
+            mOnSelectFromAlbumListener.onPhotoFinished(photoBitmap, file);
         }
     }
 
@@ -441,6 +542,59 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         if (mOnPhotoSelectListeners.size() >= index + 1) {
             mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
+        }
+    }
+
+    /**
+     * 处理拍照的图片
+     *
+     * @param data
+     */
+    private void dealPhotograph(Intent data) {
+        Bitmap photoBitmap = null;
+        File file = null;
+        Uri uri = null;
+        if (data != null) {
+            uri = data.getData();
+        }
+        // 避免有时候获取到的uri是空的情况
+        if (uri == null) {
+            Bundle bundle = data.getExtras();
+            if (bundle != null) {
+                try {
+                    // 从Bundle中获取图片
+                    photoBitmap = (Bitmap) bundle.get("data");
+
+                    File externalFilesDir = getExternalFilesDir(Environment
+                            .DIRECTORY_PICTURES);
+                    file = new File(externalFilesDir, System
+                            .currentTimeMillis() + ".jpg");
+                    L.i("文件路径：" + file.getPath());
+                    // 打开文件输出流
+                    FileOutputStream fileOutputStream = new
+                            FileOutputStream(file);
+                    // 生成图片文件
+                    photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                    // 压缩图片
+                    photoBitmap = PictureUtil.getScaleBitmap
+                            (file.getPath(), this);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                T.showLong(ActivityCollector.getTopActivity(),
+                        R.string.photograph_failed);
+                return;
+            }
+        } else {
+            String realFilePath = FileUtil.getRealFilePath(this, uri);
+            // 压缩图片
+            photoBitmap = PictureUtil.getScaleBitmap
+                    (realFilePath, this);
+            file = new File(realFilePath);
+        }
+        if (mOnPhotographFinishListener != null) {
+            mOnPhotographFinishListener.onPhotographFinished(photoBitmap, file);
         }
     }
 }

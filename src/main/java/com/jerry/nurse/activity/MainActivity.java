@@ -49,8 +49,10 @@ public class MainActivity extends BaseActivity
 
     public static final String ACTION_CHAT_MESSAGE_RECEIVE = "action_chat_message_receive";
     public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
+    public static final String ACTION_J_PUSH_RECEIVE = "action_j_push_receive";
 
     public static final String EXTRA_CHAT_MESSAGE = "extra_chat_message";
+    public static final String EXTRA_J_PUSH_MESSAGE = "extra_j_push_message";
 
     public static final String EXTRA_FRIEND_APPLY_CONTACT = "extra_friend_apply";
 
@@ -300,7 +302,7 @@ public class MainActivity extends BaseActivity
      *
      * @param bodyDatas
      */
-    private static void updateContactInfoData(List<Contact> bodyDatas) {
+    public static void updateContactInfoData(List<Contact> bodyDatas) {
 
         List<ContactInfo> infos = null;
         try {
@@ -463,5 +465,51 @@ public class MainActivity extends BaseActivity
                 info.save();
             }
         }
+    }
+
+
+    /**
+     * 更新本地群信息数据
+     *
+     * @param groupInfo
+     */
+    public static void updateGroupInfoData(GroupInfo groupInfo) {
+
+        List<GroupInfo> infos = null;
+        try {
+            infos = DataSupport.findAll(GroupInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (infos == null) {
+            infos = new ArrayList<>();
+        }
+        int i;
+        for (i = 0; i < infos.size(); i++) {
+            // 如果两个信息相同就更新
+            GroupInfo info = infos.get(i);
+            if (groupInfo.getHXGroupId().equals(info.getHXGroupId())) {
+                info.setHXGroupId(groupInfo.getHXGroupId());
+                info.setHXNickName(groupInfo.getHXNickName());
+                info.setRegisterId(groupInfo.getRegisterId());
+                L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
+                // 更新联系人信息
+                updateContactInfoData(groupInfo.getGroupMemberList());
+                info.save();
+                break;
+            }
+        }
+        // 如果本地数据库没有就创建保存
+        if (i == infos.size()) {
+            GroupInfo info = new GroupInfo();
+            info.setHXGroupId(groupInfo.getHXGroupId());
+            info.setHXNickName(groupInfo.getHXNickName());
+            info.setRegisterId(groupInfo.getRegisterId());
+            L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
+            // 更新联系人信息
+            updateContactInfoData(groupInfo.getGroupMemberList());
+            info.save();
+        }
+
     }
 }

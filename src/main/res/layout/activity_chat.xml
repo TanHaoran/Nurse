@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@color/background"
         android:gravity="top"
         android:textColor="@color/black"/>
 
@@ -115,10 +116,10 @@
 
     <LinearLayout
         android:id="@+id/ll_option"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/add_option_height"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <View
             style="@style/DividerLineStyle"/>
@@ -184,7 +185,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/add_option_item_width"

@@ -206,6 +206,95 @@ public class MessageManager {
     }
 
     /**
+     * 收到消息：
+     * 将消息数据保存在本地数据库
+     *
+     * @param emMessage
+     * @param path
+     * @return
+     */
+    @NonNull
+    public static ChatMessage saveImageReceiveChatMessageLocalData(EMMessage emMessage, String path) {
+        Message message = null;
+        ChatMessage chatMessage = null;
+        // 单聊
+        if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+
+            // 保存首页消息
+            try {
+                message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                        emMessage.getTo(), emMessage.getFrom(), "1").findFirst(Message.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (message == null) {
+                message = new Message();
+            }
+            message.setType(Message.TYPE_CHAT);
+            message.setTime(emMessage.getMsgTime());
+            message.setRegisterId(emMessage.getTo());
+            message.setContactId(emMessage.getFrom());
+            message.save();
+
+            // 保存聊天消息
+            chatMessage = new ChatMessage();
+            if (emMessage.getType() == EMMessage.Type.TXT) {
+                chatMessage.setType(ChatMessage.TYPE_TXT);
+            } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+                chatMessage.setType(ChatMessage.TYPE_VOICE);
+            } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+                chatMessage.setType(ChatMessage.TYPE_IMAGE);
+            }
+            chatMessage.setFrom(emMessage.getFrom());
+            chatMessage.setPath(path);
+            chatMessage.setTo(emMessage.getTo());
+            chatMessage.setSend(false);
+            chatMessage.setGroup(false);
+            chatMessage.setTime(emMessage.getMsgTime());
+            chatMessage.save();
+            L.i("读取到一条消息，并存入数据库");
+        }
+        // 群聊
+        else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+            // 保存首页消息
+            try {
+                message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                        emMessage.getTo(), emMessage.getFrom(), "2").findFirst(Message.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (message == null) {
+                message = new Message();
+            }
+            message.setType(Message.TYPE_CHAT_GROUP);
+            message.setTime(emMessage.getMsgTime());
+            message.setRegisterId(EMClient.getInstance().getCurrentUser());
+            message.setContactId(emMessage.getTo());
+            message.setImageResource(R.drawable.icon_qlt);
+            message.save();
+
+            // 保存聊天消息
+            chatMessage = new ChatMessage();
+            if (emMessage.getType() == EMMessage.Type.TXT) {
+                chatMessage.setType(ChatMessage.TYPE_TXT);
+            } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+                chatMessage.setType(ChatMessage.TYPE_VOICE);
+            } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+                chatMessage.setType(ChatMessage.TYPE_IMAGE);
+            }
+            chatMessage.setFrom(emMessage.getFrom());
+            chatMessage.setPath(path);
+            chatMessage.setTo(emMessage.getTo());
+            chatMessage.setSend(false);
+            chatMessage.setGroup(true);
+            chatMessage.setTime(emMessage.getMsgTime());
+            chatMessage.save();
+            L.i("读取到一条消息，并存入数据库");
+        }
+        return chatMessage;
+    }
+
+    /**
      * 发送消息：
      * 将消息数据保存在本地数据库
      *
@@ -369,6 +458,93 @@ public class MessageManager {
             }
             chatMessage.setFrom(emMessage.getFrom());
             chatMessage.setSecond(second);
+            chatMessage.setPath(path);
+            chatMessage.setTo(emMessage.getTo());
+            chatMessage.setSend(true);
+            chatMessage.setGroup(true);
+            chatMessage.setTime(emMessage.getMsgTime());
+            chatMessage.save();
+            L.i("发送出一条消息，并存入数据库");
+        }
+
+        return chatMessage;
+    }
+
+    /**
+     * 发送消息：
+     * 将消息数据保存在本地数据库
+     *
+     * @param emMessage
+     * @param path
+     * @return
+     */
+    public static ChatMessage saveSendImageChatMessageLocalData(EMMessage emMessage, String path) {
+        // 保存首页消息
+        Message message = null;
+        ChatMessage chatMessage = null;
+        // 单聊
+        if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+            try {
+                message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                        emMessage.getFrom(), emMessage.getTo(), "1").findFirst(Message.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (message == null) {
+                message = new Message();
+            }
+            message.setType(Message.TYPE_CHAT);
+            message.setTime(emMessage.getMsgTime());
+            message.setRegisterId(emMessage.getFrom());
+            message.setContactId(emMessage.getTo());
+            message.save();
+
+            // 保存聊天消息
+            chatMessage = new ChatMessage();
+            if (emMessage.getType() == EMMessage.Type.TXT) {
+                chatMessage.setType(ChatMessage.TYPE_TXT);
+            } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+                chatMessage.setType(ChatMessage.TYPE_VOICE);
+            } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+                chatMessage.setType(ChatMessage.TYPE_IMAGE);
+            }
+            chatMessage.setFrom(emMessage.getFrom());
+            chatMessage.setPath(path);
+            chatMessage.setTo(emMessage.getTo());
+            chatMessage.setSend(true);
+            chatMessage.setGroup(false);
+            chatMessage.setTime(emMessage.getMsgTime());
+            chatMessage.save();
+            L.i("发送出一条消息，并存入数据库");
+        }
+        // 群聊
+        else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+            try {
+                message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                        emMessage.getFrom(), emMessage.getTo(), "2").findFirst(Message.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (message == null) {
+                message = new Message();
+            }
+            message.setType(Message.TYPE_CHAT_GROUP);
+            message.setTime(emMessage.getMsgTime());
+            message.setRegisterId(emMessage.getFrom());
+            message.setContactId(emMessage.getTo());
+            message.setImageResource(R.drawable.icon_qlt);
+            message.save();
+
+            // 保存聊天消息
+            chatMessage = new ChatMessage();
+            if (emMessage.getType() == EMMessage.Type.TXT) {
+                chatMessage.setType(ChatMessage.TYPE_TXT);
+            } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+                chatMessage.setType(ChatMessage.TYPE_VOICE);
+            } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+                chatMessage.setType(ChatMessage.TYPE_IMAGE);
+            }
+            chatMessage.setFrom(emMessage.getFrom());
             chatMessage.setPath(path);
             chatMessage.setTo(emMessage.getTo());
             chatMessage.setSend(true);

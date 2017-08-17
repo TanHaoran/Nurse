@@ -27,11 +27,17 @@ import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
+import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_NAME;
+import static com.jerry.nurse.activity.SignupActivity.DEFAULT_COUNTRY_CODE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_BIND_CELLPHONE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
@@ -40,7 +46,12 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     private static final int REQUEST_CHANGE_CELLPHONE = 0x101;
 
+    private static final int REQUEST_COUNTRY = 0x00000102;
+
     private static final String EXTRA_BIND_INFO = "extra_bind_info";
+
+    @Bind(R.id.tv_country)
+    TextView mCountryTextView;
 
     @Bind(R.id.tb_change_cellphone)
     TitleBar mTitleBar;
@@ -170,28 +181,40 @@ public class ChangeCellphoneActivity extends BaseActivity {
             }
         }
 
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
-                .addParams("Phone", cellphone)
-                .addParams("Type", String.valueOf(mType))
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
+        // 读取国家代码
+        String countryCode = DEFAULT_COUNTRY_CODE;
+        if (mCountryTextView.getText().toString().split(" ").length == 2) {
+            countryCode = mCountryTextView.getText().toString().split(" ")[1];
+        }
 
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            // 控制发送验证码的状态
-                            mGetVerificationCodeTextView.setEnabled(false);
-                            mGetVerificationCodeTextView.setTextColor(mGrayColor);
-                            mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
-                            mHandler.postDelayed(mValidateRunnable, 1000);
-                            T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_finished);
-                        } else {
-                            T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_code_failed);
+        mProgressDialogManager.show();
+        try {
+            countryCode = URLEncoder.encode(countryCode, "UTF-8");
+            OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
+                    .addParams("Phone", cellphone)
+                    .addParams("CountryCode", countryCode)
+                    .addParams("Type", String.valueOf(mType))
+                    .build()
+                    .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                        @Override
+                        public void onFilterResponse(String response, int id) {
+                            CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                            if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                                // 控制发送验证码的状态
+                                mGetVerificationCodeTextView.setEnabled(false);
+                                mGetVerificationCodeTextView.setTextColor(mGrayColor);
+                                mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
+                                mHandler.postDelayed(mValidateRunnable, 1000);
+                                T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_finished);
+                            } else {
+                                T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_code_failed);
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClick(R.id.acb_next)
@@ -292,11 +315,31 @@ public class ChangeCellphoneActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 国家代码点击事件
+     *
+     * @param view
+     */
+    @OnClick(R.id.rl_country)
+    void onCountry(View view) {
+        if (mCountryTextView.getText().toString().split(" ").length == 2) {
+            String countryCode = mCountryTextView.getText().toString().split(" ")[1];
+            Intent intent = CountryActivity.getIntent(this, countryCode);
+            startActivityForResult(intent, REQUEST_COUNTRY);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CHANGE_CELLPHONE) {
                 finish();
+            } else if (requestCode == REQUEST_COUNTRY) {
+                // 获取国家地区编号并显示
+                Bundle bundle = data.getExtras();
+                String countryName = bundle.getString(EXTRA_COUNTRY_NAME);
+                String countryCode = bundle.getString(EXTRA_COUNTRY_CODE);
+                mCountryTextView.setText(countryName + " " + countryCode);
             }
         }
     }

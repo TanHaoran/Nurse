@@ -18,13 +18,13 @@ import com.jerry.nurse.R;
 public class ToggleButton extends RelativeLayout {
 
 
-    private TextView mOpenTextView;
-    private TextView mCloseTextView;
+    private TextView mLeftTextView;
+    private TextView mRightTextView;
 
-    private ImageView mOpenImageView;
-    private ImageView mCloseImageView;
+    private ImageView mLeftImageView;
+    private ImageView mRightImageView;
 
-    private boolean mIsMale = false;
+    private boolean mIsOpen = false;
 
     public ToggleButton(Context context) {
         this(context, null);
@@ -38,22 +38,22 @@ public class ToggleButton extends RelativeLayout {
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ToggleButton);
-        String openText = ta.getString(R.styleable.ToggleButton_open_text);
-        String closeText = ta.getString(R.styleable.ToggleButton_close_text);
+        String leftText = ta.getString(R.styleable.ToggleButton_toggle_left_text);
+        String rightText = ta.getString(R.styleable.ToggleButton_toggle_right_text);
 
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_sax_toggle, this);
+        inflater.inflate(R.layout.view_toggle_button, this);
 
-        mOpenTextView = (TextView) findViewById(R.id.tv_right);
-        mCloseTextView = (TextView) findViewById(R.id.tv_left);
+        mLeftTextView = (TextView) findViewById(R.id.tv_left);
+        mRightTextView = (TextView) findViewById(R.id.tv_right);
 
-        mOpenImageView = (ImageView) findViewById(R.id.iv_left);
-        mCloseImageView = (ImageView) findViewById(R.id.iv_right);
+        mLeftImageView = (ImageView) findViewById(R.id.iv_left);
+        mRightImageView = (ImageView) findViewById(R.id.iv_right);
 
-        mOpenTextView.setText(openText);
-        mCloseTextView.setText(closeText);
+        mLeftTextView.setText(leftText);
+        mRightTextView.setText(rightText);
 
         ta.recycle();
     }
@@ -74,26 +74,26 @@ public class ToggleButton extends RelativeLayout {
      * @return
      */
     public int getOpen() {
-        return mIsMale ? 0 : 1;
+        return mIsOpen ? 1 : 0;
     }
 
     /**
      * 切换显示状态
      */
     private void toggle() {
-        if (mIsMale) {
-            mCloseImageView.setVisibility(VISIBLE);
-            mCloseTextView.setTextColor(getResources().getColor(R.color.white));
+        if (mIsOpen) {
+            mLeftImageView.setVisibility(INVISIBLE);
+            mRightImageView.setVisibility(VISIBLE);
 
-            mOpenTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
-            mOpenImageView.setVisibility(INVISIBLE);
+            mLeftTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+            mRightTextView.setTextColor(getResources().getColor(R.color.white));
         } else {
-            mCloseImageView.setVisibility(INVISIBLE);
-            mCloseTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+            mLeftImageView.setVisibility(VISIBLE);
+            mRightImageView.setVisibility(INVISIBLE);
 
-            mOpenTextView.setTextColor(getResources().getColor(R.color.white));
-            mOpenImageView.setVisibility(VISIBLE);
+            mLeftTextView.setTextColor(getResources().getColor(R.color.white));
+            mRightTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
         }
-        mIsMale = !mIsMale;
+        mIsOpen = !mIsOpen;
     }
 }

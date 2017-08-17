@@ -23,19 +23,18 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-//    public static final String UPLOAD_IP = "http://125.76.225.7:9400/";
-    public static final String UPLOAD_IP = "http://192.168.0.100:9400/";
+    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
-    public static final String EVENT_REPORT_IP = "http://192.168.0.49:3300";
+    public static final String EVENT_REPORT_IP = "http://zh.buzzlysoft.com/";
 
-    public static final String IP = UPLOAD_IP + "UserService.svc/";
+    public static final String IP = MAIN_IP + "UserService.svc/";
 
 
-    public static final String AVATAR_ADDRESS = UPLOAD_IP + "Avatar/";
-    public static final String PROFESSIONAL_ADDRESS = UPLOAD_IP + "QC/";
-    public static final String PRACTISING_ADDRESS = UPLOAD_IP + "PC/";
-    public static final String QR_CODE_ADDRESS = UPLOAD_IP + "QRCode/";
-    public static final String BANNER_ADDRESS = UPLOAD_IP + "Banner/";
+    public static final String AVATAR_ADDRESS = MAIN_IP + "Avatar/";
+    public static final String PROFESSIONAL_ADDRESS = MAIN_IP + "QC/";
+    public static final String PRACTISING_ADDRESS = MAIN_IP + "PC/";
+    public static final String QR_CODE_ADDRESS = MAIN_IP + "QRCode/";
+    public static final String BANNER_ADDRESS = MAIN_IP + "Banner/";
 
     /**
      * 获取验证码
@@ -92,17 +91,17 @@ public class ServiceConstant {
     /**
      * 上传头像
      */
-    public static final String UPLOAD_AVATAR = UPLOAD_IP + "AvatarImgHandler.ashx";
+    public static final String UPLOAD_AVATAR = MAIN_IP + "AvatarImgHandler.ashx";
 
     /**
      * 上传专业资格证
      */
-    public static final String UPLOAD_PROFESSIONAL_PICTURE = UPLOAD_IP + "QCImgHandler.ashx";
+    public static final String UPLOAD_PROFESSIONAL_PICTURE = MAIN_IP + "QCImgHandler.ashx";
 
     /**
      * 上传执业证
      */
-    public static final String UPLOAD_PRACTISING_PICTURE = UPLOAD_IP + "PCImgHandler.ashx";
+    public static final String UPLOAD_PRACTISING_PICTURE = MAIN_IP + "PCImgHandler.ashx";
 
     /**
      * 上传文件的方法
@@ -244,6 +243,12 @@ public class ServiceConstant {
      * 创建群组
      */
     public static final String CREATE_GROUP = IP + "CreateGroup";
+
+
+    /**
+     * 获取某个群组的信息
+     */
+    public static final String GET_GROUP_INFO = IP + "GetXHGroupList";
 
 
 }

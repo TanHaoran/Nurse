@@ -29,7 +29,7 @@ public class UserHospitalInfo  extends DataSupport {
     private String NursingUnitName;
     private String RegisterId;
     private String RelRecordId;
-    private int Role;
+    private String Role;
 
     public String getDepartmentId() {
         return DepartmentId;
@@ -79,11 +79,11 @@ public class UserHospitalInfo  extends DataSupport {
         this.RelRecordId = RelRecordId;
     }
 
-    public int getRole() {
+    public String getRole() {
         return Role;
     }
 
-    public void setRole(int Role) {
+    public void setRole(String Role) {
         this.Role = Role;
     }
 

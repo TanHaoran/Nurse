@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 
+import java.io.File;
+
 public class PictureUtil {
 
     /**
@@ -17,6 +19,10 @@ public class PictureUtil {
      */
     public static Bitmap getScaleBitmap(String path, int destWidth,
                                         int destHeight) {
+        File file = new File(path);
+        if (!file.exists()) {
+            L.i("图片文件不存在");
+        }
         BitmapFactory.Options options = new BitmapFactory.Options();
         // 设置true表示只是解析bitmap，并不加载到内存
         options.inJustDecodeBounds = true;
@@ -33,7 +39,7 @@ public class PictureUtil {
             if (srcWidth > srcHeight) {
                 inSampleSize = Math.round(srcHeight / destHeight);
             } else {
-                inSampleSize = Math.round(destHeight / srcHeight);
+                inSampleSize = Math.round(srcWidth / destWidth);
             }
         }
 

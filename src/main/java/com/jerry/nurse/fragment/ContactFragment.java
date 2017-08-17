@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.jerry.nurse.R;
@@ -43,6 +44,15 @@ import butterknife.OnClick;
  */
 
 public class ContactFragment extends BaseFragment {
+
+    @Bind(R.id.ll_search)
+    LinearLayout mSearchLayout;
+
+    @Bind(R.id.et_keyword)
+    EditText mKeyWordEditText;
+
+    @Bind(R.id.tv_cancel)
+    TextView mCancelTextView;
 
     @Bind(R.id.rv)
     RecyclerView mRecyclerView;
@@ -179,8 +189,6 @@ public class ContactFragment extends BaseFragment {
                                     Intent intent = GroupListActivity.getIntent(getActivity());
                                     startActivity(intent);
                                 }
-                                Toast.makeText(getActivity(), contactTopHeaderBean.getTxt(),
-                                        Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -261,7 +269,13 @@ public class ContactFragment extends BaseFragment {
 
     @OnClick(R.id.ib_search)
     void onSearch(View view) {
+        mSearchLayout.setVisibility(View.VISIBLE);
+    }
 
+    @OnClick(R.id.tv_cancel)
+    void onCancel(View view) {
+        mKeyWordEditText.setText("");
+        mSearchLayout.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.ib_add)

@@ -1,8 +1,11 @@
 package com.jerry.nurse.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -15,6 +18,7 @@ import com.baidu.location.Poi;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.HospitalResult;
 import com.jerry.nurse.model.LoginInfo;
@@ -26,6 +30,7 @@ import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -66,6 +71,21 @@ public class HospitalActivity extends BaseActivity {
 
     private LoginInfo mLoginInfo;
 
+    private double mLatitude;
+    private double mLongitude;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (mLatitude <= 0 && mLongitude <= 0) {
+                T.showShort(HospitalActivity.this, "抱歉定位失败！请打开手机GPS定位");
+            }
+            getNearbyHospital(String.valueOf(mLatitude), String.valueOf(mLongitude));
+        }
+    };
+
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, HospitalActivity.class);
         return intent;
@@ -95,8 +115,19 @@ public class HospitalActivity extends BaseActivity {
         mLocationClient.registerLocationListener(myListener);
         //注册监听函数
         initLocation();
-        // mLocationClient.start();
-        getNearbyHospital("34.274f", "108.943f");
+
+        BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE}, new PermissionListener() {
+            @Override
+            public void onGranted() {
+                mLocationClient.start();
+            }
+
+            @Override
+            public void onDenied(List<String> deniedPermission) {
+
+            }
+        });
     }
 
 
@@ -330,6 +361,13 @@ public class HospitalActivity extends BaseActivity {
             }
 
             L.i(sb.toString());
+
+            mLatitude = location.getLatitude();
+            mLongitude = location.getLongitude();
+
+            mHandler.sendEmptyMessage(0);
+
+            mLocationClient.stop();
         }
 
         @Override
@@ -350,7 +388,7 @@ public class HospitalActivity extends BaseActivity {
             holder.setText(R.id.tv_string, hospital.getName());
             if (hospital.getHospitalId().equals(mLoginInfo.getHospitalId())) {
                 holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
             }
         }

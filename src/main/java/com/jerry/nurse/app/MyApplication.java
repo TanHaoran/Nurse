@@ -1,19 +1,24 @@
 package com.jerry.nurse.app;
 
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.multidex.MultiDex;
 
 import com.google.gson.Gson;
 import com.hyphenate.EMContactListener;
+import com.hyphenate.EMGroupChangeListener;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
+import com.jerry.nurse.activity.ChatActivity;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
@@ -37,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.OkHttpClient;
 
 import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_RECEIVE;
@@ -60,6 +66,9 @@ public class MyApplication extends LitePalApplication {
         // 设置字体大小不随系统而变化
         initFontSize();
 
+        // 初始化极光推送
+        initJPush();
+
         // 初始化LitePal        
         initLitePal();
 
@@ -69,6 +78,14 @@ public class MyApplication extends LitePalApplication {
         initEaseMob();
         // 初始化OkHttp封装类
         initOkHttp();
+    }
+
+    /**
+     * 初始化极光推送
+     */
+    private void initJPush() {
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
     /**
@@ -125,11 +142,11 @@ public class MyApplication extends LitePalApplication {
         //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
 
-        // 开启消息监听和申请好友监听
+        // 开启消息监听、申请好友监听和群组监听
         startMessageListener();
         startContactListener();
+        startGroupListener();
     }
-
 
     /**
      * 消息监听
@@ -138,7 +155,6 @@ public class MyApplication extends LitePalApplication {
         EMMessageListener emMessageListener = new EMMessageListener() {
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
-                L.i("收到消息");
                 String name = ActivityCollector.getTopActivity().getLocalClassName();
                 if (name.equals("activity.ChatActivity")) {
                     return;
@@ -214,12 +230,16 @@ public class MyApplication extends LitePalApplication {
             L.i("音频时长：" + messageBody.getLength());
             L.i("音频路径：" + messageBody.getLocalUrl());
 
-            if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
-                chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage,
-                        messageBody.getLength(), messageBody.getLocalUrl());
-            } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
-                // TODO
-            }
+            chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage,
+                    messageBody.getLength(), messageBody.getLocalUrl());
+        } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+            EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
+
+            String path = ChatActivity.parseImagePath(messageBody.getLocalUrl());
+            L.i("图片路径：" + path);
+
+            chatMessage = MessageManager.saveImageReceiveChatMessageLocalData(emMessage,
+                    path);
         }
 
 
@@ -264,7 +284,7 @@ public class MyApplication extends LitePalApplication {
                             getContext().sendBroadcast(intent);
                         }
                     });
-                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(), username);
                 } else {
                     // 保存好友申请到数据库
                     AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(ci, reason);
@@ -295,7 +315,7 @@ public class MyApplication extends LitePalApplication {
                             getContext().sendBroadcast(intent);
                         }
                     });
-                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(), username);
                 } else {
                     // 保存好友申请到数据库
                     ci.setFriend(true);
@@ -326,7 +346,7 @@ public class MyApplication extends LitePalApplication {
                             getContext().sendBroadcast(intent);
                         }
                     });
-                    util.getContactDetail(EMClient.getInstance().getCurrentUser(),username );
+                    util.getContactDetail(EMClient.getInstance().getCurrentUser(), username);
                 } else {
                     // 保存好友申请到数据库
                     AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(ci, false);
@@ -340,7 +360,83 @@ public class MyApplication extends LitePalApplication {
         EMClient.getInstance().contactManager().setContactListener(emContactListener);
     }
 
-       /**
+
+    private void startGroupListener() {
+        EMClient.getInstance().groupManager().addGroupChangeListener(new EMGroupChangeListener() {
+
+            @Override
+            public void onInvitationReceived(String groupId, String groupName, String inviter, String reason) {
+                //接收到群组加入邀请
+            }
+
+            @Override
+            public void onRequestToJoinReceived(String groupId, String groupName, String applicant, String reason) {
+                //用户申请加入群
+            }
+
+            @Override
+            public void onRequestToJoinAccepted(String groupId, String groupName, String accepter) {
+                //加群申请被同意
+            }
+
+            @Override
+            public void onRequestToJoinDeclined(String groupId, String groupName, String decliner, String reason) {
+                //加群申请被拒绝
+            }
+
+            @Override
+            public void onInvitationAccepted(String groupId, String invitee, String reason) {
+                //群组邀请被同意
+            }
+
+            @Override
+            public void onInvitationDeclined(String groupId, String invitee, String reason) {
+                //群组邀请被拒绝
+            }
+
+            @Override
+            public void onUserRemoved(String groupId, String groupName) {
+                //当前登录用户被管理员移除出群组
+            }
+
+            @Override
+            public void onGroupDestroyed(String groupId, String groupName) {
+                //群组被解散
+            }
+
+            @Override
+            public void onAutoAcceptInvitationFromGroup(String groupId, String inviter, String inviteMessage) {
+                //自动同意加入群组
+            }
+
+            @Override
+            public void onMuteListAdded(String groupId, List<String> mutes, long muteExpire) {
+                //有成员被禁言
+            }
+
+            @Override
+            public void onMuteListRemoved(String groupId, List<String> mutes) {
+                //有成员从禁言列表中移除，恢复发言权限
+            }
+
+            @Override
+            public void onAdminAdded(String groupId, String administrator) {
+                //添加成员管理员权限
+            }
+
+            @Override
+            public void onAdminRemoved(String groupId, String administrator) {
+                //取消某管理员权限
+            }
+
+            @Override
+            public void onOwnerChanged(String groupId, String newOwner, String oldOwner) {
+                //转移群组所有者权限
+            }
+        });
+    }
+
+    /**
      * 获取app名称
      *
      * @param pID
@@ -417,6 +513,11 @@ public class MyApplication extends LitePalApplication {
                 .build();
 
         OkHttpUtils.initClient(okHttpClient);
+    }
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
 }

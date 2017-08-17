@@ -10,9 +10,17 @@ public class Register {
 
     private String Password;
 
+    private String CountryCode;
+
     public Register(String phone, String password) {
         Phone = phone;
         Password = password;
+    }
+
+    public Register(String phone, String password, String countryCode) {
+        Phone = phone;
+        Password = password;
+        CountryCode = countryCode;
     }
 
     public String getPhone() {
@@ -29,5 +37,13 @@ public class Register {
 
     public void setPassword(String password) {
         Password = password;
+    }
+
+    public String getCountryCode() {
+        return CountryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        CountryCode = countryCode;
     }
 }

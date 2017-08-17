@@ -447,7 +447,7 @@ public class PractisingCertificateActivity extends BaseActivity {
         // 组装数据
         mPractising.setName(mNameEditText.getText().toString());
         mPractising.setBirthDate(DateUtil.parseStringToMysqlDate(mBirthdayTextView.getText().toString()));
-        if (mSexButton.getOpen() == 0) {
+        if (mSexButton.getOpen() == 1) {
             mPractising.setSex("男");
         } else {
             mPractising.setSex("女");

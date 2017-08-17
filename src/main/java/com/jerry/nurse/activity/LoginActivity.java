@@ -3,11 +3,10 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
@@ -15,7 +14,6 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.Register;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.LoginManager;
@@ -33,6 +31,7 @@ import butterknife.BindString;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_FORGET_PASSWORD;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_REGISTER;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_VERIFICATION_CODE;
@@ -40,8 +39,10 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
 
-    private static final int MESSAGE_EASE_MOB_LOGIN_FAILED = 0;
-    private static final int MESSAGE_EASE_MOB_LOGIN_SUCCESS = 1;
+    private static final int REQUEST_COUNTRY = 0x00000101;
+
+    @Bind(R.id.tv_country_code)
+    TextView mCountryCodeTextView;
 
     @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
@@ -58,29 +59,7 @@ public class LoginActivity extends BaseActivity {
     // 腾讯官方获取的APPID
     private TencentLoginUtil mTencentLoginUtil;
 
-    private UserRegisterInfo mUserRegisterInfo;
-
-    private String mErrorMessage;
-
     private ProgressDialogManager mProgressDialogManager;
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_EASE_MOB_LOGIN_SUCCESS:
-                    String cellphone = mCellphoneEditText.getText().toString();
-                    LoginManager loginUtil = new LoginManager(LoginActivity.this, mProgressDialogManager);
-//                    loginUtil.getLoginInfoByCellphone(cellphone);
-                    break;
-                case MESSAGE_EASE_MOB_LOGIN_FAILED:
-                    onLoginFailed();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -117,6 +96,7 @@ public class LoginActivity extends BaseActivity {
     void onLoginButton(View view) {
         String cellphone = mCellphoneEditText.getText().toString();
         String password = mPasswordEditText.getText().toString().trim();
+        String countryCode = mCountryCodeTextView.getText().toString();
 
         //验证用户名和密码格式是否符合
         String errorMessage = localValidate(cellphone, password);
@@ -128,7 +108,7 @@ public class LoginActivity extends BaseActivity {
         mProgressDialogManager.setMessage("登录中...");
 
         // 第一步：登录护士通账号
-        login(cellphone, password);
+        login(countryCode, cellphone, password);
     }
 
 
@@ -164,6 +144,17 @@ public class LoginActivity extends BaseActivity {
         resetUI();
     }
 
+    /**
+     * 国家代码点击事件
+     *
+     * @param view
+     */
+    @OnClick(R.id.tv_country_code)
+    void onCountry(View view) {
+        String countryCode = mCountryCodeTextView.getText().toString();
+        Intent intent = CountryActivity.getIntent(this, countryCode);
+        startActivityForResult(intent, REQUEST_COUNTRY);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -171,18 +162,29 @@ public class LoginActivity extends BaseActivity {
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
         }
+
+        if (resultCode==RESULT_OK) {
+            if (requestCode == REQUEST_COUNTRY) {
+                // 获取国家地区编号并显示
+                Bundle bundle = data.getExtras();
+                String countryCode = bundle.getString(EXTRA_COUNTRY_CODE);
+                mCountryCodeTextView.setText(countryCode);
+            }
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
      * 登录
      *
+     * @param countryCode
      * @param cellphone
      * @param password
      */
-    private void login(final String cellphone, final String password) {
+    private void login(String countryCode, final String cellphone, final String password) {
         mProgressDialogManager.show();
-        Register register = new Register(cellphone, password);
+        Register register = new Register(cellphone, password, countryCode);
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN)
                 .content(StringUtil.addModelWithJson(register))
@@ -253,7 +255,7 @@ public class LoginActivity extends BaseActivity {
 
     /********************************QQ第三方登录******************************************/
 
-     /**
+    /**
      * 使用qq登录
      *
      * @param view

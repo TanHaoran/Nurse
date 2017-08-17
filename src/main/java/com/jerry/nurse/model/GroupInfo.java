@@ -12,6 +12,8 @@ public class GroupInfo extends DataSupport{
      * groupMemberList : [{"Avatar":"01bca757ef140ca84a0d304fca0d15time20170811102624.gif","DepartmentName":"","FriendId":"","HospitalName":"","IsFriend":true,"MyId":"0000000799","Name":"","NickName":"白衣天使","Phone":"","Remark":"","Role":0,"Sex":""},{"Avatar":"-1749197750time20170810113416.jpg","DepartmentName":"","FriendId":"","HospitalName":"","IsFriend":false,"MyId":"0000000430","Name":"","NickName":"jerrytan","Phone":"","Remark":"","Role":0,"Sex":""},{"Avatar":"IMG_20170430_103937time20170810113605.jpg","DepartmentName":"","FriendId":"","HospitalName":"","IsFriend":true,"MyId":"0000000429","Name":"","NickName":"灰大狼","Phone":"","Remark":"","Role":0,"Sex":""}]
      */
 
+    private String GroupId;
+    private int GroupUserCount;
     private String RegisterId;
     private String HXGroupId;
     private String HXNickName;
@@ -39,6 +41,22 @@ public class GroupInfo extends DataSupport{
 
     public void setHXNickName(String HXNickName) {
         this.HXNickName = HXNickName;
+    }
+
+    public String getGroupId() {
+        return GroupId;
+    }
+
+    public void setGroupId(String groupId) {
+        GroupId = groupId;
+    }
+
+    public int getGroupUserCount() {
+        return GroupUserCount;
+    }
+
+    public void setGroupUserCount(int groupUserCount) {
+        GroupUserCount = groupUserCount;
     }
 
     public List<Contact> getGroupMemberList() {

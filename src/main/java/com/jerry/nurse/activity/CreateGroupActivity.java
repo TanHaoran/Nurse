@@ -155,6 +155,8 @@ public class CreateGroupActivity extends BaseActivity {
                             String groupId = result.getBody().getGroupId();
                             String name = result.getBody().getGroupNickName();
                             MessageManager.saveCreateGroupLocalData(groupId, name);
+                            T.showShort(CreateGroupActivity.this, "创建成功");
+                            finish();
                         } else {
                             T.showShort(CreateGroupActivity.this, result.getMsg());
                         }

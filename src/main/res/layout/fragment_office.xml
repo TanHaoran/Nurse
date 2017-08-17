@@ -49,9 +49,10 @@
             android:textSize="@dimen/small_textSize"/>
 
         <TextView
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
             android:id="@+id/tv_announcement"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/line_paddingLeft"
             android:layout_toRightOf="@id/tv_announcement_text"
@@ -62,7 +63,8 @@
         <TextView
             android:id="@+id/tv_announcement_more"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/line_paddingRight"

@@ -190,8 +190,8 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/line_paddingLeft"
-                        app:close_text="@string/male"
-                        app:open_text="@string/female"/>
+                        app:toggle_left_text="@string/male"
+                        app:toggle_right_text="@string/female"/>
 
                     <TextView
                         android:id="@+id/tv_sex"

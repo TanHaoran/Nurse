@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white"
@@ -42,20 +43,31 @@
                     android:layout_marginLeft="@dimen/signup_text_marginLeft"
                     android:text="@string/cellphone_number"/>
 
-                <com.jerry.nurse.view.ClearEditText
-                    android:maxLength="11"
-                    android:id="@+id/cet_cellphone"
-                    android:layout_marginRight="@dimen/line_paddingLeft"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_toRightOf="@id/tv_cellphone"
+                    android:id="@+id/tv_country_code"
+                    android:layout_width="@dimen/login_country_code_width"
                     android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
-                    android:background="@drawable/edit_no_border"
+                    android:textSize="@dimen/normal_textSize"
+                    android:gravity="center_vertical|right"
+                    android:textColor="@color/gray_textColor"
+                    android:layout_marginLeft="34dp"
+                    android:text="@string/default_country_code"
+                    android:layout_marginStart="34dp"/>
+
+                <com.jerry.nurse.view.ClearEditText
                     android:gravity="center_vertical"
+                    android:id="@+id/cet_cellphone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:layout_toRightOf="@id/tv_country_code"
+                    android:background="@drawable/edit_no_border"
                     android:inputType="number"
                     android:lines="1"
+                    android:maxLength="11"
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/normal_textColor"
@@ -88,13 +100,13 @@
                     app:passwordToggleDrawable="@drawable/login_eye">
 
                     <EditText
-                        android:maxLength="12"
                         android:id="@+id/et_password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/edit_no_border"
                         android:gravity="center_vertical"
                         android:inputType="textPassword"
+                        android:maxLength="12"
                         android:paddingLeft="@dimen/line_paddingLeft"
                         android:paddingRight="@dimen/line_paddingLeft"
                         android:textColor="@color/normal_textColor"

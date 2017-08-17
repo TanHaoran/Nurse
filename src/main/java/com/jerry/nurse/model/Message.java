@@ -13,6 +13,7 @@ public class Message extends DataSupport implements Serializable {
     public static final int TYPE_ADD_FRIEND_APPLY = 0;
     public static final int TYPE_CHAT = 1;
     public static final int TYPE_CHAT_GROUP = 2;
+    public static final int TYPE_J_PUSH = 3;
 //    public static final int TYPE_EVENT_REPORT = 2;
 
     private String mRegisterId;

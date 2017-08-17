@@ -50,7 +50,7 @@
     </declare-styleable>
 
     <declare-styleable name="ToggleButton">
-        <attr name="open_text" format="string"/>
-        <attr name="close_text" format="string"/>
+        <attr name="toggle_left_text" format="string"/>
+        <attr name="toggle_right_text" format="string"/>
     </declare-styleable>
 </resources>

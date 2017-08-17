@@ -154,6 +154,14 @@ public class MessageFragment extends BaseFragment {
                                 holder.setText(R.id.tv_content, "语音消息");
                             }
                             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+                        } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
+                            ImageView imageView = holder.getView(R.id.iv_avatar);
+                            Glide.with(getActivity()).load(info.getAvatar()).into(imageView);
+                            holder.setText(R.id.tv_title, info.getNickName());
+                            if (chatMessage != null) {
+                                holder.setText(R.id.tv_content, "图片消息");
+                            }
+                            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         }
                     }
                     break;
@@ -175,6 +183,10 @@ public class MessageFragment extends BaseFragment {
                         }
                         holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                     }
+                    break;
+                case Message.TYPE_J_PUSH:
+                    holder.setText(R.id.tv_title, message.getTitle());
+                    break;
 
             }
 
@@ -195,6 +207,8 @@ public class MessageFragment extends BaseFragment {
                             Intent chatGroupIntent = ChatActivity.getIntent(getActivity(),
                                     message.getContactId(), true);
                             startActivity(chatGroupIntent);
+                            break;
+                        case Message.TYPE_J_PUSH:
                             break;
                     }
                 }

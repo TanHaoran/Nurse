@@ -16,7 +16,9 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AnnouncementActivity;
 import com.jerry.nurse.activity.AnnouncementDetailActivity;
+import com.jerry.nurse.activity.CreditCheckActivity;
 import com.jerry.nurse.activity.HtmlActivity;
+import com.jerry.nurse.activity.ScheduleActivity;
 import com.jerry.nurse.adapter.BannerAdapter;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Announcement;
@@ -146,12 +148,12 @@ public class OfficeFragment extends BaseFragment {
                 departmentId = "";
             }
         }
-        mProgressDialogManager.show();
+//        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_BANNER)
                 .addParams("HospitalId", hospitalId)
                 .addParams("DepartmentId", departmentId)
                 .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
+                .execute(new FilterStringCallback() {
 
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
@@ -206,13 +208,13 @@ public class OfficeFragment extends BaseFragment {
                 officeId = "";
             }
         }
-        mProgressDialogManager.show();
+//        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
                 .addParams("pageNumber", String.valueOf(page))
                 .addParams("HospitalId", hospitalId)
                 .addParams("DepartmentId", officeId)
                 .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
+                .execute(new FilterStringCallback() {
 
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
@@ -275,7 +277,7 @@ public class OfficeFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = HtmlActivity.getIntent(getActivity(), mBanners.get(index).getBannerToUrl()
-                                , mBanners.get(index).getBannerId());
+                                , mBanners.get(index).getTitle());
                         startActivity(intent);
                     }
                 });
@@ -304,7 +306,6 @@ public class OfficeFragment extends BaseFragment {
             e.printStackTrace();
         }
     }
-
 
     /**
      * 更新公告显示
@@ -359,10 +360,14 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_credit_check)
     void onCreditCheck(View view) {
+        Intent intent = CreditCheckActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 
     @OnClick(R.id.ll_schedule_check)
     void onScheduleCheck(View view) {
+        Intent intent = ScheduleActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 
     @Override

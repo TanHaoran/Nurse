@@ -15,11 +15,12 @@ android {
         versionName "0.5"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,6 +40,10 @@ dependencies {
     compile files('libs/open_sdk_r5793_lite.jar')
     compile files('libs/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar')
     compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/jcore-android-1.1.6.jar')
+    compile files('libs/jpush-android-3.0.8.jar')
+    compile files('libs/jcore-android-1.1.6.jar')
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'

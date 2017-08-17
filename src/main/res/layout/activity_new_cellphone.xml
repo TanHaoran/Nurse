@@ -21,6 +21,36 @@
         android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
+        android:id="@+id/rl_country"
+        style="@style/BusinessLineStyle">
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/signup_text_marginLeft"
+            android:text="@string/country_and_region"/>
+
+        <ImageView
+            android:id="@+id/iv_arrow_enter_country"
+            style="@style/ArrowEnterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/line_paddingLeft"
+            android:layout_toLeftOf="@id/iv_arrow_enter_country"
+            android:text="@string/country_china_number"
+            android:textColor="@color/gray_textColor"
+            android:textSize="@dimen/normal_textSize"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+    <RelativeLayout
         android:id="@+id/rl_cellphone"
         style="@style/BusinessLineStyle"
         android:clickable="false">

@@ -37,7 +37,7 @@ public abstract class FilterStringCallback extends StringCallback {
             mProgressDialogManager.dismiss();
         }
         L.e("请求失败：" + e.getMessage());
-        T.showShort(ActivityCollector.getTopActivity(), "服务连接错误");
+        T.showShort(ActivityCollector.getTopActivity(), "服务连接超时");
         onFilterError(call, e, id);
     }
 

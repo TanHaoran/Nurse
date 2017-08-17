@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -81,9 +80,6 @@ public class SignupActivity extends BaseActivity {
 
     @Bind(R.id.cet_cellphone)
     EditText mCellphoneEditText;
-
-    @Bind(R.id.rl_country)
-    RelativeLayout mCountryLayout;
 
     @Bind(R.id.et_verification_code)
     EditText mVerificationCodeEditText;
@@ -185,14 +181,12 @@ public class SignupActivity extends BaseActivity {
             // 验证码登录
             case TYPE_VERIFICATION_CODE:
                 mTitleBar.setTitle("验证码登录");
-                mCountryLayout.setVisibility(View.GONE);
                 mProtocolLayout.setVisibility(View.GONE);
                 mSignupButton.setText(R.string.login);
                 break;
             // 忘记密码
             case TYPE_FORGET_PASSWORD:
                 mTitleBar.setTitle("忘记密码");
-                mCountryLayout.setVisibility(View.GONE);
                 mProtocolLayout.setVisibility(View.GONE);
                 mSignupButton.setText(R.string.next_step);
                 break;
@@ -206,7 +200,7 @@ public class SignupActivity extends BaseActivity {
     }
 
     /**
-     * 获取验证码点击事件
+     * 发送验证码点击事件
      *
      * @param v
      */
