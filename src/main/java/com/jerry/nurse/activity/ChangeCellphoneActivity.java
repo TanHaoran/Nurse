@@ -40,6 +40,7 @@ import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_NAME;
 import static com.jerry.nurse.activity.SignupActivity.DEFAULT_COUNTRY_CODE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_BIND_CELLPHONE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_CHANGE_CELLPHONE;
+import static com.jerry.nurse.activity.SignupActivity.TYPE_UNBIND_CELLPHONE;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ChangeCellphoneActivity extends BaseActivity {
@@ -135,15 +136,15 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
         L.i("获取到的值是：" + mBindInfo.toString());
 
-        // 绑定数量是1，就是修改手机号
+        // 绑定数量是1，并且有手机号：就是修改手机号
         if (mBindInfo.getBindCount() == 1 && !TextUtils.isEmpty(cellphone)) {
             L.i("修改手机");
             mType = TYPE_CHANGE_CELLPHONE;
             mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
             mGetVerificationCodeTextView.setEnabled(true);
         }
-        // 绑定数量大于1，手机为空，就是绑定手机号
-        else if (mBindInfo.getBindCount() > 1 && TextUtils.isEmpty(cellphone)) {
+        // 绑定数量大于等于1，并且没有手机号：就是绑定手机
+        else if (mBindInfo.getBindCount() >= 1 && TextUtils.isEmpty(cellphone)) {
             L.i("绑定手机号");
             mType = TYPE_BIND_CELLPHONE;
             mTitleBar.setTitle("绑定手机");
@@ -154,7 +155,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
         // 绑定数量大于1，手机不为空，就是解绑手机号
         else if (mBindInfo.getBindCount() > 1 && !TextUtils.isEmpty(cellphone)) {
             L.i("解绑手机号");
-            mType = TYPE_BIND_CELLPHONE;
+            mType = TYPE_UNBIND_CELLPHONE;
             mTitleBar.setTitle("解绑手机");
             mOriginCellphoneTextView.setText("手机号码");
             mCellphoneTextView.setVisibility(View.GONE);
@@ -300,13 +301,10 @@ public class ChangeCellphoneActivity extends BaseActivity {
                                 startActivityForResult(intent, REQUEST_CHANGE_CELLPHONE);
                             } else if (mType == TYPE_BIND_CELLPHONE) {
                                 // 绑定手机
-                                if (!TextUtils.isEmpty(mBindInfo.getPhone())) {
-                                    bind(cellphone, false);
-                                }
+                                bind(cellphone, true);
+                            } else if (mType == TYPE_UNBIND_CELLPHONE) {
                                 // 解绑手机
-                                else {
-                                    bind(cellphone, true);
-                                }
+                                bind(cellphone,false );
                             }
                         } else {
                             T.showShort(ChangeCellphoneActivity.this, commonResult.getMsg());

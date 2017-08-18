@@ -193,6 +193,76 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 给一个View设置日期选择控件
      *
      * @param view
+     * @param origin
+     * @param isBirthday
+     * @param biggerThanToday
+     * @param onDateSelectListener
+     */
+    public void setDateSelectListener(View view, final Date origin, final boolean isBirthday,
+                                      final boolean biggerThanToday, final OnDateSelectListener onDateSelectListener) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                int nowYear = calendar.get(Calendar.YEAR);
+                //  首先如果原日期不为空就先设置成原日期
+                if (origin != null) {
+                    calendar.setTime(origin);
+                }
+                // 然后判断是否需要往前退20年
+                if (nowYear - calendar.get(Calendar.YEAR) > 50) {
+
+                    if (isBirthday) {
+                        calendar.set(Calendar.YEAR, nowYear - 20);
+                    }
+                }
+
+                final DatePickerDialog datePickerDialog =
+                        new DatePickerDialog(ActivityCollector.getTopActivity(), null,
+                                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH));
+
+                //手动设置按钮
+                datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "完成",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //通过mDialog.getDatePicker()获得dialog上的DatePicker组件，然后可以获取日期信息
+                                DatePicker datePicker = datePickerDialog.getDatePicker();
+                                int year = datePicker.getYear();
+                                int month = datePicker.getMonth();
+                                int day = datePicker.getDayOfMonth();
+                                String date = year + "-" + (month + 1) + "-" + day;
+                                Date nowDate = new Date();
+                                if (!biggerThanToday) {
+                                    if (DateUtil.parseStringToDate(date).getTime() > nowDate.getTime()) {
+                                        T.showShort(ActivityCollector.getTopActivity(), "日期设置不能大于当天");
+                                        return;
+                                    }
+                                }
+                                if (onDateSelectListener != null) {
+                                    onDateSelectListener.onDateSelected(DateUtil.parseStringToDate(date));
+                                }
+                                datePickerDialog.dismiss();
+                            }
+                        });
+
+                //取消按钮，如果不需要直接不设置即可
+                datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                datePickerDialog.show();
+            }
+        });
+    }
+
+    /**
+     * 给一个View设置日期选择控件
+     *
+     * @param view
      * @param origin               初始日期
      * @param isBirthday           是否是生日控件
      * @param onDateSelectListener

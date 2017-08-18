@@ -55,8 +55,6 @@ public class OfficeFragment extends BaseFragment {
 
     private static final String REPORT_EVENT_URL = ServiceConstant.EVENT_REPORT_IP + "?Ruid=";
 
-    private static final String NURSE_CLASS_URL = "http://192.168.0.100:8100";
-
     // Banner停留时间
     private static final int BANNER_DELAYED = 5000;
     // Banner滚动持续时间
@@ -354,8 +352,8 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_nurse_class)
     void onNurseClass(View view) {
-        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL, null);
-        startActivity(intent);
+//        Intent intent = HtmlActivity.getIntent(getActivity(), NURSE_CLASS_URL, null);
+//        startActivity(intent);
     }
 
     @OnClick(R.id.ll_credit_check)

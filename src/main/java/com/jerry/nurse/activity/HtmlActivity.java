@@ -13,6 +13,7 @@ import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -73,6 +74,8 @@ public class HtmlActivity extends BaseActivity {
 
         mHistories.add(mUrl);
 
+        // 清除WebView缓存
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         // 允许JS脚本
         mWebView.getSettings().setJavaScriptEnabled(true);
         // 设置字体所放大小不随系统改变

@@ -143,6 +143,7 @@
                         android:text="@string/name"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_name"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_name"/>
@@ -212,6 +213,7 @@
                         android:text="@string/country_nation"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_country_nation"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_country_nation"/>
@@ -230,6 +232,7 @@
                         android:text="@string/practising_location"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_practising_location"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_practising_location"/>
@@ -249,6 +252,7 @@
                         android:text="@string/certificate_number"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_certificate_number"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_certificate_number"
@@ -269,6 +273,7 @@
                         android:text="@string/id_card_number"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_id_card_number"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_id_card_number"/>
@@ -343,6 +348,7 @@
                         android:text="@string/sign_department"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_sign_department"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_sign_department"/>
@@ -361,6 +367,7 @@
                         android:text="@string/certificate_organization"/>
 
                     <EditText
+                        android:maxLength="20"
                         android:id="@+id/et_certificate_organization"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_certificate_organization"/>

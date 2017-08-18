@@ -54,8 +54,8 @@ public class EaseMobManager {
      * @param registerId
      */
     public void login(String registerId) {
-        mProgressDialogManager.setMessage("初始化中");
-        mProgressDialogManager.show();
+//        mProgressDialogManager.setMessage("初始化中");
+//        mProgressDialogManager.show();
         EMClient.getInstance().login(registerId, PASSWORD, new EMCallBack() {
             @Override
             public void onSuccess() {

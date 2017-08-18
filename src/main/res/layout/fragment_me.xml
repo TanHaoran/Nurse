@@ -56,7 +56,7 @@
                 android:layout_marginBottom="@dimen/name_marginBottom"
                 android:textColor="@color/normal_textColor"
                 android:textSize="@dimen/big_textSize"
-                tools:text="李静静"/>
+                tools:text="李小美"/>
 
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_toRightOf="@id/civ_avatar"
                 android:textColor="@color/monsoon"
                 android:textSize="14sp"
-                tools:text="静静"/>
+                tools:text="小美"/>
         </LinearLayout>
 
 

@@ -26,6 +26,7 @@ public class ServiceConstant {
     public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = "http://zh.buzzlysoft.com/";
+//    public static final String EVENT_REPORT_IP = "http://192.168.0.49:3300/";
 
     public static final String IP = MAIN_IP + "UserService.svc/";
 

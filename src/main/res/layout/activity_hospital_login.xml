@@ -30,7 +30,6 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
 
-
             <RelativeLayout
                 style="@style/BusinessLineStyle"
                 android:clickable="false">
@@ -72,22 +71,31 @@
                     android:layout_marginLeft="@dimen/signup_text_marginLeft"
                     android:text="@string/password"/>
 
-                <EditText
-                    android:id="@+id/et_password"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/signup_edit_marginLeft"
-                    android:background="@drawable/edit_no_border"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
                     android:gravity="center_vertical"
-                    android:hint="@string/please_input_password"
-                    android:inputType="textPassword"
-                    android:lines="1"
+                    android:textColorHint="@color/gray_textColor"
+                    android:paddingBottom="@dimen/signup_password_paddingBottom"
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
-                    android:textColor="@color/normal_textColor"
-                    android:textColorHint="@color/gray_textColor"
-                    android:textCursorDrawable="@null"
-                    android:textSize="@dimen/normal_textSize"/>
+                    app:passwordToggleDrawable="@drawable/login_eye">
+
+                    <EditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/edit_no_border"
+                        android:gravity="center_vertical"
+                        android:hint="@string/please_input_password"
+                        android:inputType="textPassword"
+                        android:lines="1"
+                        android:textColor="@color/normal_textColor"
+                        android:textCursorDrawable="@null"
+                        android:textSize="@dimen/normal_textSize"/>
+                </android.support.design.widget.TextInputLayout>
 
             </RelativeLayout>
 

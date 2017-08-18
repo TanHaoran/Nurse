@@ -20,6 +20,7 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.ViewHolder;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -33,7 +34,6 @@ import butterknife.Bind;
 import okhttp3.Call;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
-import static com.jerry.nurse.fragment.OfficeFragment.DEFAULT_PAGE;
 
 public class AnnouncementActivity extends BaseActivity {
 
@@ -47,6 +47,8 @@ public class AnnouncementActivity extends BaseActivity {
     private ProgressDialogManager mProgressDialogManager;
 
     private LoginInfo mLoginInfo;
+
+    private int mCurrentPage = 1;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AnnouncementActivity.class);
@@ -71,9 +73,25 @@ public class AnnouncementActivity extends BaseActivity {
         mAdapter = new AnnouncementAdapter(this, R.layout.item_announcement, mAnnouncements);
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.setLoadingMoreEnabled(false);
+
+        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                L.i("onRefresh");
+                getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
+            }
+
+            @Override
+            public void onLoadMore() {
+                L.i("onLoadMore");
+
+            }
+        });
+
         // 获取公告数据
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        getAnnouncement(DEFAULT_PAGE, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
+        getAnnouncement(mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
     }
 
     /**
@@ -105,22 +123,25 @@ public class AnnouncementActivity extends BaseActivity {
 
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
+                        mRecyclerView.refreshComplete();
                         //从数据库中获取数据
                         mAnnouncements = DataSupport.findAll(Announcement.class);
                         if (mAnnouncements != null) {
-                            updateAnnouncements();
+                            setAnnouncements();
                         }
                     }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mRecyclerView.refreshComplete();
                         AnnouncementsResult result = new Gson().fromJson(response, AnnouncementsResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
-                            mAnnouncements = result.getBody();
-                            if (mAnnouncements == null) {
-                                mAnnouncements = new ArrayList<>();
+                            List<Announcement> announcements = result.getBody();
+                            if (announcements == null) {
+                                announcements = new ArrayList<>();
+                                T.showShort(AnnouncementActivity.this, "没有更多数据了");
                             }
-                            updateAnnouncements();
+                            updateAnnouncements(announcements);
                             if (mAnnouncements.size() > 0) {
                                 //添加新数据到数据库
                                 DataSupport.deleteAll(Announcement.class);
@@ -133,10 +154,19 @@ public class AnnouncementActivity extends BaseActivity {
                 });
     }
 
+    private void setAnnouncements() {
+        mAdapter.setDatas(mAnnouncements);
+        mAdapter.notifyDataSetChanged();
+    }
+
+
     /**
      * 更新公告列表显示
+     *
+     * @param announcements
      */
-    private void updateAnnouncements() {
+    private void updateAnnouncements(List<Announcement> announcements) {
+        mAnnouncements.addAll(announcements);
         mAdapter.setDatas(mAnnouncements);
         mAdapter.notifyDataSetChanged();
     }

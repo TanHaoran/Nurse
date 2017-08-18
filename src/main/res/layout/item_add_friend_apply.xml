@@ -65,17 +65,23 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/acb_agree"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/apply_button_width"
+                android:layout_height="@dimen/apply_button_height"
+                android:background="@drawable/apply_agree"
+                android:layout_marginRight="@dimen/line_paddingLeft"
                 android:text="@string/agree"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_textSize"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/acb_refuse"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/line_paddingLeft"
+                android:layout_width="@dimen/apply_button_width"
+                android:layout_height="@dimen/apply_button_height"
+                android:background="@drawable/apply_delete"
                 android:text="@string/refuse"
-                android:textColor="@color/white"/>
+                android:textColor="@color/delete"
+                android:textSize="@dimen/small_textSize"/>
 
             <TextView
                 android:id="@+id/tv_result"

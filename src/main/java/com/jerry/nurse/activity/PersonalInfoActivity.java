@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.OnDateSelectListener;
@@ -208,7 +207,7 @@ public class PersonalInfoActivity extends BaseActivity {
         mUserInfo = DataSupport.findFirst(UserInfo.class);
         if (mUserInfo != null) {
             // 头像
-            if (!TextUtils.isEmpty(mLoginInfo.getAvatar())) {
+            if (!TextUtils.isEmpty(mUserInfo.getAvatar())) {
                 if (mUserInfo.getAvatar().startsWith("http")) {
                     Glide.with(this).load(mUserInfo.getAvatar()).into(mAvatarView);
                 } else {
@@ -259,42 +258,6 @@ public class PersonalInfoActivity extends BaseActivity {
                     }
             );
         }
-
-
-    }
-
-
-    /**
-     * 获取用户医院信息
-     */
-    private void getHospitalInfo(final String registerId) {
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_HOSPITAL_INFO)
-                .addParams("RegisterId", registerId)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialogManager.dismiss();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialogManager.dismiss();
-                        try {
-                            mHospitalInfo = new Gson().fromJson(response, UserHospitalInfo.class);
-                            if (mHospitalInfo != null) {
-                                // 更新个人医院信息
-//                                LitePalUtil.saveHospitalInfo(mHospitalInfo);
-                                updateHospitalInfo();
-                            }
-                        } catch (JsonSyntaxException e) {
-                            L.i("获取医院信息失败");
-                            e.printStackTrace();
-                        }
-                    }
-                });
     }
 
     /**
@@ -373,28 +336,9 @@ public class PersonalInfoActivity extends BaseActivity {
         Date now = new Date();
         int mouths = DateUtil.getMonthsBetweenTwoDate(firstDate, now);
         if (mouths >= 12) {
-            return mouths / 12 + "年";
+            return mouths / 12 + "年" + mouths % 12 + "月";
         } else {
             return mouths + "个月";
-        }
-    }
-
-    /**
-     * 更新用户医院信息
-     */
-    private void updateHospitalInfo() {
-        mHospitalInfo = DataSupport.findLast(UserHospitalInfo.class);
-
-        if (mHospitalInfo != null) {
-            if (!TextUtils.isEmpty(mHospitalInfo.getHospitalName())) {
-                mHospitalTextView.setText(mHospitalInfo.getHospitalName());
-            }
-            if (!TextUtils.isEmpty(mHospitalInfo.getDepartmentName())) {
-                mOfficeTextView.setText(mHospitalInfo.getDepartmentName());
-            }
-            if (!TextUtils.isEmpty(mHospitalInfo.getEmployeeId())) {
-                mJobNumberTextView.setText(mHospitalInfo.getEmployeeId());
-            }
         }
     }
 

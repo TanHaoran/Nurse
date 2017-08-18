@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.jerry.nurse.activity.ChatActivity;
-import com.jerry.nurse.model.Message;
 import com.jerry.nurse.util.L;
 
 import org.json.JSONException;
@@ -34,14 +33,6 @@ public class MyReceiver extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             L.d("[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
-
-            String title = bundle.getString("cn.jpush.android.ALERT");
-            Message message = new Message();
-            message.setTitle(title);
-            message.setType(Message.TYPE_J_PUSH);
-            message.save();
-
-
             if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
                 String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
                 L.d("[MyReceiver] 接收Registration Id : " + regId);
@@ -57,7 +48,7 @@ public class MyReceiver extends BroadcastReceiver {
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
                 L.d("[MyReceiver] 用户点击打开了通知");
-                Intent toIntent = ChatActivity.getIntent(context, title, false);
+                Intent toIntent = ChatActivity.getIntent(context, "", false);
                 toIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(toIntent);
 

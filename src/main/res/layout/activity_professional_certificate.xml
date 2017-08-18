@@ -142,6 +142,7 @@
                     android:text="@string/id_number"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_id_number"
                     android:id="@+id/et_id_number"
                     style="@style/Certificate_Line_Edit_Style"
@@ -163,6 +164,7 @@
                     android:text="@string/management_number"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_management_number"
                     android:id="@+id/et_management_number"
                     style="@style/Certificate_Line_Edit_Style"
@@ -183,6 +185,7 @@
                     android:text="@string/name"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_name"
                     android:id="@+id/et_name"
                     style="@style/Certificate_Line_Edit_Style"/>
@@ -248,6 +251,7 @@
                     android:text="@string/profession_name"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_profession_name"
                     android:id="@+id/et_profession_name"
                     style="@style/Certificate_Line_Edit_Style"
@@ -270,6 +274,7 @@
                     android:text="@string/certificate_level"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_certificate_level"
                     android:id="@+id/et_certificate_level"
                     style="@style/Certificate_Line_Edit_Style"/>
@@ -289,6 +294,7 @@
                     android:text="@string/type"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_type"
                     android:id="@+id/et_type"
                     style="@style/Certificate_Line_Edit_Style"/>
@@ -326,6 +332,7 @@
                     android:text="@string/sign_organization"/>
 
                 <EditText
+                    android:maxLength="20"
                     android:hint="@string/please_sign_organization"
                     android:id="@+id/et_sign_organization"
                     style="@style/Certificate_Line_Edit_Style"/>

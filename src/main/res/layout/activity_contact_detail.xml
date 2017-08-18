@@ -150,6 +150,10 @@
 
             </LinearLayout>
 
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
             <LinearLayout
                 android:id="@+id/ll_hospital"
                 style="@style/Contact_Info_Line">

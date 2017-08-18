@@ -393,7 +393,7 @@ public class PractisingCertificateActivity extends BaseActivity {
                 mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mLastSignDateValidLayout, null, false, new OnDateSelectListener() {
+        setDateSelectListener(mLastSignDateValidLayout, null, false, true, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
@@ -509,7 +509,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "身份证为空！";
             return false;
         }
-        if (mIdCardNumberEditText.getText().toString().length() >= 15) {
+        if (mIdCardNumberEditText.getText().toString().length() >= 19) {
             mErrorMessage = "身份证过长！";
             return false;
         }
@@ -637,7 +637,7 @@ public class PractisingCertificateActivity extends BaseActivity {
                             setResult(RESULT_OK);
                             finish();
                         } else {
-                            L.i("设置执业证失败");
+                            T.showShort(PractisingCertificateActivity.this, commonResult.getMsg());
                         }
                     }
                 });

@@ -69,6 +69,9 @@ public class SignupActivity extends BaseActivity {
     public static final int TYPE_NEW_CELLPHONE = 4;
     // 进入类型：绑定手机
     public static final int TYPE_BIND_CELLPHONE = 5;
+    // 进入类型：解绑手机
+    public static final int TYPE_UNBIND_CELLPHONE = 6;
+
 
     private static final int REQUEST_COUNTRY = 0x00000101;
 
@@ -240,6 +243,8 @@ public class SignupActivity extends BaseActivity {
                             CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                             if (commonResult.getCode() == RESPONSE_SUCCESS) {
                                 // 控制发送验证码的状态
+                                mVerificationCodeEditText.setFocusable(true);
+                                mVerificationCodeEditText.requestFocus();
                                 mGetVerificationCodeTextView.setEnabled(false);
                                 mGetVerificationCodeTextView.setTextColor(mGrayColor);
                                 mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");

@@ -117,7 +117,7 @@ public class HospitalActivity extends BaseActivity {
         initLocation();
 
         BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE}, new PermissionListener() {
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE}, new PermissionListener() {
             @Override
             public void onGranted() {
                 mLocationClient.start();
@@ -391,6 +391,15 @@ public class HospitalActivity extends BaseActivity {
             } else {
                 holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mLocationClient.isStarted()) {
+            mLocationClient.stop();
         }
     }
 }

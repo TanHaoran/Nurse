@@ -38,7 +38,7 @@
     <dimen name="login_bottom_paddingBottom">10dp</dimen>
     <dimen name="third_party_login_text_marginTop">5dp</dimen>
     <dimen name="login_country_code_marginRight">15dp</dimen>
-    <dimen name="login_country_code_width">45dp</dimen>
+    <dimen name="login_country_code_width">35dp</dimen>
 
     <dimen name="login_paddingLeft">24dp</dimen>
     <dimen name="login_paddingTop">20dp</dimen>
@@ -122,6 +122,8 @@
     <dimen name="group_info_user_avatar_width">50dp</dimen>
     <dimen name="group_info_list_paddingTop">50dp</dimen>
     <dimen name="group_info_list_paddingLeft">50dp</dimen>
+    <dimen name="apply_button_width">48dp</dimen>
+    <dimen name="apply_button_height">31dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>

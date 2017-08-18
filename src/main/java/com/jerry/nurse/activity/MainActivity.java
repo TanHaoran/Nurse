@@ -91,8 +91,7 @@ public class MainActivity extends BaseActivity
         mProgressDialogManager = new ProgressDialogManager(this);
         // 设置导航栏按钮数据
         BottomNavigationItem messageItem = new BottomNavigationItem(
-                R.drawable.ic_action_message,
-                R.string.message);
+                R.drawable.ic_action_message, R.string.message);
 
         BottomNavigationItem officeItem = new BottomNavigationItem(R.drawable
                 .ic_action_office, R.string.business);
@@ -112,6 +111,8 @@ public class MainActivity extends BaseActivity
 
         // 注册点击事件
         mNavigationBar.setTabSelectedListener(this);
+
+        mNavigationBar.setAnimation(null);
 
         // 初始化Fragment
         getFragments();

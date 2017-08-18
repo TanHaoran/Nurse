@@ -21,6 +21,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.CreateGroupResult;
 import com.jerry.nurse.model.FriendListResult;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CellphoneContact;
@@ -152,8 +153,10 @@ public class CreateGroupActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CreateGroupResult result = new Gson().fromJson(response, CreateGroupResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
-                            String groupId = result.getBody().getGroupId();
-                            String name = result.getBody().getGroupNickName();
+                            GroupInfo groupInfo = result.getBody();
+                            groupInfo.save();
+                            String groupId = result.getBody().getHXGroupId();
+                            String name = result.getBody().getHXNickName();
                             MessageManager.saveCreateGroupLocalData(groupId, name);
                             T.showShort(CreateGroupActivity.this, "创建成功");
                             finish();

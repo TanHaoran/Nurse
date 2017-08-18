@@ -11,13 +11,13 @@
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
-        app:title_text="@string/announcement"
-        app:show_back="true"/>
+        app:show_back="true"
+        app:title_text="@string/announcement"/>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/rv_announcement"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="top"
         android:textColor="@color/black"/>

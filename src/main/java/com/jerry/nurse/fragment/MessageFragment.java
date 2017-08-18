@@ -81,8 +81,27 @@ public class MessageFragment extends BaseFragment {
     public void refresh() {
         mRegisterId = (String) SPUtil.get(getActivity(), SPUtil.REGISTER_ID, "");
 
+        Message message = null;
+        try {
+            message = DataSupport.where("mRegisterId=? and mType=?", mRegisterId, "3").findFirst(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (message == null) {
+            message = new Message();
+        }
+        message.setRegisterId(mRegisterId);
+        message.setType(Message.TYPE_WELCOME);
+        message.setTitle("你好");
+        message.setContent("欢迎使用智护App！");
+        message.setTime(new Date().getTime());
+        message.setImageResource(R.drawable.yn);
+        message.save();
+
+
         // 加载本地数据库中的消息
         loadLocalMessage();
+
 
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -184,8 +203,11 @@ public class MessageFragment extends BaseFragment {
                         holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                     }
                     break;
-                case Message.TYPE_J_PUSH:
+                case Message.TYPE_WELCOME:
                     holder.setText(R.id.tv_title, message.getTitle());
+                    holder.setText(R.id.tv_content, message.getContent());
+                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
+                    holder.setImageResource(R.id.iv_avatar, message.getImageResource());
                     break;
 
             }
@@ -208,7 +230,7 @@ public class MessageFragment extends BaseFragment {
                                     message.getContactId(), true);
                             startActivity(chatGroupIntent);
                             break;
-                        case Message.TYPE_J_PUSH:
+                        case Message.TYPE_WELCOME:
                             break;
                     }
                 }

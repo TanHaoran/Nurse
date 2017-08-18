@@ -150,7 +150,10 @@ public class ContactDetailActivity extends BaseActivity {
             mHospitalLayout.setVisibility(View.GONE);
             mOfficeLayout.setVisibility(View.GONE);
             mNameTextView.setVisibility(View.INVISIBLE);
-            String cellphone = contact.getPhone().substring(0, 2) + "*******" + contact.getPhone().substring(9);
+            String cellphone = contact.getPhone();
+            if (cellphone != null) {
+                cellphone = cellphone.substring(0, 2) + "*******" + contact.getPhone().substring(9);
+            }
             mCellphoneTextView.setText(cellphone);
             mAddFriendButton.setVisibility(View.VISIBLE);
             mAddFriendButton.setText(R.string.add_friend);

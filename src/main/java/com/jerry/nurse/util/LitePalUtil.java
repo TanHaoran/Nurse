@@ -117,6 +117,7 @@ public class LitePalUtil {
         // 清除用户表信息
         try {
             DataSupport.deleteAll(LoginInfo.class);
+            DataSupport.deleteAll(UserInfo.class);
             DataSupport.deleteAll(Banner.class);
             DataSupport.deleteAll(Announcement.class);
             DataSupport.deleteAll(ContactInfo.class);

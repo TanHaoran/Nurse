@@ -44,19 +44,18 @@
                     android:text="@string/cellphone_number"/>
 
                 <TextView
-                    android:layout_toRightOf="@id/tv_cellphone"
                     android:id="@+id/tv_country_code"
                     android:layout_width="@dimen/login_country_code_width"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/normal_textSize"
-                    android:gravity="center_vertical|right"
-                    android:textColor="@color/gray_textColor"
                     android:layout_marginLeft="34dp"
+                    android:layout_marginStart="34dp"
+                    android:layout_toRightOf="@id/tv_cellphone"
+                    android:gravity="center_vertical|right"
                     android:text="@string/default_country_code"
-                    android:layout_marginStart="34dp"/>
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
 
                 <com.jerry.nurse.view.ClearEditText
-                    android:gravity="center_vertical"
                     android:id="@+id/cet_cellphone"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -65,6 +64,7 @@
                     android:layout_marginRight="@dimen/line_paddingLeft"
                     android:layout_toRightOf="@id/tv_country_code"
                     android:background="@drawable/edit_no_border"
+                    android:gravity="center_vertical"
                     android:inputType="number"
                     android:lines="1"
                     android:maxLength="11"
@@ -81,6 +81,7 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <RelativeLayout
+                android:clickable="false"
                 android:id="@+id/rl_password"
                 style="@style/BusinessLineStyle">
 
@@ -97,6 +98,7 @@
                     android:layout_marginRight="@dimen/line_paddingLeft"
                     android:gravity="center_vertical"
                     android:paddingBottom="@dimen/signup_password_paddingBottom"
+                    android:paddingLeft="@dimen/login_country_code_width"
                     app:passwordToggleDrawable="@drawable/login_eye">
 
                     <EditText
@@ -161,12 +163,14 @@
 
             <RelativeLayout
                 style="@style/BusinessLineStyle"
+                android:clickable="false"
                 android:paddingRight="@dimen/line_paddingLeft">
 
                 <TextView
                     android:id="@+id/tv_forget_password"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:text="@string/forget_password"
                     android:textColor="@color/primary"
@@ -175,7 +179,8 @@
                 <TextView
                     android:id="@+id/tv_signup"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="@string/signup"
@@ -197,7 +202,8 @@
                 <TextView
                     android:id="@+id/tv_verification_code_login"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/tv_vertical_line"
                     android:text="@string/verification_code_login"

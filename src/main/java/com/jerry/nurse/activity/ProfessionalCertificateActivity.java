@@ -550,7 +550,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
                             setResult(RESULT_OK);
                             finish();
                         } else {
-                            L.i("设置专业资格证失败");
+                            T.showShort(ProfessionalCertificateActivity.this, commonResult.getMsg());
                         }
                     }
                 });
