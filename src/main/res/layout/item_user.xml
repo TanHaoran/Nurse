@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_contact"
+    android:id="@+id/rl_contact"
     android:layout_width="match_parent"
     android:layout_height="@dimen/contact_item_height"
     android:background="@drawable/plugin_line_selector"

@@ -20,7 +20,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.GetContactInfoUtil;
+import com.jerry.nurse.util.ContactInfoCache;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
@@ -145,24 +145,18 @@ public class AddContactApplyActivity extends BaseActivity {
                         holder.setVisible(R.id.acb_refuse, false);
                         holder.setVisible(R.id.tv_result, true);
                         holder.setText(R.id.tv_result, "已同意");
-                        ContactInfo ci = DataSupport.where("mRegisterId=?", apply.getContactId()).findFirst(ContactInfo.class);
-                        if (ci == null) {
-                            GetContactInfoUtil getContactInfoUtil = new GetContactInfoUtil();
-                            getContactInfoUtil.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
-                                @Override
-                                public void onLoadSuccess(ContactInfo ci) {
-                                    updateLocalData(apply, true);
-                                    addAsFriend(mRegisterId, apply.getContactId());
-                                }
-                            });
-                            getContactInfoUtil.getContactDetail(EMClient.getInstance().getCurrentUser(),
-                                    apply.getContactId());
-                        } else {
-                            ci.setFriend(true);
-                            ci.save();
-                            updateLocalData(apply, true);
-                            addAsFriend(mRegisterId, apply.getContactId());
-                        }
+
+                        new ContactInfoCache() {
+                            @Override
+                            protected void onLoadContactInfoSuccess(ContactInfo info) {
+                                info.setFriend(true);
+                                info.save();
+                                updateLocalData(apply, true);
+                                addAsFriend(mRegisterId, apply.getContactId());
+                            }
+                        }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                                apply.getContactId());
+
                     } catch (HyphenateException e) {
                         L.i("同意好友申请失败");
                         e.printStackTrace();

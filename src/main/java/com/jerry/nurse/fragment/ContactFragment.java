@@ -257,7 +257,7 @@ public class ContactFragment extends BaseFragment {
             Glide.with(getActivity()).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
             holder.setText(R.id.tv_nickname, contact.getNickName());
-            holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
+            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId());

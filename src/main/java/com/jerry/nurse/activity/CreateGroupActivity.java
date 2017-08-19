@@ -265,7 +265,7 @@ public class CreateGroupActivity extends BaseActivity {
                                         final SelectView selectView = holder.getView(R.id.sv_choose);
                                         selectView.setSelected(contact.isChoose());
                                         holder.setText(R.id.tv_nickname, contact.getNickName());
-                                        holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
+                                        holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 contact.setChoose(!contact.isChoose());
@@ -356,7 +356,7 @@ public class CreateGroupActivity extends BaseActivity {
             final SelectView selectView = holder.getView(R.id.sv_choose);
             selectView.setSelected(contact.isChoose());
             holder.setText(R.id.tv_nickname, contact.getNickName());
-            holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
+            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     contact.setChoose(!contact.isChoose());

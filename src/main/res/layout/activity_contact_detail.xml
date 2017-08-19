@@ -178,7 +178,7 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <LinearLayout
-                android:id="@+id/ll_office"
+                android:id="@+id/rl_office"
                 style="@style/Contact_Info_Line">
 
                 <TextView

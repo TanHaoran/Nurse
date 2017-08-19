@@ -273,7 +273,7 @@
                         android:text="@string/id_card_number"/>
 
                     <EditText
-                        android:maxLength="20"
+                        android:maxLength="18"
                         android:id="@+id/et_id_card_number"
                         style="@style/Certificate_Line_Edit_Style"
                         android:hint="@string/please_id_card_number"/>

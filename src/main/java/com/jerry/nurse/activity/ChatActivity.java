@@ -42,7 +42,7 @@ import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.GetContactInfoUtil;
+import com.jerry.nurse.util.ContactInfoCache;
 import com.jerry.nurse.util.KeyBoardUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MediaManager;
@@ -214,43 +214,25 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         e.printStackTrace();
                     }
 
-                    ContactInfo ci = DataSupport.where("mRegisterId=?", emMessage.getFrom()).findFirst(ContactInfo.class);
-                    if (ci == null) {
-                        GetContactInfoUtil getContactInfoUtil = new GetContactInfoUtil();
-                        getContactInfoUtil.setOnLoadSuccess(new GetContactInfoUtil.OnLoadSuccess() {
-                            @Override
-                            public void onLoadSuccess(ContactInfo ci) {
+                    new ContactInfoCache() {
+                        @Override
+                        protected void onLoadContactInfoSuccess(ContactInfo info) {
 
-                                if (mHomePageMessage == null) {
-                                    mHomePageMessage = new com.jerry.nurse.model.Message();
-                                }
-                                mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
-                                mHomePageMessage.setImageResource(R.drawable.icon_qlt);
-                                mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
-                                mHomePageMessage.setTime(new Date().getTime());
-                                mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
-                                mHomePageMessage.setContactId(mContactId);
-                                mHomePageMessage.save();
+                            if (mHomePageMessage == null) {
+                                mHomePageMessage = new com.jerry.nurse.model.Message();
                             }
-                        });
-                        getContactInfoUtil.getContactDetail(EMClient.getInstance().getCurrentUser(),
-                                emMessage.getFrom());
-                    } else {
-
-                        if (mHomePageMessage == null) {
-                            mHomePageMessage = new com.jerry.nurse.model.Message();
+                            mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
+                            mHomePageMessage.setImageResource(R.drawable.icon_qlt);
+                            mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
+                            mHomePageMessage.setTime(new Date().getTime());
+                            mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
+                            mHomePageMessage.setContactId(mContactId);
+                            mHomePageMessage.save();
                         }
-                        mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
-                        mHomePageMessage.setImageResource(R.drawable.icon_qlt);
-                        mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
-                        mHomePageMessage.setTime(new Date().getTime());
-                        mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
-                        mHomePageMessage.setContactId(mContactId);
-                        mHomePageMessage.save();
-                    }
+                    }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                            emMessage.getFrom());
 
                 }
-
                 chatMessage.save();
             }
         }

@@ -142,7 +142,7 @@ public class ContactListActivity extends BaseActivity {
             } else {
                 Glide.with(ContactListActivity.this).load(AVATAR_ADDRESS + contact.getAvatar()).into(imageView);
             }
-            holder.getView(R.id.ll_contact).setOnClickListener(new View.OnClickListener() {
+            holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                 }

@@ -10,9 +10,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationManagerCompat;
+import android.view.View;
+import android.widget.TextView;
 
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
-import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
@@ -40,12 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
-import static com.jerry.nurse.R.string.contact;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
-public class MainActivity extends BaseActivity
-        implements BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BaseActivity {
 
     public static final String ACTION_CHAT_MESSAGE_RECEIVE = "action_chat_message_receive";
     public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
@@ -56,8 +55,20 @@ public class MainActivity extends BaseActivity
 
     public static final String EXTRA_FRIEND_APPLY_CONTACT = "extra_friend_apply";
 
-    @Bind(R.id.bnb_main)
-    BottomNavigationBar mNavigationBar;
+//    @Bind(R.id.bnb_main)
+//    BottomNavigationBar mNavigationBar;
+
+    @Bind(R.id.tv_message)
+    TextView mMessageTextView;
+
+    @Bind(R.id.tv_office)
+    TextView mOfficeTextView;
+
+    @Bind(R.id.tv_contact)
+    TextView mContactTextView;
+
+    @Bind(R.id.tv_me)
+    TextView mMeTextView;
 
     private List<Fragment> mFragments;
     private MessageFragment mMessageFragment;
@@ -70,6 +81,8 @@ public class MainActivity extends BaseActivity
     private MessageReceiver mMessageReceiver;
 
     private String mRegisterId;
+
+    private int mCurrentIndex = 0;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -89,30 +102,30 @@ public class MainActivity extends BaseActivity
         mEaseMobManager.login(mRegisterId);
 
         mProgressDialogManager = new ProgressDialogManager(this);
-        // 设置导航栏按钮数据
-        BottomNavigationItem messageItem = new BottomNavigationItem(
-                R.drawable.ic_action_message, R.string.message);
-
-        BottomNavigationItem officeItem = new BottomNavigationItem(R.drawable
-                .ic_action_office, R.string.business);
-
-        BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
-                .ic_action_contact, contact);
-
-        BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
-                .string.mine);
-
-        // 添加元素并显示
-        mNavigationBar.addItem(messageItem)
-                .addItem(officeItem)
-                .addItem(contactItem)
-                .addItem(mineItem)
-                .setFirstSelectedPosition(0).initialise();
-
-        // 注册点击事件
-        mNavigationBar.setTabSelectedListener(this);
-
-        mNavigationBar.setAnimation(null);
+//        // 设置导航栏按钮数据
+//        BottomNavigationItem messageItem = new BottomNavigationItem(
+//                R.drawable.ic_action_message, R.string.message);
+//
+//        BottomNavigationItem officeItem = new BottomNavigationItem(R.drawable
+//                .ic_action_office, R.string.business);
+//
+//        BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
+//                .ic_action_contact, contact);
+//
+//        BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
+//                .string.mine);
+//
+//        // 添加元素并显示
+//        mNavigationBar.addItem(messageItem)
+//                .addItem(officeItem)
+//                .addItem(contactItem)
+//                .addItem(mineItem)
+//                .setFirstSelectedPosition(0).initialise();
+//
+//        // 注册点击事件
+//        mNavigationBar.setTabSelectedListener(this);
+//
+//        mNavigationBar.setAnimation(null);
 
         // 初始化Fragment
         getFragments();
@@ -152,15 +165,63 @@ public class MainActivity extends BaseActivity
      * 设置起始页
      */
     private void setDefaultFragment() {
+        mMessageTextView.setSelected(true);
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.replace(R.id.fl_main, mMessageFragment);
         transaction.commit();
     }
 
+    /**
+     * 重置按钮状态
+     */
+    private void resetTextView() {
+        mMessageTextView.setSelected(false);
+        mOfficeTextView.setSelected(false);
+        mContactTextView.setSelected(false);
+        mMeTextView.setSelected(false);
+    }
 
-    @Override
-    public void onTabSelected(int position) {
+    @OnClick({R.id.rl_message, R.id.rl_office, R.id.rl_contact, R.id.rl_me})
+    void onTabSelected(View view) {
+        resetTextView();
+        switch (view.getId()) {
+            case R.id.rl_message:
+                mMessageTextView.setSelected(true);
+                onTabSelected(0);
+                if (mCurrentIndex != 0) {
+                    onTabUnselected(mCurrentIndex);
+                }
+                mCurrentIndex = 0;
+                break;
+            case R.id.rl_office:
+                mOfficeTextView.setSelected(true);
+                onTabSelected(1);
+                if (mCurrentIndex != 1) {
+                    onTabUnselected(mCurrentIndex);
+                }
+                mCurrentIndex = 1;
+                break;
+            case R.id.rl_contact:
+                mContactTextView.setSelected(true);
+                onTabSelected(2);
+                if (mCurrentIndex != 2) {
+                    onTabUnselected(mCurrentIndex);
+                }
+                mCurrentIndex = 2;
+                break;
+            case R.id.rl_me:
+                mMeTextView.setSelected(true);
+                onTabSelected(3);
+                if (mCurrentIndex != 3) {
+                    onTabUnselected(mCurrentIndex);
+                }
+                mCurrentIndex = 3;
+                break;
+        }
+    }
+
+    private  void onTabSelected(int position) {
         if (!mFragments.isEmpty()) {
             if (position < mFragments.size()) {
                 FragmentTransaction transaction = getSupportFragmentManager()
@@ -176,7 +237,6 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @Override
     public void onTabUnselected(int position) {
         if (!mFragments.isEmpty()) {
             if (position < mFragments.size()) {
@@ -187,10 +247,6 @@ public class MainActivity extends BaseActivity
                 transaction.commitAllowingStateLoss();
             }
         }
-    }
-
-    @Override
-    public void onTabReselected(int position) {
     }
 
 

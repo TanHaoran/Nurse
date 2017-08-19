@@ -433,6 +433,12 @@ public class SignupActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.tv_protocol)
+    void onProtocol(View view) {
+        Intent intent = HtmlActivity.getIntent(this, "", "智护服务协议");
+        startActivity(intent);
+    }
+
     @OnClick({R.id.ll_agree, R.id.tv_agree})
     void onAgree(View v) {
         if (mIsAgree) {

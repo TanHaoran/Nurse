@@ -173,7 +173,7 @@ public class GroupInfoActivity extends BaseActivity {
                         .placeholder(R.drawable.icon_avatar_default).into(imageView);
             }
 
-            holder.setOnClickListener(R.id.ll_contact, new View.OnClickListener() {
+            holder.setOnClickListener(R.id.rl_contact, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId());

@@ -74,7 +74,7 @@ public class ContactDetailActivity extends BaseActivity {
     @Bind(R.id.ll_hospital)
     LinearLayout mHospitalLayout;
 
-    @Bind(R.id.ll_office)
+    @Bind(R.id.rl_office)
     LinearLayout mOfficeLayout;
 
     private ProgressDialogManager mProgressDialogManager;

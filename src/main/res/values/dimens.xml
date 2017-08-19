@@ -10,6 +10,7 @@
     <dimen name="line_paddingLeft">15dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
+    <dimen name="tab_menu_drawable_padding">4dp</dimen>
 
     <!--注册-->
     <dimen name="signup_text_marginLeft">5dp</dimen>

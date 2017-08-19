@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/ll_contact"
+    android:id="@+id/rl_contact"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 

@@ -198,5 +198,24 @@
         <item name="android:layout_marginRight">@dimen/select_view_marginRight</item>
     </style>
 
+    <style name="tab_menu_text">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:textColor">@drawable/tab_menu_text</item>
+    </style>
+
+    <style name="tab_menu_bg_num">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:background">@drawable/bg_num</item>
+        <item name="android:layout_marginLeft">-10dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
 
 </resources>

@@ -57,6 +57,8 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ProfessionalCertificateActivity extends BaseActivity {
 
+    private static final int DEFAULT_LENGTH  = 20;
+
     @Bind(R.id.tb_certificate)
     TitleBar mTitleBar;
 
@@ -406,7 +408,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "编号为空！";
             return false;
         }
-        if (mIdNumberEditText.getText().toString().length() >= 15) {
+        if (mIdNumberEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "编号长度过长！";
             return false;
         }
@@ -414,7 +416,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "管理号为空！";
             return false;
         }
-        if (mManagementNumberEditText.getText().toString().length() >= 15) {
+        if (mManagementNumberEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "管理号长度过长！";
             return false;
         }
@@ -422,7 +424,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "姓名为空！";
             return false;
         }
-        if (mNameEditText.getText().toString().length() >= 15) {
+        if (mNameEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "姓名长度过长！";
             return false;
         }
@@ -435,7 +437,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "专业名称为空！";
             return false;
         }
-        if (mProfessionNameEditText.getText().toString().length() >= 15) {
+        if (mProfessionNameEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "专业名称过长！";
             return false;
         }
@@ -443,7 +445,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "资格级别为空！";
             return false;
         }
-        if (mCertificateLevelEditText.getText().toString().length() >= 15) {
+        if (mCertificateLevelEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "资格级别名称过长！";
             return false;
         }
@@ -451,7 +453,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "类别为空！";
             return false;
         }
-        if (mTypeEditText.getText().toString().length() >= 15) {
+        if (mTypeEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "类别名称过长！";
             return false;
         }
@@ -463,7 +465,7 @@ public class ProfessionalCertificateActivity extends BaseActivity {
             mErrorMessage = "签发单位为空！";
             return false;
         }
-        if (mSignOrganizationEditText.getText().toString().length() >= 15) {
+        if (mSignOrganizationEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "签发单位名称过长！";
             return false;
         }

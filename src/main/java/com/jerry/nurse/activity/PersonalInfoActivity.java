@@ -133,7 +133,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
         initData();
 
-
         // 设置图片点击监听
         setPhotoSelectListener(mAvatarLayout, 0, new OnPhotoSelectListener() {
             @Override
@@ -189,6 +188,12 @@ public class PersonalInfoActivity extends BaseActivity {
                         if (userInfoResult.getCode() == RESPONSE_SUCCESS) {
                             mUserInfo = userInfoResult.getBody();
                             if (mUserInfo != null) {
+                                LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+                                // 更新登录数据的两证状态
+                                loginInfo.setPStatus(mUserInfo.getPVerifyStatus());
+                                loginInfo.setQStatus(mUserInfo.getQVerifyStatus());
+                                loginInfo.save();
+
                                 LitePalUtil.saveUserInfo(PersonalInfoActivity.this, mUserInfo);
                             }
                         } else {

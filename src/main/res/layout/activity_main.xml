@@ -14,14 +14,119 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <com.ashokvarma.bottomnavigation.BottomNavigationBar
-        android:id="@+id/bnb_main"
+    <View
+        style="@style/DividerLineStyle"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:bnbActiveColor="@color/primary"
-        app:bnbBackgroundStyle="background_style_static"
-        app:bnbInactiveColor="@color/navigation_in_active_color"
-        app:bnbMode="mode_fixed"/>
+        android:layout_height="60dp"
+        android:background="@color/background"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rl_message"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="@dimen/tab_menu_drawable_padding"
+                android:drawableTop="@drawable/tab_menu_message"
+                android:text="@string/message"
+                android:textColor="@drawable/tab_menu_text"/>
+
+            <TextView
+                android:id="@+id/tv_message_num"
+                style="@style/tab_menu_bg_num"
+                android:layout_toRightOf="@+id/tv_message"
+                tools:text="1"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_office"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_office"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="@dimen/tab_menu_drawable_padding"
+                android:drawableTop="@drawable/tab_menu_office"
+                android:text="@string/office"
+                android:textColor="@drawable/tab_menu_text"/>
+
+            <TextView
+                android:id="@+id/tv_office_num"
+                style="@style/tab_menu_bg_num"
+                android:layout_toRightOf="@+id/tv_office"
+                tools:text="1"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_contact"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="@dimen/tab_menu_drawable_padding"
+                android:drawableTop="@drawable/tab_menu_contact"
+                android:text="@string/contact"
+                android:textColor="@drawable/tab_menu_text"/>
+
+            <TextView
+                android:id="@+id/tv_contact_num"
+                style="@style/tab_menu_bg_num"
+                android:layout_toRightOf="@+id/tv_contact"
+                tools:text="1"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_me"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawablePadding="@dimen/tab_menu_drawable_padding"
+                android:drawableTop="@drawable/tab_menu_me"
+                android:text="@string/mine"
+                android:textColor="@drawable/tab_menu_text"/>
+
+            <TextView
+                android:id="@+id/tv_me_num"
+                style="@style/tab_menu_bg_num"
+                android:layout_toRightOf="@+id/tv_me"
+                tools:text="1"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

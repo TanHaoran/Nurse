@@ -216,15 +216,18 @@
                 <TextView
                     android:id="@+id/tv_agree"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:text="@string/read_and_agree"
                     android:textColor="@color/normal_textColor"
                     android:textSize="@dimen/small_textSize"/>
 
                 <TextView
+                    android:id="@+id/tv_protocol"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/protocol_text_marginLeft"
+                    android:gravity="center_vertical"
                     android:text="@string/protocol"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/small_textSize"/>

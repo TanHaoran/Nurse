@@ -34,6 +34,8 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class InputActivity extends BaseActivity {
 
+    private static final int DEFAULT_LENGTH = 30;
+
     public static final String NICKNAME = "昵称";
     public static final String JOB_NUMBER = "工号";
     public static final String VALIDATE_MESSAGE = "验证消息";
@@ -79,7 +81,7 @@ public class InputActivity extends BaseActivity {
             @Override
             public void onRightClick(View view) {
                 String content = mInputEditText.getText().toString();
-                if (content.length() > 15) {
+                if (content.length() > DEFAULT_LENGTH) {
                     T.showShort(InputActivity.this, "内容过长");
                     return;
                 }

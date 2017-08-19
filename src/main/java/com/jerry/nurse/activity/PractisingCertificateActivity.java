@@ -25,6 +25,7 @@ import com.jerry.nurse.model.PractisingResult;
 import com.jerry.nurse.model.UploadResult;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
@@ -56,6 +57,8 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
 public class PractisingCertificateActivity extends BaseActivity {
+
+    private static final int DEFAULT_LENGTH  = 20;
 
     @Bind(R.id.tb_certificate)
     TitleBar mTitleBar;
@@ -287,7 +290,6 @@ public class PractisingCertificateActivity extends BaseActivity {
     private void setStatus(int status) {
         if (status == AUDIT_ING) {
 
-
             mAuditingLayout.setVisibility(View.VISIBLE);
             mStatusImageView.setVisibility(View.VISIBLE);
             mAuditingTextView.setVisibility(View.VISIBLE);
@@ -473,7 +475,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "姓名为空！";
             return false;
         }
-        if (mNameEditText.getText().toString().length() >= 15) {
+        if (mNameEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "姓名过长！";
             return false;
         }
@@ -485,7 +487,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "国籍为空！";
             return false;
         }
-        if (mCountryNationEditText.getText().toString().length() >= 15) {
+        if (mCountryNationEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "国籍名称过长！";
             return false;
         }
@@ -493,7 +495,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "执业地点为空！";
             return false;
         }
-        if (mPractisingLocationEditText.getText().toString().length() >= 15) {
+        if (mPractisingLocationEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "执业地点名称过长！";
             return false;
         }
@@ -501,7 +503,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "执业编号为空！";
             return false;
         }
-        if (mCertificateNumberEditText.getText().toString().length() >= 15) {
+        if (mCertificateNumberEditText.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "执业编号名称过长！";
             return false;
         }
@@ -509,7 +511,11 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "身份证为空！";
             return false;
         }
-        if (mIdCardNumberEditText.getText().toString().length() >= 19) {
+        if (!AccountValidatorUtil.isIDCard(mIdCardNumberEditText.getText().toString())) {
+            mErrorMessage = "身份证格式不正确！";
+            return false;
+        }
+        if (mIdCardNumberEditText.getText().toString().length() > 18) {
             mErrorMessage = "身份证过长！";
             return false;
         }
@@ -529,7 +535,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "注册机关为空！";
             return false;
         }
-        if (mSignDepartmentTextView.getText().toString().length() >= 15) {
+        if (mSignDepartmentTextView.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "注册机关名称过长！";
             return false;
         }
@@ -537,7 +543,7 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "发证机关为空！";
             return false;
         }
-        if (mCertificateOrganizationTextView.getText().toString().length() >= 15) {
+        if (mCertificateOrganizationTextView.getText().toString().length() > DEFAULT_LENGTH) {
             mErrorMessage = "发证机关名称过长！";
             return false;
         }
