@@ -71,6 +71,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     public static final String EXTRA_CONTACT_ID = "extra_contact_id";
     public static final String EXTRA_IS_GROUP = "extra_is_group";
 
+    private static final int REQUEST_GROUP_CHAT = 0x101;
+
     @Bind(R.id.rv_content)
     XRecyclerView mRecyclerView;
 
@@ -238,6 +240,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         }
     };
 
+    /**
+     * 将环信给的图片路径转换成可以查询到的路径
+     *
+     * @param localUrl
+     * @return
+     */
     @NonNull
     public static String parseImagePath(String localUrl) {
         int index = localUrl.lastIndexOf("/");
@@ -604,11 +612,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @OnClick(R.id.iv_create_group)
     void onCreateGroup(View view) {
         if (!mIsGroup) {
-            Intent intent = CreateGroupActivity.getIntent(this);
+            Intent intent = CreateGroupActivity.getIntent(this, null, null);
             startActivity(intent);
         } else {
             Intent intent = GroupInfoActivity.getIntent(this, mContactId);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_GROUP_CHAT);
         }
     }
 
@@ -809,6 +817,17 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             KeyBoardUtil.closeKeybord(mMessageEditText, this);
         }
         mIsAdding = !mIsAdding;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_GROUP_CHAT) {
+                finish();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

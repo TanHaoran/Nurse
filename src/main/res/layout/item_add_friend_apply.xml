@@ -87,7 +87,6 @@
                 android:id="@+id/tv_result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:textSize="@dimen/contact_item_time_textSize"
                 tools:text="已添加"/>
         </LinearLayout>

@@ -114,6 +114,7 @@
     <string name="my_group">我的群</string>
     <string name="visiting_card">名片</string>
     <string name="quit_group">退出群聊</string>
+    <string name="select_contact">选择联系人</string>
 
     <!--我的-->
     <string name="mine">我的</string>

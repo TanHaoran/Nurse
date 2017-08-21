@@ -7,21 +7,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.gson.Gson;
 import com.jerry.nurse.R;
-import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.GroupInfo;
-import com.jerry.nurse.model.GroupListResult;
-import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
-import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -29,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-
-import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class GroupListActivity extends BaseActivity {
 
@@ -63,6 +55,11 @@ public class GroupListActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
 
         mProgressDialogManager = new ProgressDialogManager(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
 
 //        getGroupList(mRegisterId);
@@ -71,35 +68,6 @@ public class GroupListActivity extends BaseActivity {
             mGroupInfos = new ArrayList<>();
         }
         setListData();
-    }
-
-
-    /**
-     * 获取群信息
-     *
-     * @param registerId
-     */
-    private void getGroupList(String registerId) {
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_GROUP_LIST)
-                .addParams("RegisterId", registerId)
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        GroupListResult result = new Gson().fromJson(response, GroupListResult.class);
-                        if (result.getCode() == RESPONSE_SUCCESS) {
-                            mGroupInfos = result.getBody();
-                            L.i("初始化读取到了" + mGroupInfos.size() + "个群");
-                            if (mGroupInfos == null) {
-                                mGroupInfos = new ArrayList();
-                            }
-                            setListData();
-                            MainActivity.updateGroupInfoData(mGroupInfos);
-                        }
-                    }
-                });
     }
 
     private void setListData() {

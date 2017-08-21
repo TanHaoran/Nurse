@@ -128,6 +128,10 @@ public class MessageFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     class MessageAdapter extends CommonAdapter<Message> {
 

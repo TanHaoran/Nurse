@@ -12,6 +12,7 @@
         android:layout_height="@dimen/title_bar_height"
         app:button_textSize="@dimen/normal_textSize"
         app:right_text="@string/ok"
+        app:title_text="@string/select_contact"
         app:show_back="true"/>
 
     <FrameLayout

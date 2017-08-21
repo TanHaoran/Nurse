@@ -90,7 +90,6 @@ public class MyApplication extends LitePalApplication {
     private void initJPush() {
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
-        L.i("极光推送的注册Id是：" + JPushInterface.getRegistrationID(this));
     }
 
     /**

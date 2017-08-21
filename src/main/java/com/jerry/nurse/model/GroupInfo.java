@@ -4,7 +4,7 @@ import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
-public class GroupInfo extends DataSupport{
+public class GroupInfo extends DataSupport {
 
     /**
      * HXGroupId : 24346151157761
@@ -17,6 +17,7 @@ public class GroupInfo extends DataSupport{
     private String RegisterId;
     private String HXGroupId;
     private String HXNickName;
+    private String CreateTime;
     private List<Contact> groupMemberList;
 
     public String getRegisterId() {
@@ -57,6 +58,14 @@ public class GroupInfo extends DataSupport{
 
     public void setGroupUserCount(int groupUserCount) {
         GroupUserCount = groupUserCount;
+    }
+
+    public String getCreateTime() {
+        return CreateTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        CreateTime = createTime;
     }
 
     public List<Contact> getGroupMemberList() {

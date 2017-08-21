@@ -15,19 +15,18 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.fragment.OfficeFragment;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.CreateGroupResult;
-import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.CellphoneContact;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
@@ -42,16 +41,19 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class CreateGroupActivity extends BaseActivity {
+
+    private static final String EXTRA_GROUP_ID = "extra_group_id";
+    private static final String EXTRA_CONTACTS = "extra_contacts";
 
     @Bind(R.id.tb_group)
     TitleBar mTitleBar;
@@ -83,8 +85,14 @@ public class CreateGroupActivity extends BaseActivity {
 
     private LoginInfo mLoginInfo;
 
-    public static Intent getIntent(Context context) {
+    private String mGroupId;
+
+    private List<Contact> mGroupContacts;
+
+    public static Intent getIntent(Context context, String groupId, List<Contact> contacts) {
         Intent intent = new Intent(context, CreateGroupActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        intent.putExtra(EXTRA_CONTACTS, (Serializable) contacts);
         return intent;
     }
 
@@ -96,10 +104,21 @@ public class CreateGroupActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
+
+        mGroupContacts = (List<Contact>) getIntent().getSerializableExtra(EXTRA_CONTACTS);
+        mGroupId = getIntent().getStringExtra(EXTRA_GROUP_ID);
+
+        for (Contact c : mGroupContacts) {
+            if (c.getFriendId() == null) {
+                mGroupContacts.remove(c);
+            }
+        }
+
+
         mBodyDatas = new ArrayList<>();
+
         updateView(false);
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-//        getFriendList(mLoginInfo.getRegisterId());
 
         List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
         for (ContactInfo info : infos) {
@@ -110,26 +129,58 @@ public class CreateGroupActivity extends BaseActivity {
             c.setPhone(info.getCellphone());
             c.setRemark(info.getRemark());
             c.setFriendId(info.getRegisterId());
-            c.setFriend(info.isFriend());
-            mBodyDatas.add(c);
-        }
-        updateView(true);
+            c.setFriend(true);
 
-        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
-            @Override
-            public void onRightClick(View view) {
-                List<CellphoneContact> ccs = new ArrayList<>();
-                CellphoneContact me = new CellphoneContact();
-                me.setRegisterId(mLoginInfo.getRegisterId());
-                ccs.add(me);
-                for (Contact c : mBodyDatas) {
-                    if (c.isChoose()) {
-                        CellphoneContact cc = new CellphoneContact();
-                        cc.setRegisterId(c.getFriendId());
-                        ccs.add(cc);
+
+            if (mGroupContacts != null) {
+                int i;
+                for (i = 0; i < mGroupContacts.size(); i++) {
+                    if (mGroupContacts.get(i).getFriendId().equals(c.getFriendId())) {
+                        break;
                     }
                 }
-                createChatGroup(ccs);
+                if (i == mGroupContacts.size()) {
+                    mBodyDatas.add(c);
+                }
+            } else {
+                mBodyDatas.add(c);
+            }
+        }
+
+        updateView(true);
+
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener()
+
+        {
+            @Override
+            public void onRightClick(View view) {
+                // 创建群
+                if (mGroupId == null) {
+                    List<UserRegisterInfo> infos = new ArrayList<>();
+                    UserRegisterInfo me = new UserRegisterInfo();
+                    me.setRegisterId(mLoginInfo.getRegisterId());
+                    infos.add(me);
+                    for (Contact c : mBodyDatas) {
+                        if (c.isChoose()) {
+                            UserRegisterInfo friend = new UserRegisterInfo();
+                            friend.setRegisterId(c.getFriendId());
+                            infos.add(friend);
+                        }
+                    }
+                    createChatGroup(infos);
+                }
+                // 添加群成员
+                else {
+                    List<Contact> cs = new ArrayList<>();
+                    for (Contact c : mBodyDatas) {
+                        if (c.isChoose()) {
+                            Contact contact = new Contact();
+                            contact.setFriendId(c.getFriendId());
+                            cs.add(contact);
+                        }
+                    }
+                    addGroupMember(mGroupId, cs);
+                }
             }
         });
 
@@ -138,13 +189,13 @@ public class CreateGroupActivity extends BaseActivity {
     /**
      * 创建群组
      *
-     * @param ccs
+     * @param infos
      */
-    private void createChatGroup(List<CellphoneContact> ccs) {
+    private void createChatGroup(List<UserRegisterInfo> infos) {
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.CREATE_GROUP)
-                .content(StringUtil.addModelWithJson(ccs))
+                .content(StringUtil.addModelWithJson(infos))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {
@@ -156,8 +207,8 @@ public class CreateGroupActivity extends BaseActivity {
                             GroupInfo groupInfo = result.getBody();
                             groupInfo.save();
                             String groupId = result.getBody().getHXGroupId();
-                            String name = result.getBody().getHXNickName();
-                            MessageManager.saveCreateGroupLocalData(groupId, name);
+                            String nickname = result.getBody().getHXNickName();
+                            MessageManager.saveCreateGroupLocalData(groupId, nickname);
                             T.showShort(CreateGroupActivity.this, "创建成功");
                             finish();
                         } else {
@@ -166,62 +217,6 @@ public class CreateGroupActivity extends BaseActivity {
                     }
                 });
     }
-
-    /**
-     * 获取用户好友资料
-     */
-    private void getFriendList(final String registerId) {
-        mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_FRIEND_LIST)
-                .addParams("MyId", registerId)
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        updateView(true);
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        FriendListResult friendListResult = new Gson().fromJson(response, FriendListResult.class);
-                        if (friendListResult.getCode() == RESPONSE_SUCCESS) {
-                            mBodyDatas = friendListResult.getBody();
-                            L.i("读取到了" + mBodyDatas.size());
-                            if (mBodyDatas == null) {
-                                mBodyDatas = new ArrayList();
-                            } else {
-                                updateContactInfoData(mBodyDatas);
-                            }
-                            updateView(true);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * 更新本地联系人数据
-     *
-     * @param bodyDatas
-     */
-    private void updateContactInfoData(List<Contact> bodyDatas) {
-        try {
-            DataSupport.deleteAll(ContactInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (Contact contact : bodyDatas) {
-            ContactInfo info = new ContactInfo();
-            info.setAvatar(contact.getAvatar());
-            info.setName(contact.getName());
-            info.setNickName(contact.getNickName());
-            info.setCellphone(contact.getPhone());
-            info.setRemark(contact.getRemark());
-            info.setRegisterId(contact.getFriendId());
-            info.save();
-        }
-    }
-
 
     /**
      * 填充数据
@@ -341,6 +336,35 @@ public class CreateGroupActivity extends BaseActivity {
         mDecoration.setmDatas(mSourceDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 添加群成员
+     */
+    private void addGroupMember(String groupId, List<Contact> contacts) {
+        GroupInfo info = new GroupInfo();
+        info.setHXGroupId(groupId);
+        info.setGroupMemberList(contacts);
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.ADD_GROUP_MEMBER)
+                .content(StringUtil.addModelWithJson(info))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            T.showShort(CreateGroupActivity.this, "操作成功");
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            T.showShort(CreateGroupActivity.this, commonResult.getMsg());
+                        }
+                    }
+                });
     }
 
     class ContactAdapter extends CommonAdapter<Contact> {

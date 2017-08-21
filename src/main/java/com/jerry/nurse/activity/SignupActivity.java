@@ -20,11 +20,8 @@ import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.SignupResult;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
-import com.jerry.nurse.util.ActivityCollector;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
@@ -38,6 +35,7 @@ import java.net.URLEncoder;
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
@@ -297,7 +295,7 @@ public class SignupActivity extends BaseActivity {
      */
     private void validateVerificationCode(final String cellphone, String code) {
         ShortMessage shortMessage = new ShortMessage("", cellphone, code, mType);
-
+        shortMessage.setDeviceRegId(JPushInterface.getRegistrationID(this));
         // 发送请求
         mProgressDialogManager.setMessage("请稍后...");
         mProgressDialogManager.show();
@@ -322,7 +320,7 @@ public class SignupActivity extends BaseActivity {
                                 SignupResult signupResult = new Gson().fromJson(response, SignupResult.class);
                                 if (signupResult.getCode() == RESPONSE_SUCCESS) {
                                     mRegisterId = signupResult.getBody().getRegisterId();
-                                    Intent intent = PasswordActivity.getIntent(SignupActivity.this, mRegisterId, cellphone);
+                                    Intent intent = PasswordActivity.getIntent(SignupActivity.this, mRegisterId);
                                     startActivity(intent);
                                 } else {
                                     T.showShort(SignupActivity.this, signupResult.getMsg());
@@ -373,43 +371,13 @@ public class SignupActivity extends BaseActivity {
         if (mType != TYPE_VERIFICATION_CODE) {
             T.showLong(this, R.string.signup_success);
 
-            String cellphone = mCellphoneEditText.getText().toString();
-            Intent intent = PasswordActivity.getIntent(this, mRegisterId, cellphone);
+            Intent intent = PasswordActivity.getIntent(this, mRegisterId);
             startActivity(intent);
             mHandler.removeCallbacks(mValidateRunnable);
         } else {
             LoginManager loginUtil = new LoginManager(this, mProgressDialogManager);
             loginUtil.getLoginInfoByRegisterId(mRegisterId);
         }
-    }
-
-    /**
-     * 获取用户注册信息
-     */
-    private void getUserRegisterInfo(final String registerId) {
-        OkHttpUtils.get().url(ServiceConstant.GET_USER_REGISTER_INFO_BY_REGISTER_ID)
-                .addParams("RegisterId", registerId)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialogManager.dismiss();
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mProgressDialogManager.dismiss();
-                        L.e("获取用户信息成功，护士通登录");
-                        UserRegisterInfo userRegisterInfo = new Gson()
-                                .fromJson(response, UserRegisterInfo.class);
-
-//                        LitePalUtil.saveRegisterInfo(SignupActivity.this, userRegisterInfo);
-                        ActivityCollector.removeAllActivity();
-                        Intent intent = MainActivity.getIntent(SignupActivity.this);
-                        startActivity(intent);
-                    }
-                });
     }
 
     /**

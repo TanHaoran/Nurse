@@ -1,9 +1,11 @@
 package com.jerry.nurse.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.BindInfoResult;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
@@ -32,11 +35,17 @@ import com.jerry.nurse.util.TencentLoginUtil;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
@@ -155,6 +164,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_check_update)
     void onCheckUpdate(View view) {
+        downloadApk();
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_APP_VERSION)
                 .build()
@@ -176,7 +186,7 @@ public class SettingActivity extends BaseActivity {
                                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-
+                                                    downloadApk();
                                                 }
                                             }).setNegativeButton(R.string.cancel, null)
                                             .show();
@@ -193,6 +203,41 @@ public class SettingActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * 下载最新版本的Apk
+     */
+    private void downloadApk() {
+
+        BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
+            @Override
+            public void onGranted() {
+                // 权限通过
+                OkHttpUtils.get().url("http://zh.buzzlysoft.com/Avatar/20170821025223.jpg").build()
+                        .execute(new FileCallBack(SettingActivity.this
+                                .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString(),
+                                new Date().getTime() + ".apk") {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                L.i("apk下载失败！");
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(File response, int id) {
+                                L.i("apk下载成功！");
+                            }
+                        });
+            }
+
+            @Override
+            public void onDenied(List<String> deniedPermission) {
+
+            }
+        });
+
     }
 
     /**

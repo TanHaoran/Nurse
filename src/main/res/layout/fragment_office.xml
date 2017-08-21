@@ -33,8 +33,8 @@
         android:layout_height="@dimen/announcement_height">
 
         <View
-            android:layout_width="3dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/announcement_bar_width"
+            android:layout_height="@dimen/announcement_bar_height"
             android:layout_centerVertical="true"
             android:background="@color/primary"/>
 
@@ -49,25 +49,25 @@
             android:textSize="@dimen/small_textSize"/>
 
         <TextView
-            android:gravity="center_vertical"
-            android:layout_height="match_parent"
             android:id="@+id/tv_announcement"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/line_paddingLeft"
             android:layout_toRightOf="@id/tv_announcement_text"
-            android:textColor="@color/gray_textColor"
+            android:gravity="center_vertical"
+            android:textColor="@color/normal_textColor"
             android:textSize="@dimen/small_textSize"
             tools:text="关于护理不良事件上报流程通知"/>
 
         <TextView
             android:id="@+id/tv_announcement_more"
             android:layout_width="wrap_content"
-            android:gravity="center_vertical"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/line_paddingRight"
+            android:gravity="center_vertical"
             android:text="@string/more"
             android:textColor="@color/gray_textColor"
             android:textSize="@dimen/small_textSize"/>

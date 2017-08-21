@@ -676,7 +676,8 @@ public class MessageManager {
         // 构建首页消息
         Message message = null;
         try {
-            message = DataSupport.where("mType=?", "0").findFirst(Message.class);
+            message = DataSupport.where("mType=? and mRegisterId=?", "0",
+                    EMClient.getInstance().getCurrentUser()).findFirst(Message.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -720,9 +721,9 @@ public class MessageManager {
      * 保存本地群数据
      *
      * @param groupId
-     * @param name
+     * @param nickname
      */
-    public static void saveCreateGroupLocalData(String groupId, String name) {
+    public static void saveCreateGroupLocalData(String groupId, String nickname) {
         // 构建首页消息
         Message message = null;
         try {
@@ -737,7 +738,7 @@ public class MessageManager {
 
         message.setType(Message.TYPE_CHAT_GROUP);
         message.setImageResource(R.drawable.icon_nurse_class);
-        message.setTitle(name);
+        message.setTitle(nickname);
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
         message.setContactId(groupId);

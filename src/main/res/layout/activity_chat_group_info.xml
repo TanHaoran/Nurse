@@ -120,7 +120,7 @@
                 style="@style/DividerLineStyle"/>
 
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/acb_add_friend"
+                android:id="@+id/acb_quit_group"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/add_friend_button_height"

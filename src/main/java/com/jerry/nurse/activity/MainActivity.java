@@ -102,30 +102,6 @@ public class MainActivity extends BaseActivity {
         mEaseMobManager.login(mRegisterId);
 
         mProgressDialogManager = new ProgressDialogManager(this);
-//        // 设置导航栏按钮数据
-//        BottomNavigationItem messageItem = new BottomNavigationItem(
-//                R.drawable.ic_action_message, R.string.message);
-//
-//        BottomNavigationItem officeItem = new BottomNavigationItem(R.drawable
-//                .ic_action_office, R.string.business);
-//
-//        BottomNavigationItem contactItem = new BottomNavigationItem(R.drawable
-//                .ic_action_contact, contact);
-//
-//        BottomNavigationItem mineItem = new BottomNavigationItem(R.drawable.ic_action_me, R
-//                .string.mine);
-//
-//        // 添加元素并显示
-//        mNavigationBar.addItem(messageItem)
-//                .addItem(officeItem)
-//                .addItem(contactItem)
-//                .addItem(mineItem)
-//                .setFirstSelectedPosition(0).initialise();
-//
-//        // 注册点击事件
-//        mNavigationBar.setTabSelectedListener(this);
-//
-//        mNavigationBar.setAnimation(null);
 
         // 初始化Fragment
         getFragments();
@@ -221,7 +197,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private  void onTabSelected(int position) {
+    private void onTabSelected(int position) {
         if (!mFragments.isEmpty()) {
             if (position < mFragments.size()) {
                 FragmentTransaction transaction = getSupportFragmentManager()
@@ -503,6 +479,8 @@ public class MainActivity extends BaseActivity {
                     info.setHXGroupId(group.getHXGroupId());
                     info.setHXNickName(group.getHXNickName());
                     info.setRegisterId(group.getRegisterId());
+                    info.setCreateTime(group.getCreateTime());
+                    info.setGroupUserCount(group.getGroupUserCount());
                     L.i("更新的群成员数量：" + group.getGroupMemberList().size());
                     // 更新联系人信息
                     updateContactInfoData(group.getGroupMemberList());
@@ -516,6 +494,8 @@ public class MainActivity extends BaseActivity {
                 info.setHXGroupId(group.getHXGroupId());
                 info.setHXNickName(group.getHXNickName());
                 info.setRegisterId(group.getRegisterId());
+                info.setCreateTime(group.getCreateTime());
+                info.setGroupUserCount(group.getGroupUserCount());
                 L.i("更新的群成员数量：" + group.getGroupMemberList().size());
                 // 更新联系人信息
                 updateContactInfoData(group.getGroupMemberList());
@@ -549,6 +529,8 @@ public class MainActivity extends BaseActivity {
                 info.setHXGroupId(groupInfo.getHXGroupId());
                 info.setHXNickName(groupInfo.getHXNickName());
                 info.setRegisterId(groupInfo.getRegisterId());
+                info.setCreateTime(groupInfo.getCreateTime());
+                info.setGroupUserCount(groupInfo.getGroupUserCount());
                 L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
                 // 更新联系人信息
                 updateContactInfoData(groupInfo.getGroupMemberList());
@@ -562,6 +544,8 @@ public class MainActivity extends BaseActivity {
             info.setHXGroupId(groupInfo.getHXGroupId());
             info.setHXNickName(groupInfo.getHXNickName());
             info.setRegisterId(groupInfo.getRegisterId());
+            info.setCreateTime(groupInfo.getCreateTime());
+            info.setGroupUserCount(groupInfo.getGroupUserCount());
             L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
             // 更新联系人信息
             updateContactInfoData(groupInfo.getGroupMemberList());

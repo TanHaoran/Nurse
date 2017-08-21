@@ -105,11 +105,6 @@ public class ServiceConstant {
     public static final String UPLOAD_PRACTISING_PICTURE = MAIN_IP + "PCImgHandler.ashx";
 
     /**
-     * 上传文件的方法
-     */
-    public static final String UPLOAD_FILE = IP + "ImgHandler.ashx";
-
-    /**
      * 获取用户信息
      */
     public static final String GET_USER_INFO = IP + "GetUserInfo";
@@ -128,11 +123,6 @@ public class ServiceConstant {
      * 获取护士职业证书
      */
     public static final String GET_PRACTISING_CERTIFICATE_INFO = IP + "GetUserPtccetById";
-
-    /**
-     * 获取用户医院信息
-     */
-    public static final String GET_USER_HOSPITAL_INFO = IP + "GetUserRelcodById";
 
     /**
      * 更新用户注册信息
@@ -250,6 +240,22 @@ public class ServiceConstant {
      * 获取某个群组的信息
      */
     public static final String GET_GROUP_INFO = IP + "GetXHGroupList";
+
+    /**
+     * 添加群成员
+     */
+    public static final String ADD_GROUP_MEMBER = IP + "AddGroupMember";
+
+    /**
+     * 退出群聊
+     */
+    public static final String QUIT_GROUP = IP + "QuitGroup";
+
+
+    /**
+     * 修改群昵称
+     */
+    public static final String UPDATE_GROUP_NICKNAME = IP + "UpdateGroupNickName";
 
 
 }

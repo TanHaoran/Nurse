@@ -30,6 +30,7 @@ import butterknife.Bind;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.ContactDetailActivity.EXTRA_VALIDATE_MESSAGE;
+import static com.jerry.nurse.activity.GroupInfoActivity.EXTRA_GROUP_NICKNAME;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class InputActivity extends BaseActivity {
@@ -39,8 +40,10 @@ public class InputActivity extends BaseActivity {
     public static final String NICKNAME = "昵称";
     public static final String JOB_NUMBER = "工号";
     public static final String VALIDATE_MESSAGE = "验证消息";
+    public static final String GROUP_NICKNAME = "群昵称";
 
     public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_VALUE = "value";
 
     @Bind(R.id.tb_input)
     TitleBar mTitleBar;
@@ -49,19 +52,16 @@ public class InputActivity extends BaseActivity {
     ClearEditText mInputEditText;
 
     private String mTitle;
+    private String mValue;
 
     private UserInfo mUserInfo;
     private ProgressDialogManager mProgressDialogManager;
 
-    public static Intent getIntent(Context context, String title) {
+    public static Intent getIntent(Context context, String title, String value) {
         Intent intent = new Intent(context, InputActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_VALUE, value);
         return intent;
-    }
-
-    public static Intent getIntent(Context context, int titleRes) {
-        String title = context.getResources().getString(titleRes);
-        return getIntent(context, title);
     }
 
     @Override
@@ -74,6 +74,7 @@ public class InputActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
 
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
+        mValue = getIntent().getStringExtra(EXTRA_VALUE);
 
         mTitleBar.setTitle(mTitle);
 
@@ -93,17 +94,15 @@ public class InputActivity extends BaseActivity {
                     postJobNumber(jobNumber);
                 } else if (mTitle.equals(VALIDATE_MESSAGE)) {
                     sendValidateMessage(content);
+                } else if (mTitle.equals(GROUP_NICKNAME)) {
+                    updateGroupNickname(content);
                 }
             }
         });
 
         mUserInfo = DataSupport.findFirst(UserInfo.class);
 
-        if (mTitle.equals(NICKNAME)) {
-            mInputEditText.setText(mUserInfo.getNickName());
-        } else if (mTitle.equals(JOB_NUMBER)) {
-            mInputEditText.setText(mUserInfo.getEmployeeId());
-        }
+        mInputEditText.setText(mValue);
 
         // 如果内容为空，就给显示提示输入框
         if (!TextUtils.isEmpty(mInputEditText.getText().toString())) {
@@ -119,6 +118,18 @@ public class InputActivity extends BaseActivity {
     private void sendValidateMessage(String message) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_VALIDATE_MESSAGE, message);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    /**
+     * 修改群昵称
+     *
+     * @param message
+     */
+    private void updateGroupNickname(String message) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_GROUP_NICKNAME, message);
         setResult(RESULT_OK, intent);
         finish();
     }

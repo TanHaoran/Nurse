@@ -193,7 +193,7 @@ public class ContactDetailActivity extends BaseActivity {
     @OnClick(R.id.acb_add_friend)
     void onAddFriend(View view) {
         if (!mContact.isIsFriend()) {
-            Intent intent = InputActivity.getIntent(this, "验证消息");
+            Intent intent = InputActivity.getIntent(this, "验证消息", "");
             startActivityForResult(intent, REQUEST_ADD_FRIEND);
         } else {
             new AlertDialog.Builder(this)

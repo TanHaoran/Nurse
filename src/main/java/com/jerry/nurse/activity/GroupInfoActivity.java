@@ -15,28 +15,43 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupInfoResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
+import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.view.TitleBar;
 import com.jerry.nurse.view.ToggleButton;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class GroupInfoActivity extends BaseActivity {
 
+
+    private static final int REQUEST_UPDATE_NICKNAME = 0x102;
+    private static final int REQUEST_ADD_GROUP_MEMBER = 0x103;
+
     public static final String EXTRA_GROUP_ID = "extra_group_id";
+
+    public static final String EXTRA_GROUP_NICKNAME = "extra_group_nickname";
+
+    @Bind(R.id.tb_group)
+    TitleBar mTitleBar;
 
     @Bind(R.id.rv_group)
     RecyclerView mRecyclerView;
@@ -74,11 +89,10 @@ public class GroupInfoActivity extends BaseActivity {
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         mGroupId = getIntent().getStringExtra(EXTRA_GROUP_ID);
         getGroupInfo(mRegisterId, mGroupId);
-
     }
 
     /**
-     * 获取用户信息
+     * 获取群信息
      */
     private void getGroupInfo(final String registerId, final String groupId) {
         mProgressDialogManager.show();
@@ -92,14 +106,14 @@ public class GroupInfoActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         GroupInfoResult result = new Gson().fromJson(response, GroupInfoResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
+                            mTitleBar.setTitle(result.getBody().getHXNickName());
                             mGroupInfo = result.getBody();
-                            mGroupInfo.setHXGroupId(groupId);
+                            mGroupInfo.setGroupId(groupId);
                             mContacts = result.getBody().getGroupMemberList();
                             if (mContacts == null) {
                                 mContacts = new ArrayList<>();
                             }
                             MainActivity.updateGroupInfoData(mGroupInfo);
-                            MainActivity.updateContactInfoData(mContacts);
                             setContactsData(mContacts);
                         } else {
                             T.showShort(GroupInfoActivity.this, result.getMsg());
@@ -121,12 +135,58 @@ public class GroupInfoActivity extends BaseActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         mGroupNameTextView.setText(mGroupInfo.getHXNickName());
+        mTitleBar.setTitle(mGroupInfo.getHXNickName());
     }
 
     @OnClick(R.id.rl_group_name)
     void onGroupName(View view) {
-        Intent intent = InputActivity.getIntent(this, "群昵称");
-        startActivity(intent);
+        Intent intent = InputActivity.getIntent(this, "群昵称", mGroupInfo.getHXNickName());
+        startActivityForResult(intent, REQUEST_UPDATE_NICKNAME);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            // 修改群昵称
+            if (requestCode == REQUEST_UPDATE_NICKNAME) {
+                String nickname = data.getStringExtra(EXTRA_GROUP_NICKNAME);
+                postGroupNickname(nickname);
+            } else if (requestCode == REQUEST_ADD_GROUP_MEMBER) {
+                getGroupInfo(mRegisterId, mGroupId);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 修改群昵称
+     *
+     * @param nickname
+     */
+    void postGroupNickname(final String nickname) {
+        mProgressDialogManager.show();
+        mGroupInfo.setHXNickName(nickname);
+        OkHttpUtils.postString()
+                .url(ServiceConstant.UPDATE_GROUP_NICKNAME)
+                .content(StringUtil.addModelWithJson(mGroupInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            T.showShort(GroupInfoActivity.this, "群昵称设置成功");
+                            mGroupInfo.getGroupMemberList().remove(mGroupInfo.getGroupMemberList().size() - 1);
+                            MainActivity.updateGroupInfoData(mGroupInfo);
+                            // 更新界面
+                            setContactsData(mGroupInfo.getGroupMemberList());
+                        } else {
+                            T.showShort(GroupInfoActivity.this, commonResult.getMsg());
+                        }
+                    }
+                });
     }
 
     @OnClick(R.id.rl_group_qr_code)
@@ -134,7 +194,7 @@ public class GroupInfoActivity extends BaseActivity {
 
     }
 
-    @OnClick(R.id.acb_add_friend)
+    @OnClick(R.id.acb_quit_group)
     void onQuitGroup(View view) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.tips)
@@ -153,7 +213,29 @@ public class GroupInfoActivity extends BaseActivity {
      * 退出群聊
      */
     private void quitGroup() {
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.QUIT_GROUP)
+                .content(StringUtil.addModelWithJson(mGroupInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            GroupInfo info = DataSupport.where("HXGroupId=?",
+                                    mGroupInfo.getHXGroupId()).findFirst(GroupInfo.class);
+                            info.delete();
+                            T.showShort(GroupInfoActivity.this, "你已退出该群聊");
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            T.showShort(GroupInfoActivity.this, commonResult.getMsg());
+                        }
+                    }
+                });
     }
 
 
@@ -163,7 +245,7 @@ public class GroupInfoActivity extends BaseActivity {
         }
 
         @Override
-        protected void convert(com.zhy.adapter.recyclerview.base.ViewHolder holder, final Contact contact, int position) {
+        protected void convert(com.zhy.adapter.recyclerview.base.ViewHolder holder, final Contact contact, final int position) {
             if (position == mDatas.size() - 1) {
                 holder.setImageResource(R.id.iv_avatar, R.drawable.group_add_contact);
             } else {
@@ -176,8 +258,15 @@ public class GroupInfoActivity extends BaseActivity {
             holder.setOnClickListener(R.id.rl_contact, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId());
-                    startActivity(intent);
+                    // 最后一个是添加群成员
+                    if (position != mDatas.size() - 1) {
+                        Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId());
+                        startActivity(intent);
+                    } else {
+                        Intent intent = CreateGroupActivity.getIntent(GroupInfoActivity.this,
+                                mGroupInfo.getHXGroupId(), mContacts);
+                        startActivityForResult(intent, REQUEST_ADD_GROUP_MEMBER);
+                    }
                 }
             });
         }

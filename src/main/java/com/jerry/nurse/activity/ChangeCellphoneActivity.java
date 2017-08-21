@@ -209,7 +209,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
                                 mHandler.postDelayed(mValidateRunnable, 1000);
                                 T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_finished);
                             } else {
-                                T.showLong(ChangeCellphoneActivity.this, R.string.get_verification_code_failed);
+                                T.showLong(ChangeCellphoneActivity.this, commonResult.getMsg());
                             }
                         }
                     });
@@ -304,7 +304,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
                                 bind(cellphone, true);
                             } else if (mType == TYPE_UNBIND_CELLPHONE) {
                                 // 解绑手机
-                                bind(cellphone,false );
+                                bind(cellphone, false);
                             }
                         } else {
                             T.showShort(ChangeCellphoneActivity.this, commonResult.getMsg());

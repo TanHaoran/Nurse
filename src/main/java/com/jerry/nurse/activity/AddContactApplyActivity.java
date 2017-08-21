@@ -130,7 +130,7 @@ public class AddContactApplyActivity extends BaseActivity {
 
             if (info != null) {
                 holder.setText(R.id.tv_title, apply.getNickname());
-                holder.setText(R.id.tv_content, apply.getReason());
+                holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
                 ImageView imageView = holder.getView(R.id.iv_avatar);
                 Glide.with(AddContactApplyActivity.this).load(apply.getAvatar()).into(imageView);
             }

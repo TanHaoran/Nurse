@@ -253,7 +253,9 @@ public class OfficeFragment extends BaseFragment {
     public static boolean checkPermission() {
         // 两证同时通过验证才可以进行院务内的消息展示
         LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
-        if (loginInfo.getPStatus() == AUDIT_SUCCESS && loginInfo.getQStatus() == AUDIT_SUCCESS) {
+        if (loginInfo.getPStatus() == AUDIT_SUCCESS && loginInfo.getQStatus() == AUDIT_SUCCESS
+                && !TextUtils.isEmpty(loginInfo.getHospitalId())
+                &&!TextUtils.isEmpty(loginInfo.getDepartmentId()) ) {
             return true;
         } else {
             return false;

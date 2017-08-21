@@ -28,7 +28,6 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 public class PasswordActivity extends BaseActivity {
 
     private static final String EXTRA_REGISTER_ID = "extra_register_id";
-    private static final String EXTRA_CELLPHONE = "extra_register_cellphone";
 
     @Bind(R.id.tb_password)
     TitleBar mTitleBar;
@@ -37,13 +36,11 @@ public class PasswordActivity extends BaseActivity {
     EditText mPasswordEditText;
 
     private String mRegisterId;
-    private String mCellphone;
     private ProgressDialogManager mProgressDialogManager;
 
-    public static Intent getIntent(Context context, String registerId, String cellphone) {
+    public static Intent getIntent(Context context, String registerId) {
         Intent intent = new Intent(context, PasswordActivity.class);
         intent.putExtra(EXTRA_REGISTER_ID, registerId);
-        intent.putExtra(EXTRA_CELLPHONE, cellphone);
 
         return intent;
     }
@@ -58,7 +55,7 @@ public class PasswordActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
 
         mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
-        mCellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
+//        mCellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -70,7 +67,7 @@ public class PasswordActivity extends BaseActivity {
                 }
                 String password = mPasswordEditText.getText().toString().trim();
                 // 设置密码
-                setPassword(mRegisterId, mCellphone, password);
+                setPassword(mRegisterId, password);
             }
         });
     }
@@ -94,14 +91,12 @@ public class PasswordActivity extends BaseActivity {
      * 设置密码
      *
      * @param registerId
-     * @param cellphone
      * @param password
      */
-    private void setPassword(final String registerId, String cellphone, final String password) {
+    private void setPassword(final String registerId, final String password) {
         mProgressDialogManager.show();
         UserRegisterInfo info = new UserRegisterInfo();
         info.setRegisterId(registerId);
-        info.setPhone(cellphone);
         info.setPassword(password);
         OkHttpUtils.postString()
                 .url(ServiceConstant.UPDATE_REGISTER_INFO)

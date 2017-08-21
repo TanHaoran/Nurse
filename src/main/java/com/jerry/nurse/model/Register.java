@@ -12,6 +12,8 @@ public class Register {
 
     private String CountryCode;
 
+    private String DeviceId;
+
     public Register(String phone, String password) {
         Phone = phone;
         Password = password;
@@ -45,5 +47,13 @@ public class Register {
 
     public void setCountryCode(String countryCode) {
         CountryCode = countryCode;
+    }
+
+    public String getDeviceId() {
+        return DeviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        DeviceId = deviceId;
     }
 }

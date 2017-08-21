@@ -337,11 +337,12 @@ public class PersonalInfoActivity extends BaseActivity {
      * @return
      */
     private String getWorkingTime(String firstWorkDate) {
+        L.i("计算工龄方法执行一次");
         Date firstDate = DateUtil.parseMysqlDateToDate(firstWorkDate);
         Date now = new Date();
         int mouths = DateUtil.getMonthsBetweenTwoDate(firstDate, now);
         if (mouths >= 12) {
-            return mouths / 12 + "年" + mouths % 12 + "月";
+            return mouths / 12 + "年" + mouths % 12 + "个月";
         } else {
             return mouths + "个月";
         }
@@ -369,7 +370,7 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_nickname)
     void onNickname(View view) {
-        Intent intent = InputActivity.getIntent(this, InputActivity.NICKNAME);
+        Intent intent = InputActivity.getIntent(this, InputActivity.NICKNAME, mLoginInfo.getNickName());
         startActivity(intent);
     }
 
@@ -470,7 +471,7 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_job_number)
     void onJobNumber(View view) {
-        Intent intent = InputActivity.getIntent(this, "工号");
+        Intent intent = InputActivity.getIntent(this, "工号", mUserInfo.getEmployeeId());
         startActivity(intent);
     }
 }

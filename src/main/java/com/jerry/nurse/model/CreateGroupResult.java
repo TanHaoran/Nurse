@@ -8,7 +8,7 @@ public class CreateGroupResult {
 
 
     /**
-     * body : {"CreateTime":"/Date(1502610131677+0800)/","CreaterId":"0000000430","Descg":"0000000430在2017/8/13 15:42:11创建的群","GroupId":"0000000013","GroupNickName":"群聊","IsFlag":1,"MaxGroupCount":100,"UserCount":2}
+     * body : {"CreateTime":"/Date(1503324961662+0800)/","GroupId":"0000000027","GroupUserCount":4,"HXGroupId":"25088821886977","HXNickName":"群聊","RegisterId":"","groupMemberList":""}
      * code : 0
      * msg :
      */
@@ -40,5 +40,6 @@ public class CreateGroupResult {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
 
 }

@@ -175,22 +175,23 @@ public class ContactFragment extends BaseFragment {
                         break;
                     case R.layout.item_contact_header_top:
                         final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
-                        if (contactTopHeaderBean.getTxt().equals("我的群")) {
-                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
-                        }
-                        holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
-                        holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (contactTopHeaderBean.getTxt().equals("当前科室")) {
-                                    Intent intent = ContactListActivity.getIntent(getActivity());
-                                    startActivity(intent);
-                                } else if (contactTopHeaderBean.getTxt().equals("我的群")) {
-                                    Intent intent = GroupListActivity.getIntent(getActivity());
-                                    startActivity(intent);
-                                }
+                            if ("我的群".equals(contactTopHeaderBean.getTxt())) {
+                                holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
                             }
-                        });
+                            holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
+                            holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (contactTopHeaderBean.getTxt().equals("当前科室")) {
+                                        Intent intent = ContactListActivity.getIntent(getActivity());
+                                        startActivity(intent);
+                                    } else if (contactTopHeaderBean.getTxt().equals("我的群")) {
+                                        Intent intent = GroupListActivity.getIntent(getActivity());
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+
                         break;
                     default:
                         break;

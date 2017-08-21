@@ -12,6 +12,7 @@ public class ShortMessage {
     private String Phone;
     private String Code;
     private int Type;
+    private String DeviceRegId;
 
     public ShortMessage(String registerId, String phone, String code, int type) {
         RegisterId = registerId;
@@ -50,5 +51,13 @@ public class ShortMessage {
 
     public void setType(int type) {
         Type = type;
+    }
+
+    public String getDeviceRegId() {
+        return DeviceRegId;
+    }
+
+    public void setDeviceRegId(String deviceRegId) {
+        DeviceRegId = deviceRegId;
     }
 }

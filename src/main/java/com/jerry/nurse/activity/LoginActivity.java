@@ -29,6 +29,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
@@ -135,15 +136,6 @@ public class LoginActivity extends BaseActivity {
         return null;
     }
 
-    private void resetUI() {
-        mProgressDialogManager.dismiss();
-    }
-
-
-    private void onLoginFailed() {
-        resetUI();
-    }
-
     /**
      * 国家代码点击事件
      *
@@ -185,6 +177,7 @@ public class LoginActivity extends BaseActivity {
     private void login(String countryCode, final String cellphone, final String password) {
         mProgressDialogManager.show();
         Register register = new Register(cellphone, password, countryCode);
+        register.setDeviceId(JPushInterface.getRegistrationID(this));
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN)
                 .content(StringUtil.addModelWithJson(register))

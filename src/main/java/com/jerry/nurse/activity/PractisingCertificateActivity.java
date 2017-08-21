@@ -25,7 +25,6 @@ import com.jerry.nurse.model.PractisingResult;
 import com.jerry.nurse.model.UploadResult;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
@@ -377,7 +376,7 @@ public class PractisingCertificateActivity extends BaseActivity {
 
         mTitleBar.setRightVisible(View.INVISIBLE);
 
-        setDateSelectListener(mBirthdayLayout, null, false, new OnDateSelectListener() {
+        setDateSelectListener(mBirthdayLayout, null, true, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mBirthdayTextView.setText(DateUtil.parseDateToString(date));
@@ -511,10 +510,10 @@ public class PractisingCertificateActivity extends BaseActivity {
             mErrorMessage = "身份证为空！";
             return false;
         }
-        if (!AccountValidatorUtil.isIDCard(mIdCardNumberEditText.getText().toString())) {
-            mErrorMessage = "身份证格式不正确！";
-            return false;
-        }
+//        if (!AccountValidatorUtil.isIDCard(mIdCardNumberEditText.getText().toString())) {
+//            mErrorMessage = "身份证格式不正确！";
+//            return false;
+//        }
         if (mIdCardNumberEditText.getText().toString().length() > 18) {
             mErrorMessage = "身份证过长！";
             return false;
