@@ -1,13 +1,14 @@
 package com.jerry.nurse.activity;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ import com.jerry.nurse.model.VersionResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.AppUtil;
+import com.jerry.nurse.util.DateUtil;
+import com.jerry.nurse.util.DownloadUtil;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
@@ -35,7 +38,6 @@ import com.jerry.nurse.util.TencentLoginUtil;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.FileCallBack;
 
 import org.litepal.crud.DataSupport;
 
@@ -45,12 +47,15 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.APK_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
+import static com.jerry.nurse.util.T.showShort;
 
 public class SettingActivity extends BaseActivity {
+
+    private static final int PROGRESS_NOTIFICATION_ID = 0x101;
 
     @Bind(R.id.tv_cellphone)
     TextView mCellphoneTextView;
@@ -162,31 +167,36 @@ public class SettingActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    /**
+     * 检查更新
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_check_update)
     void onCheckUpdate(View view) {
-        downloadApk();
         mProgressDialog.show();
         OkHttpUtils.get().url(ServiceConstant.GET_APP_VERSION)
                 .build()
                 .execute(new FilterStringCallback(mProgressDialog) {
 
-
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        VersionResult versionResult = new Gson().fromJson(response, VersionResult.class);
+                        final VersionResult versionResult = new Gson().fromJson(response, VersionResult.class);
                         if (versionResult.getCode() == RESPONSE_SUCCESS) {
-                            VersionResult.Version version = versionResult.getBody();
 
                             String localVersion = AppUtil.getVersionName(SettingActivity.this);
-                            if (!localVersion.equals(version.getVersion())) {
+                            if (!localVersion.equals(versionResult.getBody().getVersion())) {
                                 if (!SettingActivity.this.isFinishing()) {
                                     new AlertDialog.Builder(SettingActivity.this)
                                             .setTitle(R.string.tips)
-                                            .setMessage("发现新版本：" + version.getVersion() + ",是否更新?")
+                                            .setMessage("发现新版本:" + versionResult.getBody().getVersion() +
+                                                    "\n更新时间: " +
+                                                    DateUtil.parseMysqlDateToString(versionResult.getBody().getReleaseTime()) +
+                                                    "\n更新内容:" + versionResult.getBody().getUpdateContent() + "\n是否更新?")
                                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    downloadApk();
+                                                    downloadApk(versionResult.getBody().getReleaseUrl());
                                                 }
                                             }).setNegativeButton(R.string.cancel, null)
                                             .show();
@@ -199,7 +209,7 @@ public class SettingActivity extends BaseActivity {
                                         .show();
                             }
                         } else {
-                            T.showShort(SettingActivity.this, versionResult.getMsg());
+                            showShort(SettingActivity.this, versionResult.getMsg());
                         }
                     }
                 });
@@ -207,29 +217,57 @@ public class SettingActivity extends BaseActivity {
 
     /**
      * 下载最新版本的Apk
+     *
+     * @param webName
      */
-    private void downloadApk() {
+    private void downloadApk(final String webName) {
+
+        // 创建顶部通知框
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("智护下载");
+        builder.setContentText("正在下载");
+        final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0x101, builder.build());
+        builder.setProgress(100, 0, false);
 
         BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
             @Override
             public void onGranted() {
-                // 权限通过
-                OkHttpUtils.get().url("http://zh.buzzlysoft.com/Avatar/20170821025223.jpg").build()
-                        .execute(new FileCallBack(SettingActivity.this
-                                .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString(),
-                                new Date().getTime() + ".apk") {
+                DownloadUtil.get().download(APK_ADDRESS + webName, new Date().getTime() + ".apk",
+                        new DownloadUtil.OnDownloadListener() {
                             @Override
-                            public void onError(Call call, Exception e, int id) {
-                                L.i("apk下载失败！");
-                                e.printStackTrace();
+                            public void onDownloadSuccess(File file) {
+                                L.i("下载完成");
+
+                                //下载完成后更改标题以及提示信息
+                                builder.setContentText("下载完成");
+                                //设置进度为完成
+                                builder.setProgress(100, 100, false);
+                                manager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
+
+                                if (!file.exists()) {
+                                    L.i("文件不存在");
+                                }
+                                DownloadUtil.get().openFile(file);
                             }
 
                             @Override
-                            public void onResponse(File response, int id) {
-                                L.i("apk下载成功！");
+                            public void onDownloading(int progress) {
+                                L.i("下载进度:" + progress);
+                                builder.setProgress(100, progress, false);
+                                manager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
+                                //下载进度提示
+                                builder.setContentText("下载" + progress + "%");
+                            }
+
+                            @Override
+                            public void onDownloadFailed() {
+                                L.i("下载失败");
                             }
                         });
+                T.showShort(SettingActivity.this, "已转入后台下载");
             }
 
             @Override
@@ -237,7 +275,6 @@ public class SettingActivity extends BaseActivity {
 
             }
         });
-
     }
 
     /**
@@ -249,14 +286,15 @@ public class SettingActivity extends BaseActivity {
     void onClearCache(View view) {
         mProgressDialog.show();
 
-        new Handler().postDelayed(new Runnable() {
+        // 清除掉包名下DOCUMENTS中所有的文件
+        File dir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            file.delete();
+        }
 
-            @Override
-            public void run() {
-                mProgressDialog.dismiss();
-                T.showShort(SettingActivity.this, R.string.clear_finish);
-            }
-        }, 1000);
+        mProgressDialog.dismiss();
+        showShort(SettingActivity.this, R.string.clear_finish);
     }
 
     @OnClick(R.id.rl_about)
@@ -317,7 +355,7 @@ public class SettingActivity extends BaseActivity {
                             // 更新界面显示绑定信息
                             updateBindInfo(mBindInfo);
                         } else {
-                            T.showShort(SettingActivity.this, bindInfoResult.getMsg());
+                            showShort(SettingActivity.this, bindInfoResult.getMsg());
                         }
                     }
                 });
@@ -328,8 +366,10 @@ public class SettingActivity extends BaseActivity {
      */
     private void updateBindInfo(BindInfoResult.BindInfo bindInfo) {
         if (!TextUtils.isEmpty(bindInfo.getPhone())) {
-            String cellphone = bindInfo.getPhone().substring(0, 2) + "*******" + mBindInfo.getPhone().substring(9);
-            mCellphoneTextView.setText(cellphone);
+            if (bindInfo.getPhone().length() == 11) {
+                String cellphone = bindInfo.getPhone().substring(0, 2) + "*******" + mBindInfo.getPhone().substring(9);
+                mCellphoneTextView.setText(cellphone);
+            }
         } else {
             mCellphoneTextView.setText("");
         }
@@ -361,7 +401,7 @@ public class SettingActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            T.showShort(SettingActivity.this, "QQ绑定成功");
+                            showShort(SettingActivity.this, "QQ绑定成功");
                             L.i("qq绑定成功");
                             // 获取用户所有绑定信息
                             mBindInfo.setQQOpenId(qq.getOpenId());
@@ -369,7 +409,7 @@ public class SettingActivity extends BaseActivity {
                             mBindInfo.setBindCount(mBindInfo.getBindCount() + 1);
                             updateBindInfo(mBindInfo);
                         } else {
-                            T.showShort(SettingActivity.this, commonResult.getMsg());
+                            showShort(SettingActivity.this, commonResult.getMsg());
                         }
                     }
                 });
@@ -397,14 +437,14 @@ public class SettingActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            T.showShort(SettingActivity.this, "QQ解绑成功");
+                            showShort(SettingActivity.this, "QQ解绑成功");
                             L.i("qq解绑成功");
                             mBindInfo.setQQNickName("");
                             mBindInfo.setQQOpenId("");
                             mBindInfo.setBindCount(mBindInfo.getBindCount() - 1);
                             updateBindInfo(mBindInfo);
                         } else {
-                            T.showShort(SettingActivity.this, commonResult.getMsg());
+                            showShort(SettingActivity.this, commonResult.getMsg());
                         }
                     }
                 });

@@ -241,7 +241,6 @@ public class MainActivity extends BaseActivity {
         unregisterReceiver(mMessageReceiver);
     }
 
-
     class MessageReceiver extends BroadcastReceiver {
 
         @Override

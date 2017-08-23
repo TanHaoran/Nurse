@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -41,14 +42,15 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
-import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.ContactInfoCache;
+import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.KeyBoardUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MediaManager;
 import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.PictureUtil;
 import com.jerry.nurse.util.ScreenUtil;
+import com.jerry.nurse.util.StreamUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.AudioRecordButton;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
@@ -271,148 +273,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        BaseActivity.requestRuntimePermission(new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-        }, new PermissionListener() {
-            @Override
-            public void onGranted() {
 
-            }
-
-            @Override
-            public void onDenied(List<String> deniedPermission) {
-
-            }
-        });
-
-        // 初始化获取对方的Id
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
-        mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
-
-        // 单聊
-        if (!mIsGroup) {
-            L.i("联系人的Id是：" + mContactId);
-            // 查询对方的信息
-            mContactInfo = DataSupport.where("mRegisterId=?",
-                    mContactId).findFirst(ContactInfo.class);
-            if (!TextUtils.isEmpty(mContactInfo.getNickName())) {
-                mNameTextView.setText(mContactInfo.getNickName());
-            }
-
-            // 读取数据库中存在的数据并显示
-            try {
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
-                        mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                mChatMessages = new ArrayList<>();
-            }
-
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            mAdapter = new ChatAdapter(this, mChatMessages);
-
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
-        }
-        // 群聊
-        else {
-            L.i("群组的Id是：" + mContactId);
-            mGroupInfo = DataSupport.where("HXGroupId=?", mContactId).findFirst(GroupInfo.class);
-            if (!TextUtils.isEmpty(mGroupInfo.getHXNickName())) {
-                mNameTextView.setText(mGroupInfo.getHXNickName());
-            }
-            // 读取数据库中存在的数据并显示
-            try {
-                DataSupport.findAll(ChatMessage.class);
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
-                        mContactId).find(ChatMessage.class);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                mChatMessages = new ArrayList<>();
-            }
-
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            mAdapter = new ChatAdapter(this, mChatMessages);
-
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
-
-        }
-
-        // 设置输入框的监听事件
-        mMessageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String message = mMessageEditText.getText().toString();
-                if (!TextUtils.isEmpty(message)) {
-                    mSendButton.setVisibility(View.VISIBLE);
-                    mAddButton.setVisibility(View.GONE);
-                } else {
-                    mSendButton.setVisibility(View.GONE);
-                    mAddButton.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        // 设置输入框和添加框的下显示
-        mMessageEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOptionLayout.setVisibility(View.GONE);
-            }
-        });
-        mMessageEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    mOptionLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        // 注册录音完成的回调方法
-        mRecordButton.setAudioFinishRecordListener(new AudioRecordButton.AudioFinishRecordListener() {
-            @Override
-            public void onFinish(float seconds, String filePath) {
-                easeMobSendVoiceMessage(seconds, filePath);
-
-            }
-        });
-
-        // 注册拍照和发图片两个事件监听
-        setSelectFromAlbumListener(mPhotoLayout, new OnSelectFromAlbumListener() {
-            @Override
-            public void onPhotoFinished(Bitmap bitmap, File file) {
-                easeMobSendImageMessage(file.getAbsolutePath());
-            }
-        });
-        setPhotographListener(mPhotographLayout, new OnPhotographFinishListener() {
-            @Override
-            public void onPhotographFinished(Bitmap bitmap, File file) {
-                easeMobSendImageMessage(file.getAbsolutePath());
-            }
-        });
-
-
-        // 添加消息监听
-        EMClient.getInstance().chatManager().addMessageListener(this);
     }
 
     @OnClick(R.id.acb_send)
@@ -575,6 +436,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onStop() {
         super.onStop();
+        EMClient.getInstance().chatManager().removeMessageListener(this);
     }
 
     @Override
@@ -673,7 +535,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
-                    Bitmap bmp = PictureUtil.getScaleBitmap(chatMessage.getPath(), 150, 150);
+                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getPath(), 150, 150);
+                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_send_normal);
+                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
                     holder.setImageBitmap(R.id.iv_image, bmp);
                     break;
                 case ChatMessage.TYPE_VOICE:
@@ -693,7 +557,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             }
                             // 播放动画
                             mSendAnimView = holder.getView(R.id.v_anim);
-                            mSendAnimView.setBackgroundResource(R.drawable.voice_play);
+                            mSendAnimView.setBackgroundResource(R.drawable.voice_send_play);
                             AnimationDrawable anim = (AnimationDrawable) mSendAnimView.getBackground();
                             anim.start();
                             // 播放音频
@@ -765,12 +629,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
-                    String path = chatMessage.getPath();
-                    L.i("读取到的path是：" + path);
-                    Bitmap bmp = PictureUtil.getScaleBitmap(path, 150, 150);
-                    if (bmp == null) {
-                        L.i("Bitmap是空");
-                    }
+                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getPath(), 150, 150);
+                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_receive_normal);
+                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
                     holder.setImageBitmap(R.id.iv_image, bmp);
                     break;
                 case ChatMessage.TYPE_VOICE:
@@ -790,7 +651,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             }
                             // 播放动画
                             mSendAnimView = holder.getView(R.id.v_anim);
-                            mSendAnimView.setBackgroundResource(R.drawable.voice_play);
+                            mSendAnimView.setBackgroundResource(R.drawable.voice_send_play);
                             AnimationDrawable anim = (AnimationDrawable) mSendAnimView.getBackground();
                             anim.start();
                             // 播放音频
@@ -833,6 +694,148 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onResume() {
         super.onResume();
+        BaseActivity.requestRuntimePermission(new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+        }, new PermissionListener() {
+            @Override
+            public void onGranted() {
+
+            }
+
+            @Override
+            public void onDenied(List<String> deniedPermission) {
+
+            }
+        });
+
+        // 初始化获取对方的Id
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
+        mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
+
+        // 单聊
+        if (!mIsGroup) {
+            L.i("联系人的Id是：" + mContactId);
+            // 查询对方的信息
+            mContactInfo = DataSupport.where("mRegisterId=?",
+                    mContactId).findFirst(ContactInfo.class);
+            if (!TextUtils.isEmpty(mContactInfo.getNickName())) {
+                mNameTextView.setText(mContactInfo.getNickName());
+            }
+
+            // 读取数据库中存在的数据并显示
+            try {
+                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                        mLoginInfo.getRegisterId(), mContactId,
+                        mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                mChatMessages = new ArrayList<>();
+            }
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            mAdapter = new ChatAdapter(this, mChatMessages);
+
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+        }
+        // 群聊
+        else {
+            L.i("群组的Id是：" + mContactId);
+            mGroupInfo = DataSupport.where("HXGroupId=?", mContactId).findFirst(GroupInfo.class);
+            if (!TextUtils.isEmpty(mGroupInfo.getHXNickName())) {
+                mNameTextView.setText(mGroupInfo.getHXNickName());
+            }
+            // 读取数据库中存在的数据并显示
+            try {
+                DataSupport.findAll(ChatMessage.class);
+                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mTo=?)",
+                        mLoginInfo.getRegisterId(), mContactId,
+                        mContactId).find(ChatMessage.class);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                mChatMessages = new ArrayList<>();
+            }
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            mAdapter = new ChatAdapter(this, mChatMessages);
+
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+
+        }
+
+        // 设置输入框的监听事件
+        mMessageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String message = mMessageEditText.getText().toString();
+                if (!TextUtils.isEmpty(message)) {
+                    mSendButton.setVisibility(View.VISIBLE);
+                    mAddButton.setVisibility(View.GONE);
+                } else {
+                    mSendButton.setVisibility(View.GONE);
+                    mAddButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // 设置输入框和添加框的下显示
+        mMessageEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOptionLayout.setVisibility(View.GONE);
+            }
+        });
+        mMessageEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mOptionLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // 注册录音完成的回调方法
+        mRecordButton.setAudioFinishRecordListener(new AudioRecordButton.AudioFinishRecordListener() {
+            @Override
+            public void onFinish(float seconds, String filePath) {
+                easeMobSendVoiceMessage(seconds, filePath);
+
+            }
+        });
+
+        // 注册拍照和发图片两个事件监听
+        setSelectFromAlbumListener(mPhotoLayout, new OnSelectFromAlbumListener() {
+            @Override
+            public void onPhotoFinished(Bitmap bitmap, File file) {
+                easeMobSendImageMessage(file.getAbsolutePath());
+            }
+        });
+        setPhotographListener(mPhotographLayout, new OnPhotographFinishListener() {
+            @Override
+            public void onPhotographFinished(Bitmap bitmap, File file) {
+                easeMobSendImageMessage(file.getAbsolutePath());
+            }
+        });
+
+
+        // 添加消息监听
+        EMClient.getInstance().chatManager().addMessageListener(this);
         MediaManager.resume();
     }
 
@@ -842,10 +845,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         MediaManager.pause();
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         MediaManager.release();
-        EMClient.getInstance().chatManager().removeMessageListener(this);
     }
 }

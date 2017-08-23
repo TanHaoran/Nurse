@@ -579,7 +579,7 @@ public class MessageManager {
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
         message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
-        message.setContent(ci.getNickName() + "请求添加您为好友");
+        message.setContent(ci.getDisplayName() + "请求添加您为好友");
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
         message.setContactId(ci.getRegisterId());
@@ -688,7 +688,7 @@ public class MessageManager {
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
         message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
-        message.setContent("您已申请添加" + ci.getNickName() + "为好友");
+        message.setContent("您已申请添加" + ci.getDisplayName() + "为好友");
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
         message.setContactId(ci.getRegisterId());

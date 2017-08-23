@@ -17,6 +17,7 @@ import com.jerry.nurse.activity.AddContactActivity;
 import com.jerry.nurse.activity.ContactDetailActivity;
 import com.jerry.nurse.activity.ContactListActivity;
 import com.jerry.nurse.activity.GroupListActivity;
+import com.jerry.nurse.activity.OfficeListActivity;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
 import com.jerry.nurse.model.ContactInfo;
@@ -175,22 +176,31 @@ public class ContactFragment extends BaseFragment {
                         break;
                     case R.layout.item_contact_header_top:
                         final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
-                            if ("我的群".equals(contactTopHeaderBean.getTxt())) {
-                                holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
-                            }
-                            holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
-                            holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (contactTopHeaderBean.getTxt().equals("当前科室")) {
-                                        Intent intent = ContactListActivity.getIntent(getActivity());
-                                        startActivity(intent);
-                                    } else if (contactTopHeaderBean.getTxt().equals("我的群")) {
-                                        Intent intent = GroupListActivity.getIntent(getActivity());
-                                        startActivity(intent);
-                                    }
+                        holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
+                        if ("我的群".equals(contactTopHeaderBean.getTxt())) {
+                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
+                        }
+                        holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // 点击科室
+                                if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getDepartmentName())) {
+                                    Intent intent = ContactListActivity.getIntent(getActivity());
+                                    startActivity(intent);
                                 }
-                            });
+                                // 点击医院
+                                else if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getHospitalName())) {
+                                    Intent intent = OfficeListActivity.getIntent(getActivity(),
+                                            mLoginInfo.getHospitalId(), 1);
+                                    startActivity(intent);
+                                }
+                                // 点击我的群
+                                else if (contactTopHeaderBean.getTxt().equals("我的群")) {
+                                    Intent intent = GroupListActivity.getIntent(getActivity());
+                                    startActivity(intent);
+                                }
+                            }
+                        });
 
                         break;
                     default:

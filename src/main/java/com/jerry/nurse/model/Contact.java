@@ -140,10 +140,16 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
 
     @Override
     public String getTarget() {
-        if (TextUtils.isEmpty(NickName))  {
-            return " ";
+        if (!TextUtils.isEmpty(Remark))  {
+            return Remark;
+        } else if (!TextUtils.isEmpty(NickName))  {
+            return NickName;
+        }else if (!TextUtils.isEmpty(Name))  {
+            return Name;
+        }else if (!TextUtils.isEmpty(Phone))  {
+            return Phone;
         }
-        return NickName;
+        return " ";
     }
 
     public boolean isChoose() {

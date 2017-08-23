@@ -93,7 +93,7 @@ public class CellphoneContactActivity extends BaseActivity {
 
 
     /**
-     *
+     * 获取手机联系人中注册情况
      */
     private void postCellphoneContact() {
         mProgressDialogManager.show();
@@ -185,14 +185,40 @@ public class CellphoneContactActivity extends BaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final CellphoneContact cellphoneContact) {
+            // 没有使用我们的软件
+            if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_USAGE) {
+                holder.setVisible(R.id.tv_is_friend, false);
+                holder.setVisible(R.id.acb_add, false);
+                holder.setVisible(R.id.acb_invite, true);
+            }
+            // 使用我们的软件，但不是好友
+            else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_FRIEND) {
+                holder.setVisible(R.id.tv_is_friend, false);
+                holder.setVisible(R.id.acb_add, true);
+                holder.setVisible(R.id.acb_invite, false);
+            }
+            // 使用我们的软件，而且是好友
+            else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_IS_FRIEND) {
+                holder.setVisible(R.id.tv_is_friend, true);
+                holder.setVisible(R.id.acb_add, false);
+                holder.setVisible(R.id.acb_invite, false);
+            }
             holder.setText(R.id.tv_nickname, cellphoneContact.getName());
             holder.setText(R.id.tv_cellphone, cellphoneContact.getPhone());
             holder.getView(R.id.ll_cellphone_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this,
-                            cellphoneContact.getRegisterId());
-                    startActivity(intent);
+                    // 没有使用我们的软件
+                    if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_USAGE) {
+
+                    }
+                    // 使用我们的软件，就直接跳转页面
+                    else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_FRIEND ||
+                            cellphoneContact.getStatus() == CellphoneContact.TYPE_IS_FRIEND) {
+                        Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this,
+                                cellphoneContact.getRegisterId());
+                        startActivity(intent);
+                    }
                 }
             });
         }

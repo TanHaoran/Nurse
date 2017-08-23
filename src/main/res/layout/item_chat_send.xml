@@ -3,8 +3,8 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:background="@color/background"
               android:layout_height="wrap_content"
+              android:background="@color/background"
               android:orientation="vertical"
               android:paddingBottom="@dimen/chat_line_paddingTop"
               android:paddingTop="@dimen/chat_line_paddingTop">
@@ -65,7 +65,7 @@
             <View
                 android:id="@+id/v_anim"
                 android:layout_width="@dimen/record_anim_width"
-                android:layout_height="@dimen/record_anim_width"
+                android:layout_height="@dimen/record_anim_height"
                 android:layout_gravity="center_vertical|right"
                 android:background="@drawable/talk_yy_me_3"/>
 
@@ -84,7 +84,6 @@
             tools:text="34'"/>
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,6 +97,7 @@
             android:padding="@dimen/chat_text_padding"
             android:textColor="@color/white"
             android:textSize="@dimen/normal_textSize"
+            android:visibility="gone"
             tools:text="有大吗。。。"/>
 
         <ImageView
@@ -105,11 +105,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/cv_avatar"
-            android:background="@drawable/chat_send_normal"
             android:gravity="center_vertical"
             android:maxHeight="300dp"
             android:minHeight="@dimen/chat_avatar_width"
-            android:padding="@dimen/chat_text_padding"
             android:scaleType="fitXY"/>
     </RelativeLayout>
 

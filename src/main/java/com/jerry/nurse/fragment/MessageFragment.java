@@ -161,26 +161,20 @@ public class MessageFragment extends BaseFragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        ImageView imageView = holder.getView(R.id.iv_avatar);
+                        Glide.with(getActivity()).load(info.getAvatar()).error(R.drawable.icon_avatar_default).into(imageView);
+                        holder.setText(R.id.tv_title, info.getDisplayName());
                         if (chatMessage.getType() == ChatMessage.TYPE_TXT) {
-                            ImageView imageView = holder.getView(R.id.iv_avatar);
-                            Glide.with(getActivity()).load(info.getAvatar()).into(imageView);
-                            holder.setText(R.id.tv_title, info.getNickName());
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, chatMessage.getContent());
                             }
                             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {
-                            ImageView imageView = holder.getView(R.id.iv_avatar);
-                            Glide.with(getActivity()).load(info.getAvatar()).into(imageView);
-                            holder.setText(R.id.tv_title, info.getNickName());
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, "语音消息");
                             }
                             holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
-                            ImageView imageView = holder.getView(R.id.iv_avatar);
-                            Glide.with(getActivity()).load(info.getAvatar()).into(imageView);
-                            holder.setText(R.id.tv_title, info.getNickName());
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, "图片消息");
                             }

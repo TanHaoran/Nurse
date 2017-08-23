@@ -108,9 +108,11 @@ public class CreateGroupActivity extends BaseActivity {
         mGroupContacts = (List<Contact>) getIntent().getSerializableExtra(EXTRA_CONTACTS);
         mGroupId = getIntent().getStringExtra(EXTRA_GROUP_ID);
 
-        for (Contact c : mGroupContacts) {
-            if (c.getFriendId() == null) {
-                mGroupContacts.remove(c);
+        if (mGroupContacts != null) {
+            for (Contact c : mGroupContacts) {
+                if (c.getFriendId() == null) {
+                    mGroupContacts.remove(c);
+                }
             }
         }
 
@@ -210,7 +212,9 @@ public class CreateGroupActivity extends BaseActivity {
                             String nickname = result.getBody().getHXNickName();
                             MessageManager.saveCreateGroupLocalData(groupId, nickname);
                             T.showShort(CreateGroupActivity.this, "创建成功");
-                            finish();
+                            Intent intent = ChatActivity.getIntent(CreateGroupActivity.this,
+                                    result.getBody().getHXGroupId(), true);
+                            startActivity(intent);
                         } else {
                             T.showShort(CreateGroupActivity.this, result.getMsg());
                         }

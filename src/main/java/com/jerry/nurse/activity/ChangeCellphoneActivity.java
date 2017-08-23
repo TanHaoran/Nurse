@@ -140,7 +140,9 @@ public class ChangeCellphoneActivity extends BaseActivity {
         if (mBindInfo.getBindCount() == 1 && !TextUtils.isEmpty(cellphone)) {
             L.i("修改手机");
             mType = TYPE_CHANGE_CELLPHONE;
-            mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
+            if (cellphone.length() == 11) {
+                mCellphoneTextView.setText(cellphone.substring(0, 2) + "*******" + cellphone.substring(9));
+            }
             mGetVerificationCodeTextView.setEnabled(true);
         }
         // 绑定数量大于等于1，并且没有手机号：就是绑定手机

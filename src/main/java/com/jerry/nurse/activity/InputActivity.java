@@ -166,6 +166,7 @@ public class InputActivity extends BaseActivity {
                             finish();
                         } else {
                             L.i("设置昵称失败");
+                            T.showShort(InputActivity.this, commonResult.getMsg());
                         }
                     }
                 });

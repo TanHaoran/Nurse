@@ -7,10 +7,12 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.Register;
@@ -18,13 +20,18 @@ import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
-import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginUtil;
+import com.jerry.nurse.wxapi.WXEntryActivity;
 import com.tencent.connect.common.Constants;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -62,6 +69,8 @@ public class LoginActivity extends BaseActivity {
 
     private ProgressDialogManager mProgressDialogManager;
 
+    private LoginInfo mLoginInfo;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         return intent;
@@ -77,8 +86,8 @@ public class LoginActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
 
         // 入口处判断用户是否已经登录
-        String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "-1");
-        if (!registerId.equals("-1")) {
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        if (mLoginInfo != null) {
             goToMainActivity();
         }
     }
@@ -155,7 +164,7 @@ public class LoginActivity extends BaseActivity {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
         }
 
-        if (resultCode==RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_COUNTRY) {
                 // 获取国家地区编号并显示
                 Bundle bundle = data.getExtras();
@@ -270,6 +279,7 @@ public class LoginActivity extends BaseActivity {
      * @param info
      */
     private void postQQLogin(Qq info) {
+        info.setDeviceRegId(JPushInterface.getRegistrationID(this));
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN_BY_QQ)
@@ -289,5 +299,19 @@ public class LoginActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    @OnClick(R.id.ll_wechat)
+    void onWechat(View view) {
+        IWXAPI mApi = WXAPIFactory.createWXAPI(this, WXEntryActivity.WEIXIN_APP_ID, true);
+        mApi.registerApp(WXEntryActivity.WEIXIN_APP_ID);
+
+        if (mApi != null && mApi.isWXAppInstalled()) {
+            SendAuth.Req req = new SendAuth.Req();
+            req.scope = "snsapi_userinfo";
+            req.state = "wechat_sdk_demo_test_neng";
+            mApi.sendReq(req);
+        } else
+            Toast.makeText(this, "用户未安装微信", Toast.LENGTH_SHORT).show();
     }
 }

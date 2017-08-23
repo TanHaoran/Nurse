@@ -1,16 +1,26 @@
 package com.jerry.nurse.util;
 
+import android.text.TextUtils;
+
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 
 /**
  * 手机通讯录联系人
  */
 public class CellphoneContact extends BaseIndexPinyinBean {
+
+    public static final int TYPE_NOT_USAGE = 0;
+    public static final int TYPE_NOT_FRIEND = 1;
+    public static final int TYPE_IS_FRIEND = 2;
+
     private String Avatar;
     private String Name;
     private String NickName;
     private String Phone;
     private String RegisterId;
+    /**
+     * 0：没有使用软件；1：使用软件，但不是好友；2：使用软件，而且是好友
+     */
     private int status;
 
     public String getAvatar() {
@@ -63,8 +73,12 @@ public class CellphoneContact extends BaseIndexPinyinBean {
 
     @Override
     public String getTarget() {
-        if (Name == null) {
-            return " ";
+        if (!TextUtils.isEmpty(NickName)) {
+            return NickName;
+        } else if (!TextUtils.isEmpty(Name)) {
+            return Name;
+        } else if (!TextUtils.isEmpty(Phone)) {
+            return Phone;
         }
         return Name;
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.NinePatch;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
@@ -268,5 +269,40 @@ public class StreamUtil {
 
         return bitmap;
 
+    }
+
+    /**
+     * 将图片裁剪成聊天窗口的形式
+     *
+     * @param bitmap_bg
+     * @param bitmap_in
+     * @return
+     */
+    public static Bitmap getRoundCornerImage(Bitmap bitmap_bg, Bitmap bitmap_in) {
+        Bitmap roundConcerImage = Bitmap.createBitmap(bitmap_in.getWidth(), bitmap_in.getHeight()
+                , Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(roundConcerImage);
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, bitmap_in.getWidth(), bitmap_in.getHeight());
+        Rect rectF = new Rect(0, 0, bitmap_in.getWidth(), bitmap_in.getHeight());
+        paint.setAntiAlias(true);
+        NinePatch patch = new NinePatch(bitmap_bg, bitmap_bg.getNinePatchChunk(), null);
+        patch.draw(canvas, rect);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap_in, rectF, rect, paint);
+        return roundConcerImage;
+    }
+
+    public static Bitmap getShardImage(Bitmap bitmap_bg, Bitmap bitmap_in) {
+        Bitmap roundConcerImage = Bitmap.createBitmap(bitmap_in.getWidth(), bitmap_in.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(roundConcerImage);
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, bitmap_in.getWidth(), bitmap_in.getHeight());
+        paint.setAntiAlias(true);
+        NinePatch patch = new NinePatch(bitmap_bg, bitmap_bg.getNinePatchChunk(), null);
+        patch.draw(canvas, rect);
+        Rect rect2 = new Rect(2, 2, bitmap_in.getWidth() - 2, bitmap_in.getHeight() - 2);
+        canvas.drawBitmap(bitmap_in, rect, rect2, paint);
+        return roundConcerImage;
     }
 }

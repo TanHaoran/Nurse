@@ -28,6 +28,7 @@ public class CellphoneContactUtil {
             String number = cursor.getString(cursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             number = number.replace(" ", "");
+            number = number.replace("-", "");
             if (number.length() >= 11) {
                 number = number.substring(number.length() - 11);
             }

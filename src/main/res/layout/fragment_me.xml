@@ -41,52 +41,6 @@
         </android.support.v7.widget.CardView>
 
 
-        <LinearLayout
-            android:id="@+id/ll_name"
-            android:layout_width="@dimen/me_name_layout_width"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/cv_avatar"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:id="@+id/tv_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/name_marginBottom"
-                android:textColor="@color/normal_textColor"
-                android:textSize="@dimen/big_textSize"
-                tools:text="李小美"/>
-
-
-            <TextView
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:id="@+id/tv_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/civ_avatar"
-                android:textColor="@color/monsoon"
-                android:textSize="14sp"
-                tools:text="小美"/>
-        </LinearLayout>
-
-
-        <com.jerry.nurse.view.ValidatedView
-            android:id="@+id/vv_valid"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/validated_height"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/validated_marginLeft"
-            android:layout_toRightOf="@id/ll_name"
-            android:visibility="invisible"
-            app:text="已认证"/>
-
-        <ImageView
-            style="@style/ArrowEnterStyle"/>
-
         <ImageView
             android:id="@+id/iv_qr_code"
             android:layout_width="@dimen/qr_code_width"
@@ -95,6 +49,54 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/qr_code_marginRight"
             android:src="@drawable/erm"/>
+
+        <com.jerry.nurse.view.ValidatedView
+            android:id="@+id/vv_valid"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/validated_height"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/validated_marginLeft"
+            android:layout_marginRight="@dimen/validated_marginLeft"
+            android:layout_toLeftOf="@id/iv_qr_code"
+            android:visibility="invisible"
+            app:text="已认证"/>
+
+        <LinearLayout
+            android:id="@+id/ll_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/vv_valid"
+            android:layout_toRightOf="@id/cv_avatar"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/name_marginBottom"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/big_textSize"
+                tools:text="李小美"/>
+
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/civ_avatar"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/monsoon"
+                android:textSize="14sp"
+                tools:text="小美"/>
+        </LinearLayout>
+
+        <ImageView
+            style="@style/ArrowEnterStyle"/>
+
     </RelativeLayout>
 
     <View

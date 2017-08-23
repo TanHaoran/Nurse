@@ -20,11 +20,8 @@ import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.UploadResult;
 import com.jerry.nurse.model.UserBasicInfo;
-import com.jerry.nurse.model.UserHospitalInfo;
 import com.jerry.nurse.model.UserInfo;
 import com.jerry.nurse.model.UserInfoResult;
-import com.jerry.nurse.model.UserPractisingCertificateInfo;
-import com.jerry.nurse.model.UserProfessionalCertificateInfo;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DateUtil;
@@ -101,11 +98,6 @@ public class PersonalInfoActivity extends BaseActivity {
 
     @BindString(R.string.female)
     String mStringFemale;
-
-    private UserProfessionalCertificateInfo mProfessionalCertificateInfo;
-    private UserPractisingCertificateInfo mPractisingCertificateInfo;
-    private UserHospitalInfo mHospitalInfo;
-
 
     private Bitmap mAvatarBitmap;
 
@@ -457,7 +449,7 @@ public class PersonalInfoActivity extends BaseActivity {
     @OnClick(R.id.rl_office)
     void onOffice(View view) {
         if (!TextUtils.isEmpty(mUserInfo.getHospitalId())) {
-            Intent intent = OfficeActivity.getIntent(this);
+            Intent intent = OfficeListActivity.getIntent(this, mUserInfo.getHospitalId(), 0);
             startActivity(intent);
         } else {
             T.showShort(this, R.string.please_select_hospital_first);

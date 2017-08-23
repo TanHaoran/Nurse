@@ -19,8 +19,8 @@ import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ContactInfoCache;
+import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
@@ -129,10 +129,12 @@ public class AddContactApplyActivity extends BaseActivity {
                     apply.getContactId()).findFirst(ContactInfo.class);
 
             if (info != null) {
-                holder.setText(R.id.tv_title, apply.getNickname());
+                // 设置昵称位置显示内容
+                holder.setText(R.id.tv_title, info.getDisplayName());
                 holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
                 ImageView imageView = holder.getView(R.id.iv_avatar);
-                Glide.with(AddContactApplyActivity.this).load(apply.getAvatar()).into(imageView);
+                Glide.with(AddContactApplyActivity.this).load(apply.getAvatar())
+                        .error(R.drawable.icon_avatar_default).into(imageView);
             }
 
             // 点击同意好友申请

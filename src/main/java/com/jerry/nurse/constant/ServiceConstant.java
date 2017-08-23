@@ -25,8 +25,7 @@ public class ServiceConstant {
 
     public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
-    public static final String EVENT_REPORT_IP = "http://zh.buzzlysoft.com/";
-//    public static final String EVENT_REPORT_IP = "http://192.168.0.49:3300/";
+    public static final String EVENT_REPORT_IP = MAIN_IP;
 
     public static final String IP = MAIN_IP + "UserService.svc/";
 
@@ -36,6 +35,7 @@ public class ServiceConstant {
     public static final String PRACTISING_ADDRESS = MAIN_IP + "PC/";
     public static final String QR_CODE_ADDRESS = MAIN_IP + "QRCode/";
     public static final String BANNER_ADDRESS = MAIN_IP + "Banner/";
+    public static final String APK_ADDRESS = MAIN_IP + "APK/";
 
     /**
      * 获取验证码

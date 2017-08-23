@@ -193,6 +193,10 @@ public class ContactDetailActivity extends BaseActivity {
     @OnClick(R.id.acb_add_friend)
     void onAddFriend(View view) {
         if (!mContact.isIsFriend()) {
+            if (mContact.getFriendId().equals(mRegisterId)) {
+                T.showShort(this, "不能加自己为好友");
+                return;
+            }
             Intent intent = InputActivity.getIntent(this, "验证消息", "");
             startActivityForResult(intent, REQUEST_ADD_FRIEND);
         } else {

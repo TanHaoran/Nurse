@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.Password;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ProgressDialogManager;
@@ -18,6 +19,8 @@ import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -89,9 +92,16 @@ public class ChangePasswordActivity extends BaseActivity {
      * @param newPassword
      */
     private void changePassword(String originPassword, String newPassword) {
+        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
         mProgressDialogManager.show();
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         Password password = new Password(registerId, originPassword, newPassword);
+        // 区分院内账号还是智护的账号
+        if (!TextUtils.isEmpty(loginInfo.getReguserId())) {
+            password.setType(0);
+        } else {
+            password.setType(0);
+        }
         OkHttpUtils.postString()
                 .url(ServiceConstant.CHANGE_PASSWORD)
                 .content(StringUtil.addModelWithJson(password))

@@ -50,6 +50,9 @@ public class CellphoneContactResult {
     private String NickName;
     private String Phone;
     private String RegisterId;
+    /**
+     *
+     */
     private int status;
 
     public String getAvatar() {

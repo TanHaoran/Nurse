@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +15,11 @@ import com.google.gson.reflect.TypeToken;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Contact;
-import com.jerry.nurse.model.UserHospitalInfo;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -31,7 +31,6 @@ import org.litepal.crud.DataSupport;
 import java.util.List;
 
 import butterknife.Bind;
-import okhttp3.Call;
 
 import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
@@ -43,9 +42,9 @@ public class ContactListActivity extends BaseActivity {
     @Bind(R.id.rv_contact_list)
     RecyclerView mRecyclerView;
 
-    private UserHospitalInfo mUserHospitalInfo;
+    private LoginInfo mLoginInfo;
 
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
     private List<Contact> mContacts;
 
@@ -63,21 +62,15 @@ public class ContactListActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mProgressDialogManager = new ProgressDialogManager(this);
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        mUserHospitalInfo = DataSupport.findFirst(UserHospitalInfo.class);
-
-        if (mUserHospitalInfo.getDepartmentName() != null) {
-            mTitleBar.setTitle(mUserHospitalInfo.getDepartmentName());
+        if (mLoginInfo.getDepartmentName() != null) {
+            mTitleBar.setTitle(mLoginInfo.getDepartmentName());
         }
-        String hospitalId = mUserHospitalInfo.getHospitalId();
-        String officeId = mUserHospitalInfo.getDepartmentId();
+        String hospitalId = mLoginInfo.getHospitalId();
+        String officeId = mLoginInfo.getDepartmentId();
         if (hospitalId != null && officeId != null) {
             getContactByOffice(hospitalId, officeId);
         }
@@ -87,21 +80,15 @@ public class ContactListActivity extends BaseActivity {
      * 获取科室内所有联系人
      */
     private void getContactByOffice(String hospitalId, String officeId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_CONTACT_LIST_BY_OFFICE_ID)
                 .addParams("HospitalId", hospitalId)
                 .addParams("DepartmentId", officeId)
                 .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mProgressDialog.dismiss();
                         try {
                             mContacts = new Gson().fromJson(response,
                                     new TypeToken<List<Contact>>() {
@@ -134,8 +121,8 @@ public class ContactListActivity extends BaseActivity {
         }
 
         @Override
-        protected void convert(ViewHolder holder, Contact contact, int position) {
-            holder.setText(R.id.tv_nickname, contact.getNickName());
+        protected void convert(ViewHolder holder, final Contact contact, int position) {
+            holder.setText(R.id.tv_nickname, contact.getTarget());
             ImageView imageView = holder.getView(R.id.iv_avatar);
             if (contact.getAvatar().startsWith("http")) {
                 Glide.with(ContactListActivity.this).load(contact.getAvatar()).into(imageView);
@@ -145,6 +132,8 @@ public class ContactListActivity extends BaseActivity {
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Intent intent = ContactDetailActivity.getIntent(ContactListActivity.this, contact.getFriendId());
+                    startActivity(intent);
                 }
             });
         }

@@ -40,7 +40,15 @@ import okhttp3.MediaType;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
-public class OfficeActivity extends BaseActivity {
+public class OfficeListActivity extends BaseActivity {
+
+    private static final String EXTRA_HOSPITAL_ID = "extra_hospital_id";
+    private static final String EXTRA_TYPE = "extra_type";
+
+    /**
+     * 0是修改个人信息，1是查询医院所有科室
+     */
+    private int mType = 0;
 
     @Bind(R.id.tb_list)
     TitleBar mTitleBar;
@@ -54,14 +62,16 @@ public class OfficeActivity extends BaseActivity {
     private OfficeAdapter mAdapter;
     private ProgressDialogManager mProgressDialogManager;
 
-    private UserHospitalInfo mUserHospitalInfo;
-
     private List<OfficeResult.Office> mOffices;
 
     private LoginInfo mLoginInfo;
 
-    public static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, OfficeActivity.class);
+    private String mHospitalId = "";
+
+    public static Intent getIntent(Context context, String hospitalId, int type) {
+        Intent intent = new Intent(context, OfficeListActivity.class);
+        intent.putExtra(EXTRA_HOSPITAL_ID, hospitalId);
+        intent.putExtra(EXTRA_TYPE, type);
         return intent;
     }
 
@@ -82,9 +92,12 @@ public class OfficeActivity extends BaseActivity {
             }
         });
 
+        mHospitalId = getIntent().getStringExtra(EXTRA_HOSPITAL_ID);
+        mType = getIntent().getIntExtra(EXTRA_TYPE, 0);
+
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        getOfficeList(mLoginInfo.getHospitalId());
+        getOfficeList(mHospitalId);
 
     }
 
@@ -130,7 +143,11 @@ public class OfficeActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                postOffice(mOffices.get(position));
+                if (mType == 0) {
+                    postOffice(mOffices.get(position));
+                } else {
+
+                }
             }
 
             @Override
@@ -166,12 +183,12 @@ public class OfficeActivity extends BaseActivity {
                             // 更新数据库
                             mLoginInfo.setDepartmentId(office.getDepartmentId());
                             mLoginInfo.setDepartmentName(office.getName());
-                            LitePalUtil.updateLoginInfo(OfficeActivity.this, mLoginInfo);
+                            LitePalUtil.updateLoginInfo(OfficeListActivity.this, mLoginInfo);
 
                             UserInfo userInfo = DataSupport.findFirst(UserInfo.class);
                             userInfo.setDepartmentId(office.getDepartmentId());
                             userInfo.setDepartmentName(office.getName());
-                            LitePalUtil.updateUserInfo(OfficeActivity.this, userInfo);
+                            LitePalUtil.updateUserInfo(OfficeListActivity.this, userInfo);
 
                             finish();
                         } else {
@@ -192,7 +209,7 @@ public class OfficeActivity extends BaseActivity {
             holder.setText(R.id.tv_string, office.getName());
             if (office.getDepartmentId().equals(mLoginInfo.getDepartmentId())) {
                 holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
             }
         }

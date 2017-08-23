@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
@@ -30,7 +30,6 @@ import java.net.URLEncoder;
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
@@ -88,7 +87,7 @@ public class NewCellphoneActivity extends BaseActivity {
     };
 
     private Handler mHandler = new Handler();
-    private ProgressDialog mProgressDialog;
+    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, NewCellphoneActivity.class);
@@ -103,13 +102,7 @@ public class NewCellphoneActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
 
-        // 初始化等待框
-        mProgressDialog = new ProgressDialog(this,
-                R.style.AppTheme_Dark_Dialog);
-        // 设置不定时等待
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("请稍后...");
+        mProgressDialogManager = new ProgressDialogManager(this);
 
     }
 
@@ -132,25 +125,19 @@ public class NewCellphoneActivity extends BaseActivity {
             countryCode = mCountryTextView.getText().toString().split(" ")[1];
         }
 
-        mProgressDialog.setMessage("发送验证码...");
-        mProgressDialog.show();
         try {
+            mProgressDialogManager.show();
             countryCode = URLEncoder.encode(countryCode, "UTF-8");
             OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                     .addParams("Phone", cellphone)
                     .addParams("CountryCode", countryCode)
                     .addParams("Type", String.valueOf(TYPE_NEW_CELLPHONE))
                     .build()
-                    .execute(new FilterStringCallback() {
+                    .execute(new FilterStringCallback(mProgressDialogManager) {
 
-                        @Override
-                        public void onFilterError(Call call, Exception e, int id) {
-                            mProgressDialog.dismiss();
-                        }
 
                         @Override
                         public void onFilterResponse(String response, int id) {
-                            mProgressDialog.dismiss();
                             CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                             if (commonResult.getCode() == RESPONSE_SUCCESS) {
                                 // 控制发送验证码的状态
@@ -195,6 +182,7 @@ public class NewCellphoneActivity extends BaseActivity {
      * @param code
      */
     private void validateVerificationCode(final String cellphone, String code) {
+        mProgressDialogManager.show();
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         ShortMessage shortMessage = new ShortMessage(
                 registerId, cellphone, code, TYPE_NEW_CELLPHONE);
@@ -203,11 +191,7 @@ public class NewCellphoneActivity extends BaseActivity {
                 .content(StringUtil.addModelWithJson(shortMessage))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mNextButton.setEnabled(true);
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
@@ -229,7 +213,7 @@ public class NewCellphoneActivity extends BaseActivity {
      * @param cellphone
      */
     void postNewCellphone(String cellphone) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         UserRegisterInfo userRegisterInfo = new UserRegisterInfo();
         userRegisterInfo.setPhone(cellphone);
@@ -239,11 +223,7 @@ public class NewCellphoneActivity extends BaseActivity {
                 .content(StringUtil.addModelWithJson(userRegisterInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback() {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        mProgressDialog.dismiss();
-                    }
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {

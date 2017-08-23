@@ -115,7 +115,8 @@
     <dimen name="select_view_marginLeft">10dp</dimen>
     <dimen name="select_view_marginRight">20dp</dimen>
     <dimen name="select_view_width">20dp</dimen>
-    <dimen name="record_anim_width">15dp</dimen>
+    <dimen name="record_anim_width">12dp</dimen>
+    <dimen name="record_anim_height">16dp</dimen>
     <dimen name="record_length_marginRight">5dp</dimen>
     <dimen name="add_option_height">160dp</dimen>
     <dimen name="add_option_paddingLeft">62dp</dimen>

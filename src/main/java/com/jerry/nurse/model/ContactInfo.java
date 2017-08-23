@@ -31,6 +31,25 @@ public class ContactInfo extends DataSupport {
         return "";
     }
 
+    /**
+     * 获取屏幕上显示的内容
+     *
+     * @return
+     */
+    public String getDisplayName() {
+        if (!TextUtils.isEmpty(mRemark)) {
+            return mRemark;
+        } else if (!TextUtils.isEmpty(mNickName)) {
+            return mNickName;
+        } else if (!TextUtils.isEmpty(mName)) {
+            return mName;
+        }else if (!TextUtils.isEmpty(mCellphone)) {
+            return mCellphone;
+        } else {
+            return "";
+        }
+    }
+
     public void setAvatar(String avatar) {
         mAvatar = avatar;
     }
