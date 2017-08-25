@@ -1,11 +1,14 @@
 package com.jerry.nurse.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,9 +20,11 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactDetailResult;
 import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
@@ -29,6 +34,8 @@ import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -80,15 +87,18 @@ public class ContactDetailActivity extends BaseActivity {
     private ProgressDialogManager mProgressDialogManager;
 
     public static final String EXTRA_REGISTER_ID = "extra_register_id";
+    public static final String EXTRA_IS_COMPLETE = "extra_is_complete";
 
     private String mRegisterId;
     private String mToAddRegisterId;
+    private boolean mIsComplete;
 
     private Contact mContact;
 
-    public static Intent getIntent(Context context, String registerId) {
+    public static Intent getIntent(Context context, String registerId, boolean isComplete) {
         Intent intent = new Intent(context, ContactDetailActivity.class);
         intent.putExtra(EXTRA_REGISTER_ID, registerId);
+        intent.putExtra(EXTRA_IS_COMPLETE, isComplete);
         return intent;
     }
 
@@ -103,6 +113,7 @@ public class ContactDetailActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         mToAddRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
+        mIsComplete = getIntent().getBooleanExtra(EXTRA_IS_COMPLETE, false);
         getUserDetail(mRegisterId, mToAddRegisterId);
     }
 
@@ -160,13 +171,21 @@ public class ContactDetailActivity extends BaseActivity {
             mAddFriendButton.setTextColor(getResources().getColor(R.color.white));
             mAddFriendButton.setBackgroundResource(R.drawable.make_call_button);
         } else {
+            mHospitalLayout.setVisibility(View.VISIBLE);
+            mOfficeLayout.setVisibility(View.VISIBLE);
             mOptionLayout.setVisibility(View.VISIBLE);
-            mNameTextView.setVisibility(View.INVISIBLE);
+            mNameTextView.setVisibility(View.VISIBLE);
             mAddFriendButton.setText(R.string.delete_friend);
             mAddFriendButton.setVisibility(View.VISIBLE);
             mAddFriendButton.setTextColor(getResources().getColor(R.color.delete));
             mAddFriendButton.setBackgroundResource(R.drawable.delete_friend);
             mCellphoneTextView.setText(contact.getPhone());
+        }
+        if (mIsComplete) {
+            mHospitalLayout.setVisibility(View.VISIBLE);
+            mOfficeLayout.setVisibility(View.VISIBLE);
+            mOptionLayout.setVisibility(View.VISIBLE);
+            mNameTextView.setVisibility(View.VISIBLE);
         }
         // 设置头像
         Glide.with(this).load(contact.getAvatar()).into(mAvatarImageView);
@@ -181,7 +200,24 @@ public class ContactDetailActivity extends BaseActivity {
 
     @OnClick(R.id.acb_call)
     void onCall(View view) {
+        BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.CALL_PHONE},
+                new PermissionListener() {
+                    @Override
+                    public void onGranted() {
 
+                        String cellphone = mContact.getPhone();
+                        if (!TextUtils.isEmpty(cellphone)) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cellphone));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> deniedPermission) {
+
+                    }
+                });
     }
 
     @OnClick(R.id.acb_send_message)
@@ -240,6 +276,12 @@ public class ContactDetailActivity extends BaseActivity {
                             if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
                                 if (contactDetailResult.getBody() != null) {
                                     T.showShort(ContactDetailActivity.this, "删除好友成功");
+                                    // 删除消息列表中的聊天记录
+                                    List<Message> msgs = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                                            mRegisterId, mContact.getFriendId(), "1").find(Message.class);
+                                    for (Message m : msgs) {
+                                        m.delete();
+                                    }
                                 }
                             } else {
                                 T.showShort(ContactDetailActivity.this, contactDetailResult.getMsg());

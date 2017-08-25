@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -19,7 +18,6 @@ import com.jerry.nurse.util.CellphoneContact;
 import com.jerry.nurse.util.CellphoneContactUtil;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.OnItemClickListener;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
@@ -163,19 +161,6 @@ public class CellphoneContactActivity extends BaseActivity {
         mDecoration.setmDatas(mSourceDatas);
 
         mAdapter.notifyDataSetChanged();
-
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(ViewGroup parent, View view, Object o, int position) {
-                Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this, "");
-                startActivity(intent);
-            }
-
-            @Override
-            public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
-                return false;
-            }
-        });
     }
 
     class CellphoneContactAdapter extends CommonAdapter<CellphoneContact> {
@@ -216,7 +201,7 @@ public class CellphoneContactActivity extends BaseActivity {
                     else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_FRIEND ||
                             cellphoneContact.getStatus() == CellphoneContact.TYPE_IS_FRIEND) {
                         Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this,
-                                cellphoneContact.getRegisterId());
+                                cellphoneContact.getRegisterId(),false);
                         startActivity(intent);
                     }
                 }

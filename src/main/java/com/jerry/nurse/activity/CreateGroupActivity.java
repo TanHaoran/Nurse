@@ -212,6 +212,7 @@ public class CreateGroupActivity extends BaseActivity {
                             String nickname = result.getBody().getHXNickName();
                             MessageManager.saveCreateGroupLocalData(groupId, nickname);
                             T.showShort(CreateGroupActivity.this, "创建成功");
+                            finish();
                             Intent intent = ChatActivity.getIntent(CreateGroupActivity.this,
                                     result.getBody().getHXGroupId(), true);
                             startActivity(intent);
@@ -283,7 +284,8 @@ public class CreateGroupActivity extends BaseActivity {
                             @Override
                             public void onClick(View v) {
                                 if (contactTopHeaderBean.getTxt().equals("当前科室")) {
-                                    Intent intent = ContactListActivity.getIntent(CreateGroupActivity.this);
+                                    Intent intent = ContactListActivity.getIntent(CreateGroupActivity.this,
+                                            null);
                                     startActivity(intent);
                                 }
                                 Toast.makeText(CreateGroupActivity.this, contactTopHeaderBean.getTxt(),
@@ -383,7 +385,7 @@ public class CreateGroupActivity extends BaseActivity {
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
             final SelectView selectView = holder.getView(R.id.sv_choose);
             selectView.setSelected(contact.isChoose());
-            holder.setText(R.id.tv_nickname, contact.getNickName());
+            holder.setText(R.id.tv_nickname, contact.getTarget());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

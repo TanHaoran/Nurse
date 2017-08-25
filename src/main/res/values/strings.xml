@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">智护</string>
+    <string name="app_name">格格</string>
 
     <!--公共-->
     <string name="back">返回</string>
@@ -16,6 +16,7 @@
     <string name="skip">跳过</string>
     <string name="success">成功</string>
     <string name="failed">失败</string>
+    <string name="welcome_text">西安巴斯光年软件科技有限公司提供服务</string>
 
     <!--注册-->
     <string name="new_user_signup">新用户注册</string>
@@ -29,7 +30,7 @@
     <string name="send_verification_code">发送验证码</string>
     <string name="password">密码</string>
     <string name="read_and_agree">我已阅读并同意</string>
-    <string name="protocol">智护服务协议</string>
+    <string name="protocol">格格服务协议</string>
     <string name="please_agree">请勾选同意</string>
     <string name="signup">注册</string>
     <string name="vertical_line">|</string>

@@ -62,6 +62,17 @@ public class DateUtil {
     }
 
     /**
+     * 转换成聊天界面需要显示的时间
+     *
+     * @param date
+     * @return
+     */
+    public static String parseDateToChatDate(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(date);
+    }
+
+    /**
      * 把Date类型转换成MySqlDate类型
      *
      * @param date

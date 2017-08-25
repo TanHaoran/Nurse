@@ -19,13 +19,23 @@ public class ChatMessage extends DataSupport implements Serializable {
      */
     private String mContent;
     /**
-     * 如果是语音消息，这个属性才有值
+     * 语音消息时长
      */
     private float mSecond;
     /**
-     * 如果是语音消息或者图片消息，这个属性才有值
+     * 语音消息路径
      */
     private String path;
+
+    /**
+     * 图片消息本地路径
+     */
+    private String localUrl;
+
+    /**
+     * 图片消息远程路径
+     */
+    private String remoteUrl;
 
     public final static int MSG_SEND = 0;
     public final static int MSG_RECEIVE = 1;
@@ -35,16 +45,6 @@ public class ChatMessage extends DataSupport implements Serializable {
     public static final int TYPE_VOICE = 2;
 
     public ChatMessage() {
-    }
-
-    public ChatMessage(long time, String from, String to, boolean isSend, String content, float second, String path) {
-        mTime = time;
-        mFrom = from;
-        mTo = to;
-        mIsSend = isSend;
-        mContent = content;
-        mSecond = second;
-        this.path = path;
     }
 
     public long getTime() {
@@ -119,18 +119,19 @@ public class ChatMessage extends DataSupport implements Serializable {
         mType = type;
     }
 
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "mTime=" + mTime +
-                ", mFrom='" + mFrom + '\'' +
-                ", mTo='" + mTo + '\'' +
-                ", mIsSend=" + mIsSend +
-                ", mIsGroup=" + mIsGroup +
-                ", mType=" + mType +
-                ", mContent='" + mContent + '\'' +
-                ", mSecond=" + mSecond +
-                ", path='" + path + '\'' +
-                '}';
+    public String getLocalUrl() {
+        return localUrl;
+    }
+
+    public void setLocalUrl(String localUrl) {
+        this.localUrl = localUrl;
+    }
+
+    public String getRemoteUrl() {
+        return remoteUrl;
+    }
+
+    public void setRemoteUrl(String remoteUrl) {
+        this.remoteUrl = remoteUrl;
     }
 }

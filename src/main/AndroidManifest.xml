@@ -16,7 +16,8 @@
     <uses-feature android:name="android.hardware.camera"/> <!-- 使用照相机权限 -->
     <uses-feature android:name="android.hardware.camera.autofocus"/> <!-- 自动聚焦权限 -->
 
-    <!-- 微信权限-->
+
+    <!-- 微信权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -94,7 +95,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Nurse">
 
@@ -141,14 +141,17 @@
             android:enabled="true"
             android:process=":remote"/>
 
+
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.LoginActivity">
         </activity>
         <activity
             android:name=".activity.SignupActivity"
@@ -266,28 +269,30 @@
         <receiver
             android:name="cn.jpush.android.service.AlarmReceiver"
             android:exported="false"/>
-        <!--User defined. For test only 用户自定义的广播接收器-->
-        <!--<receiver-->
-        <!--android:name=".jpush.MyReceiver"-->
-        <!--android:enabled="true"-->
-        <!--android:exported="false">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="cn.jpush.android.intent.REGISTRATION"/> &lt;!&ndash;Required  用户注册SDK的intent&ndash;&gt;-->
-        <!--<action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> &lt;!&ndash;Required  用户接收SDK消息的intent&ndash;&gt;-->
-        <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> &lt;!&ndash;Required  用户接收SDK通知栏信息的intent&ndash;&gt;-->
-        <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> &lt;!&ndash;Required  用户打开自定义通知栏的intent&ndash;&gt;-->
-        <!--<action android:name="cn.jpush.android.intent.CONNECTION"/>&lt;!&ndash; 接收网络变化 连接/断开 since 1.6.3 &ndash;&gt;-->
-        <!--<category android:name="com.jerry.nurse"/>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
+        <!-- User defined. For test only 用户自定义的广播接收器 -->
+        <!-- <receiver -->
+        <!-- android:name=".jpush.MyReceiver" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="cn.jpush.android.intent.REGISTRATION"/> &lt;!&ndash;Required  用户注册SDK的intent&ndash;&gt; -->
+        <!-- <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> &lt;!&ndash;Required  用户接收SDK消息的intent&ndash;&gt; -->
+        <!-- <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> &lt;!&ndash;Required  用户接收SDK通知栏信息的intent&ndash;&gt; -->
+        <!-- <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> &lt;!&ndash;Required  用户打开自定义通知栏的intent&ndash;&gt; -->
+        <!-- <action android:name="cn.jpush.android.intent.CONNECTION"/>&lt;!&ndash; 接收网络变化 连接/断开 since 1.6.3 &ndash;&gt; -->
+        <!-- <category android:name="com.jerry.nurse"/> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
-        <!--User defined.  For test only  用户自定义接收消息器,3.0.7开始支持,目前新tag/alias接口设置结果会在该广播接收器对应的方法中回调-->
-        <!--<receiver android:name=".jpush.MyJPushMessageReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />-->
-        <!--<category android:name="com.jerry.nurse"></category>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
+
+        <!-- User defined.  For test only  用户自定义接收消息器,3.0.7开始支持,目前新tag/alias接口设置结果会在该广播接收器对应的方法中回调 -->
+        <!-- <receiver android:name=".jpush.MyJPushMessageReceiver"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" /> -->
+        <!-- <category android:name="com.jerry.nurse"></category> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+
 
         <!-- Required  . Enable it you can get statistics data with channel -->
         <meta-data
@@ -295,7 +300,7 @@
             android:value="developer-default"/>
         <meta-data
             android:name="JPUSH_APPKEY"
-            android:value="b1ec133146726dd0ea653988"/> <!--  </>值来自开发者平台取得的AppKey-->
+            android:value="b1ec133146726dd0ea653988"/> <!-- </>值来自开发者平台取得的AppKey -->
 
 
         <!-- QQ第三方登陆SDKActivity -->
@@ -397,12 +402,16 @@
         </activity>
         <activity android:name=".activity.ScheduleActivity">
         </activity>
+        <activity android:name=".activity.PhotoActivity">
+        </activity>
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name=".activity.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent"/>
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
     </application>
 
 </manifest>

@@ -103,6 +103,10 @@ public class InputActivity extends BaseActivity {
         mUserInfo = DataSupport.findFirst(UserInfo.class);
 
         mInputEditText.setText(mValue);
+        // 定位光标到最后
+        if (mValue != null) {
+            mInputEditText.setSelection(mValue.length());
+        }
 
         // 如果内容为空，就给显示提示输入框
         if (!TextUtils.isEmpty(mInputEditText.getText().toString())) {

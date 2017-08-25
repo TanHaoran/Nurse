@@ -194,27 +194,19 @@ public abstract class BaseActivity extends AppCompatActivity {
      *
      * @param view
      * @param origin
-     * @param isBirthday
      * @param biggerThanToday
      * @param onDateSelectListener
      */
-    public void setDateSelectListener(View view, final Date origin, final boolean isBirthday,
-                                      final boolean biggerThanToday, final OnDateSelectListener onDateSelectListener) {
+    public void setDateSelectListener(View view, final Date origin, final boolean biggerThanToday, final OnDateSelectListener onDateSelectListener) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                int nowYear = calendar.get(Calendar.YEAR);
                 //  首先如果原日期不为空就先设置成原日期
                 if (origin != null) {
                     calendar.setTime(origin);
-                }
-                // 然后判断是否需要往前退20年
-                if (nowYear - calendar.get(Calendar.YEAR) > 50) {
-
-                    if (isBirthday) {
-                        calendar.set(Calendar.YEAR, nowYear - 20);
-                    }
+                } else {
+                    calendar.setTime(new Date());
                 }
 
                 final DatePickerDialog datePickerDialog =
@@ -264,26 +256,21 @@ public abstract class BaseActivity extends AppCompatActivity {
      *
      * @param view
      * @param origin               初始日期
-     * @param isBirthday           是否是生日控件
      * @param onDateSelectListener
      */
-    public void setDateSelectListener(View view, final Date origin, final boolean isBirthday, final OnDateSelectListener onDateSelectListener) {
+    public void setDateSelectListener(View view, final Date origin, final OnDateSelectListener onDateSelectListener) {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                int nowYear = calendar.get(Calendar.YEAR);
                 //  首先如果原日期不为空就先设置成原日期
                 if (origin != null) {
                     calendar.setTime(origin);
-                }
-                // 然后判断是否需要往前退20年
-                if (nowYear - calendar.get(Calendar.YEAR) > 50) {
-
-                    if (isBirthday) {
-                        calendar.set(Calendar.YEAR, nowYear - 20);
-                    }
+                } else {
+                    calendar.set(Calendar.YEAR, 1900);
+                    calendar.set(Calendar.MONTH, 0);
+                    calendar.set(Calendar.DAY_OF_MONTH, 1);
                 }
 
                 final DatePickerDialog datePickerDialog =

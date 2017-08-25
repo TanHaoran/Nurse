@@ -14,6 +14,8 @@ public class Register {
 
     private String DeviceId;
 
+    private String DeviceRegId;
+
     public Register(String phone, String password) {
         Phone = phone;
         Password = password;
@@ -55,5 +57,13 @@ public class Register {
 
     public void setDeviceId(String deviceId) {
         DeviceId = deviceId;
+    }
+
+    public String getDeviceRegId() {
+        return DeviceRegId;
+    }
+
+    public void setDeviceRegId(String deviceRegId) {
+        DeviceRegId = deviceRegId;
     }
 }

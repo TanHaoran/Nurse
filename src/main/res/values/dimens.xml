@@ -159,6 +159,7 @@
     <dimen name="audit_success_image_marginTop">20dp</dimen>
     <dimen name="qr_code_marginRight">40dp</dimen>
     <dimen name="qr_code_width">30dp</dimen>
+    <dimen name="qr_code_padding">5dp</dimen>
     <dimen name="image_round_radius">5dp</dimen>
     <dimen name="audit_failed_text_padding">10dp</dimen>
     <dimen name="me_name_layout_width">140dp</dimen>

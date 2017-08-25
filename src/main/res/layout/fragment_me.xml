@@ -48,6 +48,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/qr_code_marginRight"
+            android:padding="@dimen/qr_code_padding"
             android:src="@drawable/erm"/>
 
         <com.jerry.nurse.view.ValidatedView

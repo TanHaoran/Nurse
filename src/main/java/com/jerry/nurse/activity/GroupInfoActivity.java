@@ -19,6 +19,7 @@ import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupInfoResult;
+import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
@@ -39,6 +40,7 @@ import butterknife.OnClick;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
+import static org.litepal.crud.DataSupport.where;
 
 public class GroupInfoActivity extends BaseActivity {
 
@@ -225,9 +227,16 @@ public class GroupInfoActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            GroupInfo info = DataSupport.where("HXGroupId=?",
+                            // 删除数据库中群信息
+                            GroupInfo info = where("HXGroupId=?",
                                     mGroupInfo.getHXGroupId()).findFirst(GroupInfo.class);
                             info.delete();
+                            // 删除消息列表中的群聊天记录
+                            List<Message> msgs = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                                    mRegisterId, mGroupInfo.getHXGroupId(), "2").find(Message.class);
+                            for (Message m : msgs) {
+                                m.delete();
+                            }
                             T.showShort(GroupInfoActivity.this, "你已退出该群聊");
                             setResult(RESULT_OK);
                             finish();
@@ -237,7 +246,6 @@ public class GroupInfoActivity extends BaseActivity {
                     }
                 });
     }
-
 
     class ContactAdapter extends CommonAdapter<Contact> {
         public ContactAdapter(Context context, int layoutId, List<Contact> datas) {
@@ -249,7 +257,7 @@ public class GroupInfoActivity extends BaseActivity {
             if (position == mDatas.size() - 1) {
                 holder.setImageResource(R.id.iv_avatar, R.drawable.group_add_contact);
             } else {
-                holder.setText(R.id.tv_nickname, contact.getNickName());
+                holder.setText(R.id.tv_nickname, contact.getTarget());
                 ImageView imageView = holder.getView(R.id.iv_avatar);
                 Glide.with(GroupInfoActivity.this).load(contact.getAvatar())
                         .placeholder(R.drawable.icon_avatar_default).into(imageView);
@@ -260,7 +268,7 @@ public class GroupInfoActivity extends BaseActivity {
                 public void onClick(View v) {
                     // 最后一个是添加群成员
                     if (position != mDatas.size() - 1) {
-                        Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId());
+                        Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId(), false);
                         startActivity(intent);
                     } else {
                         Intent intent = CreateGroupActivity.getIntent(GroupInfoActivity.this,

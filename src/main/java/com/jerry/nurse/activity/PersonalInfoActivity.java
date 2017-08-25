@@ -147,7 +147,12 @@ public class PersonalInfoActivity extends BaseActivity {
             Glide.with(this).load(mLoginInfo.getAvatar()).placeholder(R.drawable.icon_avatar_default)
                     .into(mAvatarView);
         }
-        mNameTextView.setText(mLoginInfo.getName());
+        if (TextUtils.isEmpty(mLoginInfo.getName())) {
+            mNameTextView.setText("姓名");
+            mNameTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+        } else {
+            mNameTextView.setText(mLoginInfo.getName());
+        }
         mNicknameTextView.setText(mLoginInfo.getNickName());
         mHospitalTextView.setText(mLoginInfo.getHospitalName());
         mOfficeTextView.setText(mLoginInfo.getDepartmentName());
@@ -201,6 +206,7 @@ public class PersonalInfoActivity extends BaseActivity {
      * 更新界面信息
      */
     private void updateUseInfo() {
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         mUserInfo = DataSupport.findFirst(UserInfo.class);
         if (mUserInfo != null) {
             // 头像
@@ -243,8 +249,8 @@ public class PersonalInfoActivity extends BaseActivity {
             mJobNumberTextView.setText(mUserInfo.getEmployeeId());
 
             // 设置生日数据和监听
-            setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday()),
-                    true, new OnDateSelectListener() {
+            setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday())
+                    , new OnDateSelectListener() {
                         @Override
                         public void onDateSelected(Date date) {
                             UserBasicInfo userBasicInfo = new UserBasicInfo();
@@ -362,7 +368,7 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_nickname)
     void onNickname(View view) {
-        Intent intent = InputActivity.getIntent(this, InputActivity.NICKNAME, mLoginInfo.getNickName());
+        Intent intent = InputActivity.getIntent(this, InputActivity.NICKNAME, mUserInfo.getNickName());
         startActivity(intent);
     }
 

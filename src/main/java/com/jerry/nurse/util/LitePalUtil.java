@@ -113,6 +113,7 @@ public class LitePalUtil {
         SPUtil.remove(context, SPUtil.NAME);
         SPUtil.remove(context, SPUtil.NICKNAME);
         SPUtil.remove(context, SPUtil.REGISTER_ID);
+        SPUtil.remove(context, SPUtil.IS_FIRST_IN);
 
         // 清除用户表信息
         try {

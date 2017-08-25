@@ -1,7 +1,6 @@
 package com.jerry.nurse.util;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.activity.BaseActivity;
@@ -62,7 +61,6 @@ public abstract class TencentLoginUtil {
 
         @Override
         public void onComplete(Object response) {
-            Toast.makeText(mContext, "授权成功", Toast.LENGTH_SHORT).show();
             L.e("response:" + response);
             JSONObject obj = (JSONObject) response;
             try {
@@ -126,7 +124,8 @@ public abstract class TencentLoginUtil {
         Qq info = new Qq();
         info.setOpenId(openID);
         info.setFigureUrl(originInfo.getFigureurl_qq_2());
-        info.setNickName(originInfo.getNickname());
+        String nickname = EmojiFilter.filterEmoji(originInfo.getNickname());
+        info.setNickName(nickname);
         info.setProvince(originInfo.getProvince());
         info.setCity(originInfo.getCity());
         info.setGender(originInfo.getGender());

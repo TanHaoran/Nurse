@@ -21,6 +21,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
@@ -103,6 +104,7 @@ public class HospitalLoginActivity extends BaseActivity {
     private void login(final String account, final String password) {
         mProgressDialogManager.show();
         Register register = new Register(account, password);
+        register.setDeviceRegId(JPushInterface.getRegistrationID(this));
         OkHttpUtils.postString()
                 .url(ServiceConstant.HOSPITAL_LOGIN)
                 .content(StringUtil.addModelWithJson(register))

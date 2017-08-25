@@ -401,7 +401,7 @@ public class SettingActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            showShort(SettingActivity.this, "QQ绑定成功");
+                            T.showShort(SettingActivity.this, "QQ绑定成功");
                             L.i("qq绑定成功");
                             // 获取用户所有绑定信息
                             mBindInfo.setQQOpenId(qq.getOpenId());
@@ -409,7 +409,7 @@ public class SettingActivity extends BaseActivity {
                             mBindInfo.setBindCount(mBindInfo.getBindCount() + 1);
                             updateBindInfo(mBindInfo);
                         } else {
-                            showShort(SettingActivity.this, commonResult.getMsg());
+                            T.showShort(SettingActivity.this, commonResult.getMsg());
                         }
                     }
                 });

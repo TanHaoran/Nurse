@@ -26,7 +26,9 @@
 
     <TextView
         android:id="@+id/tv_nickname"
-        android:layout_width="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_width="@dimen/group_info_user_avatar_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:textColor="@color/normal_textColor"

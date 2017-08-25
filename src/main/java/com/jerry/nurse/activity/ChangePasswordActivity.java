@@ -100,7 +100,7 @@ public class ChangePasswordActivity extends BaseActivity {
         if (!TextUtils.isEmpty(loginInfo.getReguserId())) {
             password.setType(0);
         } else {
-            password.setType(0);
+            password.setType(1);
         }
         OkHttpUtils.postString()
                 .url(ServiceConstant.CHANGE_PASSWORD)

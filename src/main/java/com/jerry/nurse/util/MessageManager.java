@@ -210,11 +210,13 @@ public class MessageManager {
      * 将消息数据保存在本地数据库
      *
      * @param emMessage
-     * @param path
+     * @param localPath
+     * @param remotePath
      * @return
      */
     @NonNull
-    public static ChatMessage saveImageReceiveChatMessageLocalData(EMMessage emMessage, String path) {
+    public static ChatMessage saveImageReceiveChatMessageLocalData(EMMessage emMessage, String localPath,
+                                                                   String remotePath) {
         Message message = null;
         ChatMessage chatMessage = null;
         // 单聊
@@ -246,7 +248,8 @@ public class MessageManager {
                 chatMessage.setType(ChatMessage.TYPE_IMAGE);
             }
             chatMessage.setFrom(emMessage.getFrom());
-            chatMessage.setPath(path);
+            chatMessage.setLocalUrl(localPath);
+            chatMessage.setRemoteUrl(remotePath);
             chatMessage.setTo(emMessage.getTo());
             chatMessage.setSend(false);
             chatMessage.setGroup(false);
@@ -283,7 +286,8 @@ public class MessageManager {
                 chatMessage.setType(ChatMessage.TYPE_IMAGE);
             }
             chatMessage.setFrom(emMessage.getFrom());
-            chatMessage.setPath(path);
+            chatMessage.setLocalUrl(localPath);
+            chatMessage.setRemoteUrl(remotePath);
             chatMessage.setTo(emMessage.getTo());
             chatMessage.setSend(false);
             chatMessage.setGroup(true);
@@ -297,8 +301,6 @@ public class MessageManager {
     /**
      * 发送消息：
      * 将消息数据保存在本地数据库
-     *
-     * @param msg
      */
     public static ChatMessage saveSendChatMessageLocalData(EMMessage emMessage, String msg) {
         Message message = null;
@@ -509,7 +511,7 @@ public class MessageManager {
                 chatMessage.setType(ChatMessage.TYPE_IMAGE);
             }
             chatMessage.setFrom(emMessage.getFrom());
-            chatMessage.setPath(path);
+            chatMessage.setLocalUrl(path);
             chatMessage.setTo(emMessage.getTo());
             chatMessage.setSend(true);
             chatMessage.setGroup(false);
@@ -545,7 +547,7 @@ public class MessageManager {
                 chatMessage.setType(ChatMessage.TYPE_IMAGE);
             }
             chatMessage.setFrom(emMessage.getFrom());
-            chatMessage.setPath(path);
+            chatMessage.setLocalUrl(path);
             chatMessage.setTo(emMessage.getTo());
             chatMessage.setSend(true);
             chatMessage.setGroup(true);

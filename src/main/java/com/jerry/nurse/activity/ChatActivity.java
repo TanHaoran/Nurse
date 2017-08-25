@@ -67,8 +67,12 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 
+import static org.litepal.crud.DataSupport.findFirst;
+
 
 public class ChatActivity extends BaseActivity implements EMMessageListener {
+
+    private static final int DEFAULT_MESSAGE_COUNT = 10;
 
     public static final String EXTRA_CONTACT_ID = "extra_contact_id";
     public static final String EXTRA_IS_GROUP = "extra_is_group";
@@ -125,6 +129,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     private com.jerry.nurse.model.Message mHomePageMessage;
 
+    /**
+     * 加载的页数
+     */
+    private int mMessagePage = 0;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -152,8 +161,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
                     EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
                     String localUrl = messageBody.getLocalUrl();
-                    String path = parseImagePath(localUrl);
-                    chatMessage.setPath(path);
+                    String remoteUrl = messageBody.getRemoteUrl();
+                    chatMessage.setLocalUrl(localUrl);
+                    chatMessage.setRemoteUrl(remoteUrl);
                     chatMessage.setType(ChatMessage.TYPE_IMAGE);
 
                     try {
@@ -180,8 +190,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     // 构建首页消息
                     com.jerry.nurse.model.Message message = null;
                     try {
-                        message = DataSupport.where("mType=? and mRegisterId=?", "1",
-                                EMClient.getInstance().getCurrentUser())
+                        message = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "1",
+                                EMClient.getInstance().getCurrentUser(), mContactId)
                                 .findFirst(com.jerry.nurse.model.Message.class);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -273,9 +283,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     public void init(Bundle savedInstanceState) {
 
-
     }
 
+    /**
+     *
+     * @param view
+     */
     @OnClick(R.id.acb_send)
     public void onSend(View view) {
         String message = mMessageEditText.getText().toString();
@@ -338,7 +351,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     private void easeMobSendImageMessage(String path) {
         // 创建消息
-        EMMessage emMessage = EMMessage.createImageSendMessage(path, false, mContactId);
+        EMMessage emMessage = EMMessage.createImageSendMessage(path, true, mContactId);
         // 单聊
         if (!mIsGroup) {
             emMessage.setChatType(EMMessage.ChatType.Chat);
@@ -521,7 +534,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             // 发消息群聊和单聊没有区别
             ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar()).into(imageView);
-            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
+            holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             switch (chatMessage.getType()) {
                 case ChatMessage.TYPE_TXT:
                     holder.setVisible(R.id.tv_message, true);
@@ -535,10 +548,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
-                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getPath(), 150, 150);
+                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getLocalUrl(), 150, 150);
                     Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_send_normal);
                     Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
                     holder.setImageBitmap(R.id.iv_image, bmp);
+                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
+                                    chatMessage.getLocalUrl(), null);
+                            startActivity(intent);
+                        }
+                    });
                     break;
                 case ChatMessage.TYPE_VOICE:
                     holder.setVisible(R.id.tv_message, false);
@@ -615,7 +636,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 holder.setVisible(R.id.tv_nickname, true);
                 holder.setText(R.id.tv_nickname, ci.getNickName());
             }
-            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(chatMessage.getTime())));
+            holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             switch (chatMessage.getType()) {
                 case ChatMessage.TYPE_TXT:
                     holder.setVisible(R.id.tv_message, true);
@@ -629,10 +650,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
-                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getPath(), 150, 150);
+                    Bitmap in = PictureUtil.getScaleBitmap(parseImagePath(chatMessage.getLocalUrl()), 300, 300);
                     Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_receive_normal);
                     Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
                     holder.setImageBitmap(R.id.iv_image, bmp);
+                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
+                                    null, chatMessage.getRemoteUrl());
+                            startActivity(intent);
+                        }
+                    });
                     break;
                 case ChatMessage.TYPE_VOICE:
                     holder.setVisible(R.id.tv_message, false);
@@ -646,12 +675,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         @Override
                         public void onClick(View v) {
                             if (mSendAnimView != null) {
-                                mSendAnimView.setBackgroundResource(R.drawable.talk_yy_me_3);
+                                mSendAnimView.setBackgroundResource(R.drawable.talk_yy_you_3);
                                 mSendAnimView = null;
                             }
                             // 播放动画
                             mSendAnimView = holder.getView(R.id.v_anim);
-                            mSendAnimView.setBackgroundResource(R.drawable.voice_send_play);
+                            mSendAnimView.setBackgroundResource(R.drawable.voice_receive_play);
                             AnimationDrawable anim = (AnimationDrawable) mSendAnimView.getBackground();
                             anim.start();
                             // 播放音频
@@ -678,6 +707,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             KeyBoardUtil.closeKeybord(mMessageEditText, this);
         }
         mIsAdding = !mIsAdding;
+    }
+
+    @OnClick(R.id.rv_content)
+    void onContent(View view) {
+        mOptionLayout.setVisibility(View.GONE);
+        KeyBoardUtil.closeKeybord(mMessageEditText, this);
     }
 
 
@@ -709,7 +744,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         });
 
         // 初始化获取对方的Id
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        mLoginInfo = findFirst(LoginInfo.class);
         mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
         mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
 
@@ -719,8 +754,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             // 查询对方的信息
             mContactInfo = DataSupport.where("mRegisterId=?",
                     mContactId).findFirst(ContactInfo.class);
-            if (!TextUtils.isEmpty(mContactInfo.getNickName())) {
-                mNameTextView.setText(mContactInfo.getNickName());
+            if (!TextUtils.isEmpty(mContactInfo.getDisplayName())) {
+                mNameTextView.setText(mContactInfo.getDisplayName());
             }
 
             // 读取数据库中存在的数据并显示

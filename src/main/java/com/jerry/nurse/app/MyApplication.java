@@ -16,7 +16,6 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
-import com.jerry.nurse.activity.ChatActivity;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
@@ -213,10 +212,8 @@ public class MyApplication extends LitePalApplication {
         } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
             EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
 
-            String path = ChatActivity.parseImagePath(messageBody.getLocalUrl());
-
             chatMessage = MessageManager.saveImageReceiveChatMessageLocalData(emMessage,
-                    path);
+                    messageBody.getLocalUrl(), messageBody.getRemoteUrl());
         }
 
 

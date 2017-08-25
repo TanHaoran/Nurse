@@ -81,24 +81,6 @@ public class MessageFragment extends BaseFragment {
     public void refresh() {
         mRegisterId = (String) SPUtil.get(getActivity(), SPUtil.REGISTER_ID, "");
 
-        Message message = null;
-        try {
-            message = DataSupport.where("mRegisterId=? and mType=?", mRegisterId, "3").findFirst(Message.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (message == null) {
-            message = new Message();
-        }
-        message.setRegisterId(mRegisterId);
-        message.setType(Message.TYPE_WELCOME);
-        message.setTitle("你好");
-        message.setContent("欢迎使用智护App！");
-        message.setTime(new Date().getTime());
-        message.setImageResource(R.drawable.yn);
-        message.save();
-
-
         // 加载本地数据库中的消息
         loadLocalMessage();
 
@@ -142,12 +124,12 @@ public class MessageFragment extends BaseFragment {
         @Override
         protected void convert(ViewHolder holder, final Message message, final int position) {
             final int type = message.getType();
+            holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(message.getTime())));
             switch (type) {
                 case Message.TYPE_ADD_FRIEND_APPLY:
                     holder.setImageResource(R.id.iv_avatar, message.getImageResource());
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
-                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                     break;
                 case Message.TYPE_CHAT:
                     ContactInfo info = DataSupport.where("mRegisterId=?",
@@ -168,17 +150,14 @@ public class MessageFragment extends BaseFragment {
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, chatMessage.getContent());
                             }
-                            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, "语音消息");
                             }
-                            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
                             if (chatMessage != null) {
                                 holder.setText(R.id.tv_content, "图片消息");
                             }
-                            holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                         }
                     }
                     break;
@@ -198,13 +177,11 @@ public class MessageFragment extends BaseFragment {
                         if (groupMessage != null) {
                             holder.setText(R.id.tv_content, groupMessage.getContent());
                         }
-                        holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                     }
                     break;
                 case Message.TYPE_WELCOME:
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
-                    holder.setText(R.id.tv_time, DateUtil.parseDateToString(new Date(message.getTime())));
                     holder.setImageResource(R.id.iv_avatar, message.getImageResource());
                     break;
 

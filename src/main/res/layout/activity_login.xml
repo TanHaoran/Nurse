@@ -81,9 +81,9 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <RelativeLayout
-                android:clickable="false"
                 android:id="@+id/rl_password"
-                style="@style/BusinessLineStyle">
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
@@ -172,8 +172,8 @@
                     android:id="@+id/tv_forget_password"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
                     android:text="@string/forget_password"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/small_textSize"/>
@@ -182,9 +182,9 @@
                     android:id="@+id/tv_signup"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
                     android:text="@string/signup"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/small_textSize"/>
@@ -205,9 +205,9 @@
                     android:id="@+id/tv_verification_code_login"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/tv_vertical_line"
+                    android:gravity="center_vertical"
                     android:text="@string/verification_code_login"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/small_textSize"/>
@@ -305,7 +305,8 @@
 
                 <LinearLayout
                     android:id="@+id/ll_microblog"
-                    style="@style/Third_Party_login_Layout_Style">
+                    style="@style/Third_Party_login_Layout_Style"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="wrap_content"

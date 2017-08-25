@@ -1,5 +1,6 @@
 package com.jerry.nurse.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class OfficeResult {
         this.body = body;
     }
 
-    public static class Office {
+    public static class Office implements Serializable{
         /**
          * Address :
          * Contact :

@@ -7,7 +7,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
@@ -23,7 +22,6 @@ import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginUtil;
-import com.jerry.nurse.wxapi.WXEntryActivity;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -43,6 +41,7 @@ import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_FORGET_PASSWORD;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_REGISTER;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_VERIFICATION_CODE;
+import static com.jerry.nurse.activity.WXEntryActivity.WX_APP_ID;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
@@ -209,7 +208,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", "智护服务协议");
+        Intent intent = HtmlActivity.getIntent(this, "", "格格服务协议");
         startActivity(intent);
     }
 
@@ -303,15 +302,11 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.ll_wechat)
     void onWechat(View view) {
-        IWXAPI mApi = WXAPIFactory.createWXAPI(this, WXEntryActivity.WEIXIN_APP_ID, true);
-        mApi.registerApp(WXEntryActivity.WEIXIN_APP_ID);
-
-        if (mApi != null && mApi.isWXAppInstalled()) {
-            SendAuth.Req req = new SendAuth.Req();
-            req.scope = "snsapi_userinfo";
-            req.state = "wechat_sdk_demo_test_neng";
-            mApi.sendReq(req);
-        } else
-            Toast.makeText(this, "用户未安装微信", Toast.LENGTH_SHORT).show();
+        IWXAPI  WXapi = WXAPIFactory.createWXAPI(LoginActivity.this, WX_APP_ID, true);
+        WXapi.registerApp(WX_APP_ID);
+        SendAuth.Req req = new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = "wechat_sdk_demo";
+        WXapi.sendReq(req);
     }
 }

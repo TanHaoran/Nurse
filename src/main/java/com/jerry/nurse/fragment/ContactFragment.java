@@ -25,7 +25,6 @@ import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -66,8 +65,6 @@ public class ContactFragment extends BaseFragment {
 
     private LinearLayoutManager mManager;
 
-    private ProgressDialogManager mProgressDialogManager;
-
     //设置给InexBar、ItemDecoration的完整数据集
     private List<BaseIndexPinyinBean> mSourceDatas;
     //头部数据源
@@ -95,11 +92,9 @@ public class ContactFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(getActivity());
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         mBodyDatas = new ArrayList<>();
         updateView(false);
-        //        getFriendList(mLoginInfo.getRegisterId());
 
     }
 
@@ -162,14 +157,14 @@ public class ContactFragment extends BaseFragment {
                                 new CommonAdapter<Contact>(getActivity(), R.layout.meituan_item_header_item, contactHeaderBean.getCityList()) {
                                     @Override
                                     public void convert(ViewHolder holder, final Contact contact) {
-                                        holder.setText(R.id.tv_nickname, contact.getNickName());
-                                        holder.getConvertView().setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = ContactDetailActivity.getIntent(getActivity(), "");
-                                                startActivity(intent);
-                                            }
-                                        });
+//                                        holder.setText(R.id.tv_nickname, contact.getNickName());
+//                                        holder.getConvertView().setOnClickListener(new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View v) {
+//                                                Intent intent = ContactDetailActivity.getIntent(getActivity(), "");
+//                                                startActivity(intent);
+//                                            }
+//                                        });
                                     }
                                 });
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -185,7 +180,7 @@ public class ContactFragment extends BaseFragment {
                             public void onClick(View v) {
                                 // 点击科室
                                 if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getDepartmentName())) {
-                                    Intent intent = ContactListActivity.getIntent(getActivity());
+                                    Intent intent = ContactListActivity.getIntent(getActivity(), null);
                                     startActivity(intent);
                                 }
                                 // 点击医院
@@ -267,11 +262,11 @@ public class ContactFragment extends BaseFragment {
             ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(getActivity()).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
-            holder.setText(R.id.tv_nickname, contact.getNickName());
+            holder.setText(R.id.tv_nickname, contact.getTarget());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId());
+                    Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId(), false);
                     startActivity(intent);
                 }
             });

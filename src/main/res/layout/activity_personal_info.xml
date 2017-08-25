@@ -84,6 +84,7 @@
                     android:layout_toLeftOf="@id/iv_arrow_nickname"
                     android:layout_toRightOf="@id/tv_nickname_text"
                     android:ellipsize="end"
+                    android:gravity="right"
                     tools:text="静静"/>
 
 

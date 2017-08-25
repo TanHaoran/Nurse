@@ -57,7 +57,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class ProfessionalCertificateActivity extends BaseActivity {
 
-    private static final int DEFAULT_LENGTH  = 20;
+    private static final int DEFAULT_LENGTH = 20;
 
     @Bind(R.id.tb_certificate)
     TitleBar mTitleBar;
@@ -299,19 +299,19 @@ public class ProfessionalCertificateActivity extends BaseActivity {
         mSexTextView.setVisibility(View.INVISIBLE);
         mSubmitButton.setVisibility(View.VISIBLE);
 
-        setDateSelectListener(mBirthdayLayout, null, true, new OnDateSelectListener() {
+        setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mBirthdayTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mApproveDateLayout, null, false, new OnDateSelectListener() {
+        setDateSelectListener(mApproveDateLayout, null, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mApproveDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mSignDateLayout, null, false, new OnDateSelectListener() {
+        setDateSelectListener(mSignDateLayout, null, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mSignDateTextView.setText(DateUtil.parseDateToString(date));

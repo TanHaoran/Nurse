@@ -153,7 +153,7 @@ public class AddContactApplyActivity extends BaseActivity {
                             protected void onLoadContactInfoSuccess(ContactInfo info) {
                                 info.setFriend(true);
                                 info.save();
-                                updateLocalData(apply, true);
+                                updateLocalData(apply, true, info);
                                 addAsFriend(mRegisterId, apply.getContactId());
                             }
                         }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
@@ -176,7 +176,16 @@ public class AddContactApplyActivity extends BaseActivity {
                         holder.setVisible(R.id.acb_refuse, false);
                         holder.setVisible(R.id.tv_result, true);
                         holder.setText(R.id.tv_result, "已拒绝");
-                        updateLocalData(apply, false);
+
+
+                        new ContactInfoCache() {
+                            @Override
+                            protected void onLoadContactInfoSuccess(ContactInfo info) {
+                                updateLocalData(apply, false, info);
+                            }
+                        }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                                apply.getContactId());
+
                     } catch (HyphenateException e) {
                         L.i("拒绝好友申请失败");
                         e.printStackTrace();
@@ -192,7 +201,7 @@ public class AddContactApplyActivity extends BaseActivity {
      * @param a
      * @param agree 是否同意
      */
-    private void updateLocalData(AddFriendApply a, boolean agree) {
+    private void updateLocalData(AddFriendApply a, boolean agree, ContactInfo info) {
         // 构建首页消息
         Message message = null;
         try {
@@ -203,16 +212,17 @@ public class AddContactApplyActivity extends BaseActivity {
         if (message == null) {
             message = new Message();
         }
+
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-        message.setImageResource(R.drawable.icon_pb);
+        message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
         message.setTime(new Date().getTime());
         message.setRegisterId(mRegisterId);
         message.setContactId(a.getContactId());
         if (agree) {
-            message.setContent("已同意" + a.getNickname() + "的申请");
+            message.setContent("已同意" + info.getDisplayName() + "的申请");
         } else {
-            message.setContent("已拒绝" + a.getNickname() + "的申请");
+            message.setContent("已拒绝" + info.getDisplayName() + "的申请");
         }
         message.save();
 

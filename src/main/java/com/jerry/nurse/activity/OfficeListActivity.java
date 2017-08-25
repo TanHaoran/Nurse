@@ -37,6 +37,7 @@ import butterknife.Bind;
 import butterknife.BindString;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.R.string.office;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
@@ -56,7 +57,7 @@ public class OfficeListActivity extends BaseActivity {
     @Bind(R.id.rv_list)
     RecyclerView mRecyclerView;
 
-    @BindString(R.string.office)
+    @BindString(office)
     String mTitle;
 
     private OfficeAdapter mAdapter;
@@ -146,7 +147,9 @@ public class OfficeListActivity extends BaseActivity {
                 if (mType == 0) {
                     postOffice(mOffices.get(position));
                 } else {
-
+                    Intent intent = ContactListActivity.getIntent(OfficeListActivity.this,
+                            mOffices.get(position));
+                    startActivity(intent);
                 }
             }
 
@@ -207,10 +210,12 @@ public class OfficeListActivity extends BaseActivity {
         @Override
         protected void convert(ViewHolder holder, OfficeResult.Office office, int position) {
             holder.setText(R.id.tv_string, office.getName());
-            if (office.getDepartmentId().equals(mLoginInfo.getDepartmentId())) {
-                holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
-            } else {
-                holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
+            if (mType != 0) {
+                if (office.getDepartmentId().equals(mLoginInfo.getDepartmentId())) {
+                    holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
+                } else {
+                    holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
+                }
             }
         }
     }

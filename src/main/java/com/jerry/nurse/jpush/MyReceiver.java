@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.jerry.nurse.R;
 import com.jerry.nurse.activity.ChatActivity;
+import com.jerry.nurse.model.Message;
 import com.jerry.nurse.util.L;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.DataSupport;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
@@ -29,6 +33,7 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         try {
             Bundle bundle = intent.getExtras();
             L.d("[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
@@ -101,4 +106,6 @@ public class MyReceiver extends BroadcastReceiver {
         }
         return sb.toString();
     }
+
+
 }

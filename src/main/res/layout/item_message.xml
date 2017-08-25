@@ -10,10 +10,10 @@
     app:swipeEnable="true">
 
     <RelativeLayout
-        android:background="@drawable/plugin_line_selector"
         android:id="@+id/rl_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/plugin_line_selector"
         android:paddingBottom="@dimen/contact_item_paddingTop"
         android:paddingLeft="@dimen/contact_item_paddingLeft"
         android:paddingRight="@dimen/contact_item_paddingLeft"
@@ -43,7 +43,8 @@
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
             android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
             android:layout_toRightOf="@id/cv_avatar"
-            android:textSize="@dimen/contact_item_nickname_textSize"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"
             tools:text="紫萱"/>
 
         <TextView
@@ -55,16 +56,18 @@
             android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
             android:layout_toRightOf="@id/cv_avatar"
             android:textSize="@dimen/contact_item_message_textSize"
+            android:textColor="@color/gray_textColor"
             tools:text="在吗"/>
 
         <TextView
-            android:textSize="@dimen/contact_item_time_textSize"
-            tools:text="23:10"
-            android:layout_centerVertical="true"
+            android:textColor="@color/gray_textColor"
             android:id="@+id/tv_time"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/contact_item_time_textSize"
+            tools:text="23:10"/>
 
 
     </RelativeLayout>

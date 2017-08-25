@@ -27,6 +27,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupListResult;
+import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
@@ -37,6 +38,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -118,6 +120,12 @@ public class MainActivity extends BaseActivity {
 
         getFriendList(mRegisterId);
         getGroupList(mRegisterId);
+
+        boolean isFirstIn = (boolean) SPUtil.get(this, SPUtil.IS_FIRST_IN, true);
+        if (isFirstIn) {
+            createWelcomeMessage(mRegisterId);
+        }
+        SPUtil.put(this, SPUtil.IS_FIRST_IN, false);
     }
 
 
@@ -551,5 +559,29 @@ public class MainActivity extends BaseActivity {
             info.save();
         }
 
+    }
+
+
+    /**
+     * 创建欢迎消息
+     */
+    private void createWelcomeMessage(String registerId) {
+
+        Message message = null;
+        try {
+            message = DataSupport.where("mRegisterId=? and mType=?", registerId, "3").findFirst(Message.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (message == null) {
+            message = new Message();
+        }
+        message.setRegisterId(registerId);
+        message.setType(Message.TYPE_WELCOME);
+        message.setTitle("你好");
+        message.setContent("欢迎使用格格！");
+        message.setTime(new Date().getTime());
+        message.setImageResource(R.drawable.icon_zh);
+        message.save();
     }
 }
