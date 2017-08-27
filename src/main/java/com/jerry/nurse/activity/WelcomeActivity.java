@@ -2,6 +2,7 @@ package com.jerry.nurse.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import com.jerry.nurse.R;
 import butterknife.Bind;
 
 public class WelcomeActivity extends BaseActivity {
+
+    private static final int ANIMATION_DURATIONG = 1800;
 
     @Bind(R.id.iv_bg)
     ImageView mBgImageView;
@@ -34,44 +37,31 @@ public class WelcomeActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-//        int wingStartX = 0;
-//        int wingEndX = ScreenUtil.getScreenWidth(this) / 2 - 150;
-//        ObjectAnimator wingAnimator = ObjectAnimator.ofFloat(mWingImageView, "x", wingStartX, wingEndX).setDuration(300);
-//        wingAnimator.setInterpolator(new LinearInterpolator());
-//        wingAnimator.start();
+        int startAlpha = 0;
+        int endAlpha = 1;
 
-//        int textStartX = ScreenUtil.getScreenWidth(this);
-//        int textEndX = ScreenUtil.getScreenWidth(this) / 2;
-//        final ObjectAnimator textAnimator = ObjectAnimator.ofFloat(mTextImageView, "x", textStartX, textEndX).setDuration(300);
-//        textAnimator.setInterpolator(new LinearInterpolator());
-
-        int wingStartAlpha = 0;
-        int wingEndAlpha = 1;
-        ObjectAnimator wingAnimator = ObjectAnimator.ofFloat(mWingImageView, "alpha", wingStartAlpha, wingEndAlpha).setDuration(1300);
+        // 创建两个图标渐显的动画
+        ObjectAnimator wingAnimator = ObjectAnimator
+                .ofFloat(mWingImageView, "alpha", startAlpha, endAlpha)
+                .setDuration(ANIMATION_DURATIONG);
         wingAnimator.setInterpolator(new LinearInterpolator());
-        wingAnimator.start();
         mWingImageView.setVisibility(View.VISIBLE);
 
-        int textStartAlpha = 0;
-        int textEndAlpha = 1;
-        final ObjectAnimator textAnimator = ObjectAnimator.ofFloat(mTextImageView, "alpha", textStartAlpha, textEndAlpha).setDuration(1300);
+        ObjectAnimator textAnimator = ObjectAnimator
+                .ofFloat(mTextImageView, "alpha", startAlpha, endAlpha)
+                .setDuration(ANIMATION_DURATIONG);
         textAnimator.setInterpolator(new LinearInterpolator());
-        textAnimator.start();
         mTextImageView.setVisibility(View.VISIBLE);
 
-        wingAnimator.addListener(new AnimatorListenerAdapter() {
+        AnimatorSet set = new AnimatorSet();
+        set.play(wingAnimator).with(textAnimator);
+        set.start();
+
+        // 动画播放完毕后跳转到登录页面
+        set.addListener(new AnimatorListenerAdapter() {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-
-        });
-
-        textAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -86,7 +76,7 @@ public class WelcomeActivity extends BaseActivity {
                     }
                 }).start();
             }
-        });
 
+        });
     }
 }

@@ -31,7 +31,6 @@ import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -50,15 +49,10 @@ public class MainActivity extends BaseActivity {
 
     public static final String ACTION_CHAT_MESSAGE_RECEIVE = "action_chat_message_receive";
     public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
-    public static final String ACTION_J_PUSH_RECEIVE = "action_j_push_receive";
 
     public static final String EXTRA_CHAT_MESSAGE = "extra_chat_message";
-    public static final String EXTRA_J_PUSH_MESSAGE = "extra_j_push_message";
 
     public static final String EXTRA_FRIEND_APPLY_CONTACT = "extra_friend_apply";
-
-//    @Bind(R.id.bnb_main)
-//    BottomNavigationBar mNavigationBar;
 
     @Bind(R.id.tv_message)
     TextView mMessageTextView;
@@ -77,12 +71,9 @@ public class MainActivity extends BaseActivity {
     private OfficeFragment mOfficeFragment;
     private ContactFragment mContactFragment;
     private MeFragment mMeFragment;
-    private ProgressDialogManager mProgressDialogManager;
 
     private EaseMobManager mEaseMobManager;
     private MessageReceiver mMessageReceiver;
-
-    private String mRegisterId;
 
     private int mCurrentIndex = 0;
 
@@ -98,12 +89,18 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
-        // 环信登陆
-        mEaseMobManager = new EaseMobManager(this);
-        mEaseMobManager.login(mRegisterId);
+        // 获取注册Id，进行环信登陆
+        String registerId = (String) SPUtil.get(this, SPUtil
+                .REGISTER_ID, "");
+        mEaseMobManager = new EaseMobManager();
+        mEaseMobManager.login(registerId);
 
-        mProgressDialogManager = new ProgressDialogManager(this);
+        // 判断是否是该账号首次登录，首次登录要显示欢迎信息
+        boolean isFirstIn = (boolean) SPUtil.get(this, SPUtil.IS_FIRST_IN, true);
+        if (isFirstIn) {
+            createWelcomeMessage(registerId);
+        }
+        SPUtil.put(this, SPUtil.IS_FIRST_IN, false);
 
         // 初始化Fragment
         getFragments();
@@ -111,21 +108,19 @@ public class MainActivity extends BaseActivity {
         // 设置起始页
         setDefaultFragment();
 
-        // 开启广播监听
+        // 注册并开启广播监听
         mMessageReceiver = new MessageReceiver();
         IntentFilter intentFilter = new IntentFilter();
+        // 1. 接收环信消息通知
         intentFilter.addAction(ACTION_CHAT_MESSAGE_RECEIVE);
+        // 2. 接收环信添加好友通知
         intentFilter.addAction(ACTION_FRIEND_APPLY_RECEIVE);
         registerReceiver(mMessageReceiver, intentFilter);
 
-        getFriendList(mRegisterId);
-        getGroupList(mRegisterId);
-
-        boolean isFirstIn = (boolean) SPUtil.get(this, SPUtil.IS_FIRST_IN, true);
-        if (isFirstIn) {
-            createWelcomeMessage(mRegisterId);
-        }
-        SPUtil.put(this, SPUtil.IS_FIRST_IN, false);
+        // 获取好友列表，并更新本地数据库
+        getFriendList(registerId);
+        // 获取群组列表，并更新本地数据库
+        getGroupList(registerId);
     }
 
 
@@ -133,6 +128,7 @@ public class MainActivity extends BaseActivity {
      * 初始化Fragment
      */
     private void getFragments() {
+        // 创建并添加4个Fragment页面
         mFragments = new ArrayList<>();
         mMessageFragment = MessageFragment.newInstance();
         mOfficeFragment = OfficeFragment.newInstance();
@@ -166,6 +162,11 @@ public class MainActivity extends BaseActivity {
         mMeTextView.setSelected(false);
     }
 
+    /**
+     * 4个TabMenu点击事件
+     *
+     * @param view
+     */
     @OnClick({R.id.rl_message, R.id.rl_office, R.id.rl_contact, R.id.rl_me})
     void onTabSelected(View view) {
         resetTextView();
@@ -205,6 +206,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * TabMenu按钮选中事件
+     *
+     * @param position
+     */
     private void onTabSelected(int position) {
         if (!mFragments.isEmpty()) {
             if (position < mFragments.size()) {
@@ -221,6 +227,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * TabMenu清除选中事件
+     *
+     * @param position
+     */
     public void onTabUnselected(int position) {
         if (!mFragments.isEmpty()) {
             if (position < mFragments.size()) {
@@ -233,7 +244,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
+    /**
+     * 屏蔽返回按钮，定义为按下Home键按钮
+     */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
@@ -245,74 +258,86 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 注销环信
         mEaseMobManager.logout();
+        // 解除广播监听
         unregisterReceiver(mMessageReceiver);
     }
 
+    /**
+     * 广播接收器
+     */
     class MessageReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // 收到消息
-            if (ACTION_CHAT_MESSAGE_RECEIVE.equals(intent.getAction())) {
-                L.i("接收到消息广播");
-                if (mMessageFragment.isVisible()) {
-                    mMessageFragment.refresh();
-                    return;
-                }
-                ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
+            Intent newIntent;
+            PendingIntent pi;
+            Notification notification;
+            NotificationManagerCompat notificationManager;
+            switch (intent.getAction()) {
+                // 收到消息
+                case ACTION_CHAT_MESSAGE_RECEIVE:
+                    L.i("接收到消息广播");
+                    if (mMessageFragment.isVisible()) {
+                        mMessageFragment.refresh();
+                        return;
+                    }
+                    ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
 
-                // 发出Notification
-                Intent newIntent;
-                if (chatMessage.isGroup()) {
-                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), true);
-                } else {
-                    newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), false);
-                }
-                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    // 发出Notification
+                    if (chatMessage.isGroup()) {
+                        newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), true);
+                    } else {
+                        newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), false);
+                    }
+                    pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Notification notification = new Notification.Builder(MainActivity.this)
-                        .setTicker("新消息")
-                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                        .setContentTitle("新消息提示")
-                        .setContentText(chatMessage.getContent())
-                        .setContentIntent(pi)
-                        .setAutoCancel(true)
-                        .build();
+                    notification = new Notification.Builder(MainActivity.this)
+                            .setTicker("新消息")
+                            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                            .setContentTitle("新消息提示")
+                            .setContentText(chatMessage.getContent())
+                            .setContentIntent(pi)
+                            .setAutoCancel(true)
+                            .build();
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.notify(0, notification);
-            }
-            // 收到好友申请
-            else if (ACTION_FRIEND_APPLY_RECEIVE.equals(intent.getAction())) {
-                L.i("接收好友申请广播");
-                if (mMessageFragment.isVisible()) {
-                    mMessageFragment.refresh();
-                    return;
-                }
-                AddFriendApply apply = (AddFriendApply) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
+                    notificationManager = NotificationManagerCompat.from(context);
+                    notificationManager.notify(0, notification);
+                    break;
+                // 收到好友申请
+                case ACTION_FRIEND_APPLY_RECEIVE:
+                    L.i("接收好友申请广播");
+                    if (mMessageFragment.isVisible()) {
+                        mMessageFragment.refresh();
+                        return;
+                    }
+                    AddFriendApply apply = (AddFriendApply) intent.getSerializableExtra(EXTRA_FRIEND_APPLY_CONTACT);
 
-                // 发出Notification
-                Intent newIntent = AddContactApplyActivity.getIntent(context);
-                PendingIntent pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    // 发出Notification
+                    newIntent = AddContactApplyActivity.getIntent(context);
+                    pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Notification notification = new Notification.Builder(MainActivity.this)
-                        .setTicker("新消息")
-                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                        .setContentTitle("好友申请")
-                        .setContentText(apply.getReason())
-                        .setContentIntent(pi)
-                        .setAutoCancel(true)
-                        .build();
+                    notification = new Notification.Builder(MainActivity.this)
+                            .setTicker("新消息")
+                            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                            .setContentTitle("好友申请")
+                            .setContentText(apply.getReason())
+                            .setContentIntent(pi)
+                            .setAutoCancel(true)
+                            .build();
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.notify(0, notification);
+                    notificationManager = NotificationManagerCompat.from(context);
+                    notificationManager.notify(0, notification);
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * 获取用户好友资料
+     * 获取用户好友资料，并更新本地数据库
      */
     private void getFriendList(final String registerId) {
         mProgressDialogManager.show();
@@ -435,7 +460,7 @@ public class MainActivity extends BaseActivity {
 
 
     /**
-     * 获取群信息
+     * 获取群信息，并更新本地数据库
      *
      * @param registerId
      */
@@ -578,8 +603,8 @@ public class MainActivity extends BaseActivity {
         }
         message.setRegisterId(registerId);
         message.setType(Message.TYPE_WELCOME);
-        message.setTitle("你好");
-        message.setContent("欢迎使用格格！");
+        message.setTitle("你好，欢迎回来！");
+        message.setContent("感谢使用格格！");
         message.setTime(new Date().getTime());
         message.setImageResource(R.drawable.icon_zh);
         message.save();

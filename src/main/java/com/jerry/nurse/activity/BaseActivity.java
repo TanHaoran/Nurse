@@ -21,15 +21,16 @@ import android.widget.DatePicker;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnDateSelectListener;
-import com.jerry.nurse.listener.OnSelectFromAlbumListener;
 import com.jerry.nurse.listener.OnPhotoSelectListener;
 import com.jerry.nurse.listener.OnPhotographFinishListener;
+import com.jerry.nurse.listener.OnSelectFromAlbumListener;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.FileUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.PictureUtil;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.ScreenUtil;
 import com.jerry.nurse.util.T;
 import com.umeng.analytics.MobclickAgent;
@@ -78,6 +79,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private OnSelectFromAlbumListener mOnSelectFromAlbumListener;
     private OnPhotographFinishListener mOnPhotographFinishListener;
 
+    protected ProgressDialogManager mProgressDialogManager;
 
     /**
      * 获取当前页面的布局
@@ -103,6 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mOnPhotoSelectListeners = new ArrayList<>();
 
+        mProgressDialogManager = new ProgressDialogManager(this);
         init(savedInstanceState);
     }
 

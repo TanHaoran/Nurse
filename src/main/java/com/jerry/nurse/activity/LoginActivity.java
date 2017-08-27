@@ -46,7 +46,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
 
-    private static final int REQUEST_COUNTRY = 0x00000101;
+    public static final int REQUEST_COUNTRY = 0x00000101;
 
     @Bind(R.id.tv_country_code)
     TextView mCountryCodeTextView;
@@ -65,8 +65,6 @@ public class LoginActivity extends BaseActivity {
 
     // 腾讯官方获取的APPID
     private TencentLoginUtil mTencentLoginUtil;
-
-    private ProgressDialogManager mProgressDialogManager;
 
     private LoginInfo mLoginInfo;
 
@@ -103,9 +101,9 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
+        String countryCode = mCountryCodeTextView.getText().toString();
         String cellphone = mCellphoneEditText.getText().toString();
         String password = mPasswordEditText.getText().toString().trim();
-        String countryCode = mCountryCodeTextView.getText().toString();
 
         //验证用户名和密码格式是否符合
         String errorMessage = localValidate(cellphone, password);
@@ -113,8 +111,6 @@ public class LoginActivity extends BaseActivity {
             T.showShort(this, errorMessage);
             return;
         }
-
-        mProgressDialogManager.setMessage("登录中...");
 
         // 第一步：登录护士通账号
         login(countryCode, cellphone, password);
@@ -183,6 +179,7 @@ public class LoginActivity extends BaseActivity {
      * @param password
      */
     private void login(String countryCode, final String cellphone, final String password) {
+        mProgressDialogManager.setMessage("登录中...");
         mProgressDialogManager.show();
         Register register = new Register(cellphone, password, countryCode);
         register.setDeviceId(JPushInterface.getRegistrationID(this));
@@ -302,7 +299,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.ll_wechat)
     void onWechat(View view) {
-        IWXAPI  WXapi = WXAPIFactory.createWXAPI(LoginActivity.this, WX_APP_ID, true);
+        IWXAPI WXapi = WXAPIFactory.createWXAPI(LoginActivity.this, WX_APP_ID, true);
         WXapi.registerApp(WX_APP_ID);
         SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";

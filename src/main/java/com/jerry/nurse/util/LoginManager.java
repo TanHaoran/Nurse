@@ -65,7 +65,6 @@ public class LoginManager {
      * @param loginInfo
      */
     public void saveAndEnter(LoginInfo loginInfo) {
-
         // 保存登陆信息到数据库
         LitePalUtil.saveLoginInfo(mContext, loginInfo);
         goToMainActivity();
@@ -94,8 +93,6 @@ public class LoginManager {
      */
     private void goToMainActivity() {
         Intent intent = MainActivity.getIntent(ActivityCollector.getTopActivity());
-        ActivityCollector.removeAllActivity();
         mContext.startActivity(intent);
     }
-
 }
