@@ -310,31 +310,22 @@ public class SettingActivity extends BaseActivity {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EaseMobLogout();
+                        // 退出环信
+                        new EaseMobManager().logout();
+
+                        // 清除数据库
+                        LitePalUtil.deleteAllInfo(SettingActivity.this);
+                        try {
+                            ActivityCollector.removeAllActivity();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent = LoginActivity.getIntent(SettingActivity.this);
+                        startActivity(intent);
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
-    }
-
-    /**
-     * 退出环信登陆
-     */
-    private void EaseMobLogout() {
-        EaseMobManager easeMobManager = new EaseMobManager(this) {
-            @Override
-            protected void onLogoutSuccess() {
-                LitePalUtil.deleteAllInfo(SettingActivity.this);
-                try {
-                    ActivityCollector.removeAllActivity();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Intent intent = LoginActivity.getIntent(SettingActivity.this);
-                startActivity(intent);
-            }
-        };
-        easeMobManager.logout();
     }
 
     /**

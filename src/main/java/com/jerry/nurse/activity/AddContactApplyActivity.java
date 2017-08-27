@@ -17,14 +17,13 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ContactInfo;
-import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.ContactInfoCache;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LocalContactCache;
+import com.jerry.nurse.util.MessageManager;
+import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -32,12 +31,12 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
 
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
+import static com.jerry.nurse.model.AddFriendApply.STATUS_AGREE;
 
 public class AddContactApplyActivity extends BaseActivity {
 
@@ -66,13 +65,8 @@ public class AddContactApplyActivity extends BaseActivity {
         // 加载本地数据库中的消息
         loadLocalMessage();
 
-        // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
-
+        RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
         mAdapter = new ApplyAdapter(this, R.layout.item_add_friend_apply, mApplies);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -100,42 +94,37 @@ public class AddContactApplyActivity extends BaseActivity {
         @Override
         protected void convert(final ViewHolder holder, final AddFriendApply apply, final int position) {
             int status = apply.getStatus();
+            // 控制几个按钮的状态
             switch (status) {
+                // 已发送好友申请
                 case AddFriendApply.STATUS_SEND_ING:
-                    holder.setVisible(R.id.acb_agree, false);
-                    holder.setVisible(R.id.acb_refuse, false);
-                    holder.setVisible(R.id.tv_result, true);
-                    holder.setText(R.id.tv_result, "已发出申请");
+                    setDisplayStatus(holder, AddFriendApply.STATUS_SEND_ING);
                     break;
+                // 已拒绝
                 case AddFriendApply.STATUS_REFUSE:
-                    holder.setVisible(R.id.acb_agree, false);
-                    holder.setVisible(R.id.acb_refuse, false);
-                    holder.setVisible(R.id.tv_result, true);
-                    holder.setText(R.id.tv_result, "已拒绝");
+                    setDisplayStatus(holder, AddFriendApply.STATUS_REFUSE);
                     break;
-                case AddFriendApply.STATUS_AGREE:
-                    holder.setVisible(R.id.acb_agree, false);
-                    holder.setVisible(R.id.acb_refuse, false);
-                    holder.setVisible(R.id.tv_result, true);
-                    holder.setText(R.id.tv_result, "已同意");
+                // 已同意
+                case STATUS_AGREE:
+                    setDisplayStatus(holder, STATUS_AGREE);
                     break;
+                // 收到好友邀请
                 case AddFriendApply.STATUS_RECEIVE_ING:
-                    holder.setVisible(R.id.acb_agree, true);
-                    holder.setVisible(R.id.acb_refuse, true);
-                    holder.setVisible(R.id.tv_result, false);
+                    setDisplayStatus(holder, AddFriendApply.STATUS_RECEIVE_ING);
                     break;
             }
-            ContactInfo info = DataSupport.where("mRegisterId=?",
-                    apply.getContactId()).findFirst(ContactInfo.class);
 
-            if (info != null) {
-                // 设置昵称位置显示内容
-                holder.setText(R.id.tv_title, info.getDisplayName());
-                holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
-                ImageView imageView = holder.getView(R.id.iv_avatar);
-                Glide.with(AddContactApplyActivity.this).load(apply.getAvatar())
-                        .error(R.drawable.icon_avatar_default).into(imageView);
-            }
+            new LocalContactCache() {
+                @Override
+                protected void onLoadContactInfoSuccess(ContactInfo info) {
+                    // 设置昵称位置显示内容
+                    holder.setText(R.id.tv_title, info.getDisplayName());
+                    holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
+                    ImageView imageView = holder.getView(R.id.iv_avatar);
+                    Glide.with(AddContactApplyActivity.this).load(apply.getAvatar())
+                            .error(R.drawable.icon_avatar_default).into(imageView);
+                }
+            }.getContactInfo(mRegisterId, apply.getContactId());
 
             // 点击同意好友申请
             holder.setOnClickListener(R.id.acb_agree, new View.OnClickListener() {
@@ -143,20 +132,19 @@ public class AddContactApplyActivity extends BaseActivity {
                 public void onClick(View v) {
                     try {
                         EMClient.getInstance().contactManager().acceptInvitation(apply.getContactId());
-                        holder.setVisible(R.id.acb_agree, false);
-                        holder.setVisible(R.id.acb_refuse, false);
-                        holder.setVisible(R.id.tv_result, true);
-                        holder.setText(R.id.tv_result, "已同意");
+                        setDisplayStatus(holder, AddFriendApply
+                                .STATUS_AGREE);
 
-                        new ContactInfoCache() {
+                        new LocalContactCache() {
                             @Override
                             protected void onLoadContactInfoSuccess(ContactInfo info) {
                                 info.setFriend(true);
                                 info.save();
-                                updateLocalData(apply, true, info);
+                                // 更新数据库
+                                MessageManager.updateApplyData(apply, true, info);
                                 addAsFriend(mRegisterId, apply.getContactId());
                             }
-                        }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                        }.getContactInfo(EMClient.getInstance().getCurrentUser(),
                                 apply.getContactId());
 
                     } catch (HyphenateException e) {
@@ -172,18 +160,16 @@ public class AddContactApplyActivity extends BaseActivity {
                 public void onClick(View v) {
                     try {
                         EMClient.getInstance().contactManager().declineInvitation(apply.getContactId());
-                        holder.setVisible(R.id.acb_agree, false);
-                        holder.setVisible(R.id.acb_refuse, false);
-                        holder.setVisible(R.id.tv_result, true);
-                        holder.setText(R.id.tv_result, "已拒绝");
+                        setDisplayStatus(holder, AddFriendApply
+                                .STATUS_REFUSE);
 
-
-                        new ContactInfoCache() {
+                        new LocalContactCache() {
                             @Override
                             protected void onLoadContactInfoSuccess(ContactInfo info) {
-                                updateLocalData(apply, false, info);
+                                // 更新数据库
+                                MessageManager.updateApplyData(apply, false, info);
                             }
-                        }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                        }.getContactInfo(EMClient.getInstance().getCurrentUser(),
                                 apply.getContactId());
 
                     } catch (HyphenateException e) {
@@ -196,60 +182,47 @@ public class AddContactApplyActivity extends BaseActivity {
     }
 
     /**
-     * 更新本地数据库
+     * 设置几种不同的按钮显示状态
      *
-     * @param a
-     * @param agree 是否同意
+     * @param holder
+     * @param status
      */
-    private void updateLocalData(AddFriendApply a, boolean agree, ContactInfo info) {
-        // 构建首页消息
-        Message message = null;
-        try {
-            message = DataSupport.where("mType=? and mRegisterId=?", "0", mRegisterId).findFirst(Message.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void setDisplayStatus(ViewHolder holder, int status) {
+        switch (status) {
+            case AddFriendApply.STATUS_SEND_ING:
+                holder.setVisible(R.id.acb_agree, false);
+                holder.setVisible(R.id.acb_refuse, false);
+                holder.setVisible(R.id.tv_result, true);
+                holder.setText(R.id.tv_result, "已发出申请");
+                break;
+            case AddFriendApply.STATUS_REFUSE:
+                holder.setVisible(R.id.acb_agree, false);
+                holder.setVisible(R.id.acb_refuse, false);
+                holder.setVisible(R.id.tv_result, true);
+                holder.setText(R.id.tv_result, "已拒绝");
+                break;
+            case STATUS_AGREE:
+                holder.setVisible(R.id.acb_agree, false);
+                holder.setVisible(R.id.acb_refuse, false);
+                holder.setVisible(R.id.tv_result, true);
+                holder.setText(R.id.tv_result, "已同意");
+                break;
+            case AddFriendApply.STATUS_RECEIVE_ING:
+                holder.setVisible(R.id.acb_agree, true);
+                holder.setVisible(R.id.acb_refuse, true);
+                holder.setVisible(R.id.tv_result, false);
+                break;
+            default:
+                break;
         }
-        if (message == null) {
-            message = new Message();
-        }
-
-        message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-        message.setImageResource(R.drawable.icon_xzhy);
-        message.setTitle("好友申请");
-        message.setTime(new Date().getTime());
-        message.setRegisterId(mRegisterId);
-        message.setContactId(a.getContactId());
-        if (agree) {
-            message.setContent("已同意" + info.getDisplayName() + "的申请");
-        } else {
-            message.setContent("已拒绝" + info.getDisplayName() + "的申请");
-        }
-        message.save();
-
-        // 构建添加好友消息
-        AddFriendApply apply = null;
-        try {
-            apply = DataSupport.where("mRegisterId=? and mContactId=?",
-                    mRegisterId, a.getContactId()).findFirst(AddFriendApply.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (apply == null) {
-            apply = new AddFriendApply();
-        }
-        apply.setAvatar(a.getAvatar());
-        apply.setNickname(a.getNickname());
-        apply.setContactId(a.getContactId());
-        apply.setRegisterId(mRegisterId);
-        if (agree) {
-            apply.setStatus(AddFriendApply.STATUS_AGREE);
-        } else {
-            apply.setStatus(AddFriendApply.STATUS_REFUSE);
-        }
-        apply.setTime(new Date().getTime());
-        apply.save();
     }
 
+    /**
+     * 向服务器发送两个人成为好友的状态
+     *
+     * @param myId
+     * @param friendId
+     */
     private void addAsFriend(final String myId, final String friendId) {
         OkHttpUtils.get().url(ServiceConstant.ADD_AS_FRIEND)
                 .addParams("MyId", myId)
@@ -259,13 +232,12 @@ public class AddContactApplyActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            L.i("添加好友成功");
+                        CommonResult result = new Gson().fromJson(response,
+                                CommonResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(AddContactApplyActivity.this, "添加好友成功");
                         } else {
-                            T.showShort(AddContactApplyActivity.this, commonResult.getMsg());
-                            L.i("添加好友失败" + commonResult.getMsg());
+                            T.showShort(AddContactApplyActivity.this, result.getMsg());
                         }
                     }
                 });

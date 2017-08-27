@@ -17,10 +17,11 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LocalContactCache;
+import com.jerry.nurse.util.LocalGroupCache;
+import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.SPUtil;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -46,7 +47,6 @@ public class MessageFragment extends BaseFragment {
     private List<Message> mMessages;
 
     private String mRegisterId;
-
 
     /**
      * 实例化方法
@@ -84,14 +84,8 @@ public class MessageFragment extends BaseFragment {
         // 加载本地数据库中的消息
         loadLocalMessage();
 
-
-        // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(getActivity(),
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(getActivity(), 0.5f),
-                getResources().getColor(R.color.divider_line)));
-
+        RecyclerViewDecorationUtil.addItemDecoration(getActivity(), mRecyclerView);
         mAdapter = new MessageAdapter(getActivity(), R.layout.item_message, mMessages);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -101,18 +95,14 @@ public class MessageFragment extends BaseFragment {
      */
     private void loadLocalMessage() {
         try {
-            mMessages = DataSupport.where("mRegisterId=?", mRegisterId).order("mTime desc").find(Message.class);
+            mMessages = DataSupport.where("mRegisterId=?",
+                    mRegisterId).order("mTime desc").find(Message.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (mMessages == null) {
             mMessages = new ArrayList<>();
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     class MessageAdapter extends CommonAdapter<Message> {
@@ -122,105 +112,122 @@ public class MessageFragment extends BaseFragment {
         }
 
         @Override
-        protected void convert(ViewHolder holder, final Message message, final int position) {
+        protected void convert(final ViewHolder holder, final Message message, final int position) {
             final int type = message.getType();
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(message.getTime())));
+            final ImageView imageView = holder.getView(R.id.iv_avatar);
             switch (type) {
+                // 好友申请消息
                 case Message.TYPE_ADD_FRIEND_APPLY:
-                    holder.setImageResource(R.id.iv_avatar, message.getImageResource());
+                    imageView.setImageResource(message.getImageResource());
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
                     break;
+                // 单聊聊天消息
                 case Message.TYPE_CHAT:
-                    ContactInfo info = DataSupport.where("mRegisterId=?",
-                            message.getContactId()).findFirst(ContactInfo.class);
-                    ChatMessage chatMessage = null;
-                    if (info != null) {
-                        try {
-                            chatMessage = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
-                                    mRegisterId, message.getContactId(),
-                                    message.getContactId(), mRegisterId).findLast(ChatMessage.class);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    new LocalContactCache() {
+                        @Override
+                        protected void onLoadContactInfoSuccess(ContactInfo info) {
+                            ChatMessage chatMessage = null;
+                            if (info != null) {
+                                try {
+                                    // 读取聊天记录中最后一条记录
+                                    chatMessage = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                                            mRegisterId, message.getContactId(),
+                                            message.getContactId(), mRegisterId).findLast(ChatMessage.class);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                // 加载头像
+                                Glide.with(getActivity()).load(info.getAvatar())
+                                        .error(R.drawable.icon_avatar_default).into(imageView);
+                                holder.setText(R.id.tv_title, info.getDisplayName());
+                                if (chatMessage != null) {
+                                    if (chatMessage.getType() == ChatMessage.TYPE_TXT) {
+                                        holder.setText(R.id.tv_content, chatMessage.getContent());
+                                    } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {
+                                        holder.setText(R.id.tv_content, "语音消息");
+                                    } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
+                                        holder.setText(R.id.tv_content, "图片消息");
+                                    }
+                                }
+                            }
                         }
-                        ImageView imageView = holder.getView(R.id.iv_avatar);
-                        Glide.with(getActivity()).load(info.getAvatar()).error(R.drawable.icon_avatar_default).into(imageView);
-                        holder.setText(R.id.tv_title, info.getDisplayName());
-                        if (chatMessage.getType() == ChatMessage.TYPE_TXT) {
-                            if (chatMessage != null) {
-                                holder.setText(R.id.tv_content, chatMessage.getContent());
-                            }
-                        } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {
-                            if (chatMessage != null) {
-                                holder.setText(R.id.tv_content, "语音消息");
-                            }
-                        } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
-                            if (chatMessage != null) {
-                                holder.setText(R.id.tv_content, "图片消息");
-                            }
-                        }
-                    }
+                    }.getContactInfo
+                            (mRegisterId, message.getContactId());
                     break;
+                // 群聊聊天消息
                 case Message.TYPE_CHAT_GROUP:
-                    holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
-                    GroupInfo groupInfo = DataSupport.where("HXGroupId=?",
-                            message.getContactId()).findFirst(GroupInfo.class);
-                    ChatMessage groupMessage = null;
-                    if (groupInfo != null) {
-                        try {
-                            groupMessage = DataSupport.where("mFrom=? or mTo=?",
-                                    message.getContactId(), message.getContactId()).findLast(ChatMessage.class);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    new LocalGroupCache() {
+                        @Override
+                        protected void onLoadGroupInfoSuccess(GroupInfo info) {
+                            // 设置群聊头像
+                            imageView.setImageResource(message.getImageResource());
+                            ChatMessage groupMessage = null;
+                            if (info != null) {
+                                holder.setText(R.id.tv_title, info.getHXNickName());
+                                try {
+                                    // 获取最后一条消息记录
+                                    groupMessage = DataSupport.where("mFrom=? or mTo=?",
+                                            message.getContactId(), message.getContactId()).findLast(ChatMessage.class);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (groupMessage != null) {
+                                    holder.setText(R.id.tv_content, groupMessage.getContent());
+                                }
+                            }
                         }
-                        holder.setText(R.id.tv_title, groupInfo.getHXNickName());
-                        if (groupMessage != null) {
-                            holder.setText(R.id.tv_content, groupMessage.getContent());
-                        }
-                    }
+                    }.getGroupInfo(mRegisterId,
+                            message.getContactId());
                     break;
                 case Message.TYPE_WELCOME:
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
-                    holder.setImageResource(R.id.iv_avatar, message.getImageResource());
+                    imageView.setImageResource(message.getImageResource());
                     break;
 
             }
 
-            holder.getView(R.id.rl_message).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switch (type) {
-                        case Message.TYPE_ADD_FRIEND_APPLY:
-                            Intent applyIntent = AddContactApplyActivity.getIntent(getActivity());
-                            startActivity(applyIntent);
-                            break;
-                        case Message.TYPE_CHAT:
-                            Intent chatIntent = ChatActivity.getIntent(getActivity(),
-                                    message.getContactId(), false);
-                            startActivity(chatIntent);
-                            break;
-                        case Message.TYPE_CHAT_GROUP:
-                            Intent chatGroupIntent = ChatActivity.getIntent(getActivity(),
-                                    message.getContactId(), true);
-                            startActivity(chatGroupIntent);
-                            break;
-                        case Message.TYPE_WELCOME:
-                            break;
-                    }
-                }
-            });
+            // 设置点击事件
+            holder.getView(R.id.rl_message).
+                    setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent;
+                            switch (type) {
+                                case Message.TYPE_ADD_FRIEND_APPLY:
+                                    intent = AddContactApplyActivity.getIntent(getActivity());
+                                    startActivity(intent);
+                                    break;
+                                case Message.TYPE_CHAT:
+                                    intent = ChatActivity.getIntent(getActivity(),
+                                            message.getContactId(), false);
+                                    startActivity(intent);
+                                    break;
+                                case Message.TYPE_CHAT_GROUP:
+                                    intent = ChatActivity.getIntent(getActivity(),
+                                            message.getContactId(), true);
+                                    startActivity(intent);
+                                    break;
+                                case Message.TYPE_WELCOME:
+                                    break;
+                            }
+                        }
+                    });
 
             // 删除这条记录
-            holder.getView(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    L.i("执行删除");
-                    mMessages.remove(message);
-                    message.delete();
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
+            holder.getView(R.id.btn_delete).
+
+                    setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            L.i("执行删除");
+                            mMessages.remove(message);
+                            message.delete();
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
         }
     }
 }

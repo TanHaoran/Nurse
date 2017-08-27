@@ -27,6 +27,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupListResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.EaseMobManager;
@@ -98,6 +99,7 @@ public class MainActivity extends BaseActivity {
         // 判断是否是该账号首次登录，首次登录要显示欢迎信息
         boolean isFirstIn = (boolean) SPUtil.get(this, SPUtil.IS_FIRST_IN, true);
         if (isFirstIn) {
+            // 创建首页欢迎信息
             createWelcomeMessage(registerId);
         }
         SPUtil.put(this, SPUtil.IS_FIRST_IN, false);
@@ -295,7 +297,7 @@ public class MainActivity extends BaseActivity {
 
                     notification = new Notification.Builder(MainActivity.this)
                             .setTicker("新消息")
-                            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                            .setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle("新消息提示")
                             .setContentText(chatMessage.getContent())
                             .setContentIntent(pi)
@@ -320,7 +322,7 @@ public class MainActivity extends BaseActivity {
 
                     notification = new Notification.Builder(MainActivity.this)
                             .setTicker("新消息")
-                            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                            .setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle("好友申请")
                             .setContentText(apply.getReason())
                             .setContentIntent(pi)
@@ -351,113 +353,14 @@ public class MainActivity extends BaseActivity {
                         FriendListResult friendListResult = new Gson().fromJson(response, FriendListResult.class);
                         if (friendListResult.getCode() == RESPONSE_SUCCESS) {
                             List<Contact> contacts = friendListResult.getBody();
-                            L.i("初始化读取到了" + contacts.size() + "个好友");
-                            if (contacts == null) {
-                                contacts = new ArrayList();
+                            if (contacts != null) {
+                                L.i("读取到联系人个数:" + contacts.size());
+                                updateContactInfoData(contacts);
                             }
-                            updateContactInfoData(contacts);
-
                         }
                     }
                 });
     }
-
-    /**
-     * 更新本地联系人数据
-     *
-     * @param bodyDatas
-     */
-    public static void updateContactInfoData(List<Contact> bodyDatas) {
-
-        List<ContactInfo> infos = null;
-        try {
-            infos = DataSupport.findAll(ContactInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (infos == null) {
-            infos = new ArrayList<>();
-        }
-        for (Contact contact : bodyDatas) {
-            int i;
-            for (i = 0; i < infos.size(); i++) {
-                // 如果两个信息相同就更新
-                ContactInfo info = infos.get(i);
-                if (contact.getFriendId().equals(info.getRegisterId())) {
-                    info.setAvatar(contact.getAvatar());
-                    info.setName(contact.getName());
-                    info.setNickName(contact.getNickName());
-                    info.setCellphone(contact.getPhone());
-                    info.setRemark(contact.getRemark());
-                    info.setRegisterId(contact.getFriendId());
-                    info.setFriend(contact.isFriend());
-                    info.save();
-                    L.i("更新一条联系人信息");
-                    break;
-                }
-            }
-            // 如果本地数据库没有就创建保存
-            if (i == infos.size()) {
-                ContactInfo info = new ContactInfo();
-                info.setAvatar(contact.getAvatar());
-                info.setName(contact.getName());
-                info.setNickName(contact.getNickName());
-                info.setCellphone(contact.getPhone());
-                info.setRemark(contact.getRemark());
-                info.setRegisterId(contact.getFriendId());
-                info.setFriend(contact.isFriend());
-                info.save();
-                L.i("新增一条联系人信息");
-            }
-        }
-    }
-
-    /**
-     * 更新本地联系人数据
-     *
-     * @param contact
-     */
-    public static ContactInfo updateContactInfoData(Contact contact) {
-
-        List<ContactInfo> infos = null;
-        try {
-            infos = DataSupport.findAll(ContactInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (infos == null) {
-            infos = new ArrayList<>();
-        }
-        int i;
-        for (i = 0; i < infos.size(); i++) {
-            // 如果两个信息相同就更新
-            ContactInfo info = infos.get(i);
-            if (contact.getFriendId().equals(info.getRegisterId())) {
-                info.setAvatar(contact.getAvatar());
-                info.setName(contact.getName());
-                info.setNickName(contact.getNickName());
-                info.setCellphone(contact.getPhone());
-                info.setRemark(contact.getRemark());
-                info.setRegisterId(contact.getFriendId());
-                info.setFriend(contact.isFriend());
-                info.save();
-                L.i("更新一条联系人信息");
-                return info;
-            }
-        }
-        ContactInfo info = new ContactInfo();
-        info.setAvatar(contact.getAvatar());
-        info.setName(contact.getName());
-        info.setNickName(contact.getNickName());
-        info.setCellphone(contact.getPhone());
-        info.setRemark(contact.getRemark());
-        info.setRegisterId(contact.getFriendId());
-        info.save();
-        L.i("新增一条联系人信息");
-        return info;
-
-    }
-
 
     /**
      * 获取群信息，并更新本地数据库
@@ -476,114 +379,210 @@ public class MainActivity extends BaseActivity {
                         GroupListResult result = new Gson().fromJson(response, GroupListResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             List<GroupInfo> groupInfo = result.getBody();
-                            L.i("初始化读取到了" + groupInfo.size() + "个群");
-                            if (groupInfo == null) {
-                                groupInfo = new ArrayList();
+                            if (groupInfo != null) {
+                                L.i("初始化读取到了" + groupInfo.size() + "个群");
+                                updateGroupInfoData(groupInfo);
                             }
-                            updateGroupInfoData(groupInfo);
                         }
                     }
                 });
     }
 
-    /**
-     * 更新本地群信息数据
-     *
-     * @param bodyDatas
-     */
-    public static void updateGroupInfoData(List<GroupInfo> bodyDatas) {
 
-        List<GroupInfo> infos = null;
+    /**
+     * 更新本地联系人数据(多条)
+     *
+     * @param contacts
+     * @return 新增联系人的数量
+     */
+    public static int updateContactInfoData(List<Contact> contacts) {
+        int count = 0;
+        List<ContactInfo> localContacts = null;
         try {
-            infos = DataSupport.findAll(GroupInfo.class);
+            // 读取本地数据库好友个数
+            localContacts = DataSupport.findAll(ContactInfo.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (infos == null) {
-            infos = new ArrayList<>();
+        if (localContacts == null) {
+            localContacts = new ArrayList<>();
         }
-        for (GroupInfo group : bodyDatas) {
+        for (Contact contact : contacts) {
             int i;
-            for (i = 0; i < infos.size(); i++) {
+            for (i = 0; i < localContacts.size(); i++) {
                 // 如果两个信息相同就更新
-                GroupInfo info = infos.get(i);
-                if (group.getHXGroupId().equals(info.getHXGroupId())) {
-                    info.setHXGroupId(group.getHXGroupId());
-                    info.setHXNickName(group.getHXNickName());
-                    info.setRegisterId(group.getRegisterId());
-                    info.setCreateTime(group.getCreateTime());
-                    info.setGroupUserCount(group.getGroupUserCount());
-                    L.i("更新的群成员数量：" + group.getGroupMemberList().size());
-                    // 更新联系人信息
-                    updateContactInfoData(group.getGroupMemberList());
-                    info.save();
+                ContactInfo localContact = localContacts.get(i);
+                if (localContact.getRegisterId().equals(contact.getFriendId())) {
+                    updateLocalContact(localContact, contact);
+                    L.i("更新一条联系人信息");
                     break;
                 }
             }
             // 如果本地数据库没有就创建保存
-            if (i == infos.size()) {
-                GroupInfo info = new GroupInfo();
-                info.setHXGroupId(group.getHXGroupId());
-                info.setHXNickName(group.getHXNickName());
-                info.setRegisterId(group.getRegisterId());
-                info.setCreateTime(group.getCreateTime());
-                info.setGroupUserCount(group.getGroupUserCount());
-                L.i("更新的群成员数量：" + group.getGroupMemberList().size());
-                // 更新联系人信息
-                updateContactInfoData(group.getGroupMemberList());
-                info.save();
+            if (i == localContacts.size()) {
+                ContactInfo localContact = new ContactInfo();
+                updateLocalContact(localContact, contact);
+                count++;
+                L.i("新增一条联系人信息");
             }
         }
+        return count;
     }
 
 
     /**
-     * 更新本地群信息数据
+     * 更新本地联系人数据(单条)
      *
-     * @param groupInfo
+     * @param contact
+     * @return 更新的联系人数据
      */
-    public static void updateGroupInfoData(GroupInfo groupInfo) {
-
-        List<GroupInfo> infos = null;
+    public static ContactInfo updateContactInfoData(Contact contact) {
+        // 读取本地数据库联系人
+        List<ContactInfo> localContacts = null;
         try {
-            infos = DataSupport.findAll(GroupInfo.class);
+            localContacts = DataSupport.findAll(ContactInfo.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (infos == null) {
-            infos = new ArrayList<>();
+        if (localContacts == null) {
+            localContacts = new ArrayList<>();
         }
         int i;
-        for (i = 0; i < infos.size(); i++) {
+        for (i = 0; i < localContacts.size(); i++) {
             // 如果两个信息相同就更新
-            GroupInfo info = infos.get(i);
-            if (groupInfo.getHXGroupId().equals(info.getHXGroupId())) {
-                info.setHXGroupId(groupInfo.getHXGroupId());
-                info.setHXNickName(groupInfo.getHXNickName());
-                info.setRegisterId(groupInfo.getRegisterId());
-                info.setCreateTime(groupInfo.getCreateTime());
-                info.setGroupUserCount(groupInfo.getGroupUserCount());
-                L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
-                // 更新联系人信息
-                updateContactInfoData(groupInfo.getGroupMemberList());
-                info.save();
-                break;
+            ContactInfo localContact = localContacts.get(i);
+            if (localContact.getRegisterId().equals(contact.getFriendId())) {
+                L.i("更新一条联系人信息");
+                return updateLocalContact(localContact, contact);
             }
         }
         // 如果本地数据库没有就创建保存
-        if (i == infos.size()) {
-            GroupInfo info = new GroupInfo();
-            info.setHXGroupId(groupInfo.getHXGroupId());
-            info.setHXNickName(groupInfo.getHXNickName());
-            info.setRegisterId(groupInfo.getRegisterId());
-            info.setCreateTime(groupInfo.getCreateTime());
-            info.setGroupUserCount(groupInfo.getGroupUserCount());
-            L.i("更新的群成员数量：" + groupInfo.getGroupMemberList().size());
-            // 更新联系人信息
-            updateContactInfoData(groupInfo.getGroupMemberList());
-            info.save();
+        if (i == localContacts.size()) {
+            ContactInfo localContact = new ContactInfo();
+            return updateLocalContact(localContact, contact);
         }
+        return null;
+    }
 
+    /**
+     * 更新数据库联系人信息
+     *
+     * @param oldContact
+     * @param newContact
+     */
+    private static ContactInfo updateLocalContact(ContactInfo oldContact,
+                                                  Contact newContact) {
+        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+        oldContact.setMyId(loginInfo.getRegisterId());
+        oldContact.setAvatar(newContact.getAvatar());
+        oldContact.setName(newContact.getName());
+        oldContact.setNickName(newContact.getNickName());
+        oldContact.setCellphone(newContact.getPhone());
+        oldContact.setRemark(newContact.getRemark());
+        oldContact.setRegisterId(newContact.getFriendId());
+        oldContact.setFriend(newContact.isFriend());
+        oldContact.save();
+        return oldContact;
+    }
+
+
+    /**
+     * 更新本地群信息数据 (多条)
+     *
+     * @param groups
+     * @return 新增的信息数量
+     */
+    public static int updateGroupInfoData(List<GroupInfo> groups) {
+        int count = 0;
+        List<GroupInfo> localGroups = null;
+        try {
+            localGroups = DataSupport.findAll(GroupInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (localGroups == null) {
+            localGroups = new ArrayList<>();
+        }
+        for (GroupInfo group : groups) {
+            // 首先更新该群的所有联系人信息
+            if (group.getGroupMemberList() != null) {
+                updateContactInfoData(group.getGroupMemberList());
+            }
+            int i;
+            for (i = 0; i < localGroups.size(); i++) {
+                // 如果两个信息相同就更新
+                GroupInfo localGroup = localGroups.get(i);
+                if (localGroup.getHXGroupId().equals(group.getHXGroupId())) {
+                    updateLocalGroup(localGroup, group);
+                    // 更新联系人信息
+                    L.i("更新了一条群信息");
+                    break;
+                }
+            }
+            // 如果本地数据库没有就创建保存
+            if (i == localGroups.size()) {
+                GroupInfo localGroup = new GroupInfo();
+                updateLocalGroup(localGroup, group);
+                L.i("新增了一条群信息");
+                count++;
+            }
+        }
+        return count;
+    }
+
+
+    /**
+     * 更新本地群信息数据(单条)
+     *
+     * @param group
+     */
+    public static GroupInfo updateGroupInfoData(GroupInfo group) {
+
+        List<GroupInfo> localGroups = null;
+        try {
+            localGroups = DataSupport.findAll(GroupInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (localGroups == null) {
+            localGroups = new ArrayList<>();
+        }
+        // 首先更新该群的所有联系人信息
+        if (group.getGroupMemberList() != null) {
+            updateContactInfoData(group.getGroupMemberList());
+        }
+        int i;
+        for (i = 0; i < localGroups.size(); i++) {
+            // 如果两个信息相同就更新
+            GroupInfo localGroup = localGroups.get(i);
+            if (localGroup.getHXGroupId().equals(group.getHXGroupId())) {
+                return updateLocalGroup(localGroup, group);
+            }
+        }
+        // 如果本地数据库没有就创建保存
+        if (i == localGroups.size()) {
+            GroupInfo localGroup = new GroupInfo();
+            return updateLocalGroup(localGroup, group);
+        }
+        return null;
+    }
+
+    /**
+     * 更新数据库群信息
+     *
+     * @param oldGroup
+     * @param newGroup
+     * @return
+     */
+    private static GroupInfo updateLocalGroup(GroupInfo oldGroup, GroupInfo
+            newGroup) {
+        oldGroup.setHXGroupId(newGroup.getHXGroupId());
+        oldGroup.setHXNickName(newGroup.getHXNickName());
+        oldGroup.setRegisterId(newGroup.getRegisterId());
+        oldGroup.setCreateTime(newGroup.getCreateTime());
+        oldGroup.setGroupUserCount(newGroup.getGroupUserCount());
+        oldGroup.save();
+        return oldGroup;
     }
 
 
@@ -591,10 +590,10 @@ public class MainActivity extends BaseActivity {
      * 创建欢迎消息
      */
     private void createWelcomeMessage(String registerId) {
-
         Message message = null;
         try {
-            message = DataSupport.where("mRegisterId=? and mType=?", registerId, "3").findFirst(Message.class);
+            message = DataSupport.where("mRegisterId=? and mType=?",
+                    registerId, "3").findFirst(Message.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

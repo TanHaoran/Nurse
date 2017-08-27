@@ -42,10 +42,10 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
-import com.jerry.nurse.util.ContactInfoCache;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.KeyBoardUtil;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.MediaManager;
 import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.PictureUtil;
@@ -67,12 +67,17 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-import static org.litepal.crud.DataSupport.findFirst;
-
 
 public class ChatActivity extends BaseActivity implements EMMessageListener {
 
-    private static final int DEFAULT_MESSAGE_COUNT = 10;
+    /**
+     * 默认每次刷新显示的条目数
+     */
+    private static final int DEFAULT_PAGE_MESSAGE_COUNT = 10;
+    /**
+     * 目前加载的页数
+     */
+    private int mPageIndex = 0;
 
     public static final String EXTRA_CONTACT_ID = "extra_contact_id";
     public static final String EXTRA_IS_GROUP = "extra_is_group";
@@ -129,10 +134,19 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     private com.jerry.nurse.model.Message mHomePageMessage;
 
+
     /**
-     * 加载的页数
+     * @param context
+     * @param contactId 聊天对方的Id
+     * @param isGroup   是否是群聊
+     * @return
      */
-    private int mMessagePage = 0;
+    public static Intent getIntent(Context context, String contactId, boolean isGroup) {
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.putExtra(EXTRA_CONTACT_ID, contactId);
+        intent.putExtra(EXTRA_IS_GROUP, isGroup);
+        return intent;
+    }
 
     private Handler mHandler = new Handler() {
         @Override
@@ -141,31 +155,26 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             if (!name.equals("activity.ChatActivity")) {
                 return;
             }
-
+            // 一条一条解析消息
             List<EMMessage> messages = (List<EMMessage>) msg.obj;
             for (final EMMessage emMessage : messages) {
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setSend(false);
                 if (emMessage.getType() == EMMessage.Type.TXT) {
                     EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
-                    String message = messageBody.getMessage();
-                    chatMessage.setContent(message);
+                    chatMessage.setContent(messageBody.getMessage());
                     chatMessage.setType(ChatMessage.TYPE_TXT);
                 } else if (emMessage.getType() == EMMessage.Type.VOICE) {
                     EMVoiceMessageBody messageBody = (EMVoiceMessageBody) emMessage.getBody();
-                    int second = messageBody.getLength();
-                    String path = messageBody.getLocalUrl();
-                    chatMessage.setSecond(second);
-                    chatMessage.setPath(path);
+                    chatMessage.setSecond(messageBody.getLength());
+                    chatMessage.setPath(messageBody.getLocalUrl());
                     chatMessage.setType(ChatMessage.TYPE_VOICE);
                 } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
                     EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
-                    String localUrl = messageBody.getLocalUrl();
-                    String remoteUrl = messageBody.getRemoteUrl();
-                    chatMessage.setLocalUrl(localUrl);
-                    chatMessage.setRemoteUrl(remoteUrl);
+                    chatMessage.setLocalUrl(messageBody.getLocalUrl());
+                    chatMessage.setRemoteUrl(messageBody.getRemoteUrl());
                     chatMessage.setType(ChatMessage.TYPE_IMAGE);
-
+                    // TODO 图片文件传输如果立刻传输有时会无法床见文件，这里暂时延迟处理
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
@@ -173,20 +182,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     }
                 }
 
-
                 // 单聊
                 if (!mIsGroup) {
                     chatMessage.setTo(mLoginInfo.getRegisterId());
-                    chatMessage.setTime(emMessage.getMsgTime());
-                    chatMessage.setFrom(emMessage.getFrom());
-                    mChatMessages.add(chatMessage);
-                    mAdapter.notifyDataSetChanged();
-
-                    int itemCount = mAdapter.getItemCount();
-                    if (mRecyclerView != null) {
-                        mRecyclerView.scrollToPosition(itemCount);
-                    }
-
                     // 构建首页消息
                     com.jerry.nurse.model.Message message = null;
                     try {
@@ -210,15 +208,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 // 群聊
                 else {
                     chatMessage.setTo(mContactId);
-                    chatMessage.setTime(emMessage.getMsgTime());
-                    chatMessage.setFrom(emMessage.getFrom());
-                    mChatMessages.add(chatMessage);
-                    mAdapter.notifyDataSetChanged();
-
-                    int itemCount = mAdapter.getItemCount();
-                    mRecyclerView.scrollToPosition(itemCount);
-
-                    // 构建首页消息
+                    // 因为这里要异步获取发消息人的信息，所以使用了全局变量来记录
                     mHomePageMessage = null;
                     try {
                         mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "2",
@@ -228,10 +218,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         e.printStackTrace();
                     }
 
-                    new ContactInfoCache() {
+                    new LocalContactCache() {
                         @Override
                         protected void onLoadContactInfoSuccess(ContactInfo info) {
-
                             if (mHomePageMessage == null) {
                                 mHomePageMessage = new com.jerry.nurse.model.Message();
                             }
@@ -243,10 +232,21 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             mHomePageMessage.setContactId(mContactId);
                             mHomePageMessage.save();
                         }
-                    }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(),
+                    }.getContactInfo(EMClient.getInstance().getCurrentUser(),
                             emMessage.getFrom());
 
                 }
+
+                // 保存聊天消息并更新界面
+                mChatMessages.add(chatMessage);
+                mAdapter.notifyDataSetChanged();
+                // TODO 滚动问题
+                int itemCount = mAdapter.getItemCount();
+                if (mRecyclerView != null) {
+                    mRecyclerView.scrollToPosition(itemCount);
+                }
+                chatMessage.setTime(emMessage.getMsgTime());
+                chatMessage.setFrom(emMessage.getFrom());
                 chatMessage.save();
             }
         }
@@ -268,12 +268,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         return path;
     }
 
-    public static Intent getIntent(Context context, String contactId, boolean isGroup) {
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(EXTRA_CONTACT_ID, contactId);
-        intent.putExtra(EXTRA_IS_GROUP, isGroup);
-        return intent;
-    }
 
     @Override
     public int getContentViewResId() {
@@ -285,8 +279,189 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO 权限申请？
+        BaseActivity.requestRuntimePermission(new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+        }, new PermissionListener() {
+            @Override
+            public void onGranted() {
+
+            }
+
+            @Override
+            public void onDenied(List<String> deniedPermission) {
+
+            }
+        });
+
+        // 获取传递过来的值
+        mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
+        mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
+        // 获取我的信息
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+
+        // 单聊
+        if (!mIsGroup) {
+            L.i("联系人的Id是：" + mContactId);
+            // 查询联系人的信息
+            mContactInfo = DataSupport.where("mRegisterId=?",
+                    mContactId).findFirst(ContactInfo.class);
+            // 显示昵称
+            if (mContactInfo != null) {
+                mNameTextView.setText(mContactInfo.getDisplayName());
+            }
+
+            // 读取数据库中存在的数据并显示
+            try {
+                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
+                        mLoginInfo.getRegisterId(), mContactId,
+                        mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                mChatMessages = new ArrayList<>();
+            }
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mAdapter = new ChatAdapter(this, mChatMessages);
+            mRecyclerView.setAdapter(mAdapter);
+            // TODO 滑动问题
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+        }
+        // 群聊
+        else {
+            L.i("群组的Id是：" + mContactId);
+            mGroupInfo = DataSupport.where("HXGroupId=?", mContactId).findFirst(GroupInfo.class);
+            if (!TextUtils.isEmpty(mGroupInfo.getHXNickName())) {
+                mNameTextView.setText(mGroupInfo.getHXNickName());
+            }
+            // 读取数据库中存在的数据并显示
+            try {
+                DataSupport.findAll(ChatMessage.class);
+                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mTo=?)",
+                        mLoginInfo.getRegisterId(), mContactId,
+                        mContactId).find(ChatMessage.class);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                mChatMessages = new ArrayList<>();
+            }
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mAdapter = new ChatAdapter(this, mChatMessages);
+            mRecyclerView.setAdapter(mAdapter);
+            // TODO 滑动问题
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+        }
+
+        // 设置输入框的监听事件
+        mMessageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String message = mMessageEditText.getText().toString();
+                if (!TextUtils.isEmpty(message)) {
+                    mSendButton.setVisibility(View.VISIBLE);
+                    mAddButton.setVisibility(View.GONE);
+                } else {
+                    mSendButton.setVisibility(View.GONE);
+                    mAddButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // 点击输入框，隐藏操作面板
+        mMessageEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOptionLayout.setVisibility(View.GONE);
+            }
+        });
+        // 聚焦输入框，隐藏操作面板
+        mMessageEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mOptionLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // 注册录音完成的回调方法
+        mRecordButton.setAudioFinishRecordListener(new AudioRecordButton.AudioFinishRecordListener() {
+            @Override
+            public void onFinish(float seconds, String filePath) {
+                // 创建语音消息
+                EMMessage emMessage = EMMessage.createVoiceSendMessage(filePath,
+                        (int) seconds, mContactId);
+                // 单聊
+                if (!mIsGroup) {
+                    emMessage.setChatType(EMMessage.ChatType.Chat);
+                }
+                // 群聊
+                else {
+                    emMessage.setChatType(EMMessage.ChatType.GroupChat);
+                }
+                // 发送消息
+                easeMobSendMessage(emMessage);
+            }
+        });
+
+        // 注册拍照和发图片两个事件监听
+        setSelectFromAlbumListener(mPhotoLayout, new OnSelectFromAlbumListener() {
+            @Override
+            public void onPhotoFinished(Bitmap bitmap, File file) {
+                // 创建图片消息并发送
+                createImageMessageAndSend(file);
+
+            }
+        });
+        setPhotographListener(mPhotographLayout, new OnPhotographFinishListener() {
+            @Override
+            public void onPhotographFinished(Bitmap bitmap, File file) {
+                // 创建图片消息并发送
+                createImageMessageAndSend(file);
+            }
+        });
+
+        // 添加消息监听
+        EMClient.getInstance().chatManager().addMessageListener(this);
+        MediaManager.resume();
+    }
+
     /**
+     * 创建图片消息并发送
      *
+     * @param file
+     */
+    private void createImageMessageAndSend(File file) {
+        // 创建消息
+        EMMessage emMessage = EMMessage.createImageSendMessage(
+                file.getAbsolutePath(), true, mContactId);
+        // 单聊
+        if (!mIsGroup) {
+            emMessage.setChatType(EMMessage.ChatType.Chat);
+        }
+        // 群聊
+        else {
+            emMessage.setChatType(EMMessage.ChatType.GroupChat);
+        }
+        easeMobSendMessage(emMessage);
+    }
+
+    /**
      * @param view
      */
     @OnClick(R.id.acb_send)
@@ -296,21 +471,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             T.showShort(this, R.string.message_can_not_be_empty);
             return;
         }
-
+        // 发送完信息清空输入框
         mMessageEditText.setText("");
-
-        // 发送环信消息
-        easeMobSendTxtMessage(message);
-    }
-
-
-    /**
-     * 发送环信文字消息
-     *
-     * @param message
-     */
-    private void easeMobSendTxtMessage(String message) {
-        // 创建消息
+        // 创建文字消息
         EMMessage emMessage = EMMessage.createTxtSendMessage(message, mContactId);
         if (!mIsGroup) {
             emMessage.setChatType(EMMessage.ChatType.Chat);
@@ -318,50 +481,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             emMessage.setChatType(EMMessage.ChatType.GroupChat);
         }
         // 发送消息
-        EMClient.getInstance().chatManager().sendMessage(emMessage);
-        emMessage.setMessageStatusCallback(new EMCallBack() {
-            @Override
-            public void onSuccess() {
-                L.i("发送成功！");
-            }
-
-            @Override
-            public void onError(int code, String error) {
-                L.i("发送失败，错误码：" + code + "，错误信息：" + error);
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-        });
-
-        ChatMessage chatMessage = MessageManager.saveSendChatMessageLocalData(emMessage, message);
-
-        mChatMessages.add(chatMessage);
-        mAdapter.notifyDataSetChanged();
-        mRecyclerView.scrollToPosition(mChatMessages.size());
-        chatMessage.save();
+        easeMobSendMessage(emMessage);
     }
 
     /**
-     * 发送环信图片消息
+     * 发送环信消息
      *
-     * @param path
+     * @param emMessage
      */
-    private void easeMobSendImageMessage(String path) {
-        // 创建消息
-        EMMessage emMessage = EMMessage.createImageSendMessage(path, true, mContactId);
-        // 单聊
-        if (!mIsGroup) {
-            emMessage.setChatType(EMMessage.ChatType.Chat);
-        }
-        // 群聊
-        else {
-            emMessage.setChatType(EMMessage.ChatType.GroupChat);
-        }
-        // 发送消息
+    private void easeMobSendMessage(EMMessage emMessage) {
+        // 调用环信SDK发送信息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
+        // 监听消息发送状态
         emMessage.setMessageStatusCallback(new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -378,73 +509,33 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             }
         });
-        ChatMessage chatMessage = MessageManager.saveSendImageChatMessageLocalData(emMessage, path);
 
+        ChatMessage chatMessage = MessageManager.saveChatMessageLocalData(emMessage);
+
+        // 添加进显示列表并滑动到底
         mChatMessages.add(chatMessage);
         mAdapter.notifyDataSetChanged();
+        // TODO 滑动问题
         mRecyclerView.scrollToPosition(mChatMessages.size());
-        chatMessage.save();
-    }
-
-    /**
-     * 发送环信语音消息
-     *
-     * @param seconds
-     * @param path
-     */
-    private void easeMobSendVoiceMessage(float seconds, String path) {
-        // 创建消息
-        EMMessage emMessage = EMMessage.createVoiceSendMessage(path, (int) seconds, mContactId);
-        // 单聊
-        if (!mIsGroup) {
-            emMessage.setChatType(EMMessage.ChatType.Chat);
-        }
-        // 群聊
-        else {
-            emMessage.setChatType(EMMessage.ChatType.GroupChat);
-        }
-        // 发送消息
-        EMClient.getInstance().chatManager().sendMessage(emMessage);
-        emMessage.setMessageStatusCallback(new EMCallBack() {
-            @Override
-            public void onSuccess() {
-                L.i("发送成功！");
-            }
-
-            @Override
-            public void onError(int code, String error) {
-                L.i("发送失败，错误码：" + code + "，错误信息：" + error);
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-        });
-        ChatMessage chatMessage = MessageManager.saveSendChatMessageLocalData(emMessage, (int) seconds, path);
-
-        mChatMessages.add(chatMessage);
-        mAdapter.notifyDataSetChanged();
-        mRecyclerView.scrollToPosition(mChatMessages.size());
-        chatMessage.save();
     }
 
     @OnClick(R.id.ib_left)
     void onLeft(View view) {
+        // 录音状态
         if (mIsRecordState) {
             mTypeButton.setBackgroundResource(R.drawable.icon_record);
             mMessageEditText.setVisibility(View.VISIBLE);
             mRecordButton.setVisibility(View.GONE);
-        } else {
-            mTypeButton.setBackgroundResource(R.drawable.icon_keyboard);
-            mRecordButton.setVisibility(View.VISIBLE);
-            mMessageEditText.setVisibility(View.GONE);
-            mOptionLayout.setVisibility(View.GONE);
         }
+        // 文字状态
+        else {
+            mTypeButton.setBackgroundResource(R.drawable.icon_keyboard);
+            mMessageEditText.setVisibility(View.GONE);
+            mRecordButton.setVisibility(View.VISIBLE);
+        }
+        mOptionLayout.setVisibility(View.GONE);
         mIsRecordState = !mIsRecordState;
-
     }
-
 
     @Override
     protected void onStop() {
@@ -495,11 +586,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         }
     }
 
-
     class ChatAdapter extends MultiItemTypeAdapter<ChatMessage> {
         public ChatAdapter(Context context, List<ChatMessage> datas) {
             super(context, datas);
-
+            // 创建两种不同的布局
             SendItemDelagate sendItemDelagate = new SendItemDelagate();
             ReceiveItemDelagate receiveItemDelagate = new ReceiveItemDelagate();
             addItemViewDelegate(sendItemDelagate);
@@ -507,6 +597,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         }
     }
 
+    /**
+     * 发送消息布局适配器
+     */
     class SendItemDelagate implements ItemViewDelegate<ChatMessage> {
 
         private int mMaxItemWidth;
@@ -531,11 +624,13 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
+            // TODO 布局还需整理
             // 发消息群聊和单聊没有区别
             ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar()).into(imageView);
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             switch (chatMessage.getType()) {
+                // 文字消息
                 case ChatMessage.TYPE_TXT:
                     holder.setVisible(R.id.tv_message, true);
                     holder.setText(R.id.tv_message, chatMessage.getContent());
@@ -543,24 +638,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, false);
                     break;
-                case ChatMessage.TYPE_IMAGE:
-                    holder.setVisible(R.id.tv_message, false);
-                    holder.setVisible(R.id.fl_anim, false);
-                    holder.setVisible(R.id.tv_record_length, false);
-                    holder.setVisible(R.id.iv_image, true);
-                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getLocalUrl(), 150, 150);
-                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_send_normal);
-                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
-                    holder.setImageBitmap(R.id.iv_image, bmp);
-                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
-                                    chatMessage.getLocalUrl(), null);
-                            startActivity(intent);
-                        }
-                    });
-                    break;
+                // 语音消息
                 case ChatMessage.TYPE_VOICE:
                     holder.setVisible(R.id.tv_message, false);
                     holder.setVisible(R.id.fl_anim, true);
@@ -591,10 +669,34 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         }
                     });
                     break;
+                // 图片消息
+                case ChatMessage.TYPE_IMAGE:
+                    holder.setVisible(R.id.tv_message, false);
+                    holder.setVisible(R.id.fl_anim, false);
+                    holder.setVisible(R.id.tv_record_length, false);
+                    holder.setVisible(R.id.iv_image, true);
+                    Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getLocalUrl(), 150, 150);
+                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_send_normal);
+                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
+                    holder.setImageBitmap(R.id.iv_image, bmp);
+                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
+                                    chatMessage.getLocalUrl(), null);
+                            startActivity(intent);
+                        }
+                    });
+                    break;
+                default:
+                    break;
             }
         }
     }
 
+    /**
+     * 接受消息布局适配器
+     */
     class ReceiveItemDelagate implements ItemViewDelegate<ChatMessage> {
 
         private int mMaxItemWidth;
@@ -619,6 +721,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
+            // TODO 布局还需整理
             ImageView imageView = holder.getView(R.id.iv_avatar);
             // 单聊
             if (!mIsGroup) {
@@ -726,153 +829,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        BaseActivity.requestRuntimePermission(new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-        }, new PermissionListener() {
-            @Override
-            public void onGranted() {
-
-            }
-
-            @Override
-            public void onDenied(List<String> deniedPermission) {
-
-            }
-        });
-
-        // 初始化获取对方的Id
-        mLoginInfo = findFirst(LoginInfo.class);
-        mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
-        mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
-
-        // 单聊
-        if (!mIsGroup) {
-            L.i("联系人的Id是：" + mContactId);
-            // 查询对方的信息
-            mContactInfo = DataSupport.where("mRegisterId=?",
-                    mContactId).findFirst(ContactInfo.class);
-            if (!TextUtils.isEmpty(mContactInfo.getDisplayName())) {
-                mNameTextView.setText(mContactInfo.getDisplayName());
-            }
-
-            // 读取数据库中存在的数据并显示
-            try {
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
-                        mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                mChatMessages = new ArrayList<>();
-            }
-
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            mAdapter = new ChatAdapter(this, mChatMessages);
-
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
-        }
-        // 群聊
-        else {
-            L.i("群组的Id是：" + mContactId);
-            mGroupInfo = DataSupport.where("HXGroupId=?", mContactId).findFirst(GroupInfo.class);
-            if (!TextUtils.isEmpty(mGroupInfo.getHXNickName())) {
-                mNameTextView.setText(mGroupInfo.getHXNickName());
-            }
-            // 读取数据库中存在的数据并显示
-            try {
-                DataSupport.findAll(ChatMessage.class);
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
-                        mContactId).find(ChatMessage.class);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                mChatMessages = new ArrayList<>();
-            }
-
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            mAdapter = new ChatAdapter(this, mChatMessages);
-
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
-
-        }
-
-        // 设置输入框的监听事件
-        mMessageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String message = mMessageEditText.getText().toString();
-                if (!TextUtils.isEmpty(message)) {
-                    mSendButton.setVisibility(View.VISIBLE);
-                    mAddButton.setVisibility(View.GONE);
-                } else {
-                    mSendButton.setVisibility(View.GONE);
-                    mAddButton.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        // 设置输入框和添加框的下显示
-        mMessageEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOptionLayout.setVisibility(View.GONE);
-            }
-        });
-        mMessageEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    mOptionLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        // 注册录音完成的回调方法
-        mRecordButton.setAudioFinishRecordListener(new AudioRecordButton.AudioFinishRecordListener() {
-            @Override
-            public void onFinish(float seconds, String filePath) {
-                easeMobSendVoiceMessage(seconds, filePath);
-
-            }
-        });
-
-        // 注册拍照和发图片两个事件监听
-        setSelectFromAlbumListener(mPhotoLayout, new OnSelectFromAlbumListener() {
-            @Override
-            public void onPhotoFinished(Bitmap bitmap, File file) {
-                easeMobSendImageMessage(file.getAbsolutePath());
-            }
-        });
-        setPhotographListener(mPhotographLayout, new OnPhotographFinishListener() {
-            @Override
-            public void onPhotographFinished(Bitmap bitmap, File file) {
-                easeMobSendImageMessage(file.getAbsolutePath());
-            }
-        });
-
-
-        // 添加消息监听
-        EMClient.getInstance().chatManager().addMessageListener(this);
-        MediaManager.resume();
-    }
 
     @Override
     protected void onPause() {

@@ -12,6 +12,7 @@ import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 public class ContactInfo extends DataSupport {
 
+    private String mMyId;
     private String mAvatar;
     private String mName;
     private String mNickName;
@@ -100,5 +101,27 @@ public class ContactInfo extends DataSupport {
 
     public void setFriend(boolean friend) {
         mIsFriend = friend;
+    }
+
+    public String getMyId() {
+        return mMyId;
+    }
+
+    public void setMyId(String myId) {
+        mMyId = myId;
+    }
+
+    @Override
+    public String toString() {
+        return "ContactInfo{" +
+                "mMyId='" + mMyId + '\'' +
+                ", mAvatar='" + mAvatar + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mNickName='" + mNickName + '\'' +
+                ", mCellphone='" + mCellphone + '\'' +
+                ", mRemark='" + mRemark + '\'' +
+                ", mRegisterId='" + mRegisterId + '\'' +
+                ", mIsFriend=" + mIsFriend +
+                '}';
     }
 }

@@ -11,17 +11,14 @@ import android.support.multidex.MultiDex;
 import com.hyphenate.EMContactListener;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
-import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.chat.EMVoiceMessageBody;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.util.ActivityCollector;
-import com.jerry.nurse.util.ContactInfoCache;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.MessageManager;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -155,12 +152,12 @@ public class MyApplication extends LitePalApplication {
                 // 对传过来的消息进行逐条处理
                 for (final EMMessage emMessage : messages) {
                     // 首先去寻找本地数据库是否有这个人
-                    new ContactInfoCache() {
+                    new LocalContactCache() {
                         @Override
                         protected void onLoadContactInfoSuccess(ContactInfo ci) {
                             saveMessageDataAndSendBroadcast(emMessage);
                         }
-                    }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(), emMessage.getFrom());
+                    }.getContactInfo(EMClient.getInstance().getCurrentUser(), emMessage.getFrom());
                 }
             }
 
@@ -193,30 +190,9 @@ public class MyApplication extends LitePalApplication {
      * @param emMessage
      */
     private void saveMessageDataAndSendBroadcast(EMMessage emMessage) {
-
-        ChatMessage chatMessage = null;
-        if (emMessage.getType() == EMMessage.Type.TXT) {
-            EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
-            String msg = messageBody.getMessage();
-
-            if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
-                chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage, msg);
-            } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
-                chatMessage = MessageManager.saveReceiveChatGroupMessageLocalData(emMessage, msg);
-            }
-        } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            EMVoiceMessageBody messageBody = (EMVoiceMessageBody) emMessage.getBody();
-
-            chatMessage = MessageManager.saveReceiveChatMessageLocalData(emMessage,
-                    messageBody.getLength(), messageBody.getLocalUrl());
-        } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
-
-            chatMessage = MessageManager.saveImageReceiveChatMessageLocalData(emMessage,
-                    messageBody.getLocalUrl(), messageBody.getRemoteUrl());
-        }
-
-
+        ChatMessage chatMessage =
+                MessageManager.saveChatMessageLocalData(emMessage, false);
+        // 发送广播
         Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
         intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
         getContext().sendBroadcast(intent);
@@ -245,7 +221,7 @@ public class MyApplication extends LitePalApplication {
             public void onContactInvited(final String username, final String reason) {
                 L.i("收到好友邀请：" + username);
 
-                new ContactInfoCache() {
+                new LocalContactCache() {
                     @Override
                     protected void onLoadContactInfoSuccess(ContactInfo ci) {
 
@@ -255,7 +231,7 @@ public class MyApplication extends LitePalApplication {
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);
                     }
-                }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(), username);
+                }.getContactInfo(EMClient.getInstance().getCurrentUser(), username);
             }
 
             //好友请求被同意
@@ -263,7 +239,7 @@ public class MyApplication extends LitePalApplication {
             public void onFriendRequestAccepted(String username) {
                 L.i("好友请求被同意：" + username);
 
-                new ContactInfoCache() {
+                new LocalContactCache() {
                     @Override
                     protected void onLoadContactInfoSuccess(ContactInfo ci) {
                         // 保存好友申请到数据库
@@ -274,7 +250,7 @@ public class MyApplication extends LitePalApplication {
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);
                     }
-                }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(), username);
+                }.getContactInfo(EMClient.getInstance().getCurrentUser(), username);
             }
 
             //好友请求被拒绝
@@ -282,7 +258,7 @@ public class MyApplication extends LitePalApplication {
             public void onFriendRequestDeclined(String username) {
                 L.i("好友请求被拒绝：" + username);
 
-                new ContactInfoCache() {
+                new LocalContactCache() {
                     @Override
                     protected void onLoadContactInfoSuccess(ContactInfo info) {
                         // 保存好友申请到数据库
@@ -291,7 +267,7 @@ public class MyApplication extends LitePalApplication {
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);
                     }
-                }.tryToGetContactInfo(EMClient.getInstance().getCurrentUser(), username);
+                }.getContactInfo(EMClient.getInstance().getCurrentUser(), username);
             }
         };
         EMClient.getInstance().contactManager().setContactListener(emContactListener);

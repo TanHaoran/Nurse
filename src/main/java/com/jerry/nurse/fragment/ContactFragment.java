@@ -25,6 +25,7 @@ import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -103,7 +104,10 @@ public class ContactFragment extends BaseFragment {
         super.onStart();
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         mBodyDatas = new ArrayList<>();
-        List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
+        List<ContactInfo> infos = DataSupport.where("mMyId=? and " +
+                "mIsFriend=?", mLoginInfo.getRegisterId(), "1")
+                .find(ContactInfo.class);
+        // 组装成可以排序的列表
         for (ContactInfo info : infos) {
             Contact c = new Contact();
             c.setAvatar(info.getAvatar());

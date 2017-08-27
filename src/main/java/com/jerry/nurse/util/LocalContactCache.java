@@ -17,11 +17,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
  * Created by Jerry on 2017/8/15.
  */
 
-public abstract class ContactInfoCache {
-
-
-    public ContactInfoCache() {
-    }
+public abstract class LocalContactCache {
 
     /**
      * 获取数据库中联系人信息
@@ -29,7 +25,7 @@ public abstract class ContactInfoCache {
      * @param registerId
      * @param contactId
      */
-    public void tryToGetContactInfo(String registerId, String contactId) {
+    public void getContactInfo(String registerId, String contactId) {
         ContactInfo info = DataSupport.where("mRegisterId=?", contactId).findFirst(ContactInfo.class);
         if (info == null) {
             OkHttpUtils.get().url(ServiceConstant.GET_USER_DETAIL_INFO)
@@ -40,17 +36,18 @@ public abstract class ContactInfoCache {
 
                         @Override
                         public void onFilterResponse(String response, int id) {
-                            ContactDetailResult contactDetailResult = new Gson().fromJson(response, ContactDetailResult.class);
-                            if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
-                                if (contactDetailResult.getBody() != null) {
-                                    Contact contact = contactDetailResult.getBody();
+                            ContactDetailResult result = new Gson().fromJson(response, ContactDetailResult.class);
+                            if (result.getCode() == RESPONSE_SUCCESS) {
+                                if (result.getBody() != null) {
+                                    Contact contact = result.getBody();
                                     if (contact != null) {
+                                        // 更新本地数据库
                                         ContactInfo ci = MainActivity.updateContactInfoData(contact);
                                         onLoadContactInfoSuccess(ci);
                                     }
                                 }
                             } else {
-                                L.i(contactDetailResult.getMsg());
+                                L.i(result.getMsg());
                             }
                         }
                     });
@@ -58,6 +55,7 @@ public abstract class ContactInfoCache {
             onLoadContactInfoSuccess(info);
         }
     }
+
 
     /**
      * 当查询到联系人详细信息的时候调用
