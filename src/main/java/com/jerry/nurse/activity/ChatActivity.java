@@ -510,7 +510,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
         });
 
-        ChatMessage chatMessage = MessageManager.saveChatMessageLocalData(emMessage);
+        ChatMessage chatMessage = MessageManager.saveChatMessageData(emMessage, true);
 
         // 添加进显示列表并滑动到底
         mChatMessages.add(chatMessage);
@@ -602,6 +602,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     class SendItemDelagate implements ItemViewDelegate<ChatMessage> {
 
+        // 定义语音消息显示最长宽度和最窄宽度
         private int mMaxItemWidth;
         private int mMinItemWidth;
 
@@ -624,10 +625,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
-            // TODO 布局还需整理
             // 发消息群聊和单聊没有区别
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar()).into(imageView);
+            Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar())
+                    .error(R.drawable.icon_avatar_default).into(imageView);
+            // 时间要处理成和微信一致的效果
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             switch (chatMessage.getType()) {
                 // 文字消息
@@ -650,6 +652,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setOnClickListener(R.id.fl_anim, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            // 指定静止时候显示的图片
                             if (mSendAnimView != null) {
                                 mSendAnimView.setBackgroundResource(R.drawable.talk_yy_me_3);
                                 mSendAnimView = null;
@@ -663,6 +666,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             MediaManager.playSound(chatMessage.getPath(), new MediaPlayer.OnCompletionListener() {
                                 @Override
                                 public void onCompletion(MediaPlayer mp) {
+                                    // 播放完毕重新归位
                                     mSendAnimView.setBackgroundResource(R.drawable.talk_yy_me_3);
                                 }
                             });
@@ -675,8 +679,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
+                    // 压缩原图
+                    // TODO 显示接受图片的时候大小有问题
                     Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getLocalUrl(), 150, 150);
+                    // 指定背景形状
                     Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_send_normal);
+                    // 裁剪前景后放入背景
                     Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
                     holder.setImageBitmap(R.id.iv_image, bmp);
                     holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
@@ -699,6 +707,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     class ReceiveItemDelagate implements ItemViewDelegate<ChatMessage> {
 
+        // 定义语音消息显示最长宽度和最窄宽度
         private int mMaxItemWidth;
         private int mMinItemWidth;
 
@@ -721,8 +730,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
-            // TODO 布局还需整理
-            ImageView imageView = holder.getView(R.id.iv_avatar);
+            final ImageView imageView = holder.getView(R.id.iv_avatar);
+            holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             // 单聊
             if (!mIsGroup) {
                 Glide.with(ChatActivity.this).load(mContactInfo.getAvatar())
@@ -731,15 +740,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
             // 群聊
             else {
-                // 查询对方的信息
-                ContactInfo ci = DataSupport.where("mRegisterId=?",
-                        chatMessage.getFrom()).findFirst(ContactInfo.class);
-                Glide.with(ChatActivity.this).load(ci.getAvatar())
-                        .placeholder(R.drawable.icon_avatar_default).into(imageView);
-                holder.setVisible(R.id.tv_nickname, true);
-                holder.setText(R.id.tv_nickname, ci.getNickName());
+                // 读取群组中发送消息方资料
+                new LocalContactCache() {
+                    @Override
+                    protected void onLoadContactInfoSuccess(ContactInfo info) {
+                        Glide.with(ChatActivity.this).load(info.getAvatar())
+                                .placeholder(R.drawable.icon_avatar_default).into(imageView);
+                        holder.setVisible(R.id.tv_nickname, true);
+                        holder.setText(R.id.tv_nickname, info.getNickName());
+
+                    }
+                }.getContactInfo(mLoginInfo.getRegisterId(), chatMessage.getFrom());
             }
-            holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             switch (chatMessage.getType()) {
                 case ChatMessage.TYPE_TXT:
                     holder.setVisible(R.id.tv_message, true);
@@ -747,24 +759,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, false);
-                    break;
-                case ChatMessage.TYPE_IMAGE:
-                    holder.setVisible(R.id.tv_message, false);
-                    holder.setVisible(R.id.fl_anim, false);
-                    holder.setVisible(R.id.tv_record_length, false);
-                    holder.setVisible(R.id.iv_image, true);
-                    Bitmap in = PictureUtil.getScaleBitmap(parseImagePath(chatMessage.getLocalUrl()), 300, 300);
-                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_receive_normal);
-                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
-                    holder.setImageBitmap(R.id.iv_image, bmp);
-                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
-                                    null, chatMessage.getRemoteUrl());
-                            startActivity(intent);
-                        }
-                    });
                     break;
                 case ChatMessage.TYPE_VOICE:
                     holder.setVisible(R.id.tv_message, false);
@@ -777,6 +771,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setOnClickListener(R.id.fl_anim, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            // 指定静止时候显示的图片
                             if (mSendAnimView != null) {
                                 mSendAnimView.setBackgroundResource(R.drawable.talk_yy_you_3);
                                 mSendAnimView = null;
@@ -790,11 +785,35 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             MediaManager.playSound(chatMessage.getPath(), new MediaPlayer.OnCompletionListener() {
                                 @Override
                                 public void onCompletion(MediaPlayer mp) {
+                                    // 播放完毕重新归位
                                     mSendAnimView.setBackgroundResource(R.drawable.talk_yy_me_3);
                                 }
                             });
                         }
                     });
+                    break;
+                case ChatMessage.TYPE_IMAGE:
+                    holder.setVisible(R.id.tv_message, false);
+                    holder.setVisible(R.id.fl_anim, false);
+                    holder.setVisible(R.id.tv_record_length, false);
+                    holder.setVisible(R.id.iv_image, true);
+                    // 压缩原图
+                    Bitmap in = PictureUtil.getScaleBitmap(parseImagePath(chatMessage.getLocalUrl()), 300, 300);
+                    // 指定背景形状
+                    Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_receive_normal);
+                    // 裁剪前景后放入背景
+                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
+                    holder.setImageBitmap(R.id.iv_image, bmp);
+                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
+                                    null, chatMessage.getRemoteUrl());
+                            startActivity(intent);
+                        }
+                    });
+                    break;
+                default:
                     break;
             }
 
@@ -814,6 +833,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @OnClick(R.id.rv_content)
     void onContent(View view) {
+        L.i("点击了中间区域");
         mOptionLayout.setVisibility(View.GONE);
         KeyBoardUtil.closeKeybord(mMessageEditText, this);
     }

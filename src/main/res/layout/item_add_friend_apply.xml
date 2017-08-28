@@ -37,17 +37,22 @@
         </android.support.v7.widget.CardView>
 
         <TextView
+            android:ellipsize="end"
+            android:singleLine="true"
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/apply_nickname_width"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
-            android:layout_toRightOf="@id/cv_avatar"
             android:textSize="@dimen/contact_item_nickname_textSize"
-            tools:text="紫萱"/>
+            tools:text="紫萱"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/tv_content"
+            android:layout_alignStart="@+id/tv_content"/>
 
         <TextView
+            android:ellipsize="end"
+            android:singleLine="true"
             android:id="@+id/tv_content"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/apply_nickname_width"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_title"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"

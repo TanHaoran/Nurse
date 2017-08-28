@@ -155,7 +155,8 @@ public class MyApplication extends LitePalApplication {
                     new LocalContactCache() {
                         @Override
                         protected void onLoadContactInfoSuccess(ContactInfo ci) {
-                            saveMessageDataAndSendBroadcast(emMessage);
+                            // 保存记录并发送广播
+                            saveChatMessageAndSendBroadcast(emMessage);
                         }
                     }.getContactInfo(EMClient.getInstance().getCurrentUser(), emMessage.getFrom());
                 }
@@ -181,6 +182,7 @@ public class MyApplication extends LitePalApplication {
                 L.i("消息状态变动");
             }
         };
+        // 开始监听
         EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
     }
 
@@ -189,9 +191,9 @@ public class MyApplication extends LitePalApplication {
      *
      * @param emMessage
      */
-    private void saveMessageDataAndSendBroadcast(EMMessage emMessage) {
-        ChatMessage chatMessage =
-                MessageManager.saveChatMessageLocalData(emMessage, false);
+    private void saveChatMessageAndSendBroadcast(EMMessage emMessage) {
+        // 保存到数据库
+        ChatMessage chatMessage = MessageManager.saveChatMessageData(emMessage, false);
         // 发送广播
         Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
         intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
@@ -226,7 +228,8 @@ public class MyApplication extends LitePalApplication {
                     protected void onLoadContactInfoSuccess(ContactInfo ci) {
 
                         // 保存好友申请到数据库
-                        AddFriendApply apply = MessageManager.saveReceiveAddFriendApplyLocalData(ci, reason);
+                        AddFriendApply apply = MessageManager
+                                .saveApplyLocalData(ci, reason, false);
                         Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);
@@ -245,7 +248,7 @@ public class MyApplication extends LitePalApplication {
                         // 保存好友申请到数据库
                         ci.setFriend(true);
                         ci.save();
-                        AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(ci, true);
+                        AddFriendApply apply = MessageManager.updateApplyData(ci, true);
                         Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);
@@ -262,7 +265,7 @@ public class MyApplication extends LitePalApplication {
                     @Override
                     protected void onLoadContactInfoSuccess(ContactInfo info) {
                         // 保存好友申请到数据库
-                        AddFriendApply apply = MessageManager.updateReceiveAddFriendApplyLocalData(info, false);
+                        AddFriendApply apply = MessageManager.updateApplyData(info, false);
                         Intent intent = new Intent(ACTION_FRIEND_APPLY_RECEIVE);
                         intent.putExtra(EXTRA_FRIEND_APPLY_CONTACT, apply);
                         getContext().sendBroadcast(intent);

@@ -325,7 +325,7 @@ public class ContactDetailActivity extends BaseActivity {
             ci.setRemark(mContact.getRemark());
             ci.setRegisterId(mContact.getFriendId());
             ci.setFriend(mContact.isFriend());
-            MessageManager.saveSendAddFriendApplyLocalData(ci, reason);
+            MessageManager.saveApplyLocalData(ci, reason, true);
 
         } catch (HyphenateException e) {
             T.showShort(this, "发送申请失败");

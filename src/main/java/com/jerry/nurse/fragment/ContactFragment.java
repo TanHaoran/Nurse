@@ -25,7 +25,6 @@ import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -66,12 +65,12 @@ public class ContactFragment extends BaseFragment {
 
     private LinearLayoutManager mManager;
 
-    //设置给InexBar、ItemDecoration的完整数据集
-    private List<BaseIndexPinyinBean> mSourceDatas;
-    //头部数据源
-    private List<ContactHeaderBean> mHeaderDatas;
-    //主体部分数据源（城联系人据）
-    private List<Contact> mBodyDatas;
+    // 主数据集
+    private List<BaseIndexPinyinBean> mDatas;
+    // 头部数据集
+    private List<ContactHeaderBean> mHeaders;
+    // 联系人数据集
+    private List<Contact> mContacts;
 
     private ContactAdapter mAdapter;
     private HeaderRecyclerAndFooterWrapperAdapter mHeaderAdapter;
@@ -94,16 +93,24 @@ public class ContactFragment extends BaseFragment {
     @Override
     public void init(Bundle savedInstanceState) {
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        mBodyDatas = new ArrayList<>();
+        mContacts = new ArrayList<>();
         updateView(false);
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-        mBodyDatas = new ArrayList<>();
+        mContacts = new ArrayList<>();
+        // 读取好友列表
+        loadContacts();
+        updateView(true);
+    }
+
+    /**
+     * 读取好友列表
+     */
+    private void loadContacts() {
         List<ContactInfo> infos = DataSupport.where("mMyId=? and " +
                 "mIsFriend=?", mLoginInfo.getRegisterId(), "1")
                 .find(ContactInfo.class);
@@ -117,9 +124,8 @@ public class ContactFragment extends BaseFragment {
             c.setRemark(info.getRemark());
             c.setFriendId(info.getRegisterId());
             c.setFriend(info.isFriend());
-            mBodyDatas.add(c);
+            mContacts.add(c);
         }
-        updateView(true);
     }
 
     /**
@@ -129,10 +135,11 @@ public class ContactFragment extends BaseFragment {
      */
     private void updateView(boolean isUpdate) {
 
-        mRecyclerView.setLayoutManager(mManager = new LinearLayoutManager(getActivity()));
+        mManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mManager);
 
-        mSourceDatas = new ArrayList<>();
-        mHeaderDatas = new ArrayList<>();
+        mDatas = new ArrayList<>();
+        mHeaders = new ArrayList<>();
         // 构造收藏联系人
         List<Contact> collections = new ArrayList<>();
 //        Contact contact = new Contact();
@@ -142,10 +149,10 @@ public class ContactFragment extends BaseFragment {
 //        collections.add(contact);
 //        collections.add(contact2);
 
-        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "☆"));
-        mSourceDatas.addAll(mHeaderDatas);
+//        mHeaders.add(new ContactHeaderBean(collections, "    收藏联系人", "☆"));
+        mDatas.addAll(mHeaders);
 
-        mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mBodyDatas);
+        mAdapter = new ContactAdapter(getActivity(), R.layout.item_contact, mContacts);
 
         // 头部适配器
         mHeaderAdapter = new HeaderRecyclerAndFooterWrapperAdapter(mAdapter) {
@@ -200,7 +207,6 @@ public class ContactFragment extends BaseFragment {
                                 }
                             }
                         });
-
                         break;
                     default:
                         break;
@@ -219,18 +225,18 @@ public class ContactFragment extends BaseFragment {
         mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header_top,
                 new ContactTopHeaderBean("我的群"));
 
-        mHeaderAdapter.setHeaderView(3, R.layout.item_contact_header, mHeaderDatas.get(0));
+//        mHeaderAdapter.setHeaderView(3, R.layout.item_contact_header, mHeaders.get(0));
 
         mRecyclerView.setAdapter(mHeaderAdapter);
 
         if (!isUpdate) {
-            mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mSourceDatas)
-                    .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
+            mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mDatas)
+                    .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaders.size()));
         }
         mIndexBar.setmPressedShowTextView(mHintTextView)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
-                .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
+                .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaders.size());
 
         initDatas();
     }
@@ -242,16 +248,16 @@ public class ContactFragment extends BaseFragment {
     private void initDatas() {
 
         //先排序
-        mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
+        mIndexBar.getDataHelper().sortSourceDatas(mContacts);
 
-        mAdapter.setDatas(mBodyDatas);
+        mAdapter.setDatas(mContacts);
         mHeaderAdapter.notifyDataSetChanged();
-        mSourceDatas.addAll(mBodyDatas);
+        mDatas.addAll(mContacts);
 
 
-        mIndexBar.setmSourceDatas(mSourceDatas)//设置数据
+        mIndexBar.setmSourceDatas(mDatas)//设置数据
                 .invalidate();
-        mDecoration.setmDatas(mSourceDatas);
+        mDecoration.setmDatas(mDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
     }

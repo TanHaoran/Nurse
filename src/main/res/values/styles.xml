@@ -181,12 +181,16 @@
         <item name="android:textColor">@color/gray_textColor</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingRight">@dimen/line_paddingLeft</item>
+        <item name="android:singleLine">true</item>
     </style>
 
     <style name="Contact_Info_Line_Right_Text">
         <item name="android:textSize">@dimen/normal_textSize</item>
         <item name="android:textColor">@color/normal_textColor</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingRight">@dimen/line_paddingLeft</item>
+        <item name="android:singleLine">true</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
@@ -216,6 +220,14 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="TabMenuTextStyle">
+        <item name="android:paddingTop">@dimen/tab_menu_text_paddingTop</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:drawablePadding">@dimen/tab_menu_drawable_padding</item>
+        <item name="android:textColor">@drawable/tab_menu_text</item>
+    </style>
 
 
 </resources>

@@ -69,9 +69,7 @@ public class CreateGroupActivity extends BaseActivity {
 
     private LinearLayoutManager mManager;
 
-    private ProgressDialogManager mProgressDialogManager;
-
-    //设置给InexBar、ItemDecoration的完整数据集
+    //设置给IndexBar、ItemDecoration的完整数据集
     private List<BaseIndexPinyinBean> mSourceDatas;
     //头部数据源
     private List<ContactHeaderBean> mHeaderDatas;
@@ -105,6 +103,8 @@ public class CreateGroupActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+
         mGroupContacts = (List<Contact>) getIntent().getSerializableExtra(EXTRA_CONTACTS);
         mGroupId = getIntent().getStringExtra(EXTRA_GROUP_ID);
 
@@ -120,7 +120,6 @@ public class CreateGroupActivity extends BaseActivity {
         mBodyDatas = new ArrayList<>();
 
         updateView(false);
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
         List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
         for (ContactInfo info : infos) {
@@ -208,9 +207,7 @@ public class CreateGroupActivity extends BaseActivity {
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             GroupInfo groupInfo = result.getBody();
                             groupInfo.save();
-                            String groupId = result.getBody().getHXGroupId();
-                            String nickname = result.getBody().getHXNickName();
-                            MessageManager.saveCreateGroupLocalData(groupId, nickname);
+                            MessageManager.saveCreateGroupLocalData(groupInfo);
                             T.showShort(CreateGroupActivity.this, "创建成功");
                             finish();
                             Intent intent = ChatActivity.getIntent(CreateGroupActivity.this,
@@ -243,7 +240,7 @@ public class CreateGroupActivity extends BaseActivity {
 //        collections.add(contact);
 //        collections.add(contact2);
 
-        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "☆"));
+//        mHeaderDatas.add(new ContactHeaderBean(collections, "    收藏联系人", "☆"));
         mSourceDatas.addAll(mHeaderDatas);
 
         mAdapter = new ContactAdapter(CreateGroupActivity.this, R.layout.item_contact_choose, mBodyDatas);
@@ -307,7 +304,7 @@ public class CreateGroupActivity extends BaseActivity {
                     new ContactTopHeaderBean(mLoginInfo.getHospitalName()));
         }
 
-        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
+//        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
 
         mRecyclerView.setAdapter(mHeaderAdapter);
 

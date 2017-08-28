@@ -116,4 +116,18 @@ public class Message extends DataSupport implements Serializable {
     public void setType(int type) {
         mType = type;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "mRegisterId='" + mRegisterId + '\'' +
+                ", mContactId='" + mContactId + '\'' +
+                ", mImageResource=" + mImageResource +
+                ", mImageUrl='" + mImageUrl + '\'' +
+                ", mTitle='" + mTitle + '\'' +
+                ", mContent='" + mContent + '\'' +
+                ", mTime=" + mTime +
+                ", mType=" + mType +
+                '}';
+    }
 }

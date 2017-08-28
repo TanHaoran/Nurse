@@ -10,7 +10,8 @@
     <dimen name="line_paddingLeft">15dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
-    <dimen name="tab_menu_drawable_padding">2dp</dimen>
+    <dimen name="tab_menu_drawable_padding">1dp</dimen>
+    <dimen name="tab_menu_text_paddingTop">3dp</dimen>
     <dimen name="tab_menu_height">50dp</dimen>
 
     <!--注册-->
@@ -129,6 +130,10 @@
     <dimen name="group_info_list_paddingLeft">50dp</dimen>
     <dimen name="apply_button_width">48dp</dimen>
     <dimen name="apply_button_height">31dp</dimen>
+    <dimen name="chat_title_nickname_width">200dp</dimen>
+    <dimen name="message_time_width">80dp</dimen>
+    <dimen name="apply_nickname_width">150dp</dimen>
+    <dimen name="chat_receive_nickname_width">100dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>

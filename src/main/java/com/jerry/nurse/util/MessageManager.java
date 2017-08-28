@@ -1,7 +1,5 @@
 package com.jerry.nurse.util;
 
-import android.support.annotation.NonNull;
-
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
@@ -11,11 +9,13 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.Message;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.Date;
+import java.util.List;
 
 import static com.jerry.nurse.model.AddFriendApply.STATUS_AGREE;
 
@@ -72,7 +72,7 @@ public class MessageManager {
      * 发送消息：
      * 将消息数据保存在本地数据库
      */
-    public static ChatMessage saveChatMessageLocalData(
+    public static ChatMessage saveChatMessageData(
             EMMessage emMessage, boolean isSend) {
         Message message = null;
         ChatMessage chatMessage;
@@ -83,7 +83,8 @@ public class MessageManager {
         if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
             try {
                 message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                        emMessage.getFrom(), emMessage.getTo(), "1").findFirst(Message.class);
+                        EMClient.getInstance().getCurrentUser(), emMessage.getTo(), "1")
+                        .findFirst(Message.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -104,9 +105,14 @@ public class MessageManager {
         }
         // 群聊
         else {
+            List<Message> all = DataSupport.findAll(Message.class);
+            for (Message mes : all) {
+                L.i(mes.toString());
+            }
             try {
                 message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                        emMessage.getFrom(), emMessage.getTo(), "2").findFirst(Message.class);
+                        EMClient.getInstance().getCurrentUser(), emMessage.getTo(), "2")
+                        .findFirst(Message.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -179,7 +185,8 @@ public class MessageManager {
      * @param ci
      * @param reason
      */
-    public static AddFriendApply saveReceiveAddFriendApplyLocalData(ContactInfo ci, String reason) {
+    public static AddFriendApply saveApplyLocalData(ContactInfo ci,
+                                                    String reason, boolean isSend) {
         // 构建首页消息
         Message message = null;
         try {
@@ -194,17 +201,23 @@ public class MessageManager {
         message.setType(Message.TYPE_ADD_FRIEND_APPLY);
         message.setImageResource(R.drawable.icon_xzhy);
         message.setTitle("好友申请");
-        message.setContent(ci.getDisplayName() + "请求添加您为好友");
+        if (isSend) {
+            message.setContent("您已申请添加" + ci.getDisplayName() + "为好友");
+        } else {
+            message.setContent(ci.getDisplayName() + "请求添加您为好友");
+        }
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
         message.setContactId(ci.getRegisterId());
         message.save();
 
+
         // 构建添加好友消息
         AddFriendApply apply = null;
         try {
             apply = DataSupport.where("mRegisterId=? and mContactId=?",
-                    EMClient.getInstance().getCurrentUser(), ci.getRegisterId()).findFirst(AddFriendApply.class);
+                    EMClient.getInstance().getCurrentUser(), ci.getRegisterId())
+                    .findFirst(AddFriendApply.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,8 +225,12 @@ public class MessageManager {
             apply = new AddFriendApply();
         }
         apply.setAvatar(ci.getAvatar());
-        apply.setStatus(AddFriendApply.STATUS_RECEIVE_ING);
-        apply.setNickname(ci.getNickName());
+        if (isSend) {
+            apply.setStatus(AddFriendApply.STATUS_SEND_ING);
+        } else {
+            apply.setStatus(AddFriendApply.STATUS_RECEIVE_ING);
+        }
+        apply.setNickname(ci.getDisplayName());
         apply.setContactId(ci.getRegisterId());
         apply.setRegisterId(EMClient.getInstance().getCurrentUser());
         apply.setTime(new Date().getTime());
@@ -229,7 +246,7 @@ public class MessageManager {
      * @param ci
      * @param agree 是否同意
      */
-    public static AddFriendApply updateReceiveAddFriendApplyLocalData(ContactInfo ci, boolean agree) {
+    public static AddFriendApply updateApplyData(ContactInfo ci, boolean agree) {
         // 构建首页消息
         Message message = null;
         try {
@@ -267,11 +284,12 @@ public class MessageManager {
             apply = new AddFriendApply();
         }
         apply.setAvatar(ci.getAvatar());
-        apply.setNickname(ci.getNickName());
+        apply.setNickname(ci.getDisplayName());
         apply.setContactId(ci.getRegisterId());
         apply.setRegisterId(EMClient.getInstance().getCurrentUser());
+        // 修改请求状态
         if (agree) {
-            apply.setStatus(STATUS_AGREE);
+            apply.setStatus(AddFriendApply.STATUS_AGREE);
         } else {
             apply.setStatus(AddFriendApply.STATUS_REFUSE);
         }
@@ -281,129 +299,30 @@ public class MessageManager {
     }
 
     /**
-     * 发送好友申请：
-     * 保存好友申请本地数据
-     *
-     * @param ci
-     * @param reason
-     */
-    public static void saveSendAddFriendApplyLocalData(ContactInfo ci, String reason) {
-        // 构建首页消息
-        Message message = null;
-        try {
-            message = DataSupport.where("mType=? and mRegisterId=?", "0",
-                    EMClient.getInstance().getCurrentUser()).findFirst(Message.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (message == null) {
-            message = new Message();
-        }
-
-        message.setType(Message.TYPE_ADD_FRIEND_APPLY);
-        message.setImageResource(R.drawable.icon_xzhy);
-        message.setTitle("好友申请");
-        message.setContent("您已申请添加" + ci.getDisplayName() + "为好友");
-        message.setTime(new Date().getTime());
-        message.setRegisterId(EMClient.getInstance().getCurrentUser());
-        message.setContactId(ci.getRegisterId());
-        message.save();
-
-        // 构建添加好友消息
-        AddFriendApply apply = null;
-        try {
-            apply = DataSupport.where("mRegisterId=? and mContactId=?",
-                    EMClient.getInstance().getCurrentUser(),
-                    ci.getRegisterId()).findFirst(AddFriendApply.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (apply == null) {
-            apply = new AddFriendApply();
-        }
-        apply.setNickname(ci.getNickName());
-        apply.setAvatar(ci.getAvatar());
-        apply.setStatus(AddFriendApply.STATUS_SEND_ING);
-        apply.setContactId(ci.getRegisterId());
-        apply.setRegisterId(EMClient.getInstance().getCurrentUser());
-        apply.setTime(new Date().getTime());
-        apply.setReason(reason);
-        apply.save();
-    }
-
-    /**
      * 创建群：
      * 保存本地群数据
      *
-     * @param groupId
-     * @param nickname
+     * @param groupInfo
      */
-    public static void saveCreateGroupLocalData(String groupId, String nickname) {
+    public static void saveCreateGroupLocalData(GroupInfo groupInfo) {
         // 构建首页消息
         Message message = null;
         try {
             message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                    EMClient.getInstance().getCurrentUser(), groupId, "2").findFirst(Message.class);
+                    EMClient.getInstance().getCurrentUser(), groupInfo.getHXGroupId(), "2")
+                    .findFirst(Message.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (message == null) {
             message = new Message();
         }
-
         message.setType(Message.TYPE_CHAT_GROUP);
-        message.setImageResource(R.drawable.icon_nurse_class);
-        message.setTitle(nickname);
+        message.setImageResource(R.drawable.icon_qlt);
+        message.setTitle(groupInfo.getHXNickName());
         message.setTime(new Date().getTime());
         message.setRegisterId(EMClient.getInstance().getCurrentUser());
-        message.setContactId(groupId);
+        message.setContactId(groupInfo.getHXGroupId());
         message.save();
-    }
-
-    /**
-     * 收到消息：群
-     * 将消息数据保存在本地数据库
-     *
-     * @param emMessage
-     * @param msg
-     * @return
-     */
-    @NonNull
-    public static ChatMessage saveReceiveChatGroupMessageLocalData(EMMessage emMessage, String msg) {
-        // 保存首页消息
-        Message message = null;
-        try {
-            message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                    EMClient.getInstance().getCurrentUser(), emMessage.getTo(), "2").findFirst(Message.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (message == null) {
-            message = new Message();
-        }
-        message.setType(Message.TYPE_CHAT_GROUP);
-        message.setTime(emMessage.getMsgTime());
-        message.setRegisterId(EMClient.getInstance().getCurrentUser());
-        message.setContactId(emMessage.getTo());
-        message.save();
-
-        // 保存聊天消息
-        ChatMessage chatMessage = new ChatMessage();
-        if (emMessage.getType() == EMMessage.Type.TXT) {
-            chatMessage.setType(ChatMessage.TYPE_TXT);
-        } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            chatMessage.setType(ChatMessage.TYPE_VOICE);
-        } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            chatMessage.setType(ChatMessage.TYPE_IMAGE);
-        }
-        chatMessage.setFrom(emMessage.getFrom());
-        chatMessage.setTo(emMessage.getTo());
-        chatMessage.setSend(false);
-        chatMessage.setGroup(true);
-        chatMessage.setContent(msg);
-        chatMessage.setTime(emMessage.getMsgTime());
-        chatMessage.save();
-        L.i("读取到一群条消息，并存入数据库");
-        return chatMessage;
     }
 }

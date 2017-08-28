@@ -6,14 +6,10 @@
               android:layout_width="match_parent"
               android:layout_height="@dimen/contact_item_height"
               android:background="@drawable/plugin_line_selector"
-              android:orientation="vertical"
-              android:paddingLeft="@dimen/line_paddingLeft">
-
-    <View
-        style="@style/DividerLineStyle"
-        android:layout_marginLeft="@dimen/contact_item_divider_line_marginLef"/>
+              android:orientation="vertical">
 
     <RelativeLayout
+        android:paddingLeft="@dimen/line_paddingLeft"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -55,6 +51,9 @@
             style="@style/ArrowEnterStyle"/>
 
     </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"/>
 
 
 </LinearLayout>

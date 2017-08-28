@@ -15,6 +15,7 @@
         android:layout_weight="1"/>
 
     <View
+        android:background="#B2B2B2"
         style="@style/DividerLineStyle"/>
 
     <LinearLayout
@@ -31,14 +32,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawablePadding="@dimen/tab_menu_drawable_padding"
                 android:drawableTop="@drawable/tab_menu_message"
-                android:text="@string/message"
-                android:textColor="@drawable/tab_menu_text"/>
+                android:id="@+id/tv_message"
+                style="@style/TabMenuTextStyle"
+                android:text="@string/message"/>
 
             <TextView
                 android:id="@+id/tv_message_num"
@@ -57,14 +54,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_office"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawablePadding="@dimen/tab_menu_drawable_padding"
                 android:drawableTop="@drawable/tab_menu_office"
-                android:text="@string/business"
-                android:textColor="@drawable/tab_menu_text"/>
+                android:id="@+id/tv_office"
+                style="@style/TabMenuTextStyle"
+                android:text="@string/business"/>
 
             <TextView
                 android:id="@+id/tv_office_num"
@@ -83,14 +76,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_contact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawablePadding="@dimen/tab_menu_drawable_padding"
                 android:drawableTop="@drawable/tab_menu_contact"
-                android:text="@string/contact"
-                android:textColor="@drawable/tab_menu_text"/>
+                android:id="@+id/tv_contact"
+                style="@style/TabMenuTextStyle"
+                android:text="@string/contact"/>
 
             <TextView
                 android:id="@+id/tv_contact_num"
@@ -109,14 +98,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_me"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawablePadding="@dimen/tab_menu_drawable_padding"
                 android:drawableTop="@drawable/tab_menu_me"
-                android:text="@string/mine"
-                android:textColor="@drawable/tab_menu_text"/>
+                android:id="@+id/tv_me"
+                style="@style/TabMenuTextStyle"
+                android:text="@string/mine"/>
 
             <TextView
                 android:id="@+id/tv_me_num"

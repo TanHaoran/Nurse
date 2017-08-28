@@ -22,21 +22,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="@dimen/line_paddingLeft">
+            android:orientation="vertical">
 
             <TextView
+                android:padding="@dimen/line_paddingLeft"
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingBottom="@dimen/block_marinTop"
-                android:paddingTop="@dimen/block_marinTop"
                 android:textColor="@color/normal_textColor"
                 android:textSize="@dimen/big_textSize"
                 tools:text="公告标题"/>
 
             <LinearLayout
+                android:paddingLeft="@dimen/line_paddingLeft"
+                android:paddingRight="@dimen/line_paddingLeft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -59,7 +59,13 @@
                     tools:text="2017-8-5 14:26:14"/>
             </LinearLayout>
 
+            <View
+                android:layout_marginTop="@dimen/block_marinTop"
+                style="@style/DividerLineStyle"/>
+
             <TextView
+                android:paddingLeft="@dimen/line_paddingLeft"
+                android:paddingRight="@dimen/line_paddingLeft"
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
