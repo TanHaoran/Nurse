@@ -3,13 +3,16 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.app.MyApplication;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.LoginInfoResult;
@@ -21,18 +24,16 @@ import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.TencentLoginUtil;
+import com.jerry.nurse.util.TencentLoginManager;
+import com.jerry.nurse.view.PasswordEditText;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.MediaType;
@@ -41,7 +42,6 @@ import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_FORGET_PASSWORD;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_REGISTER;
 import static com.jerry.nurse.activity.SignupActivity.TYPE_VERIFICATION_CODE;
-import static com.jerry.nurse.activity.WXEntryActivity.WX_APP_ID;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
@@ -55,16 +55,13 @@ public class LoginActivity extends BaseActivity {
     EditText mCellphoneEditText;
 
     @Bind(R.id.et_password)
-    EditText mPasswordEditText;
+    PasswordEditText mPasswordEditText;
 
     @Bind(R.id.btn_login)
-    AppCompatButton mLoginButton;
-
-    @BindString(R.string.password_length_invalid)
-    String mStringPasswordInvalid;
+    Button mLoginButton;
 
     // 腾讯官方获取的APPID
-    private TencentLoginUtil mTencentLoginUtil;
+    private TencentLoginManager mTencentLoginManager;
 
     private LoginInfo mLoginInfo;
 
@@ -81,11 +78,54 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
+        // 初始化登录按钮为不可用
+        setButtonEnable(this, mLoginButton, false);
 
-        // 入口处判断用户是否已经登录
+        // 入口处判断用户是否已经登录，如果已经登录直接跳转到主界面
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         if (mLoginInfo != null) {
             goToMainActivity();
+        }
+
+        // 监听密码的填写状态
+        mPasswordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 如果手机号和密码都不为空的时候，登录按钮可用
+                if (mPasswordEditText.getText().toString().length() > 0 &&
+                        mCellphoneEditText.getText().toString().length() > 0) {
+                    setButtonEnable(LoginActivity.this, mLoginButton, true);
+                } else {
+                    setButtonEnable(LoginActivity.this, mLoginButton, false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    /**
+     * 设置登录按钮的可用状态
+     *
+     * @param context
+     * @param button  按钮
+     * @param enable  是否可用
+     */
+    public static void setButtonEnable(Context context, Button button, boolean enable) {
+        if (enable) {
+            button.setEnabled(true);
+            button.setBackgroundResource(R.drawable.button_bg);
+        } else {
+            button.setEnabled(false);
+            button.setBackgroundColor(context.getResources().getColor(R.color.button_disable));
         }
     }
 
@@ -101,18 +141,19 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     void onLoginButton(View view) {
+        // 获取国家码、手机号和密码
         String countryCode = mCountryCodeTextView.getText().toString();
         String cellphone = mCellphoneEditText.getText().toString();
         String password = mPasswordEditText.getText().toString().trim();
 
         //验证用户名和密码格式是否符合
-        String errorMessage = localValidate(cellphone, password);
-        if (errorMessage != null) {
-            T.showShort(this, errorMessage);
+        int result = localValidate(cellphone, password);
+        if (result != 0) {
+            T.showShort(this, result);
             return;
         }
 
-        // 第一步：登录护士通账号
+        // 登录系统
         login(countryCode, cellphone, password);
     }
 
@@ -120,24 +161,25 @@ public class LoginActivity extends BaseActivity {
     /**
      * 本地验证登录
      */
-    private String localValidate(String cellphone, String password) {
+    private int localValidate(String cellphone, String password) {
+        int result = 0;
 
         if (cellphone.isEmpty()) {
-            return "手机号不能为空";
+            result = R.string.cellphone_empty;
         }
         if (!AccountValidatorUtil.isMobile(cellphone)) {
-            return "手机号不合法";
+            result = R.string.cellphone_invalid;
         }
 
         if (password.isEmpty()) {
-            return "密码不能为空";
+            result = R.string.password_empty;
         }
 
         // 密码的长度要介于4和10之间
         if (password.length() < 4 || password.length() > 12) {
-            return mStringPasswordInvalid;
+            result = R.string.password_length_invalid;
         }
-        return null;
+        return result;
     }
 
     /**
@@ -156,10 +198,12 @@ public class LoginActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 腾讯的第三方登录
         if (requestCode == Constants.REQUEST_LOGIN) {
-            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
+            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginManager.getIUiListener());
         }
 
+        // 回调正常
         if (resultCode == RESULT_OK) {
+            // 获取国家码
             if (requestCode == REQUEST_COUNTRY) {
                 // 获取国家地区编号并显示
                 Bundle bundle = data.getExtras();
@@ -181,7 +225,9 @@ public class LoginActivity extends BaseActivity {
     private void login(String countryCode, final String cellphone, final String password) {
         mProgressDialogManager.setMessage("登录中...");
         mProgressDialogManager.show();
+        // 构建登录类
         Register register = new Register(cellphone, password, countryCode);
+        // 设置推送的Id
         register.setDeviceId(JPushInterface.getRegistrationID(this));
         OkHttpUtils.postString()
                 .url(ServiceConstant.LOGIN)
@@ -194,8 +240,8 @@ public class LoginActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
                         if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
-                            LoginManager loginManager = new LoginManager(LoginActivity.this, null);
-                            loginManager.saveAndEnter(loginInfoResult.getBody());
+                            // 用登录管理器登录成功后保存登录信息
+                            onLoginSuccess(loginInfoResult);
                         } else {
                             T.showShort(LoginActivity.this, loginInfoResult.getMsg());
                         }
@@ -203,9 +249,24 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 使用登录管理器登录成功后保存登录信息
+     *
+     * @param loginInfoResult
+     */
+    private void onLoginSuccess(LoginInfoResult loginInfoResult) {
+        LoginManager loginManager = new LoginManager(LoginActivity.this, mProgressDialogManager);
+        loginManager.saveAndEnter(loginInfoResult.getBody());
+    }
+
+    /**
+     * 服务协议
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", "格格服务协议");
+        Intent intent = HtmlActivity.getIntent(this, ServiceConstant.PROTOCOL_URL, "格格服务协议");
         startActivity(intent);
     }
 
@@ -242,7 +303,17 @@ public class LoginActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    /********************************使用院内账号登录***************************************/
+    /*************************************************************************************
+     *
+     * 第三方登陆
+     *
+     ************************************************************************************/
+
+    /**
+     * 使用院内账号登录
+     *
+     * @param view
+     */
     @OnClick(R.id.ll_in_hospital)
     void onHospitalLogin(View view) {
         Intent intent = HospitalLoginActivity.getIntent(this);
@@ -250,7 +321,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    /********************************QQ第三方登录******************************************/
+    /********************************使用QQ方登录******************************************/
 
     /**
      * 使用qq登录
@@ -259,22 +330,25 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.ll_qq)
     void onQQ(View view) {
-        mTencentLoginUtil = new TencentLoginUtil(this) {
+        // 使用腾讯登录管理器登录
+        mTencentLoginManager = new TencentLoginManager(this) {
 
             @Override
             public void loginComplete(Qq info) {
+                // 根据回传的登录信息进行系统注册(登录)
                 postQQLogin(info);
             }
         };
-        mTencentLoginUtil.login();
+        mTencentLoginManager.login();
     }
 
     /**
-     * 使用qq登录
+     * qq登录系统
      *
      * @param info
      */
     private void postQQLogin(Qq info) {
+        // 设置极光推送Id
         info.setDeviceRegId(JPushInterface.getRegistrationID(this));
         mProgressDialogManager.show();
         OkHttpUtils.postString()
@@ -286,10 +360,10 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
                         if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
-                            LoginManager loginManager = new LoginManager(LoginActivity.this, mProgressDialogManager);
-                            loginManager.saveAndEnter(loginInfoResult.getBody());
+                            // 使用登录管理器登录成功后保存登录信息
+                            onLoginSuccess(loginInfoResult);
                         } else {
                             T.showShort(LoginActivity.this, loginInfoResult.getMsg());
                         }
@@ -297,13 +371,22 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
+    /********************************使用微信方登录*****************************************/
+    /**
+     * 微信登录
+     *
+     * @param view
+     */
     @OnClick(R.id.ll_wechat)
     void onWechat(View view) {
-        IWXAPI WXapi = WXAPIFactory.createWXAPI(LoginActivity.this, WX_APP_ID, true);
-        WXapi.registerApp(WX_APP_ID);
+        if (!MyApplication.sWxApi.isWXAppInstalled()) {
+            // 未安装微信
+            T.showShort(this, R.string.wechat_not_install);
+            return;
+        }
         SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";
-        req.state = "wechat_sdk_demo";
-        WXapi.sendReq(req);
+        req.state = "diandi_wx_login";
+        MyApplication.sWxApi.sendReq(req);
     }
 }

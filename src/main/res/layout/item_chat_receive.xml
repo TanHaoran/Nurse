@@ -95,6 +95,7 @@
             tools:text="天使"/>
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

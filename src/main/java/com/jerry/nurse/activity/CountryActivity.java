@@ -14,10 +14,9 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CountriesResult;
 import com.jerry.nurse.model.Country;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -43,7 +42,6 @@ public class CountryActivity extends BaseActivity {
     private List<Country> mCountries;
 
     private String mCountryCode;
-    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, String countryCode) {
         Intent intent = new Intent(context, CountryActivity.class);
@@ -98,12 +96,10 @@ public class CountryActivity extends BaseActivity {
      * 设置国家代码数据
      */
     private void setCountriesData() {
-        mAdapter = new CountryAdapter(this, R.layout.item_string, mCountries);
         // 设置间隔线
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
+        RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new CountryAdapter(this, R.layout.item_string, mCountries);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -115,8 +111,9 @@ public class CountryActivity extends BaseActivity {
 
         @Override
         protected void convert(final ViewHolder holder, final Country country, final int position) {
-
+            // 将国家名称和号码区拼接到一起
             holder.setText(R.id.tv_string, country.getCountryName() + " " + country.getCountryCode());
+            // 对当前选择的国家进行打钩
             if (country.getCountryCode().equals(mCountryCode)) {
                 holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
             } else {
@@ -128,6 +125,7 @@ public class CountryActivity extends BaseActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
+                    // 将国家名称和号码回传回去
                     bundle.putString(EXTRA_COUNTRY_NAME, country.getCountryName());
                     bundle.putString(EXTRA_COUNTRY_CODE, country.getCountryCode());
                     intent.putExtras(bundle);

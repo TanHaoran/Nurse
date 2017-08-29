@@ -201,7 +201,7 @@ public class CellphoneContactActivity extends BaseActivity {
                     else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_FRIEND ||
                             cellphoneContact.getStatus() == CellphoneContact.TYPE_IS_FRIEND) {
                         Intent intent = ContactDetailActivity.getIntent(CellphoneContactActivity.this,
-                                cellphoneContact.getRegisterId(),false);
+                                cellphoneContact.getRegisterId());
                         startActivity(intent);
                     }
                 }

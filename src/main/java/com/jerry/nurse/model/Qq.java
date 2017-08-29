@@ -15,7 +15,6 @@ public class Qq {
     private String Gender;
     private String AccessToken;
     private String Expires;
-    private String DeviceId;
     private String DeviceRegId;
 
     public String getOpenId() {
@@ -82,13 +81,6 @@ public class Qq {
         Expires = expires;
     }
 
-    public String getDeviceId() {
-        return DeviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        DeviceId = deviceId;
-    }
 
     public String getRegisterId() {
         return RegisterId;

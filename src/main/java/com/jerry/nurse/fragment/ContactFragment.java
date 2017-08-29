@@ -276,7 +276,7 @@ public class ContactFragment extends BaseFragment {
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId(), false);
+                    Intent intent = ContactDetailActivity.getIntent(getActivity(), contact.getFriendId());
                     startActivity(intent);
                 }
             });

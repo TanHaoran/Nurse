@@ -268,7 +268,7 @@ public class GroupInfoActivity extends BaseActivity {
                 public void onClick(View v) {
                     // 最后一个是添加群成员
                     if (position != mDatas.size() - 1) {
-                        Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId(), false);
+                        Intent intent = ContactDetailActivity.getIntent(GroupInfoActivity.this, contact.getFriendId());
                         startActivity(intent);
                     } else {
                         Intent intent = CreateGroupActivity.getIntent(GroupInfoActivity.this,

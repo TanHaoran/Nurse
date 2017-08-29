@@ -25,10 +25,10 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_group"
-                android:padding="@dimen/block_marinTop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/block_marinTop"/>
 
             <View
                 style="@style/DividerLineStyle"/>
@@ -43,6 +43,7 @@
                 android:layout_height="@dimen/contact_group_line_height">
 
                 <TextView
+                    android:id="@+id/tv_group_name_text"
                     style="@style/PersonalInfoLineLeftTextStyle"
                     android:text="@string/group_name"/>
 
@@ -53,7 +54,11 @@
                 <TextView
                     android:id="@+id/tv_group_name"
                     style="@style/personal_info_line_right_text_style"
+                    android:layout_marginLeft="@dimen/line_paddingLeft"
                     android:layout_toLeftOf="@id/iv_group_name"
+                    android:layout_toRightOf="@id/tv_group_name_text"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     tools:text="实习护士组"/>
             </RelativeLayout>
 

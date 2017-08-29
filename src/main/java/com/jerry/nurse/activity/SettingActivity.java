@@ -34,7 +34,7 @@ import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.util.TencentLoginUtil;
+import com.jerry.nurse.util.TencentLoginManager;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -73,7 +73,7 @@ public class SettingActivity extends BaseActivity {
 
     private LoginInfo mLoginInfo;
 
-    private TencentLoginUtil mTencentLoginUtil;
+    private TencentLoginManager mTencentLoginManager;
 
     private BindInfoResult.BindInfo mBindInfo;
 
@@ -125,13 +125,13 @@ public class SettingActivity extends BaseActivity {
         L.i("绑定的数量是：" + mBindInfo.getBindCount());
         // 绑定qq
         if (TextUtils.isEmpty(mBindInfo.getQQOpenId())) {
-            mTencentLoginUtil = new TencentLoginUtil(this) {
+            mTencentLoginManager = new TencentLoginManager(this) {
                 @Override
                 public void loginComplete(Qq info) {
                     bindQQ(info);
                 }
             };
-            mTencentLoginUtil.login();
+            mTencentLoginManager.login();
 
         } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
@@ -446,7 +446,7 @@ public class SettingActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 腾讯的第三方登陆
         if (requestCode == Constants.REQUEST_LOGIN) {
-            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginUtil.getIUiListener());
+            Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginManager.getIUiListener());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -3,8 +3,6 @@ package com.jerry.nurse.util;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.jerry.nurse.activity.BaseActivity;
-import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.QQOriginUserInfo;
 import com.jerry.nurse.model.Qq;
 import com.tencent.connect.UserInfo;
@@ -16,13 +14,11 @@ import com.tencent.tauth.UiError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 /**
  * Created by Jerry on 2017/8/4.
  */
 
-public abstract class TencentLoginUtil {
+public abstract class TencentLoginManager {
 
     // 腾讯官方获取的APPID
     private static final String APP_ID = "1106292702";
@@ -32,7 +28,7 @@ public abstract class TencentLoginUtil {
 
     private Context mContext;
 
-    public TencentLoginUtil(Context context) {
+    public TencentLoginManager(Context context) {
         mContext = context;
         //传入参数APPID和全局Context上下文
         mTencent = Tencent.createInstance(APP_ID, context);
@@ -71,24 +67,12 @@ public abstract class TencentLoginUtil {
                 mTencent.setAccessToken(accessToken, expires);
                 final QQToken qqToken = mTencent.getQQToken();
                 mUserInfo = new UserInfo(mContext, qqToken);
+
                 mUserInfo.getUserInfo(new IUiListener() {
                     @Override
                     public void onComplete(final Object response) {
-                        BaseActivity.requestRuntimePermission(new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                                new PermissionListener() {
-
-                                    @Override
-                                    public void onGranted() {
-                                        String deviceId = DeviceUtil.getDeviceId(mContext);
-                                        makeUpUserInfo(response, deviceId, openID, accessToken, expires);
-                                    }
-
-                                    @Override
-                                    public void onDenied(List<String> deniedPermission) {
-                                        String deviceId = "";
-                                        makeUpUserInfo(response, deviceId, openID, accessToken, expires);
-                                    }
-                                });
+                        // 拼凑我们自己平台所需要的QQ类
+                        makeUpUserInfo(response, openID, accessToken, expires);
 
                     }
 
@@ -119,7 +103,15 @@ public abstract class TencentLoginUtil {
         }
     }
 
-    private void makeUpUserInfo(Object response, String deviceId, String openID, String accessToken, String expires) {
+    /**
+     * 拼凑我们自己平台所需要的QQ类
+     *
+     * @param response
+     * @param openID
+     * @param accessToken
+     * @param expires
+     */
+    private void makeUpUserInfo(Object response, String openID, String accessToken, String expires) {
         QQOriginUserInfo originInfo = new Gson().fromJson(response.toString(), QQOriginUserInfo.class);
         Qq info = new Qq();
         info.setOpenId(openID);
@@ -131,7 +123,6 @@ public abstract class TencentLoginUtil {
         info.setGender(originInfo.getGender());
         info.setAccessToken(accessToken);
         info.setExpires(expires);
-        info.setDeviceId(deviceId);
         L.e("登录成功" + new Gson().toJson(info));
         loginComplete(info);
     }

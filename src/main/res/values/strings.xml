@@ -54,6 +54,8 @@
     <string name="login_success">登录成功</string>
     <string name="account">账号</string>
     <string name="please_input_account">请输入账号</string>
+    <string name="password_empty">密码不能为空</string>
+    <string name="wechat_not_install">你还未安装微信</string>
 
     <string name="signup_success">注册成功</string>
     <string name="signup_failed">注册失败</string>
@@ -61,7 +63,7 @@
     <string name="get_verification_code_failed">发送验证码失败</string>
     <string name="get_verification_finished">验证码已发送</string>
     <string name="cellphone_empty">手机号不能为空</string>
-    <string name="cellphone_invalid">手机号不合法</string>
+    <string name="cellphone_invalid">手机号格式不正确</string>
     <string name="cellphone_dismatch">手机号不匹配</string>
     <string name="verification_code_invalid">验证码不正确</string>
     <string name="verification_code_length_invalid">验证码长度不正确</string>
@@ -188,6 +190,7 @@
     <string name="audit_failed_text">认证未通过原因</string>
     <string name="scan_qr_code_and_be_my_friend">扫描二维码，添加我为好友</string>
     <string name="please_select_hospital_first">请先选择医院</string>
+    <string name="in_hospital_account_please_edit_on_pc">院内账号请在PC端修改</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

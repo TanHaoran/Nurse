@@ -32,9 +32,6 @@ public class GroupListActivity extends BaseActivity {
     @Bind(R.id.rv_contact_list)
     RecyclerView mRecyclerView;
 
-
-    private ProgressDialogManager mProgressDialogManager;
-
     private List<GroupInfo> mGroupInfos;
 
     private GroupAdapter mAdapter;

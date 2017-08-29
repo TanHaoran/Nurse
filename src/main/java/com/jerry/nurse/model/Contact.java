@@ -34,6 +34,7 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
     private String Sex;
     private String FriendId;
     private boolean isChoose;
+    private boolean IsInternalHospital;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(Avatar)) {
@@ -138,6 +139,14 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
         FriendId = friendId;
     }
 
+    public boolean isInternalHospital() {
+        return IsInternalHospital;
+    }
+
+    public void setInternalHospital(boolean internalHospital) {
+        IsInternalHospital = internalHospital;
+    }
+
     @Override
     public String getTarget() {
         if (!TextUtils.isEmpty(Remark)) {
@@ -174,7 +183,9 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
                 ", Remark='" + Remark + '\'' +
                 ", Role=" + Role +
                 ", Sex='" + Sex + '\'' +
-                ", RegisterId='" + FriendId + '\'' +
+                ", FriendId='" + FriendId + '\'' +
+                ", isChoose=" + isChoose +
+                ", IsInternalHospital=" + IsInternalHospital +
                 '}';
     }
 }

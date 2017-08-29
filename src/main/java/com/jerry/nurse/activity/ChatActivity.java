@@ -159,7 +159,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             List<EMMessage> messages = (List<EMMessage>) msg.obj;
             for (final EMMessage emMessage : messages) {
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setSend(false);
                 if (emMessage.getType() == EMMessage.Type.TXT) {
                     EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
                     chatMessage.setContent(messageBody.getMessage());
@@ -276,7 +275,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
     }
 
     @Override
@@ -492,6 +490,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private void easeMobSendMessage(EMMessage emMessage) {
         // 调用环信SDK发送信息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
+        // TODO 设置对方已读???
+        emMessage.setAcked(true);
+        emMessage.setUnread(false);
         // 监听消息发送状态
         emMessage.setMessageStatusCallback(new EMCallBack() {
             @Override
@@ -543,6 +544,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         EMClient.getInstance().chatManager().removeMessageListener(this);
     }
 
+    /**
+     * 收到消息的回调
+     *
+     * @param messages
+     */
     @Override
     public void onMessageReceived(final List<EMMessage> messages) {
         L.i("收到一条消息");
@@ -551,23 +557,45 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         mHandler.sendMessage(message);
     }
 
+    /**
+     * 收到透传消息
+     *
+     * @param messages
+     */
     @Override
     public void onCmdMessageReceived(List<EMMessage> messages) {
+        L.i("收到一条透传消息");
     }
 
+    /**
+     * 收到已读回执
+     *
+     * @param messages
+     */
     @Override
     public void onMessageRead(List<EMMessage> messages) {
-
+        L.i("对方已经读取了你的消息");
     }
 
+    /**
+     * 已送达回执
+     *
+     * @param messages
+     */
     @Override
     public void onMessageDelivered(List<EMMessage> messages) {
-
+        L.i("对方已经收到了你的消息");
     }
 
+    /**
+     * 消息状态改变
+     *
+     * @param message
+     * @param change
+     */
     @Override
     public void onMessageChanged(EMMessage message, Object change) {
-
+        L.i("消息状态改变");
     }
 
     @OnClick(R.id.iv_back)
@@ -747,7 +775,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         Glide.with(ChatActivity.this).load(info.getAvatar())
                                 .placeholder(R.drawable.icon_avatar_default).into(imageView);
                         holder.setVisible(R.id.tv_nickname, true);
-                        holder.setText(R.id.tv_nickname, info.getNickName());
+                        holder.setText(R.id.tv_nickname, info.getDisplayName());
 
                     }
                 }.getContactInfo(mLoginInfo.getRegisterId(), chatMessage.getFrom());
@@ -816,7 +844,13 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 default:
                     break;
             }
-
+            holder.setOnClickListener(R.id.iv_avatar, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = ContactDetailActivity.getIntent(ChatActivity.this, chatMessage.getFrom());
+                    startActivity(intent);
+                }
+            });
         }
     }
 

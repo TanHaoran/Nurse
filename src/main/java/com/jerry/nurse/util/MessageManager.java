@@ -82,8 +82,16 @@ public class MessageManager {
         // 单聊
         if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
             try {
+                String registerId = EMClient.getInstance().getCurrentUser();
+                String contactId;
+                // 按照发送和接收区分
+                if (isSend) {
+                    contactId = emMessage.getTo();
+                } else {
+                    contactId = emMessage.getFrom();
+                }
                 message = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                        EMClient.getInstance().getCurrentUser(), emMessage.getTo(), "1")
+                        registerId, contactId, "1")
                         .findFirst(Message.class);
             } catch (Exception e) {
                 e.printStackTrace();

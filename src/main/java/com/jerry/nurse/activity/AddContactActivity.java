@@ -146,7 +146,7 @@ public class AddContactActivity extends BaseActivity {
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                 L.i("点击事件");
                 String userRegisterId = mUsers.get(position).getRegisterId();
-                Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, userRegisterId, false);
+                Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, userRegisterId);
                 startActivity(intent);
             }
 
@@ -191,7 +191,7 @@ public class AddContactActivity extends BaseActivity {
             sb.append(register);
             L.i("解码后是：" + sb.toString());
 
-            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString(),false);
+            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString());
             startActivity(intent);
 
         }

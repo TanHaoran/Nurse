@@ -17,7 +17,15 @@ import butterknife.Bind;
 
 public class WelcomeActivity extends BaseActivity {
 
-    private static final int ANIMATION_DURATIONG = 1800;
+    /**
+     * 动画持续时间
+     */
+    private static final int ANIMATION_DURATION = 1800;
+
+    /**
+     * 首页停留时间
+     */
+    private static final int STAY_DURATION = 3000;
 
     @Bind(R.id.iv_bg)
     ImageView mBgImageView;
@@ -43,13 +51,13 @@ public class WelcomeActivity extends BaseActivity {
         // 创建两个图标渐显的动画
         ObjectAnimator wingAnimator = ObjectAnimator
                 .ofFloat(mWingImageView, "alpha", startAlpha, endAlpha)
-                .setDuration(ANIMATION_DURATIONG);
+                .setDuration(ANIMATION_DURATION);
         wingAnimator.setInterpolator(new LinearInterpolator());
         mWingImageView.setVisibility(View.VISIBLE);
 
         ObjectAnimator textAnimator = ObjectAnimator
                 .ofFloat(mTextImageView, "alpha", startAlpha, endAlpha)
-                .setDuration(ANIMATION_DURATIONG);
+                .setDuration(ANIMATION_DURATION);
         textAnimator.setInterpolator(new LinearInterpolator());
         mTextImageView.setVisibility(View.VISIBLE);
 
@@ -66,7 +74,7 @@ public class WelcomeActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(STAY_DURATION);
                             Intent intent = LoginActivity.getIntent(WelcomeActivity.this);
                             startActivity(intent);
                             finish();

@@ -11,7 +11,6 @@
         <item name="android:textColorHint">@color/iron</item>
 
         <item name="colorButtonNormal">@color/primary</item>
-
     </style>
 
     <!--加载框-->
@@ -19,6 +18,14 @@
         <item name="colorAccent">@color/white</item>
         <item name="android:textColorPrimary">@color/iron</item>
         <item name="android:background">@color/primary</item>
+    </style>
+
+    <style name="Button.Style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_bg</item>
+        <item name="android:textSize">@dimen/normal_textSize</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <!--个人中心行-->
@@ -176,7 +183,9 @@
     </style>
 
     <style name="Contact_Info_Line_Left_Text">
-        <item name="android:layout_marginRight">@dimen/contact_detail_line_text_marginRight</item>
+        <item name="android:layout_marginRight">
+            @dimen/contact_detail_line_text_marginRight
+        </item>
         <item name="android:textSize">@dimen/normal_textSize</item>
         <item name="android:textColor">@color/gray_textColor</item>
         <item name="android:layout_width">wrap_content</item>

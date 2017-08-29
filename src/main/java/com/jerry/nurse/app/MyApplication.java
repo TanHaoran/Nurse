@@ -13,6 +13,7 @@ import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
+import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
@@ -20,6 +21,8 @@ import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.MessageManager;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.log.LoggerInterceptor;
@@ -46,6 +49,7 @@ import static com.jerry.nurse.activity.MainActivity.EXTRA_FRIEND_APPLY_CONTACT;
 
 public class MyApplication extends LitePalApplication {
 
+    public static IWXAPI sWxApi;
 
     @Override
     public void onCreate() {
@@ -53,21 +57,18 @@ public class MyApplication extends LitePalApplication {
 
         // 设置字体大小不随系统而变化
         initFontSize();
-
         // 初始化极光推送
         initJPush();
-
         // 初始化LitePal        
         initLitePal();
-
         // 初始化友盟
         initMobclickAgent();
-
         // 初始化环信
         initEaseMob();
-
         // 初始化OkHttp封装类
         initOkHttp();
+        // 初始化注册微信
+        initWeChat();
     }
 
     /**
@@ -112,6 +113,10 @@ public class MyApplication extends LitePalApplication {
         options.setAcceptInvitationAlways(false);
         // 自动登录
         options.setAutoLogin(true);
+        // 已读回执
+        options.setRequireAck(true);
+        // 送达回执
+        options.setRequireDeliveryAck(true);
 
         // 初始化前要验证
         int pid = android.os.Process.myPid();
@@ -138,6 +143,33 @@ public class MyApplication extends LitePalApplication {
         startContactListener();
     }
 
+
+    /**
+     * 获取app名称
+     *
+     * @param pID
+     * @return
+     */
+    private String getAppName(int pID) {
+        String processName = null;
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List l = am.getRunningAppProcesses();
+        Iterator i = l.iterator();
+        PackageManager pm = this.getPackageManager();
+        while (i.hasNext()) {
+            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+            try {
+                if (info.pid == pID) {
+                    processName = info.processName;
+                    return processName;
+                }
+            } catch (Exception e) {
+                // Log.d("Process", "Error>> :"+ e.toString());
+            }
+        }
+        return processName;
+    }
+
     /**
      * 开启消息监听
      */
@@ -151,6 +183,9 @@ public class MyApplication extends LitePalApplication {
                 }
                 // 对传过来的消息进行逐条处理
                 for (final EMMessage emMessage : messages) {
+                    // TODO 设置对方已读???
+                    emMessage.setAcked(true);
+                    emMessage.setUnread(false);
                     // 首先去寻找本地数据库是否有这个人
                     new LocalContactCache() {
                         @Override
@@ -276,31 +311,6 @@ public class MyApplication extends LitePalApplication {
         EMClient.getInstance().contactManager().setContactListener(emContactListener);
     }
 
-    /**
-     * 获取app名称
-     *
-     * @param pID
-     * @return
-     */
-    private String getAppName(int pID) {
-        String processName = null;
-        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-        List l = am.getRunningAppProcesses();
-        Iterator i = l.iterator();
-        PackageManager pm = this.getPackageManager();
-        while (i.hasNext()) {
-            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
-            try {
-                if (info.pid == pID) {
-                    processName = info.processName;
-                    return processName;
-                }
-            } catch (Exception e) {
-                // Log.d("Process", "Error>> :"+ e.toString());
-            }
-        }
-        return processName;
-    }
 
     /**
      * 初始化OkHttp封装类
@@ -316,6 +326,16 @@ public class MyApplication extends LitePalApplication {
 
         OkHttpUtils.initClient(okHttpClient);
     }
+
+
+    /**
+     * 初始化注册微信
+     */
+    private void initWeChat() {
+        sWxApi = WXAPIFactory.createWXAPI(this, ServiceConstant.WX_APP_ID, false);
+        sWxApi.registerApp(ServiceConstant.WX_APP_ID);
+    }
+
 
     /**
      * 超过最大方法数量后，设置允许的方法

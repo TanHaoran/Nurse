@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.AppCompatButton;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,7 +72,6 @@ public class SignupActivity extends BaseActivity {
     // 进入类型：解绑手机
     public static final int TYPE_UNBIND_CELLPHONE = 6;
 
-
     private static final int REQUEST_COUNTRY = 0x00000101;
 
     private static final int MESSAGE_SIGNUP_SUCCESS = 0;
@@ -100,12 +101,14 @@ public class SignupActivity extends BaseActivity {
     @Bind(R.id.ll_protocol)
     LinearLayout mProtocolLayout;
 
+    @Bind(R.id.v_block)
+    View mBlock;
+
     @BindColor(R.color.primary)
     int mPrimaryColor;
 
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
-
 
     // 是否同意协议
     private boolean mIsAgree = true;
@@ -172,6 +175,8 @@ public class SignupActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
+        LoginActivity.setButtonEnable(this, mSignupButton, false);
+
         // 根据mType判断进入类型
         mType = getIntent().getIntExtra(EXTRA_ENTER_TYPE, -1);
         switch (mType) {
@@ -184,18 +189,42 @@ public class SignupActivity extends BaseActivity {
                 mTitleBar.setTitle("验证码登录");
                 mProtocolLayout.setVisibility(View.GONE);
                 mSignupButton.setText(R.string.login);
+                mBlock.setVisibility(View.VISIBLE);
                 break;
             // 忘记密码
             case TYPE_FORGET_PASSWORD:
                 mTitleBar.setTitle("忘记密码");
                 mProtocolLayout.setVisibility(View.GONE);
                 mSignupButton.setText(R.string.next_step);
+                mBlock.setVisibility(View.VISIBLE);
                 break;
         }
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 finish();
+            }
+        });
+
+        mVerificationCodeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mCellphoneEditText.getText().toString().length() > 0 &&
+                        mVerificationCodeEditText.getText().toString().length() > 0) {
+                    LoginActivity.setButtonEnable(SignupActivity.this, mSignupButton, true);
+                } else {
+                    LoginActivity.setButtonEnable(SignupActivity.this, mSignupButton, false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }

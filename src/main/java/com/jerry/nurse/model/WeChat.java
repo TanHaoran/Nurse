@@ -4,7 +4,7 @@ package com.jerry.nurse.model;
  * Created by Jerry on 2017/8/25.
  */
 
-public class WeiXin {
+public class WeChat {
 
     private String Id;
     private String OpenId;
@@ -15,6 +15,7 @@ public class WeiXin {
     private String Province;
     private String Country;
     private String HeadImgurl;
+    private String DeviceRegId;
 
 
     public String getId() {
@@ -87,5 +88,13 @@ public class WeiXin {
 
     public void setHeadImgurl(String headImgurl) {
         HeadImgurl = headImgurl;
+    }
+
+    public String getDeviceRegId() {
+        return DeviceRegId;
+    }
+
+    public void setDeviceRegId(String deviceRegId) {
+        DeviceRegId = deviceRegId;
     }
 }

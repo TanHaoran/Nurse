@@ -164,8 +164,7 @@
                     android:layout_marginLeft="@dimen/signup_edit_marginLeft"
                     android:layout_marginRight="@dimen/line_paddingLeft"
                     android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/signup_password_paddingBottom"
-                    app:passwordToggleDrawable="@drawable/login_eye">
+                    android:paddingBottom="@dimen/signup_password_paddingBottom">
 
                     <EditText
                         android:id="@+id/et_password"
@@ -183,9 +182,6 @@
 
             </RelativeLayout>
 
-            <View
-                style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <LinearLayout
                 android:id="@+id/ll_protocol"
@@ -234,17 +230,22 @@
 
             </LinearLayout>
 
+            <View
+                android:visibility="gone"
+                android:id="@+id/v_block"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/block_marinTop"/>
+
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_signup"
+                style="@style/Button.Style"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/signup_button_height"
+                android:layout_height="@dimen/business_info_height"
                 android:layout_marginLeft="@dimen/signup_button_marginLeft"
                 android:layout_marginRight="@dimen/signup_button_marginLeft"
-                android:layout_marginTop="@dimen/block_marinTop"
                 android:text="@string/signup"
                 android:textColor="@color/white"
                 android:textSize="@dimen/normal_textSize"/>
-
 
         </LinearLayout>
     </ScrollView>

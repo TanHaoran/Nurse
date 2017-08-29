@@ -160,8 +160,7 @@
             android:layout_marginLeft="@dimen/signup_edit_marginLeft"
             android:layout_marginRight="@dimen/line_paddingLeft"
             android:gravity="center_vertical"
-            android:paddingBottom="@dimen/signup_password_paddingBottom"
-            app:passwordToggleDrawable="@drawable/login_eye">
+            android:paddingBottom="@dimen/signup_password_paddingBottom">
 
             <EditText
                 android:id="@+id/et_password"

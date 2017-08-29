@@ -132,7 +132,6 @@ public class CreateGroupActivity extends BaseActivity {
             c.setFriendId(info.getRegisterId());
             c.setFriend(true);
 
-
             if (mGroupContacts != null) {
                 int i;
                 for (i = 0; i < mGroupContacts.size(); i++) {
@@ -206,6 +205,7 @@ public class CreateGroupActivity extends BaseActivity {
                         CreateGroupResult result = new Gson().fromJson(response, CreateGroupResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             GroupInfo groupInfo = result.getBody();
+                            groupInfo.setRegisterId(mLoginInfo.getRegisterId());
                             groupInfo.save();
                             MessageManager.saveCreateGroupLocalData(groupInfo);
                             T.showShort(CreateGroupActivity.this, "创建成功");

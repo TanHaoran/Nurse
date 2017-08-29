@@ -5,11 +5,13 @@ package com.jerry.nurse.constant;
  */
 
 public class ServiceConstant {
+    // 微信AppId
+    public static String WX_APP_ID = "wx96c5f62ab4cd1676";
+    // 微信AppSecret
+    public static final String WX_APP_SECRET = "9495559c8f0bb79577076d6e88adece6";
 
     // 请求返回类型
     public static final int RESPONSE_SUCCESS = 0;
-    public static final String USER_COLON = ":";
-    public static final String USER_NAME = "Name:";
 
     /**
      * 几种审核状态
@@ -23,7 +25,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -36,6 +38,8 @@ public class ServiceConstant {
     public static final String QR_CODE_ADDRESS = MAIN_IP + "QRCode/";
     public static final String BANNER_ADDRESS = MAIN_IP + "Banner/";
     public static final String APK_ADDRESS = MAIN_IP + "APK/";
+
+    public static final String PROTOCOL_URL = "";
 
     /**
      * 获取验证码
@@ -70,6 +74,11 @@ public class ServiceConstant {
     public static final String LOGIN_BY_QQ = IP + "ThirdPartLoginQQ";
 
     /**
+     * 微信第三方登陆
+     */
+    public static final String LOGIN_BY_WX = IP + "ThirdPartLoginWeixin";
+
+    /**
      * 绑定手机号、QQ
      */
     public static final String BIND = IP + "Bind";
@@ -78,11 +87,6 @@ public class ServiceConstant {
      * 解绑手机号、qq
      */
     public static final String UNBIND = IP + "UnBind";
-
-    /**
-     * 通过注册ID获取用户注册信息
-     */
-    public static final String GET_USER_REGISTER_INFO_BY_REGISTER_ID = IP + "GetUserReginfoById";
 
     /**
      * 获取二维码
@@ -256,6 +260,17 @@ public class ServiceConstant {
      * 修改群昵称
      */
     public static final String UPDATE_GROUP_NICKNAME = IP + "UpdateGroupNickName";
+
+
+    /**
+     * 获取微信登录Token
+     */
+    public static final String WECHAT_GET_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
+
+    /**
+     * 获取微信账户基本信息
+     */
+    public static final String WECHAT_GET_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
 
 
 }

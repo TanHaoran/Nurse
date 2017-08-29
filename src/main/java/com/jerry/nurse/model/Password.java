@@ -9,10 +9,6 @@ public class Password {
     private String RegisterId;
     private String PasswordOld;
     private String PasswordNew;
-    /**
-     * 0：院内账号，1：智护账号
-     */
-    private int Type;
 
     public Password(String registerId, String passwordOld, String passwordNew) {
         RegisterId = registerId;
@@ -44,11 +40,4 @@ public class Password {
         PasswordNew = passwordNew;
     }
 
-    public int getType() {
-        return Type;
-    }
-
-    public void setType(int type) {
-        Type = type;
-    }
 }

@@ -2,6 +2,7 @@ package com.jerry.nurse.model;
 
 /**
  * Created by Jerry on 2017/7/25.
+ * 登录/注册post传值类
  */
 
 public class Register {
@@ -25,6 +26,13 @@ public class Register {
         Phone = phone;
         Password = password;
         CountryCode = countryCode;
+    }
+
+    public Register(String phone, String password, String countryCode, String deviceRegId) {
+        Phone = phone;
+        Password = password;
+        CountryCode = countryCode;
+        DeviceRegId = deviceRegId;
     }
 
     public String getPhone() {

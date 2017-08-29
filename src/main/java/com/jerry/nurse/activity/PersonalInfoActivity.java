@@ -340,7 +340,12 @@ public class PersonalInfoActivity extends BaseActivity {
         Date now = new Date();
         int mouths = DateUtil.getMonthsBetweenTwoDate(firstDate, now);
         if (mouths >= 12) {
-            return mouths / 12 + "年" + mouths % 12 + "个月";
+            if (mouths % 12 == 0) {
+                return mouths / 12 + "年";
+            } else {
+                return mouths / 12 + "年" + mouths % 12 + "个月";
+            }
+
         } else {
             return mouths + "个月";
         }
@@ -443,6 +448,11 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_hospital)
     void onHospital(View view) {
+        // 如果是院务账号就不让修改医院信息
+        if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
+            T.showShort(this, R.string.in_hospital_account_please_edit_on_pc);
+            return;
+        }
         Intent intent = HospitalActivity.getIntent(this);
         startActivity(intent);
     }
@@ -454,6 +464,11 @@ public class PersonalInfoActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_office)
     void onOffice(View view) {
+        // 如果是院务账号就不让修改医院信息
+        if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
+            T.showShort(this, R.string.in_hospital_account_please_edit_on_pc);
+            return;
+        }
         if (!TextUtils.isEmpty(mUserInfo.getHospitalId())) {
             Intent intent = OfficeListActivity.getIntent(this, mUserInfo.getHospitalId(), 0);
             startActivity(intent);

@@ -2,6 +2,7 @@ package com.jerry.nurse.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -118,6 +119,11 @@ public class TitleBar extends RelativeLayout {
                 mButtonTextSize);
         mTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mTitleTextSize);
+
+        // 设置标题的几种格式
+        mTitleTextView.setMaxWidth(DensityUtil.dp2px(context, 200));
+        mTitleTextView.setSingleLine(true);
+        mTitleTextView.setEllipsize(TextUtils.TruncateAt.END);
 
         // 设置文字颜色
         mLeftTextView.setTextColor(mTextColor);

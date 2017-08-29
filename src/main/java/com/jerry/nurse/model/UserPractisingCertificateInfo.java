@@ -1,9 +1,5 @@
 package com.jerry.nurse.model;
 
-import android.text.TextUtils;
-
-import com.jerry.nurse.util.DateUtil;
-
 import org.litepal.crud.DataSupport;
 
 /**
@@ -11,7 +7,6 @@ import org.litepal.crud.DataSupport;
  */
 
 public class UserPractisingCertificateInfo extends DataSupport {
-
 
     /**
      * BirthDate : /Date(-2209017600000+0800)/

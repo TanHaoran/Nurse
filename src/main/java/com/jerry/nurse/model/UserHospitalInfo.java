@@ -9,7 +9,6 @@ import org.litepal.crud.DataSupport;
 
 public class UserHospitalInfo  extends DataSupport {
 
-
     /**
      * DepartmentId :
      * EmployeeId :

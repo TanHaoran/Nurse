@@ -87,18 +87,15 @@ public class ContactDetailActivity extends BaseActivity {
     private ProgressDialogManager mProgressDialogManager;
 
     public static final String EXTRA_REGISTER_ID = "extra_register_id";
-    public static final String EXTRA_IS_COMPLETE = "extra_is_complete";
 
     private String mRegisterId;
     private String mToAddRegisterId;
-    private boolean mIsComplete;
 
     private Contact mContact;
 
-    public static Intent getIntent(Context context, String registerId, boolean isComplete) {
+    public static Intent getIntent(Context context, String registerId) {
         Intent intent = new Intent(context, ContactDetailActivity.class);
         intent.putExtra(EXTRA_REGISTER_ID, registerId);
-        intent.putExtra(EXTRA_IS_COMPLETE, isComplete);
         return intent;
     }
 
@@ -113,7 +110,6 @@ public class ContactDetailActivity extends BaseActivity {
         mProgressDialogManager = new ProgressDialogManager(this);
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         mToAddRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
-        mIsComplete = getIntent().getBooleanExtra(EXTRA_IS_COMPLETE, false);
         getUserDetail(mRegisterId, mToAddRegisterId);
     }
 
@@ -181,7 +177,7 @@ public class ContactDetailActivity extends BaseActivity {
             mAddFriendButton.setBackgroundResource(R.drawable.delete_friend);
             mCellphoneTextView.setText(contact.getPhone());
         }
-        if (mIsComplete) {
+        if (mContact.isInternalHospital()) {
             mHospitalLayout.setVisibility(View.VISIBLE);
             mOfficeLayout.setVisibility(View.VISIBLE);
             mOptionLayout.setVisibility(View.VISIBLE);
