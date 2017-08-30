@@ -9,6 +9,7 @@ public class ThirdPartInfo {
     private String RegisterId;
     private String Phone;
     private Qq QQData;
+    private WeChat WXData;
 
     public String getRegisterId() {
         return RegisterId;
@@ -32,5 +33,13 @@ public class ThirdPartInfo {
 
     public void setQQData(Qq QQData) {
         this.QQData = QQData;
+    }
+
+    public WeChat getWXData() {
+        return WXData;
+    }
+
+    public void setWXData(WeChat WXData) {
+        this.WXData = WXData;
     }
 }

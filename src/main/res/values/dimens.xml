@@ -7,7 +7,7 @@
     <dimen name="normal_textSize">15sp</dimen>
     <dimen name="small_textSize">14sp</dimen>
     <dimen name="smaller_textSize">10sp</dimen>
-    <dimen name="line_paddingLeft">15dp</dimen>
+    <dimen name="line_paddingLeft">12dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
     <dimen name="tab_menu_drawable_padding">1dp</dimen>
@@ -17,6 +17,7 @@
     <!--注册-->
     <dimen name="signup_text_marginLeft">5dp</dimen>
     <dimen name="signup_edit_marginLeft">100dp</dimen>
+    <dimen name="in_hospital_edit_marginLeft">70dp</dimen>
     <dimen name="signup_password_paddingBottom">10dp</dimen>
     <dimen name="protocol_line_height">57dp</dimen>
     <dimen name="checkbox_marginRight">8dp</dimen>
@@ -72,6 +73,9 @@
     <dimen name="plugin_divider_line_marginLeft">70dp</dimen>
     <dimen name="announcement_line_height">65dp</dimen>
     <dimen name="announcement_line_time_marginLeft">8dp</dimen>
+    <dimen name="event_text_marginTop">7dp</dimen>
+    <dimen name="event_paddingLeft">30dp</dimen>
+    <dimen name="event_paddingTop">28dp</dimen>
 
     <!--联系人-->
     <dimen name="contact_item_height">56dp</dimen>
@@ -136,6 +140,7 @@
     <dimen name="message_time_width">80dp</dimen>
     <dimen name="apply_nickname_width">150dp</dimen>
     <dimen name="chat_receive_nickname_width">100dp</dimen>
+    <dimen name="unread_marginRight">8dp</dimen>
 
     <!--我的-->
     <dimen name="avatar_marginRight">11dp</dimen>

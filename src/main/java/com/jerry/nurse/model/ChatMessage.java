@@ -37,6 +37,11 @@ public class ChatMessage extends DataSupport implements Serializable {
      */
     private String remoteUrl;
 
+    /**
+     * 这条消息是否已读
+     */
+    private boolean mRead;
+
     public final static int MSG_SEND = 0;
     public final static int MSG_RECEIVE = 1;
 
@@ -133,5 +138,13 @@ public class ChatMessage extends DataSupport implements Serializable {
 
     public void setRemoteUrl(String remoteUrl) {
         this.remoteUrl = remoteUrl;
+    }
+
+    public boolean isRead() {
+        return mRead;
+    }
+
+    public void setRead(boolean read) {
+        mRead = read;
     }
 }

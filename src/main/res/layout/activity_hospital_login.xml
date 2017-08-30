@@ -40,16 +40,16 @@
                     android:text="@string/account"/>
 
                 <EditText
-                    android:maxLength="12"
                     android:id="@+id/et_account"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:layout_marginLeft="@dimen/in_hospital_edit_marginLeft"
                     android:background="@drawable/edit_no_border"
                     android:gravity="center_vertical"
                     android:hint="@string/please_input_account"
                     android:inputType="number"
                     android:lines="1"
+                    android:maxLength="12"
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/normal_textColor"
@@ -72,31 +72,26 @@
                     android:layout_marginLeft="@dimen/signup_text_marginLeft"
                     android:text="@string/password"/>
 
-                <android.support.design.widget.TextInputLayout
+
+                <com.jerry.nurse.view.PasswordEditText
+                    android:id="@+id/et_password"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:layout_marginLeft="@dimen/in_hospital_edit_marginLeft"
                     android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:background="@drawable/edit_no_border"
+                    android:drawableRight="@drawable/eye_close"
                     android:gravity="center_vertical"
-                    android:textColorHint="@color/gray_textColor"
-                    android:paddingBottom="@dimen/signup_password_paddingBottom"
+                    android:hint="@string/please_input_password"
+                    android:inputType="textPassword"
+                    android:lines="1"
+                    android:maxLength="12"
                     android:paddingLeft="@dimen/line_paddingLeft"
-                    android:paddingRight="@dimen/line_paddingLeft">
-
-                    <EditText
-                        android:maxLength="12"
-                        android:id="@+id/et_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/edit_no_border"
-                        android:gravity="center_vertical"
-                        android:hint="@string/please_input_password"
-                        android:inputType="textPassword"
-                        android:lines="1"
-                        android:textColor="@color/normal_textColor"
-                        android:textCursorDrawable="@null"
-                        android:textSize="@dimen/normal_textSize"/>
-                </android.support.design.widget.TextInputLayout>
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textColorHint="@color/gray_textColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/normal_textSize"/>
 
             </RelativeLayout>
 
@@ -109,8 +104,9 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/acb_login"
+                style="@style/Button.Style"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/signup_button_height"
                 android:layout_marginLeft="@dimen/signup_button_marginLeft"
@@ -118,7 +114,7 @@
                 android:layout_marginTop="@dimen/block_marinTop"
                 android:text="@string/login"
                 android:textColor="@color/white"
-                android:textSize="@dimen/normal_textSize"/>
+                android:textSize="@dimen/big_textSize"/>
 
             <TextView
                 android:id="@+id/tv_account_login"

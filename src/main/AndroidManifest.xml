@@ -141,7 +141,6 @@
             android:enabled="true"
             android:process=":remote"/>
 
-
         <activity
             android:name=".activity.WelcomeActivity"
             android:screenOrientation="portrait">
@@ -408,6 +407,8 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.EventReportActivity">
         </activity>
     </application>
 

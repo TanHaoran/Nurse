@@ -199,6 +199,7 @@ public class LoginActivity extends BaseActivity {
         // 腾讯的第三方登录
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginManager.getIUiListener());
+            return;
         }
 
         // 回调正常

@@ -20,12 +20,12 @@ public class WelcomeActivity extends BaseActivity {
     /**
      * 动画持续时间
      */
-    private static final int ANIMATION_DURATION = 1800;
+    private static final int ANIMATION_DURATION = 800;
 
     /**
      * 首页停留时间
      */
-    private static final int STAY_DURATION = 3000;
+    private static final int STAY_DURATION = 200;
 
     @Bind(R.id.iv_bg)
     ImageView mBgImageView;

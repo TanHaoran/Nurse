@@ -26,10 +26,11 @@
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/chat_line_paddingTop"
         android:layout_marginTop="@dimen/chat_line_paddingTop"
+        android:gravity="right"
         android:paddingLeft="@dimen/chat_line_paddingLeft"
         android:paddingRight="@dimen/chat_line_paddingRight">
 
@@ -51,65 +52,82 @@
                 android:src="@drawable/icon_avatar_default"/>
         </android.support.v7.widget.CardView>
 
-        <FrameLayout
-            android:id="@+id/fl_anim"
+
+        <RelativeLayout
+            android:id="@+id/rl_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/cv_avatar"
-            android:background="@drawable/chat_send_normal"
-            android:minHeight="@dimen/chat_avatar_width"
-            android:padding="@dimen/chat_text_padding"
-            android:visibility="gone">
+            android:layout_toLeftOf="@id/cv_avatar">
 
-            <View
-                android:id="@+id/v_anim"
-                android:layout_width="@dimen/record_anim_width"
-                android:layout_height="@dimen/record_anim_height"
-                android:layout_gravity="center_vertical|right"
-                android:background="@drawable/talk_yy_me_3"/>
+            <FrameLayout
+                android:id="@+id/fl_anim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/chat_send_normal"
+                android:minHeight="@dimen/chat_avatar_width"
+                android:padding="@dimen/chat_text_padding"
+                android:visibility="gone">
 
-        </FrameLayout>
+                <View
+                    android:id="@+id/v_anim"
+                    android:layout_width="@dimen/record_anim_width"
+                    android:layout_height="@dimen/record_anim_height"
+                    android:layout_gravity="center_vertical|right"
+                    android:background="@drawable/talk_yy_me_3"/>
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_record_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/record_length_marginRight"
+                android:layout_toLeftOf="@id/fl_anim"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/normal_textSize"
+                android:visibility="gone"
+                tools:text="34'"/>
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chat_send_normal"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:lineSpacingExtra="@dimen/chat_line_space_height"
+                android:minHeight="@dimen/chat_avatar_width"
+                android:padding="@dimen/chat_text_padding"
+                android:textColor="@color/white"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/normal_textSize"
+                android:visibility="visible"
+                tools:text="有大吗。。。"/>
+
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:maxHeight="300dp"
+                android:minHeight="@dimen/chat_avatar_width"
+                android:scaleType="fitXY"/>
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/tv_record_length"
+            android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/record_length_marginRight"
-            android:layout_toLeftOf="@id/fl_anim"
+            android:layout_marginRight="@dimen/unread_marginRight"
+            android:layout_toLeftOf="@id/rl_content"
+            android:text="@string/unread"
             android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/normal_textSize"
-            android:visibility="gone"
-            tools:text="34'"/>
-
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/tv_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/cv_avatar"
-            android:background="@drawable/chat_send_normal"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:lineSpacingExtra="@dimen/chat_line_space_height"
-            android:minHeight="@dimen/chat_avatar_width"
-            android:padding="@dimen/chat_text_padding"
-            android:textColor="@color/white"
-            android:textSize="@dimen/normal_textSize"
-            android:visibility="gone"
-            tools:text="有大吗。。。"/>
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/cv_avatar"
-            android:gravity="center_vertical"
-            android:maxHeight="300dp"
-            android:minHeight="@dimen/chat_avatar_width"
-            android:scaleType="fitXY"/>
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 </LinearLayout>

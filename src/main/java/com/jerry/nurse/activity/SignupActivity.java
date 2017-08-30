@@ -55,8 +55,6 @@ public class SignupActivity extends BaseActivity {
     // 进入类型
     public static final String EXTRA_ENTER_TYPE = "extra_signup_type";
 
-    public static final String DEFAULT_COUNTRY_CODE = "+86";
-
     // 进入类型：注册
     public static final int TYPE_REGISTER = 0;
     // 进入类型：验证码登录
@@ -71,6 +69,9 @@ public class SignupActivity extends BaseActivity {
     public static final int TYPE_BIND_CELLPHONE = 5;
     // 进入类型：解绑手机
     public static final int TYPE_UNBIND_CELLPHONE = 6;
+
+    // 默认显示国家号码
+    public static final String DEFAULT_COUNTRY_CODE = "+86";
 
     private static final int REQUEST_COUNTRY = 0x00000101;
 
@@ -157,7 +158,6 @@ public class SignupActivity extends BaseActivity {
             }
         }
     };
-    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, SignupActivity.class);

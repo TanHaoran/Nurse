@@ -15,14 +15,17 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.app.MyApplication;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.PermissionListener;
+import com.jerry.nurse.model.BindInfo;
 import com.jerry.nurse.model.BindInfoResult;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.model.VersionResult;
+import com.jerry.nurse.model.WeChat;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.AppUtil;
@@ -31,11 +34,11 @@ import com.jerry.nurse.util.DownloadUtil;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginManager;
 import com.tencent.connect.common.Constants;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.tauth.Tencent;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -47,6 +50,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.APK_ADDRESS;
@@ -69,13 +73,12 @@ public class SettingActivity extends BaseActivity {
     @Bind(R.id.tv_microblog)
     TextView mMicroblogTextView;
 
-    private ProgressDialogManager mProgressDialog;
 
     private LoginInfo mLoginInfo;
 
     private TencentLoginManager mTencentLoginManager;
 
-    private BindInfoResult.BindInfo mBindInfo;
+    private BindInfo mBindInfo;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SettingActivity.class);
@@ -89,11 +92,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        mProgressDialog = new ProgressDialogManager(this);
-
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-
     }
 
     @Override
@@ -140,7 +139,53 @@ public class SettingActivity extends BaseActivity {
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            unBindQQ();
+                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                            Qq qq = new Qq();
+                            qq.setOpenId(mBindInfo.getQQOpenId());
+                            thirdPartInfo.setQQData(qq);
+                            unBind(thirdPartInfo);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
+    }
+
+    /**
+     * 绑定/解绑 微信
+     *
+     * @param view
+     */
+    @OnClick(R.id.rl_weixin)
+    void onWeChat(View view) {
+        // 解绑微信
+        L.i("绑定的数量是：" + mBindInfo.getBindCount());
+        // 绑定微信
+        if (TextUtils.isEmpty(mBindInfo.getWeixinOpenId())) {
+            if (!MyApplication.sWxApi.isWXAppInstalled()) {
+                // 未安装微信
+                T.showShort(this, R.string.wechat_not_install);
+                return;
+            }
+            SendAuth.Req req = new SendAuth.Req();
+            req.scope = "snsapi_userinfo";
+            req.state = "diandi_wx_login";
+            MyApplication.sWxApi.sendReq(req);
+
+        } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.tips)
+                    .setMessage("确定解除绑定 " + mBindInfo.getWeixinNickName() + " 吗?")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                            WeChat weChat = new WeChat();
+                            weChat.setOpenId(mBindInfo.getWeixinOpenId());
+                            thirdPartInfo.setWXData(weChat);
+                            unBind(thirdPartInfo);
                         }
                     })
                     .setNegativeButton(R.string.cancel, null)
@@ -174,10 +219,10 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_check_update)
     void onCheckUpdate(View view) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_APP_VERSION)
                 .build()
-                .execute(new FilterStringCallback(mProgressDialog) {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
@@ -284,7 +329,7 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_clear_cache)
     void onClearCache(View view) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
 
         // 清除掉包名下DOCUMENTS中所有的文件
         File dir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -293,7 +338,7 @@ public class SettingActivity extends BaseActivity {
             file.delete();
         }
 
-        mProgressDialog.dismiss();
+        mProgressDialogManager.dismiss();
         showShort(SettingActivity.this, R.string.clear_finish);
     }
 
@@ -332,11 +377,16 @@ public class SettingActivity extends BaseActivity {
      * 获取用户所有绑定信息
      */
     private void getBindInfo(final String registerId) {
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_BIND_INFO)
                 .addParams("RegisterId", registerId)
                 .build()
-                .execute(new FilterStringCallback(mProgressDialog) {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        super.onError(call, e, id);
+                    }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
@@ -355,7 +405,7 @@ public class SettingActivity extends BaseActivity {
     /**
      * 更新界面显示绑定信息
      */
-    private void updateBindInfo(BindInfoResult.BindInfo bindInfo) {
+    private void updateBindInfo(BindInfo bindInfo) {
         if (!TextUtils.isEmpty(bindInfo.getPhone())) {
             if (bindInfo.getPhone().length() == 11) {
                 String cellphone = bindInfo.getPhone().substring(0, 2) + "*******" + mBindInfo.getPhone().substring(9);
@@ -364,10 +414,17 @@ public class SettingActivity extends BaseActivity {
         } else {
             mCellphoneTextView.setText("");
         }
+        // 根据QQ的OpenId来判断是否有QQ资料
         if (!TextUtils.isEmpty(bindInfo.getQQOpenId())) {
             mQQTextView.setText(bindInfo.getQQNickName());
         } else {
             mQQTextView.setText("");
+        }
+        // 根据微信的OpenId来判断是否有微信资料
+        if (!TextUtils.isEmpty(bindInfo.getWeixinOpenId())) {
+            mWechatTextView.setText(bindInfo.getWeixinNickName());
+        } else {
+            mWechatTextView.setText("");
         }
     }
 
@@ -380,13 +437,13 @@ public class SettingActivity extends BaseActivity {
         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
         thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
         thirdPartInfo.setQQData(qq);
-        mProgressDialog.show();
+        mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.BIND)
                 .content(StringUtil.addModelWithJson(thirdPartInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback(mProgressDialog) {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
@@ -406,34 +463,25 @@ public class SettingActivity extends BaseActivity {
                 });
     }
 
-
     /**
-     * 解绑QQ
+     * 解绑微信
      */
-    private void unBindQQ() {
-        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
-        Qq qq = new Qq();
-        qq.setOpenId(mBindInfo.getQQOpenId());
-        thirdPartInfo.setQQData(qq);
-        mProgressDialog.show();
+    private void unBind(ThirdPartInfo thirdPartInfo) {
+        mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.UNBIND)
                 .content(StringUtil.addModelWithJson(thirdPartInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
-                .execute(new FilterStringCallback(mProgressDialog) {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            showShort(SettingActivity.this, "QQ解绑成功");
-                            L.i("qq解绑成功");
-                            mBindInfo.setQQNickName("");
-                            mBindInfo.setQQOpenId("");
-                            mBindInfo.setBindCount(mBindInfo.getBindCount() - 1);
-                            updateBindInfo(mBindInfo);
+                            showShort(SettingActivity.this, "解绑成功");
+                            L.i("解绑成功");
+                            getBindInfo(mLoginInfo.getRegisterId());
                         } else {
                             showShort(SettingActivity.this, commonResult.getMsg());
                         }

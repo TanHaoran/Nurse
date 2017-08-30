@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.BindInfoResult;
+import com.jerry.nurse.model.BindInfo;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ShortMessage;
 import com.jerry.nurse.model.ThirdPartInfo;
@@ -84,7 +84,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
     @BindColor(R.color.gray_textColor)
     int mGrayColor;
 
-    private BindInfoResult.BindInfo mBindInfo;
+    private BindInfo mBindInfo;
 
     private int mType;
 
@@ -115,7 +115,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     private Handler mHandler = new Handler();
 
-    public static Intent getIntent(Context context, BindInfoResult.BindInfo bindInfo) {
+    public static Intent getIntent(Context context, BindInfo bindInfo) {
         Intent intent = new Intent(context, ChangeCellphoneActivity.class);
         intent.putExtra(EXTRA_BIND_INFO, bindInfo);
         return intent;
@@ -130,7 +130,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(this);
 
-        mBindInfo = (BindInfoResult.BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
+        mBindInfo = (BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
 
         String cellphone = mBindInfo.getPhone();
 

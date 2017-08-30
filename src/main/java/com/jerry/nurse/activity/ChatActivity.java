@@ -28,10 +28,12 @@ import com.bumptech.glide.Glide;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
+import com.hyphenate.exceptions.HyphenateException;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnPhotographFinishListener;
@@ -158,6 +160,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             // 一条一条解析消息
             List<EMMessage> messages = (List<EMMessage>) msg.obj;
             for (final EMMessage emMessage : messages) {
+
+
                 ChatMessage chatMessage = new ChatMessage();
                 if (emMessage.getType() == EMMessage.Type.TXT) {
                     EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
@@ -280,6 +284,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onResume() {
         super.onResume();
+
+
         // TODO 权限申请？
         BaseActivity.requestRuntimePermission(new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
@@ -300,6 +306,22 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
         // 获取我的信息
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+
+        EMConversation conversation = EMClient.getInstance().chatManager().getConversation(mContactId);
+
+        L.i("未读消息数量：" + conversation.getUnreadMsgCount());
+
+        L.i("所有消息数量：" + conversation.getAllMessages().size());
+
+        // 将所有未读消息设置为已读
+        for (EMMessage emMessage : conversation.getAllMessages()) {
+            try {
+                EMClient.getInstance().chatManager().ackMessageRead(emMessage.getFrom(), emMessage.getMsgId());
+                L.i("设置已读消息:" + emMessage.getMsgId());
+            } catch (HyphenateException e) {
+                e.printStackTrace();
+            }
+        }
 
         // 单聊
         if (!mIsGroup) {
@@ -490,9 +512,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private void easeMobSendMessage(EMMessage emMessage) {
         // 调用环信SDK发送信息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
-        // TODO 设置对方已读???
-        emMessage.setAcked(true);
-        emMessage.setUnread(false);
         // 监听消息发送状态
         emMessage.setMessageStatusCallback(new EMCallBack() {
             @Override
@@ -541,7 +560,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onStop() {
         super.onStop();
-        EMClient.getInstance().chatManager().removeMessageListener(this);
     }
 
     /**
@@ -574,17 +592,19 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     @Override
     public void onMessageRead(List<EMMessage> messages) {
-        L.i("对方已经读取了你的消息");
+        for (EMMessage emMessage : messages) {
+            L.i("收到已读回执" + emMessage.getMsgId());
+        }
     }
 
     /**
-     * 已送达回执
+     * 收到已送达回执
      *
      * @param messages
      */
     @Override
     public void onMessageDelivered(List<EMMessage> messages) {
-        L.i("对方已经收到了你的消息");
+        L.i("ChatActivity中收到已送达回执");
     }
 
     /**
@@ -894,6 +914,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EMClient.getInstance().chatManager().removeMessageListener(this);
         MediaManager.release();
     }
 }

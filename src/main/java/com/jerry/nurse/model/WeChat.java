@@ -1,10 +1,12 @@
 package com.jerry.nurse.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Jerry on 2017/8/25.
  */
 
-public class WeChat {
+public class WeChat implements Serializable {
 
     private String Id;
     private String OpenId;

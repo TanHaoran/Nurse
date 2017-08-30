@@ -35,6 +35,7 @@
     <string name="signup">注册</string>
     <string name="vertical_line">|</string>
     <string name="press_login">点击登录，表示您同意</string>
+    <string name="press_signup">点击注册，表示您同意</string>
     <string name="forget_password">忘记密码</string>
     <string name="verification_code_login">手机验证码登录</string>
     <string name="third_party_login">第三方登录</string>
@@ -83,6 +84,14 @@
     <string name="schedule_check">排班查看</string>
     <string name="announcement">公告</string>
     <string name="more">更多</string>
+    <string name="fall_down_event">跌倒事件</string>
+    <string name="fall_bed_event">坠床事件</string>
+    <string name="pipe_line_event">管路滑脱</string>
+    <string name="medicine_event">给药事件</string>
+    <string name="pressure_sore_event">压疮评估</string>
+    <string name="profession_event">职业暴露</string>
+    <string name="other_event">其他事件</string>
+    <string name="zero_event">零事件</string>
 
     <!--联系人-->
     <string name="contact">联系人</string>
@@ -118,6 +127,8 @@
     <string name="visiting_card">名片</string>
     <string name="quit_group">退出群聊</string>
     <string name="select_contact">选择联系人</string>
+    <string name="unread">未读</string>
+    <string name="read">已读</string>
 
     <!--我的-->
     <string name="mine">我的</string>

@@ -22,8 +22,9 @@ import com.jerry.nurse.util.DensityUtil;
 public class TitleBar extends RelativeLayout {
 
     private static final int DEFAULT_BUTTON_WIDTH = 50;
+    private static final int DEFAULT_BACK_ARROW_WIDTH = 40;
 
-    private static final int DEFAULT_BUTTON_TEXT_SIZE = 14;
+    private static final int DEFAULT_BUTTON_TEXT_SIZE = 15;
     private static final int DEFAULT_TITLE_TEXT_SIZE = 18;
 
     private static final int DEFAULT_TEXT_COLOR = 0xFFFFFFFF;
@@ -137,7 +138,7 @@ public class TitleBar extends RelativeLayout {
 
         // 设置布局摆放方式
         LayoutParams backLayoutParam = new LayoutParams(
-                DensityUtil.dp2px(context, DEFAULT_BUTTON_WIDTH),
+                DensityUtil.dp2px(context, DEFAULT_BACK_ARROW_WIDTH),
                 ViewGroup.LayoutParams.MATCH_PARENT);
         LayoutParams leftTextLayoutParam = new LayoutParams(
                 DensityUtil.dp2px(context, DEFAULT_BUTTON_WIDTH),
@@ -151,9 +152,9 @@ public class TitleBar extends RelativeLayout {
 
         backLayoutParam.addRule(ALIGN_PARENT_LEFT, TRUE);
 
-        mBackImageView.setPadding(DensityUtil.dp2px(context, 3),
-                DensityUtil.dp2px(context, 10), DensityUtil.dp2px(context, 3),
-                DensityUtil.dp2px(context, 10));
+        mBackImageView.setPadding(DensityUtil.dp2px(context, 1),
+                DensityUtil.dp2px(context, 13), DensityUtil.dp2px(context, 4),
+                DensityUtil.dp2px(context, 13));
 
         leftTextLayoutParam.addRule(ALIGN_PARENT_LEFT, TRUE);
         rightTextLayoutParam.addRule(ALIGN_PARENT_RIGHT, TRUE);

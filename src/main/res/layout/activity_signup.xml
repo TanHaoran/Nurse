@@ -193,6 +193,7 @@
                 android:paddingRight="@dimen/line_paddingLeft">
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/ll_agree"
                     android:layout_width="@dimen/checkbox_width"
                     android:layout_height="@dimen/checkbox_width"
@@ -214,15 +215,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/read_and_agree"
-                    android:textColor="@color/normal_textColor"
+                    android:text="@string/press_signup"
+                    android:textColor="@color/gray_textColor"
                     android:textSize="@dimen/small_textSize"/>
 
                 <TextView
                     android:id="@+id/tv_protocol"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/protocol_text_marginLeft"
                     android:gravity="center_vertical"
                     android:text="@string/protocol"
                     android:textColor="@color/primary"

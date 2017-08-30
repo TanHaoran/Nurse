@@ -181,11 +181,10 @@ public class MyApplication extends LitePalApplication {
                 if (name.equals("activity.ChatActivity")) {
                     return;
                 }
+                L.i("收到一条消息");
+
                 // 对传过来的消息进行逐条处理
                 for (final EMMessage emMessage : messages) {
-                    // TODO 设置对方已读???
-                    emMessage.setAcked(true);
-                    emMessage.setUnread(false);
                     // 首先去寻找本地数据库是否有这个人
                     new LocalContactCache() {
                         @Override
@@ -199,21 +198,37 @@ public class MyApplication extends LitePalApplication {
 
             @Override
             public void onCmdMessageReceived(List<EMMessage> messages) {
+                String name = ActivityCollector.getTopActivity().getLocalClassName();
+                if (name.equals("activity.ChatActivity")) {
+                    return;
+                }
                 L.i("收到透传消息");
             }
 
             @Override
             public void onMessageRead(List<EMMessage> messages) {
+                String name = ActivityCollector.getTopActivity().getLocalClassName();
+                if (name.equals("activity.ChatActivity")) {
+                    return;
+                }
                 L.i("收到已读回执");
             }
 
             @Override
             public void onMessageDelivered(List<EMMessage> messages) {
+                String name = ActivityCollector.getTopActivity().getLocalClassName();
+                if (name.equals("activity.ChatActivity")) {
+                    return;
+                }
                 L.i("收到已送达回执");
             }
 
             @Override
             public void onMessageChanged(EMMessage message, Object change) {
+                String name = ActivityCollector.getTopActivity().getLocalClassName();
+                if (name.equals("activity.ChatActivity")) {
+                    return;
+                }
                 L.i("消息状态变动");
             }
         };
