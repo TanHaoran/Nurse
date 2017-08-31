@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
@@ -16,16 +17,22 @@ import com.jerry.nurse.app.MyApplication;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.LoginInfoResult;
+import com.jerry.nurse.model.MicroBlog;
+import com.jerry.nurse.model.MicroBlogResult;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginManager;
 import com.jerry.nurse.view.PasswordEditText;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.tauth.Tencent;
@@ -36,6 +43,7 @@ import org.litepal.crud.DataSupport;
 import butterknife.Bind;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
+import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
@@ -64,6 +72,15 @@ public class LoginActivity extends BaseActivity {
     private TencentLoginManager mTencentLoginManager;
 
     private LoginInfo mLoginInfo;
+
+    /**
+     * 新浪微博
+     */
+    private SsoHandler mSsoHandler;
+    /**
+     * 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能
+     */
+    private Oauth2AccessToken mAccessToken;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -110,6 +127,8 @@ public class LoginActivity extends BaseActivity {
 
             }
         });
+        // 初始化微博登录的对象
+        mSsoHandler = new SsoHandler(this);
     }
 
     /**
@@ -196,6 +215,10 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 处理微博
+        if (mSsoHandler != null) {
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
         // 腾讯的第三方登录
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginManager.getIUiListener());
@@ -390,4 +413,107 @@ public class LoginActivity extends BaseActivity {
         req.state = "diandi_wx_login";
         MyApplication.sWxApi.sendReq(req);
     }
+
+
+    /******************************使用微博登录*********************************************/
+    /**
+     * 微博登录
+     *
+     * @param view
+     */
+    @OnClick(R.id.ll_microblog)
+    void onMicroBlog(View view) {
+        mSsoHandler.authorize(new SelfWbAuthListener());
+    }
+
+    private class SelfWbAuthListener implements com.sina.weibo.sdk.auth.WbAuthListener {
+        @Override
+        public void onSuccess(final Oauth2AccessToken token) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAccessToken = token;
+                    L.i("Token:" + mAccessToken.getToken());
+                    L.i("Uid:" + mAccessToken.getUid());
+                    if (mAccessToken.isSessionValid()) {
+                        L.i("授权成功");
+                        //获取个人资料
+                        OkHttpUtils.get()
+                                .url(ServiceConstant.MICRO_BLOG_GET_USER_INFO)
+                                .addParams("access_token", mAccessToken.getToken())
+                                .addParams("uid", mAccessToken.getUid())
+                                .build()
+                                .execute(new FilterStringCallback() {
+
+                                    @Override
+                                    public void onError(Call call, Exception e, int id) {
+                                        L.i("获取失败：" + e.getMessage());
+                                        e.printStackTrace();
+                                    }
+
+                                    @Override
+                                    public void onFilterResponse(String response, int id) {
+                                        int start = response.indexOf("source");
+                                        int end = response.indexOf(",\"favorited");
+                                        String href = response.substring(start, end);
+                                        response = response.replace(href, "source\":\"\"");
+                                        L.i("处理后结果:" + response);
+                                        MicroBlogResult result = new Gson().fromJson(response, MicroBlogResult.class);
+                                        // 微博登录
+                                        postMicroBlogLogin(result);
+                                    }
+                                });
+
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void cancel() {
+            L.i("取消授权");
+        }
+
+        @Override
+        public void onFailure(WbConnectErrorMessage errorMessage) {
+            Toast.makeText(LoginActivity.this, errorMessage.getErrorMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 微博登录系统
+     *
+     * @param info
+     */
+    private void postMicroBlogLogin(MicroBlogResult info) {
+        MicroBlog microBlog = new MicroBlog();
+        microBlog.setIdstr(info.getIdstr());
+        microBlog.setName(info.getName());
+        microBlog.setLocation(info.getLocation());
+        microBlog.setDescription(info.getDescription());
+        microBlog.setProfile_image_url(info.getProfile_image_url());
+        microBlog.setGender(info.getGender());
+        // 设置极光推送Id
+        microBlog.setDeviceRegId(JPushInterface.getRegistrationID(this));
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.LOGIN_BY_WB)
+                .content(StringUtil.addModelWithJson(microBlog))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            // 使用登录管理器登录成功后保存登录信息
+                            onLoginSuccess(loginInfoResult);
+                        } else {
+                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
+                        }
+                    }
+                });
+    }
+
 }

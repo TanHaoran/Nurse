@@ -108,6 +108,7 @@
     <orderEntry type="library" exported="" name="core-3.3.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-9.4.0" level="project" />
+    <orderEntry type="library" exported="" name="core-4.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="exposed-instrumentation-api-publish-0.5" level="project" />
     <orderEntry type="library" exported="" name="analytics-6.1.2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />

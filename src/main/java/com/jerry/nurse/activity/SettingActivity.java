@@ -193,6 +193,46 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 绑定/解绑微博
+     *
+     * @param view
+     */
+    @OnClick(R.id.rl_microblog)
+    void onMicroBlog(View view) {
+        // 解绑微博
+        L.i("绑定的数量是：" + mBindInfo.getBindCount());
+        // 绑定微博
+        if (TextUtils.isEmpty(mBindInfo.getWeixinOpenId())) {
+
+        } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.tips)
+                    .setMessage("确定解除绑定 " + mBindInfo.getWeixinNickName() + " 吗?")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+//                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+//                            MicroBlog microBlog  = new MicroBlog();
+//                            thirdPartInfo.setWBData(microBlog);
+//                            unBind(thirdPartInfo);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
+    }
+
+    /**
+     * 院内账号绑定/解绑
+     * @param view
+     */
+    @OnClick(R.id.rl_hospital_account)
+    void onHospitalAccount(View view) {
+
+    }
+
     @OnClick(R.id.rl_change_password)
     void onChangePassword(View view) {
         Intent intent = ChangePasswordActivity.getIntent(this);

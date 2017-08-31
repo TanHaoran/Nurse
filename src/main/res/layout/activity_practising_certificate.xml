@@ -663,7 +663,8 @@
                 <View
                     style="@style/DividerLineStyle"/>
 
-                <android.support.v7.widget.AppCompatButton
+                <Button
+                    style="@style/Button.Style"
                     android:id="@+id/acb_submit"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/normal_button_height"

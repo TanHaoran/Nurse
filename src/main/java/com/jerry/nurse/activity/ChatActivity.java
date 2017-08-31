@@ -76,6 +76,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      * 默认每次刷新显示的条目数
      */
     private static final int DEFAULT_PAGE_MESSAGE_COUNT = 10;
+
+    private static final int MESSAGE_RECEIVED = 0x101;
+    private static final int MESSAGE_READ = 0x102;
     /**
      * 目前加载的页数
      */
@@ -153,104 +156,114 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            String name = ActivityCollector.getTopActivity().getLocalClassName();
-            if (!name.equals("activity.ChatActivity")) {
-                return;
-            }
-            // 一条一条解析消息
-            List<EMMessage> messages = (List<EMMessage>) msg.obj;
-            for (final EMMessage emMessage : messages) {
-
-
-                ChatMessage chatMessage = new ChatMessage();
-                if (emMessage.getType() == EMMessage.Type.TXT) {
-                    EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
-                    chatMessage.setContent(messageBody.getMessage());
-                    chatMessage.setType(ChatMessage.TYPE_TXT);
-                } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-                    EMVoiceMessageBody messageBody = (EMVoiceMessageBody) emMessage.getBody();
-                    chatMessage.setSecond(messageBody.getLength());
-                    chatMessage.setPath(messageBody.getLocalUrl());
-                    chatMessage.setType(ChatMessage.TYPE_VOICE);
-                } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-                    EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
-                    chatMessage.setLocalUrl(messageBody.getLocalUrl());
-                    chatMessage.setRemoteUrl(messageBody.getRemoteUrl());
-                    chatMessage.setType(ChatMessage.TYPE_IMAGE);
-                    // TODO 图片文件传输如果立刻传输有时会无法床见文件，这里暂时延迟处理
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            switch (msg.what) {
+                case MESSAGE_RECEIVED:
+                    String name = ActivityCollector.getTopActivity().getLocalClassName();
+                    if (!name.equals("activity.ChatActivity")) {
+                        return;
                     }
-                }
-
-                // 单聊
-                if (!mIsGroup) {
-                    chatMessage.setTo(mLoginInfo.getRegisterId());
-                    // 构建首页消息
-                    com.jerry.nurse.model.Message message = null;
-                    try {
-                        message = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "1",
-                                EMClient.getInstance().getCurrentUser(), mContactId)
-                                .findFirst(com.jerry.nurse.model.Message.class);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (message == null) {
-                        message = new com.jerry.nurse.model.Message();
-                    }
-                    message.setType(com.jerry.nurse.model.Message.TYPE_CHAT);
-                    message.setImageUrl(mContactInfo.getAvatar());
-                    message.setTitle(mContactInfo.getNickName());
-                    message.setTime(new Date().getTime());
-                    message.setRegisterId(EMClient.getInstance().getCurrentUser());
-                    message.setContactId(mContactId);
-                    message.save();
-                }
-                // 群聊
-                else {
-                    chatMessage.setTo(mContactId);
-                    // 因为这里要异步获取发消息人的信息，所以使用了全局变量来记录
-                    mHomePageMessage = null;
-                    try {
-                        mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "2",
-                                EMClient.getInstance().getCurrentUser(), mContactId)
-                                .findFirst(com.jerry.nurse.model.Message.class);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    new LocalContactCache() {
-                        @Override
-                        protected void onLoadContactInfoSuccess(ContactInfo info) {
-                            if (mHomePageMessage == null) {
-                                mHomePageMessage = new com.jerry.nurse.model.Message();
+                    // 一条一条解析消息
+                    List<EMMessage> messages = (List<EMMessage>) msg.obj;
+                    for (final EMMessage emMessage : messages) {
+                        L.i("收到一条消息:" + emMessage.getMsgId());
+                        ChatMessage chatMessage = new ChatMessage();
+                        if (emMessage.getType() == EMMessage.Type.TXT) {
+                            EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
+                            chatMessage.setContent(messageBody.getMessage());
+                            chatMessage.setType(ChatMessage.TYPE_TXT);
+                        } else if (emMessage.getType() == EMMessage.Type.VOICE) {
+                            EMVoiceMessageBody messageBody = (EMVoiceMessageBody) emMessage.getBody();
+                            chatMessage.setSecond(messageBody.getLength());
+                            chatMessage.setPath(messageBody.getLocalUrl());
+                            chatMessage.setType(ChatMessage.TYPE_VOICE);
+                        } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
+                            EMImageMessageBody messageBody = (EMImageMessageBody) emMessage.getBody();
+                            chatMessage.setLocalUrl(messageBody.getLocalUrl());
+                            chatMessage.setRemoteUrl(messageBody.getRemoteUrl());
+                            chatMessage.setType(ChatMessage.TYPE_IMAGE);
+                            // TODO 图片文件传输如果立刻传输有时会无法床见文件，这里暂时延迟处理
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                            mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
-                            mHomePageMessage.setImageResource(R.drawable.icon_qlt);
-                            mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
-                            mHomePageMessage.setTime(new Date().getTime());
-                            mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
-                            mHomePageMessage.setContactId(mContactId);
-                            mHomePageMessage.save();
                         }
-                    }.getContactInfo(EMClient.getInstance().getCurrentUser(),
-                            emMessage.getFrom());
 
-                }
+                        // 单聊
+                        if (!mIsGroup) {
+                            // 设置消息已读
+                            makeMessagesRead();
+                            chatMessage.setTo(mLoginInfo.getRegisterId());
+                            // 构建首页消息
+                            com.jerry.nurse.model.Message message = null;
+                            try {
+                                message = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "1",
+                                        EMClient.getInstance().getCurrentUser(), mContactId)
+                                        .findFirst(com.jerry.nurse.model.Message.class);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (message == null) {
+                                message = new com.jerry.nurse.model.Message();
+                            }
+                            message.setType(com.jerry.nurse.model.Message.TYPE_CHAT);
+                            message.setImageUrl(mContactInfo.getAvatar());
+                            message.setTitle(mContactInfo.getNickName());
+                            message.setTime(new Date().getTime());
+                            message.setRegisterId(EMClient.getInstance().getCurrentUser());
+                            message.setContactId(mContactId);
+                            message.save();
+                        }
+                        // 群聊
+                        else {
+                            chatMessage.setTo(mContactId);
+                            // 因为这里要异步获取发消息人的信息，所以使用了全局变量来记录
+                            mHomePageMessage = null;
+                            try {
+                                mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "2",
+                                        EMClient.getInstance().getCurrentUser(), mContactId)
+                                        .findFirst(com.jerry.nurse.model.Message.class);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                // 保存聊天消息并更新界面
-                mChatMessages.add(chatMessage);
-                mAdapter.notifyDataSetChanged();
-                // TODO 滚动问题
-                int itemCount = mAdapter.getItemCount();
-                if (mRecyclerView != null) {
-                    mRecyclerView.scrollToPosition(itemCount);
-                }
-                chatMessage.setTime(emMessage.getMsgTime());
-                chatMessage.setFrom(emMessage.getFrom());
-                chatMessage.save();
+                            new LocalContactCache() {
+                                @Override
+                                protected void onLoadContactInfoSuccess(ContactInfo info) {
+                                    if (mHomePageMessage == null) {
+                                        mHomePageMessage = new com.jerry.nurse.model.Message();
+                                    }
+                                    mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
+                                    mHomePageMessage.setImageResource(R.drawable.icon_qlt);
+                                    mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
+                                    mHomePageMessage.setTime(new Date().getTime());
+                                    mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
+                                    mHomePageMessage.setContactId(mContactId);
+                                    mHomePageMessage.save();
+                                }
+                            }.getContactInfo(EMClient.getInstance().getCurrentUser(),
+                                    emMessage.getFrom());
+
+                        }
+                        chatMessage.setTime(emMessage.getMsgTime());
+                        chatMessage.setFrom(emMessage.getFrom());
+                        chatMessage.save();
+
+                        // TODO 滚动问题
+                        int itemCount = mAdapter.getItemCount();
+                        if (mRecyclerView != null) {
+                            mRecyclerView.scrollToPosition(itemCount);
+                        }
+                        // 保存聊天消息并更新界面
+                        mChatMessages.add(chatMessage);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case MESSAGE_READ:
+                    mAdapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -285,7 +298,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     protected void onResume() {
         super.onResume();
 
-
         // TODO 权限申请？
         BaseActivity.requestRuntimePermission(new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
@@ -307,21 +319,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         // 获取我的信息
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
-        EMConversation conversation = EMClient.getInstance().chatManager().getConversation(mContactId);
+        // 设置消息已读
+        makeMessagesRead();
 
-        L.i("未读消息数量：" + conversation.getUnreadMsgCount());
-
-        L.i("所有消息数量：" + conversation.getAllMessages().size());
-
-        // 将所有未读消息设置为已读
-        for (EMMessage emMessage : conversation.getAllMessages()) {
-            try {
-                EMClient.getInstance().chatManager().ackMessageRead(emMessage.getFrom(), emMessage.getMsgId());
-                L.i("设置已读消息:" + emMessage.getMsgId());
-            } catch (HyphenateException e) {
-                e.printStackTrace();
-            }
-        }
 
         // 单聊
         if (!mIsGroup) {
@@ -462,6 +462,27 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     }
 
     /**
+     * 将所有消息设置为已读
+     */
+    private void makeMessagesRead() {
+        EMConversation conversation = EMClient.getInstance().chatManager().getConversation(mContactId);
+
+        // 将所有未读消息设置为已读
+        if (conversation != null) {
+            for (EMMessage emMessage : conversation.getAllMessages()) {
+                try {
+                    EMClient.getInstance().chatManager().ackMessageRead(emMessage.getFrom(), emMessage.getMsgId());
+                    L.i("设置已读消息:" + emMessage.getMsgId());
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            L.i("谈话为空");
+        }
+    }
+
+    /**
      * 创建图片消息并发送
      *
      * @param file
@@ -572,6 +593,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         L.i("收到一条消息");
         Message message = new Message();
         message.obj = messages;
+        message.what = MESSAGE_RECEIVED;
         mHandler.sendMessage(message);
     }
 
@@ -592,9 +614,14 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      */
     @Override
     public void onMessageRead(List<EMMessage> messages) {
-        for (EMMessage emMessage : messages) {
-            L.i("收到已读回执" + emMessage.getMsgId());
+        for (ChatMessage cm : mChatMessages) {
+            if (!cm.isRead()) {
+                cm.setRead(true);
+                L.i("设置一条已读");
+                cm.save();
+            }
         }
+        mHandler.sendEmptyMessage(MESSAGE_READ);
     }
 
     /**
@@ -679,6 +706,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     .error(R.drawable.icon_avatar_default).into(imageView);
             // 时间要处理成和微信一致的效果
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
+            // 设置已读和未读状态
+            TextView statusTextView = holder.getView(R.id.tv_status);
+            if (chatMessage.isRead()) {
+                statusTextView.setText(R.string.read);
+                statusTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+            } else {
+                statusTextView.setText(R.string.unread);
+                statusTextView.setTextColor(getResources().getColor(R.color.primary));
+            }
             switch (chatMessage.getType()) {
                 // 文字消息
                 case ChatMessage.TYPE_TXT:

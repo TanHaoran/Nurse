@@ -43,6 +43,7 @@
     <string name="in_hospital">院内</string>
     <string name="qq">QQ</string>
     <string name="microblog">微博</string>
+    <string name="hospital_account">院内账号</string>
     <string name="setup_password">设置密码</string>
     <string name="user_account_and_password_login">使用账号密码登录</string>
     <string name="hospital_account_login">院内账号登录</string>

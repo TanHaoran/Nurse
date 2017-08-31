@@ -9,8 +9,7 @@
         android:id="@+id/iv_qr_code"
         android:layout_width="280dp"
         android:layout_height="280dp"
-        android:layout_marginBottom="@dimen/line_paddingLeft"
-        android:src="@drawable/erm"/>
+        android:layout_marginBottom="@dimen/line_paddingLeft"/>
 
     <TextView
         android:layout_width="wrap_content"

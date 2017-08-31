@@ -134,6 +134,7 @@
             android:layout_marginLeft="@dimen/unread_marginRight"
             android:layout_toRightOf="@id/rl_content"
             android:text="@string/unread"
+            android:visibility="gone"
             android:textColor="@color/gray_textColor"
             android:textSize="@dimen/small_textSize"/>
 

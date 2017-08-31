@@ -298,8 +298,7 @@
 
                 <LinearLayout
                     android:id="@+id/ll_microblog"
-                    style="@style/Third_Party_login_Layout_Style"
-                    android:visibility="gone">
+                    style="@style/Third_Party_login_Layout_Style">
 
                     <ImageView
                         android:layout_width="@dimen/third_party_login_width"

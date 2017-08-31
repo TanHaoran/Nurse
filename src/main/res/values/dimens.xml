@@ -10,7 +10,7 @@
     <dimen name="line_paddingLeft">12dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
-    <dimen name="tab_menu_drawable_padding">1dp</dimen>
+    <dimen name="tab_menu_drawable_padding">2dp</dimen>
     <dimen name="tab_menu_text_paddingTop">3dp</dimen>
     <dimen name="tab_menu_height">50dp</dimen>
 

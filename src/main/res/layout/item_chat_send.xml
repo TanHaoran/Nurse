@@ -125,9 +125,9 @@
             android:layout_marginRight="@dimen/unread_marginRight"
             android:layout_toLeftOf="@id/rl_content"
             android:text="@string/unread"
-            android:textColor="@color/gray_textColor"
+            android:textColor="@color/primary"
             android:textSize="@dimen/small_textSize"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
     </RelativeLayout>
 
 </LinearLayout>

@@ -5,8 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -44,6 +46,11 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        Window window = this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setNavigationBarColor(this.getResources().getColor(R.color.primary));
+        }
 
         int startAlpha = 0;
         int endAlpha = 1;

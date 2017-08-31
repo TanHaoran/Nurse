@@ -21,6 +21,8 @@ import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.MessageManager;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
@@ -29,6 +31,7 @@ import com.zhy.http.okhttp.log.LoggerInterceptor;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
+import org.litepal.crud.DataSupport;
 
 import java.util.Iterator;
 import java.util.List;
@@ -69,6 +72,8 @@ public class MyApplication extends LitePalApplication {
         initOkHttp();
         // 初始化注册微信
         initWeChat();
+        // 初始化微博
+        initWebSDK();
     }
 
     /**
@@ -177,14 +182,13 @@ public class MyApplication extends LitePalApplication {
         EMMessageListener emMessageListener = new EMMessageListener() {
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
-                String name = ActivityCollector.getTopActivity().getLocalClassName();
-                if (name.equals("activity.ChatActivity")) {
+                if (checkIfChatting()) {
                     return;
                 }
-                L.i("收到一条消息");
 
                 // 对传过来的消息进行逐条处理
                 for (final EMMessage emMessage : messages) {
+                    L.i("收到一条消息:" + emMessage.getMsgId());
                     // 首先去寻找本地数据库是否有这个人
                     new LocalContactCache() {
                         @Override
@@ -198,8 +202,7 @@ public class MyApplication extends LitePalApplication {
 
             @Override
             public void onCmdMessageReceived(List<EMMessage> messages) {
-                String name = ActivityCollector.getTopActivity().getLocalClassName();
-                if (name.equals("activity.ChatActivity")) {
+                if (checkIfChatting()) {
                     return;
                 }
                 L.i("收到透传消息");
@@ -207,17 +210,32 @@ public class MyApplication extends LitePalApplication {
 
             @Override
             public void onMessageRead(List<EMMessage> messages) {
-                String name = ActivityCollector.getTopActivity().getLocalClassName();
-                if (name.equals("activity.ChatActivity")) {
+                if (checkIfChatting()) {
                     return;
                 }
                 L.i("收到已读回执");
+                for (EMMessage emMessage : messages) {
+                    // 单聊
+                    if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+
+                        // 从数据库中找到这条数据设置消息状态已读
+                        List<ChatMessage> cms = DataSupport.where("mFrom=? and mTo=? and mRead=?",
+                                emMessage.getFrom(), emMessage.getTo(), "0").find(ChatMessage.class);
+                        for(ChatMessage cm: cms) {
+                            if (!cm.isRead()) {
+                                cm.setRead(true);
+                                cm.save();
+                                L.i("设置一条已读");
+                            }
+                        }
+                    }
+                    // TODO 群聊
+                }
             }
 
             @Override
             public void onMessageDelivered(List<EMMessage> messages) {
-                String name = ActivityCollector.getTopActivity().getLocalClassName();
-                if (name.equals("activity.ChatActivity")) {
+                if (checkIfChatting()) {
                     return;
                 }
                 L.i("收到已送达回执");
@@ -225,8 +243,7 @@ public class MyApplication extends LitePalApplication {
 
             @Override
             public void onMessageChanged(EMMessage message, Object change) {
-                String name = ActivityCollector.getTopActivity().getLocalClassName();
-                if (name.equals("activity.ChatActivity")) {
+                if (checkIfChatting()) {
                     return;
                 }
                 L.i("消息状态变动");
@@ -234,6 +251,19 @@ public class MyApplication extends LitePalApplication {
         };
         // 开始监听
         EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+    }
+
+    /**
+     * 检测是否在聊天窗口中
+     *
+     * @return
+     */
+    private boolean checkIfChatting() {
+        String name = ActivityCollector.getTopActivity().getLocalClassName();
+        if (name.equals("activity.ChatActivity")) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -349,6 +379,12 @@ public class MyApplication extends LitePalApplication {
     private void initWeChat() {
         sWxApi = WXAPIFactory.createWXAPI(this, ServiceConstant.WX_APP_ID, false);
         sWxApi.registerApp(ServiceConstant.WX_APP_ID);
+    }
+
+    //新浪微博初始化，对应的参数分别是app_key,回调地址，和权限
+    private void initWebSDK() {
+        WbSdk.install(this,new AuthInfo(this, ServiceConstant.SINA_APP_KEY, ServiceConstant.SINA_REDIRECT_URL,
+                ServiceConstant.SINA_SCOPE));
     }
 
 

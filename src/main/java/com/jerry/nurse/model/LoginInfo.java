@@ -10,6 +10,8 @@ import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
  * 用户登陆信息
  */
 public class LoginInfo extends DataSupport {
+
+
     /**
      * Avatar :
      * DepartmentId :

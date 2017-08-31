@@ -17,7 +17,6 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AnnouncementActivity;
 import com.jerry.nurse.activity.AnnouncementDetailActivity;
 import com.jerry.nurse.activity.CreditCheckActivity;
-import com.jerry.nurse.activity.EventReportActivity;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.ScheduleActivity;
 import com.jerry.nurse.adapter.BannerAdapter;
@@ -351,9 +350,9 @@ public class OfficeFragment extends BaseFragment {
                     .show();
             return;
         }
-//        Intent intent = HtmlActivity.getIntent(getActivity(),
-//                REPORT_EVENT_URL + info.getReguserId(), null);
-        Intent intent = EventReportActivity.getIntent(getActivity());
+        Intent intent = HtmlActivity.getIntent(getActivity(),
+                REPORT_EVENT_URL + info.getReguserId(), null);
+//        Intent intent = EventReportActivity.getIntent(getActivity());
         startActivity(intent);
     }
 

@@ -116,8 +116,7 @@ public abstract class TencentLoginManager {
         Qq info = new Qq();
         info.setOpenId(openID);
         info.setFigureUrl(originInfo.getFigureurl_qq_2());
-        String nickname = EmojiFilter.filterEmoji(originInfo.getNickname());
-        info.setNickName(nickname);
+        info.setNickName(originInfo.getNickname());
         info.setProvince(originInfo.getProvince());
         info.setCity(originInfo.getCity());
         info.setGender(originInfo.getGender());

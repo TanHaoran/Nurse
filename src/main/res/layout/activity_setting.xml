@@ -151,6 +151,35 @@
             <View
                 style="@style/DividerLineStyle"/>
 
+            <RelativeLayout
+                android:id="@+id/rl_hospital_account"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/hospital_account"/>
+
+                <ImageView
+                    android:id="@+id/iv_hospital_account"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_hospital_account"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_hospital_account"
+                    tools:text="林山夕风"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
             <View
                 style="@style/DividerLineStyle"
                 android:layout_marginTop="@dimen/block_marinTop"/>
@@ -266,8 +295,9 @@
             <View
                 style="@style/DividerLineStyle"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/btn_login"
+                style="@style/Button.Style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/block_marinTop"

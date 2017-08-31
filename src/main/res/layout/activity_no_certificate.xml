@@ -22,11 +22,13 @@
         android:textColor="@color/normal_textColor"
         android:textSize="@dimen/normal_textSize"/>
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/acb_go_certificate"
+        style="@style/Button.Style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/block_marinTop"
         android:layout_marginLeft="@dimen/signup_button_marginLeft"
         android:layout_marginRight="@dimen/signup_button_marginLeft"
         android:text="@string/go_certificate"

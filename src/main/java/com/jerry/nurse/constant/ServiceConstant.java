@@ -10,6 +10,13 @@ public class ServiceConstant {
     // 微信AppSecret
     public static final String WX_APP_SECRET = "9495559c8f0bb79577076d6e88adece6";
 
+    public static final String SINA_APP_KEY = "3324408859";
+    public static final String SINA_REDIRECT_URL = "http://api.weibo.com/oauth?/default.html";
+    public static final String SINA_SCOPE =
+            "email,direct_messages_read,direct_messages_write,"
+                    + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
+                    + "follow_app_official_microblog," + "invitation_write";
+
     // 请求返回类型
     public static final int RESPONSE_SUCCESS = 0;
 
@@ -77,6 +84,11 @@ public class ServiceConstant {
      * 微信第三方登陆
      */
     public static final String LOGIN_BY_WX = IP + "ThirdPartLoginWeixin";
+
+    /**
+     * 微博第三方登陆
+     */
+    public static final String LOGIN_BY_WB = IP + "ThirdPartLoginWeibo";
 
     /**
      * 绑定手机号、QQ
@@ -271,6 +283,11 @@ public class ServiceConstant {
      * 获取微信账户基本信息
      */
     public static final String WECHAT_GET_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
+
+    /**
+     * 获取微博基本信息
+     */
+    public static final String MICRO_BLOG_GET_USER_INFO = "https://api.weibo.com/2/users/show.json";
 
 
 }

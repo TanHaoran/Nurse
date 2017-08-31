@@ -5,6 +5,7 @@ import org.litepal.crud.DataSupport;
 import java.io.Serializable;
 
 public class ChatMessage extends DataSupport implements Serializable {
+
     private long mTime;
     private String mFrom;
     private String mTo;
@@ -40,7 +41,7 @@ public class ChatMessage extends DataSupport implements Serializable {
     /**
      * 这条消息是否已读
      */
-    private boolean mRead;
+    private boolean mRead = false;
 
     public final static int MSG_SEND = 0;
     public final static int MSG_RECEIVE = 1;

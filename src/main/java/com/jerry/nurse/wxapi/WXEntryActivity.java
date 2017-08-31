@@ -68,6 +68,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 } else {
                     T.showShort(WXEntryActivity.this, "登录失败");
                 }
+                finish();
                 break;
             // 请求成功
             case BaseResp.ErrCode.ERR_OK:

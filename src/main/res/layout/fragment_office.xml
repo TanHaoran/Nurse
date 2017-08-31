@@ -84,7 +84,7 @@
         <ImageView
             android:layout_width="@dimen/plugin_img_width"
             android:layout_height="@dimen/plugin_img_width"
-            android:src="@drawable/icon_event_report"/>
+            android:src="@drawable/icon_blsj"/>
 
         <TextView
             style="@style/Plug_Text_Style"
