@@ -59,6 +59,9 @@
     <dimen name="login_signup_text_padding">10dp</dimen>
     <dimen name="login_edit_textSize">16sp</dimen>
 
+    <!--消息-->
+    <dimen name="message_item_divider_line_marginLef">64dp</dimen>
+
     <!--院务-->
     <dimen name="banner_height">150dp</dimen>
     <dimen name="plugin_line_height">60dp</dimen>
@@ -159,8 +162,8 @@
     <dimen name="certificate_image_width">100dp</dimen>
     <dimen name="change_cellphone_edit_marginTop">40dp</dimen>
     <dimen name="certificate_edit_marginLeft">150dp</dimen>
-    <dimen name="sex_toggle_width">90dp</dimen>
-    <dimen name="sex_toggle_height">33dp</dimen>
+    <dimen name="sex_toggle_width">80dp</dimen>
+    <dimen name="sex_toggle_height">30dp</dimen>
     <dimen name="sex_toggle_text_margin">15dp</dimen>
     <dimen name="please_upload_text_marginBottom">7dp</dimen>
     <dimen name="please_upload_picture_marginTop">10dp</dimen>

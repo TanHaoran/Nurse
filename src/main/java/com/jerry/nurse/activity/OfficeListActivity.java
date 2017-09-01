@@ -210,12 +210,14 @@ public class OfficeListActivity extends BaseActivity {
         @Override
         protected void convert(ViewHolder holder, OfficeResult.Office office, int position) {
             holder.setText(R.id.tv_string, office.getName());
-            if (mType != 0) {
+            if (mType == 0) {
                 if (office.getDepartmentId().equals(mLoginInfo.getDepartmentId())) {
-                    holder.getView(R.id.iv_choose).setVisibility(View.VISIBLE);
+                    holder.setVisible(R.id.iv_choose, true);
                 } else {
-                    holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
+                    holder.setVisible(R.id.iv_choose, false);
                 }
+            } else {
+                holder.setVisible(R.id.iv_choose, false);
             }
         }
     }

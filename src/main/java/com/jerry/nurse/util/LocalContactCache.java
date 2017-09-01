@@ -26,7 +26,8 @@ public abstract class LocalContactCache {
      * @param contactId
      */
     public void getContactInfo(String registerId, String contactId) {
-        ContactInfo info = DataSupport.where("mRegisterId=?", contactId).findFirst(ContactInfo.class);
+        ContactInfo info = DataSupport.where("mMyId=? and mRegisterId=?",
+                registerId, contactId).findFirst(ContactInfo.class);
         if (info == null) {
             OkHttpUtils.get().url(ServiceConstant.GET_USER_DETAIL_INFO)
                     .addParams("MyId", registerId)

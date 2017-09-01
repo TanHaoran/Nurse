@@ -201,6 +201,31 @@
             <View
                 style="@style/DividerLineStyle"/>
 
+            <RelativeLayout
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/alarm_notification"/>
+
+
+                <com.jerry.nurse.view.ToggleButton
+                    android:id="@+id/tb_alarm"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    app:toggle_left_text="@string/open"
+                    app:toggle_right_text="@string/close"/>
+
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
 
             <View
                 style="@style/DividerLineStyle"

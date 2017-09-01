@@ -12,6 +12,7 @@ import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
@@ -22,6 +23,8 @@ import com.jerry.nurse.model.BindInfo;
 import com.jerry.nurse.model.BindInfoResult;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.MicroBlog;
+import com.jerry.nurse.model.MicroBlogResult;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.model.VersionResult;
@@ -34,9 +37,14 @@ import com.jerry.nurse.util.DownloadUtil;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LitePalUtil;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginManager;
+import com.jerry.nurse.view.ToggleButton;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.tauth.Tencent;
@@ -50,6 +58,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.MediaType;
 
@@ -73,12 +82,19 @@ public class SettingActivity extends BaseActivity {
     @Bind(R.id.tv_microblog)
     TextView mMicroblogTextView;
 
+    @Bind(R.id.tb_alarm)
+    ToggleButton mAlarmButton;
+
 
     private LoginInfo mLoginInfo;
 
     private TencentLoginManager mTencentLoginManager;
 
     private BindInfo mBindInfo;
+
+    private SsoHandler mSsoHandler;
+
+    private boolean mAlarmOn;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SettingActivity.class);
@@ -93,6 +109,18 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        // 初始化微博登录的对象
+        mSsoHandler = new SsoHandler(this);
+        mAlarmOn = (boolean) SPUtil.get(this, SPUtil.ALARM_ON, false);
+        L.i("读取到的值是:" + mAlarmOn);
+        mAlarmButton.setOpen(mAlarmOn);
+        mAlarmButton.setOnToggleListener(new ToggleButton.OnToggleListener() {
+            @Override
+            public void onToggle(boolean open) {
+                SPUtil.put(SettingActivity.this, SPUtil.ALARM_ON, open);
+                L.i("设置的开关值是:" + open);
+            }
+        });
     }
 
     @Override
@@ -127,7 +155,10 @@ public class SettingActivity extends BaseActivity {
             mTencentLoginManager = new TencentLoginManager(this) {
                 @Override
                 public void loginComplete(Qq info) {
-                    bindQQ(info);
+                    ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                    thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                    thirdPartInfo.setQQData(info);
+                    bind(thirdPartInfo);
                 }
             };
             mTencentLoginManager.login();
@@ -165,7 +196,7 @@ public class SettingActivity extends BaseActivity {
         if (TextUtils.isEmpty(mBindInfo.getWeixinOpenId())) {
             if (!MyApplication.sWxApi.isWXAppInstalled()) {
                 // 未安装微信
-                T.showShort(this, R.string.wechat_not_install);
+                showShort(this, R.string.wechat_not_install);
                 return;
             }
             SendAuth.Req req = new SendAuth.Req();
@@ -203,20 +234,21 @@ public class SettingActivity extends BaseActivity {
         // 解绑微博
         L.i("绑定的数量是：" + mBindInfo.getBindCount());
         // 绑定微博
-        if (TextUtils.isEmpty(mBindInfo.getWeixinOpenId())) {
-
-        } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
+        if (TextUtils.isEmpty(mBindInfo.getWeiboOpenId())) {
+            mSsoHandler.authorize(new SelfWbAuthListener());
+        } else if (!TextUtils.isEmpty(mBindInfo.getWeiboOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
-                    .setMessage("确定解除绑定 " + mBindInfo.getWeixinNickName() + " 吗?")
+                    .setMessage("确定解除绑定 " + mBindInfo.getWeiboNickName() + " 吗?")
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-//                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
-//                            MicroBlog microBlog  = new MicroBlog();
-//                            thirdPartInfo.setWBData(microBlog);
-//                            unBind(thirdPartInfo);
+                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                            MicroBlog microBlog = new MicroBlog();
+                            microBlog.setIdstr(mBindInfo.getWeiboOpenId());
+                            thirdPartInfo.setWBData(microBlog);
+                            unBind(thirdPartInfo);
                         }
                     })
                     .setNegativeButton(R.string.cancel, null)
@@ -224,8 +256,77 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
+    private class SelfWbAuthListener implements com.sina.weibo.sdk.auth.WbAuthListener {
+        @Override
+        public void onSuccess(final Oauth2AccessToken token) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Oauth2AccessToken mAccessToken = token;
+                    L.i("Token:" + mAccessToken.getToken());
+                    L.i("Uid:" + mAccessToken.getUid());
+                    if (mAccessToken.isSessionValid()) {
+                        L.i("授权成功");
+                        //获取个人资料
+                        OkHttpUtils.get()
+                                .url(ServiceConstant.MICRO_BLOG_GET_USER_INFO)
+                                .addParams("access_token", mAccessToken.getToken())
+                                .addParams("uid", mAccessToken.getUid())
+                                .build()
+                                .execute(new FilterStringCallback() {
+
+                                    @Override
+                                    public void onError(Call call, Exception e, int id) {
+                                        L.i("获取失败：" + e.getMessage());
+                                        e.printStackTrace();
+                                    }
+
+                                    @Override
+                                    public void onFilterResponse(String response, int id) {
+                                        int start = response.indexOf("source");
+                                        int end = response.indexOf(",\"favorited");
+                                        String href = response.substring(start, end);
+                                        response = response.replace(href, "source\":\"\"");
+                                        L.i("处理后结果:" + response);
+                                        MicroBlogResult result = new Gson().fromJson(response, MicroBlogResult.class);
+                                        // 微博绑定
+
+                                        MicroBlog microBlog = new MicroBlog();
+                                        microBlog.setIdstr(result.getIdstr());
+                                        microBlog.setName(result.getName());
+                                        microBlog.setLocation(result.getLocation());
+                                        microBlog.setDescription(result.getDescription());
+                                        microBlog.setProfile_image_url(result.getProfile_image_url());
+                                        microBlog.setGender(result.getGender());
+                                        // 设置极光推送Id
+                                        microBlog.setDeviceRegId(JPushInterface.getRegistrationID(SettingActivity.this));
+
+                                        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                                        thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                                        thirdPartInfo.setWBData(microBlog);
+                                        bind(thirdPartInfo);
+                                    }
+                                });
+
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void cancel() {
+            L.i("取消授权");
+        }
+
+        @Override
+        public void onFailure(WbConnectErrorMessage errorMessage) {
+            Toast.makeText(SettingActivity.this, errorMessage.getErrorMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     /**
      * 院内账号绑定/解绑
+     *
      * @param view
      */
     @OnClick(R.id.rl_hospital_account)
@@ -309,7 +410,7 @@ public class SettingActivity extends BaseActivity {
 
         // 创建顶部通知框
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setSmallIcon(R.drawable.topnew_icon);
         builder.setContentTitle("智护下载");
         builder.setContentText("正在下载");
         final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -320,6 +421,7 @@ public class SettingActivity extends BaseActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
             @Override
             public void onGranted() {
+                final int[] nowProgress = {-1};
                 DownloadUtil.get().download(APK_ADDRESS + webName, new Date().getTime() + ".apk",
                         new DownloadUtil.OnDownloadListener() {
                             @Override
@@ -340,11 +442,14 @@ public class SettingActivity extends BaseActivity {
 
                             @Override
                             public void onDownloading(int progress) {
-                                L.i("下载进度:" + progress);
-                                builder.setProgress(100, progress, false);
-                                manager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
-                                //下载进度提示
-                                builder.setContentText("下载" + progress + "%");
+                                if (progress > nowProgress[0]) {
+                                    nowProgress[0] = progress;
+                                    L.i("下载进度:" + progress);
+                                    builder.setProgress(100, progress, false);
+                                    manager.notify(PROGRESS_NOTIFICATION_ID, builder.build());
+                                    //下载进度提示
+                                    builder.setContentText("下载" + progress + "%");
+                                }
                             }
 
                             @Override
@@ -352,7 +457,7 @@ public class SettingActivity extends BaseActivity {
                                 L.i("下载失败");
                             }
                         });
-                T.showShort(SettingActivity.this, "已转入后台下载");
+                showShort(SettingActivity.this, "已转入后台下载");
             }
 
             @Override
@@ -379,7 +484,7 @@ public class SettingActivity extends BaseActivity {
         }
 
         mProgressDialogManager.dismiss();
-        showShort(SettingActivity.this, R.string.clear_finish);
+        T.showShort(SettingActivity.this, R.string.clear_finish);
     }
 
     @OnClick(R.id.rl_about)
@@ -466,17 +571,20 @@ public class SettingActivity extends BaseActivity {
         } else {
             mWechatTextView.setText("");
         }
+        // 根据微博的用户名Id来判断是否有微信资料
+        if (!TextUtils.isEmpty(bindInfo.getWeiboOpenId())) {
+            mMicroblogTextView.setText(bindInfo.getWeiboNickName());
+        } else {
+            mMicroblogTextView.setText("");
+        }
     }
 
     /**
-     * 绑定QQ
+     * 绑定账号
      *
-     * @param qq
+     * @param thirdPartInfo
      */
-    private void bindQQ(final Qq qq) {
-        ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-        thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
-        thirdPartInfo.setQQData(qq);
+    private void bind(final ThirdPartInfo thirdPartInfo) {
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.BIND)
@@ -489,15 +597,12 @@ public class SettingActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            T.showShort(SettingActivity.this, "QQ绑定成功");
-                            L.i("qq绑定成功");
+                            showShort(SettingActivity.this, "账号绑定成功");
+                            L.i("账号绑定成功");
                             // 获取用户所有绑定信息
-                            mBindInfo.setQQOpenId(qq.getOpenId());
-                            mBindInfo.setQQNickName(qq.getNickName());
-                            mBindInfo.setBindCount(mBindInfo.getBindCount() + 1);
-                            updateBindInfo(mBindInfo);
+                            getBindInfo(mBindInfo.getRegisterId());
                         } else {
-                            T.showShort(SettingActivity.this, commonResult.getMsg());
+                            showShort(SettingActivity.this, commonResult.getMsg());
                         }
                     }
                 });
@@ -519,19 +624,23 @@ public class SettingActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            showShort(SettingActivity.this, "解绑成功");
+                            T.showShort(SettingActivity.this, "解绑成功");
                             L.i("解绑成功");
                             getBindInfo(mLoginInfo.getRegisterId());
                         } else {
-                            showShort(SettingActivity.this, commonResult.getMsg());
+                            T.showShort(SettingActivity.this, commonResult.getMsg());
                         }
                     }
                 });
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 处理微博
+        if (mSsoHandler != null) {
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
+
         // 腾讯的第三方登陆
         if (requestCode == Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, mTencentLoginManager.getIUiListener());

@@ -172,9 +172,6 @@
                 <View
                     style="@style/DividerLineStyle"/>
 
-                <View
-                    style="@style/DividerLineStyle"/>
-
                 <RelativeLayout
                     style="@style/BusinessLineStyle"
                     android:clickable="false">

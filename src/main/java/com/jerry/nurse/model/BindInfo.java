@@ -18,6 +18,8 @@ public class BindInfo implements Serializable {
     private String RegisterId;
     private String WeixinNickName;
     private String WeixinOpenId;
+    private String WeiboOpenId;
+    private String WeiboNickName;
 
     public int getBindCount() {
         return BindCount;
@@ -73,5 +75,21 @@ public class BindInfo implements Serializable {
 
     public void setWeixinOpenId(String weixinOpenId) {
         WeixinOpenId = weixinOpenId;
+    }
+
+    public String getWeiboOpenId() {
+        return WeiboOpenId;
+    }
+
+    public void setWeiboOpenId(String weiboOpenId) {
+        WeiboOpenId = weiboOpenId;
+    }
+
+    public String getWeiboNickName() {
+        return WeiboNickName;
+    }
+
+    public void setWeiboNickName(String weiboNickName) {
+        WeiboNickName = weiboNickName;
     }
 }

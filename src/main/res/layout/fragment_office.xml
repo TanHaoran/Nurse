@@ -49,18 +49,6 @@
             android:textSize="@dimen/small_textSize"/>
 
         <TextView
-            android:id="@+id/tv_announcement"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/line_paddingLeft"
-            android:layout_toRightOf="@id/tv_announcement_text"
-            android:gravity="center_vertical"
-            android:textColor="@color/normal_textColor"
-            android:textSize="@dimen/small_textSize"
-            tools:text="关于护理不良事件上报流程通知"/>
-
-        <TextView
             android:id="@+id/tv_announcement_more"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -71,6 +59,23 @@
             android:text="@string/more"
             android:textColor="@color/gray_textColor"
             android:textSize="@dimen/small_textSize"/>
+
+        <TextView
+            android:id="@+id/tv_announcement"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_marginRight="@dimen/line_paddingLeft"
+            android:layout_toLeftOf="@id/tv_announcement_more"
+            android:layout_toRightOf="@id/tv_announcement_text"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/small_textSize"
+            tools:text="关于护理不良事件上报流程通知"/>
+
 
     </RelativeLayout>
 
@@ -162,7 +167,6 @@
     </LinearLayout>
 
     <View
-        style="@style/DividerLineStyle"
-        android:layout_marginLeft="@dimen/plugin_divider_line_marginLeft"/>
+        style="@style/DividerLineStyle"/>
 
 </LinearLayout>

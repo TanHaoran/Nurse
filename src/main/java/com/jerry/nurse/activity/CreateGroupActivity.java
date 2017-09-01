@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.fragment.OfficeFragment;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactHeaderBean;
@@ -116,12 +115,12 @@ public class CreateGroupActivity extends BaseActivity {
             }
         }
 
-
         mBodyDatas = new ArrayList<>();
 
         updateView(false);
 
-        List<ContactInfo> infos = DataSupport.where("mIsFriend=?", "1").find(ContactInfo.class);
+        List<ContactInfo> infos = DataSupport.where("mMyId=? and mIsFriend=?",
+                mLoginInfo.getRegisterId(), "1").find(ContactInfo.class);
         for (ContactInfo info : infos) {
             Contact c = new Contact();
             c.setAvatar(info.getAvatar());
@@ -297,12 +296,12 @@ public class CreateGroupActivity extends BaseActivity {
         };
 
         // 如果都通过审核了就可以显示医院和科室的信息
-        if (OfficeFragment.checkPermission()) {
-            mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
-                    new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
-            mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
-                    new ContactTopHeaderBean(mLoginInfo.getHospitalName()));
-        }
+//        if (OfficeFragment.checkPermission()) {
+//            mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
+//                    new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
+//            mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,
+//                    new ContactTopHeaderBean(mLoginInfo.getHospitalName()));
+//        }
 
 //        mHeaderAdapter.setHeaderView(2, R.layout.item_contact_header, mHeaderDatas.get(0));
 

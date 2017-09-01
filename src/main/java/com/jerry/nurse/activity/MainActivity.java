@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -78,6 +79,8 @@ public class MainActivity extends BaseActivity {
 
     private int mCurrentIndex = 0;
 
+    private String mRegisterId;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         return intent;
@@ -91,16 +94,16 @@ public class MainActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         // 获取注册Id，进行环信登陆
-        String registerId = (String) SPUtil.get(this, SPUtil
+        mRegisterId = (String) SPUtil.get(this, SPUtil
                 .REGISTER_ID, "");
         mEaseMobManager = new EaseMobManager();
-        mEaseMobManager.login(registerId);
+        mEaseMobManager.login(mRegisterId);
 
         // 判断是否是该账号首次登录，首次登录要显示欢迎信息
         boolean isFirstIn = (boolean) SPUtil.get(this, SPUtil.IS_FIRST_IN, true);
         if (isFirstIn) {
             // 创建首页欢迎信息
-            createWelcomeMessage(registerId);
+            createWelcomeMessage(mRegisterId);
         }
         SPUtil.put(this, SPUtil.IS_FIRST_IN, false);
 
@@ -120,9 +123,9 @@ public class MainActivity extends BaseActivity {
         registerReceiver(mMessageReceiver, intentFilter);
 
         // 获取好友列表，并更新本地数据库
-        getFriendList(registerId);
+        getFriendList(mRegisterId);
         // 获取群组列表，并更新本地数据库
-        getGroupList(registerId);
+        getGroupList(mRegisterId);
     }
 
 
@@ -277,6 +280,7 @@ public class MainActivity extends BaseActivity {
             PendingIntent pi;
             Notification notification;
             NotificationManagerCompat notificationManager;
+            ContactInfo info;
             switch (intent.getAction()) {
                 // 收到消息
                 case ACTION_CHAT_MESSAGE_RECEIVE:
@@ -287,18 +291,25 @@ public class MainActivity extends BaseActivity {
                     }
                     ChatMessage chatMessage = (ChatMessage) intent.getSerializableExtra(EXTRA_CHAT_MESSAGE);
 
-                    // 发出Notification
+                    // 群聊
                     if (chatMessage.isGroup()) {
                         newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), true);
-                    } else {
+                    }
+                    // 单聊
+                    else {
                         newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), false);
                     }
                     pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    // 读取这个人的个人信息
+                    info = DataSupport.where("mRegisterId=?", chatMessage.getFrom()).findFirst(ContactInfo.class);
+
+                    // 发出Notification
                     notification = new Notification.Builder(MainActivity.this)
                             .setTicker("新消息")
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("新消息提示")
+                            .setSmallIcon(R.drawable.topnew_icon)
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                            .setContentTitle(info.getDisplayName())
                             .setContentText(chatMessage.getContent())
                             .setContentIntent(pi)
                             .setAutoCancel(true)
@@ -306,6 +317,7 @@ public class MainActivity extends BaseActivity {
 
                     notificationManager = NotificationManagerCompat.from(context);
                     notificationManager.notify(0, notification);
+
                     break;
                 // 收到好友申请
                 case ACTION_FRIEND_APPLY_RECEIVE:
@@ -320,11 +332,15 @@ public class MainActivity extends BaseActivity {
                     newIntent = AddContactApplyActivity.getIntent(context);
                     pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    // 读取这个人的个人信息
+                    info= DataSupport.where("mRegisterId=?", apply.getContactId()).findFirst(ContactInfo.class);
+
                     notification = new Notification.Builder(MainActivity.this)
                             .setTicker("新消息")
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.topnew_icon)
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                             .setContentTitle("好友申请")
-                            .setContentText(apply.getReason())
+                            .setContentText(info.getDisplayName() + "申请添加你为好友:" + apply.getReason())
                             .setContentIntent(pi)
                             .setAutoCancel(true)
                             .build();

@@ -18,6 +18,7 @@ import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
+import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
@@ -40,12 +41,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     private static final int RETURN_MSG_TYPE_LOGIN = 1;
     private static final int RETURN_MSG_TYPE_SHARE = 2;
 
+    private ProgressDialogManager mProgressDialogManager;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        mProgressDialogManager = new ProgressDialogManager(this);
         //如果没回调onResp，八成是这句没有写
         MyApplication.sWxApi.handleIntent(getIntent(), this);
     }
@@ -78,13 +81,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                         String code = ((SendAuth.Resp) resp).code;
                         L.i("code = " + code);
 
+                        mProgressDialogManager.show();
                         OkHttpUtils.get().url(ServiceConstant.WECHAT_GET_TOKEN)
                                 .addParams("appid", ServiceConstant.WX_APP_ID)
                                 .addParams("secret", ServiceConstant.WX_APP_SECRET)
                                 .addParams("code", code)
                                 .addParams("grant_type", "authorization_code")
                                 .build()
-                                .execute(new FilterStringCallback() {
+                                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                                     @Override
                                     public void onFilterResponse(String response, int id) {
@@ -115,11 +119,12 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
      * @param openId
      */
     private void getUserInfo(String accessToken, String openId) {
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.WECHAT_GET_USER_INFO)
                 .addParams("access_token", accessToken)
                 .addParams("openid", openId)
                 .build()
-                .execute(new FilterStringCallback() {
+                .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
                     public void onFilterResponse(String response, int id) {

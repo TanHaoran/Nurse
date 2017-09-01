@@ -18,6 +18,7 @@ import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.AlarmManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.MessageManager;
@@ -186,6 +187,9 @@ public class MyApplication extends LitePalApplication {
                     return;
                 }
 
+                // 播放系统提示音
+                AlarmManager.playAlarm(getApplicationContext());
+
                 // 对传过来的消息进行逐条处理
                 for (final EMMessage emMessage : messages) {
                     L.i("收到一条消息:" + emMessage.getMsgId());
@@ -221,7 +225,7 @@ public class MyApplication extends LitePalApplication {
                         // 从数据库中找到这条数据设置消息状态已读
                         List<ChatMessage> cms = DataSupport.where("mFrom=? and mTo=? and mRead=?",
                                 emMessage.getFrom(), emMessage.getTo(), "0").find(ChatMessage.class);
-                        for(ChatMessage cm: cms) {
+                        for (ChatMessage cm : cms) {
                             if (!cm.isRead()) {
                                 cm.setRead(true);
                                 cm.save();
@@ -303,6 +307,9 @@ public class MyApplication extends LitePalApplication {
             public void onContactInvited(final String username, final String reason) {
                 L.i("收到好友邀请：" + username);
 
+                // 播放系统提示音
+                AlarmManager.playAlarm(getApplicationContext());
+
                 new LocalContactCache() {
                     @Override
                     protected void onLoadContactInfoSuccess(ContactInfo ci) {
@@ -383,7 +390,7 @@ public class MyApplication extends LitePalApplication {
 
     //新浪微博初始化，对应的参数分别是app_key,回调地址，和权限
     private void initWebSDK() {
-        WbSdk.install(this,new AuthInfo(this, ServiceConstant.SINA_APP_KEY, ServiceConstant.SINA_REDIRECT_URL,
+        WbSdk.install(this, new AuthInfo(this, ServiceConstant.SINA_APP_KEY, ServiceConstant.SINA_REDIRECT_URL,
                 ServiceConstant.SINA_SCOPE));
     }
 

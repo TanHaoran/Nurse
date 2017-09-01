@@ -26,6 +26,17 @@ public class ToggleButton extends RelativeLayout {
 
     private boolean mIsOpen = false;
 
+    public interface OnToggleListener {
+        void onToggle(boolean open);
+    }
+
+    private OnToggleListener mOnToggleListener;
+
+
+    public void setOnToggleListener(OnToggleListener onToggleListener) {
+        mOnToggleListener = onToggleListener;
+    }
+
     public ToggleButton(Context context) {
         this(context, null);
     }
@@ -63,6 +74,9 @@ public class ToggleButton extends RelativeLayout {
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
                 toggle();
+                if (mOnToggleListener != null) {
+                    mOnToggleListener.onToggle(mIsOpen);
+                }
         }
         return true;
     }
@@ -95,5 +109,27 @@ public class ToggleButton extends RelativeLayout {
             mRightTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
         }
         mIsOpen = !mIsOpen;
+    }
+
+    /**
+     * 设置按钮的开关状态
+     *
+     * @param open
+     */
+    public void setOpen(boolean open) {
+        mIsOpen = open;
+        if (open) {
+            mLeftImageView.setVisibility(VISIBLE);
+            mRightImageView.setVisibility(INVISIBLE);
+
+            mLeftTextView.setTextColor(getResources().getColor(R.color.white));
+            mRightTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+        } else {
+            mLeftImageView.setVisibility(INVISIBLE);
+            mRightImageView.setVisibility(VISIBLE);
+
+            mLeftTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+            mRightTextView.setTextColor(getResources().getColor(R.color.white));
+        }
     }
 }

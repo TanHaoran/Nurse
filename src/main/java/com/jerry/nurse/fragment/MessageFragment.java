@@ -20,7 +20,6 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
 import com.jerry.nurse.util.LocalGroupCache;
-import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.SPUtil;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -85,7 +84,7 @@ public class MessageFragment extends BaseFragment {
         loadLocalMessage();
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        RecyclerViewDecorationUtil.addItemDecoration(getActivity(), mRecyclerView);
+
         mAdapter = new MessageAdapter(getActivity(), R.layout.item_message, mMessages);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -150,11 +149,15 @@ public class MessageFragment extends BaseFragment {
                                     } else if (chatMessage.getType() == ChatMessage.TYPE_IMAGE) {
                                         holder.setText(R.id.tv_content, "图片消息");
                                     }
+                                } else {
+                                    setEmptyContent(holder);
                                 }
+                            } else {
+                                setEmptyContent(holder);
+
                             }
                         }
-                    }.getContactInfo
-                            (mRegisterId, message.getContactId());
+                    }.getContactInfo(mRegisterId, message.getContactId());
                     break;
                 // 群聊聊天消息
                 case Message.TYPE_CHAT_GROUP:
@@ -175,7 +178,11 @@ public class MessageFragment extends BaseFragment {
                                 }
                                 if (groupMessage != null) {
                                     holder.setText(R.id.tv_content, groupMessage.getContent());
+                                } else {
+                                    setEmptyContent(holder);
                                 }
+                            } else {
+                                setEmptyContent(holder);
                             }
                         }
                     }.getGroupInfo(mRegisterId,
@@ -229,5 +236,9 @@ public class MessageFragment extends BaseFragment {
                         }
                     });
         }
+    }
+
+    private void setEmptyContent(ViewHolder holder) {
+        holder.setText(R.id.tv_content, "");
     }
 }

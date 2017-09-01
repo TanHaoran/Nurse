@@ -77,10 +77,6 @@ public class LoginActivity extends BaseActivity {
      * 新浪微博
      */
     private SsoHandler mSsoHandler;
-    /**
-     * 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能
-     */
-    private Oauth2AccessToken mAccessToken;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -432,7 +428,7 @@ public class LoginActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAccessToken = token;
+                    Oauth2AccessToken mAccessToken = token;
                     L.i("Token:" + mAccessToken.getToken());
                     L.i("Uid:" + mAccessToken.getUid());
                     if (mAccessToken.isSessionValid()) {

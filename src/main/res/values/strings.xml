@@ -231,6 +231,7 @@
     <string name="next_step">下一步</string>
 
     <string name="change_password">修改密码</string>
+    <string name="alarm_notification">声音提示</string>
     <string name="help">帮助</string>
     <string name="feedback">反馈</string>
     <string name="check_update">检查更新</string>

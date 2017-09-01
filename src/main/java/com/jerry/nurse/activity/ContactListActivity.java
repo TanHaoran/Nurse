@@ -17,10 +17,8 @@ import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.OfficeResult;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -114,9 +112,6 @@ public class ContactListActivity extends BaseActivity {
     private void setListData(List<Contact> contacts) {
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
 
         mAdapter = new ContactAdapter(this, R.layout.item_contact, contacts);
         mRecyclerView.setAdapter(mAdapter);

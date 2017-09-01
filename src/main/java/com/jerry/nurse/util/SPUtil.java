@@ -16,9 +16,9 @@ public class SPUtil
 
     public static final String NAME = "name";
     public static final String NICKNAME = "nickname";
-    public static final String CELLPHONE = "cellphone";
     public static final String REGISTER_ID = "register_id";
     public static final String IS_FIRST_IN = "is_first_in";
+    public static final String ALARM_ON = "alarm_on";
 
     /** 
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法 

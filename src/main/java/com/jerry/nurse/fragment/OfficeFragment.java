@@ -93,7 +93,6 @@ public class OfficeFragment extends BaseFragment {
             }
         }
     };
-    private ProgressDialogManager mProgressDialogManager;
 
     /**
      * 实例化方法

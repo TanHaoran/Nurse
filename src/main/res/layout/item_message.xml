@@ -10,73 +10,82 @@
     app:swipeEnable="true">
 
     <RelativeLayout
-        android:id="@+id/rl_message"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/plugin_line_selector"
-        android:paddingBottom="@dimen/contact_item_paddingTop"
-        android:paddingLeft="@dimen/contact_item_paddingLeft"
-        android:paddingRight="@dimen/contact_item_paddingLeft"
-        android:paddingTop="@dimen/contact_item_paddingTop">
+        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/cv_avatar"
-            android:layout_width="@dimen/contact_item_avatar_width"
-            android:layout_height="@dimen/contact_item_avatar_width"
-            android:layout_centerVertical="true"
-            app:cardCornerRadius="@dimen/image_round_radius"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:id="@+id/iv_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/icon_avatar_default"/>
-
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="@dimen/message_time_width"
+        <RelativeLayout
+            android:id="@+id/rl_message"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="right"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/contact_item_time_textSize"
-            tools:text="23:10"/>
+            android:background="@drawable/plugin_line_selector"
+            android:paddingBottom="@dimen/contact_item_paddingTop"
+            android:paddingLeft="@dimen/contact_item_paddingLeft"
+            android:paddingRight="@dimen/contact_item_paddingLeft"
+            android:paddingTop="@dimen/contact_item_paddingTop">
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
-            android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-            android:layout_toLeftOf="@id/tv_time"
-            android:layout_toRightOf="@id/cv_avatar"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/normal_textColor"
-            android:textSize="@dimen/normal_textSize"
-            tools:text="紫萱"/>
+            <android.support.v7.widget.CardView
+                android:id="@+id/cv_avatar"
+                android:layout_width="@dimen/contact_item_avatar_width"
+                android:layout_height="@dimen/contact_item_avatar_width"
+                android:layout_centerVertical="true"
+                app:cardCornerRadius="@dimen/image_round_radius"
+                app:cardElevation="0dp">
 
-        <TextView
-            android:id="@+id/tv_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_title"
-            android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
-            android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-            android:layout_toLeftOf="@id/tv_time"
-            android:layout_toRightOf="@id/cv_avatar"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/contact_item_message_textSize"
-            tools:text="在吗"/>
+                <ImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_avatar_default"/>
 
+            </android.support.v7.widget.CardView>
 
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="@dimen/message_time_width"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/contact_item_time_textSize"
+                tools:text="23:10"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+                android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+                android:layout_toLeftOf="@id/tv_time"
+                android:layout_toRightOf="@id/cv_avatar"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"
+                tools:text="紫萱"/>
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_title"
+                android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
+                android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+                android:layout_toLeftOf="@id/tv_time"
+                android:layout_toRightOf="@id/cv_avatar"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/contact_item_message_textSize"
+                tools:text="在吗"/>
+
+        </RelativeLayout>
+
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/message_item_divider_line_marginLef"/>
     </RelativeLayout>
 
     <Button
@@ -86,4 +95,5 @@
         android:background="@color/delete"
         android:text="删除"
         android:textColor="@android:color/white"/>
+
 </com.mcxtzhang.swipemenulib.SwipeMenuLayout>
