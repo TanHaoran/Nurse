@@ -79,6 +79,10 @@
     <dimen name="event_text_marginTop">7dp</dimen>
     <dimen name="event_paddingLeft">30dp</dimen>
     <dimen name="event_paddingTop">28dp</dimen>
+    <dimen name="event_line_height">50dp</dimen>
+    <dimen name="event_dialog_line_height">45dp</dimen>
+    <dimen name="event_line_edit_max_width">150dp</dimen>
+    <dimen name="event_line_edit_height">120dp</dimen>
 
     <!--联系人-->
     <dimen name="contact_item_height">56dp</dimen>

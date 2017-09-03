@@ -120,7 +120,7 @@ public class CountryActivity extends BaseActivity {
                 holder.getView(R.id.iv_choose).setVisibility(View.INVISIBLE);
             }
 
-            holder.getView(R.id.ll_country).setOnClickListener(new View.OnClickListener() {
+            holder.getView(R.id.ll_main).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent();

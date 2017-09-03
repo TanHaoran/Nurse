@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.FallDownEventActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <com.jerry.nurse.view.EventLineTimeView
+                android:id="@+id/eltv_happened_time"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:event_time_name="@string/happened_time"/>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
+            <com.jerry.nurse.view.EventLineEditView
+                android:id="@+id/elev_patient_number"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:event_edit_hint="@string/please_patient_number"
+                app:event_edit_name="@string/patient_number"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <com.jerry.nurse.view.EventLineToggleView
+                android:id="@+id/eltv_sex"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:toggle_close="@string/female"
+                app:toggle_name="@string/patient_sex"
+                app:toggle_open="@string/male"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <com.jerry.nurse.view.EventLineSelectView
+                android:id="@+id/elsv_age"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:select_default="@string/age_year"
+                app:select_hint="@string/please_age"
+                app:select_name="@string/patient_age"
+                app:select_show_edit="true"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <com.jerry.nurse.view.EventLineSelectView
+                android:id="@+id/elsv_nursing_level"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:select_default="@string/level_1"
+                app:select_name="@string/nursing_level"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/personal_info_line_paddingLeft"
+                android:text="@string/patient_diagnosis"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_edit_height"
+                android:background="@drawable/edit_no_border"
+                android:gravity="left|top"
+                android:padding="@dimen/personal_info_line_paddingLeft"
+                android:textColor="@color/normal_textColor"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
+            <com.jerry.nurse.view.EventLineTimeView
+                android:id="@+id/eltv_assessment_time"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:event_time_name="@string/assessment_time"/>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <com.jerry.nurse.view.EventLineEditView
+                android:id="@+id/elev_assessment_score"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:event_edit_hint="@string/please_assessment_score"
+                app:event_edit_name="@string/assessment_score"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <com.jerry.nurse.view.EventLineToggleView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:toggle_close="@string/no"
+                app:toggle_name="@string/if_dangerous"
+                app:toggle_open="@string/yes"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <com.jerry.nurse.view.EventLineToggleView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:toggle_close="@string/no"
+                app:toggle_name="@string/if_defending_measure"
+                app:toggle_open="@string/yes"/>
+
+            <View
+                style="@style/DividerLineStyle"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
+            <com.jerry.nurse.view.EventLineSelectView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_line_height"
+                app:select_default="@string/level_1"
+                app:select_name="@string/fall_down_position"/>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_input"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:button_textSize="@dimen/normal_textSize"
+        app:show_back="true"
+        app:title_text="@string/fall_down_event"/>
+
+</LinearLayout>

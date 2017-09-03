@@ -138,17 +138,16 @@ public class CellphoneContactActivity extends BaseActivity {
                 .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
         ;
 
-        initDatas(getResources().getStringArray(R.array.provinces));
+        initDatas();
     }
 
 
     /**
      * 组织数据源
      *
-     * @param data
      * @return
      */
-    private void initDatas(final String[] data) {
+    private void initDatas() {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 

@@ -178,7 +178,9 @@
     <style name="Contact_Info_Line">
         <item name="android:paddingLeft">@dimen/line_paddingLeft</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:layout_height">@dimen/personal_info_line_height</item>
+        <item name="android:layout_height">
+            @dimen/personal_info_line_height
+        </item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
@@ -207,8 +209,12 @@
         <item name="android:layout_width">@dimen/select_view_width</item>
         <item name="android:layout_height">@dimen/select_view_width</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_marginLeft">@dimen/select_view_marginLeft</item>
-        <item name="android:layout_marginRight">@dimen/select_view_marginRight</item>
+        <item name="android:layout_marginLeft">
+            @dimen/select_view_marginLeft
+        </item>
+        <item name="android:layout_marginRight">
+            @dimen/select_view_marginRight
+        </item>
     </style>
 
     <style name="tab_menu_text">
@@ -230,11 +236,14 @@
     </style>
 
     <style name="TabMenuTextStyle">
-        <item name="android:paddingTop">@dimen/tab_menu_text_paddingTop</item>
+        <item name="android:paddingTop">@dimen/tab_menu_text_paddingTop
+        </item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>
-        <item name="android:drawablePadding">@dimen/tab_menu_drawable_padding</item>
+        <item name="android:drawablePadding">
+            @dimen/tab_menu_drawable_padding
+        </item>
         <item name="android:textColor">@drawable/tab_menu_text</item>
         <item name="android:textSize">@dimen/smaller_textSize</item>
         <item name="android:gravity">center_horizontal</item>
@@ -244,10 +253,22 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:drawablePadding">@dimen/event_text_marginTop</item>
+        <item name="android:drawablePadding">@dimen/event_text_marginTop
+        </item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textSize">@dimen/normal_textSize</item>
         <item name="android:textColor">@color/normal_textColor</item>
+    </style>
+
+    <style name="my_dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="dialogstyle" parent="android:Animation">
+        <item name="@android:windowEnterAnimation">@anim/dialog_enter
+        </item>
+        <item name="@android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
 
 

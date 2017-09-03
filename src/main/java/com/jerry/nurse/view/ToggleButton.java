@@ -24,7 +24,7 @@ public class ToggleButton extends RelativeLayout {
     private ImageView mLeftImageView;
     private ImageView mRightImageView;
 
-    private boolean mIsOpen = false;
+    private boolean mOpen = false;
 
     public interface OnToggleListener {
         void onToggle(boolean open);
@@ -75,7 +75,7 @@ public class ToggleButton extends RelativeLayout {
             case MotionEvent.ACTION_UP:
                 toggle();
                 if (mOnToggleListener != null) {
-                    mOnToggleListener.onToggle(mIsOpen);
+                    mOnToggleListener.onToggle(mOpen);
                 }
         }
         return true;
@@ -88,14 +88,18 @@ public class ToggleButton extends RelativeLayout {
      * @return
      */
     public int getOpen() {
-        return mIsOpen ? 1 : 0;
+        return mOpen ? 1 : 0;
+    }
+
+    public boolean isOpen() {
+        return mOpen;
     }
 
     /**
      * 切换显示状态
      */
     private void toggle() {
-        if (mIsOpen) {
+        if (mOpen) {
             mLeftImageView.setVisibility(INVISIBLE);
             mRightImageView.setVisibility(VISIBLE);
 
@@ -108,7 +112,7 @@ public class ToggleButton extends RelativeLayout {
             mLeftTextView.setTextColor(getResources().getColor(R.color.white));
             mRightTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
         }
-        mIsOpen = !mIsOpen;
+        mOpen = !mOpen;
     }
 
     /**
@@ -117,7 +121,7 @@ public class ToggleButton extends RelativeLayout {
      * @param open
      */
     public void setOpen(boolean open) {
-        mIsOpen = open;
+        mOpen = open;
         if (open) {
             mLeftImageView.setVisibility(VISIBLE);
             mRightImageView.setVisibility(INVISIBLE);
@@ -132,4 +136,35 @@ public class ToggleButton extends RelativeLayout {
             mRightTextView.setTextColor(getResources().getColor(R.color.white));
         }
     }
+
+    /**
+     * 设置左侧(开状态)文字
+     *
+     * @param open
+     */
+    public void setOpenText(String open) {
+        mLeftTextView.setText(open);
+    }
+
+
+    /**
+     * 设置右侧(开状态)文字
+     *
+     * @param close
+     */
+    public void setCloseText(String close) {
+        mRightTextView.setText(close);
+    }
+
+    /**
+     * 获取当前状态值
+     */
+    public String getValue() {
+        if (mOpen) {
+            return mLeftTextView.getText().toString();
+        } else {
+            return mRightTextView.getText().toString();
+        }
+    }
+
 }

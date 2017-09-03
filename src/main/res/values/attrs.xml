@@ -53,4 +53,26 @@
         <attr name="toggle_left_text" format="string"/>
         <attr name="toggle_right_text" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="EventLineEditView">
+        <attr name="event_edit_name" format="string"/>
+        <attr name="event_edit_hint" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="EventLineTimeView">
+        <attr name="event_time_name" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="EventLineToggleView">
+        <attr name="toggle_name" format="string"/>
+        <attr name="toggle_open" format="string"/>
+        <attr name="toggle_close" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="EventLineSelectView">
+        <attr name="select_hint" format="string"/>
+        <attr name="select_name" format="string"/>
+        <attr name="select_show_edit" format="boolean"/>
+        <attr name="select_default" format="string"/>
+    </declare-styleable>
 </resources>

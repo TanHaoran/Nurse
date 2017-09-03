@@ -33,7 +33,8 @@ public class EventReportActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_fall_down)
     void onFallDown(View view) {
-
+        Intent intent = FallDownEventActivity.getIntent(this);
+        startActivity(intent);
     }
 
     /**

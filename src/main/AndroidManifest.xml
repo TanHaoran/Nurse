@@ -410,6 +410,8 @@
         </activity>
         <activity android:name=".activity.EventReportActivity">
         </activity>
+        <activity android:name=".activity.FallDownEventActivity">
+        </activity>
     </application>
 
 </manifest>

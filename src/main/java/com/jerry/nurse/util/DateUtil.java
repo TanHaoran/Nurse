@@ -176,5 +176,17 @@ public class DateUtil {
         }
     }
 
+    /**
+     * 把Date数据转换成String(详细)
+     *
+     * @param date
+     * @return
+     */
+    public static String parseDateToStringDetail(Date date) {
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd " +
+                "HH:mm:ss");
+        return format.format(date);
+    }
 
 }

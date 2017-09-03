@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/event_line_height"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/personal_info_line_paddingLeft"
+        android:paddingRight="@dimen/personal_info_line_paddingLeft">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="left"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"
+            tools:text="患者住院号"/>
+
+        <TextView
+            android:id="@+id/tv_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:paddingLeft="@dimen/login_paddingLeft"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"
+            tools:text="岁"/>
+
+        <EditText
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/tv_value"
+            android:background="@drawable/edit_no_border"
+            android:gravity="right"
+            android:maxWidth="@dimen/event_line_edit_max_width"
+            android:paddingRight="@dimen/login_paddingLeft"
+            android:singleLine="true"
+            android:textColor="@color/normal_textColor"
+            android:textColorHint="@color/gray_textColor"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/normal_textSize"
+            android:visibility="gone"
+            tools:text="18"/>
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/et_other"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/event_line_edit_height"
+        android:gravity="left|top"
+        android:padding="@dimen/personal_info_line_paddingLeft"
+        android:textColor="@color/normal_textColor"
+        android:textSize="@dimen/normal_textSize"
+        android:visibility="gone"/>
+</LinearLayout>
