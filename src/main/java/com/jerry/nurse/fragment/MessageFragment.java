@@ -114,7 +114,7 @@ public class MessageFragment extends BaseFragment {
         protected void convert(final ViewHolder holder, final Message message, final int position) {
             final int type = message.getType();
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(message.getTime())));
-            final ImageView imageView = holder.getView(R.id.iv_avatar);
+            final ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
             switch (type) {
                 // 好友申请消息
                 case Message.TYPE_ADD_FRIEND_APPLY:

@@ -1,6 +1,10 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
 import org.litepal.crud.DataSupport;
+
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 public class UserInfo extends DataSupport {
     /**
@@ -38,7 +42,14 @@ public class UserInfo extends DataSupport {
     private int QVerifyStatus;
 
     public String getAvatar() {
-        return Avatar;
+        if (!TextUtils.isEmpty(Avatar)) {
+            if (Avatar.startsWith("http")) {
+                return Avatar;
+            } else {
+                return AVATAR_ADDRESS + Avatar;
+            }
+        }
+        return "";
     }
 
     public void setAvatar(String Avatar) {

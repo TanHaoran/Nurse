@@ -57,6 +57,7 @@
     <string name="account">账号</string>
     <string name="please_input_account">请输入账号</string>
     <string name="password_empty">密码不能为空</string>
+    <string name="account_empty">账号不能为空</string>
     <string name="wechat_not_install">你还未安装微信</string>
 
     <string name="signup_success">注册成功</string>
@@ -67,6 +68,7 @@
     <string name="cellphone_empty">手机号不能为空</string>
     <string name="cellphone_invalid">手机号格式不正确</string>
     <string name="cellphone_dismatch">手机号不匹配</string>
+    <string name="verification_empty">验证码不正确</string>
     <string name="verification_code_invalid">验证码不正确</string>
     <string name="verification_code_length_invalid">验证码长度不正确</string>
     <string name="password_length_invalid">密码长度应在4和12之间</string>

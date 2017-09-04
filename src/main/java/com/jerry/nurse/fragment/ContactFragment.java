@@ -33,7 +33,9 @@ import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -78,6 +80,8 @@ public class ContactFragment extends BaseFragment {
     private SuspensionDecoration mDecoration;
 
     private LoginInfo mLoginInfo;
+
+    private Map<String, Contact> mTagLast;
 
     public static ContactFragment newInstance() {
 
@@ -160,12 +164,13 @@ public class ContactFragment extends BaseFragment {
             @Override
             protected void onBindHeaderHolder(com.jerry.nurse.util.ViewHolder holder, int headerPos, int layoutId, Object o) {
                 switch (layoutId) {
+                    // 收藏联系人
                     case R.layout.item_contact_header:
                         final ContactHeaderBean contactHeaderBean = (ContactHeaderBean) o;
 
                         RecyclerView recyclerView = holder.getView(R.id.rv_collection);
                         recyclerView.setAdapter(
-                                new CommonAdapter<Contact>(getActivity(), R.layout.meituan_item_header_item, contactHeaderBean.getCityList()) {
+                                new CommonAdapter<Contact>(getActivity(), R.layout.item_header_item, contactHeaderBean.getCityList()) {
                                     @Override
                                     public void convert(ViewHolder holder, final Contact contact) {
 //                                        holder.setText(R.id.tv_nickname, contact.getNickName());
@@ -180,11 +185,12 @@ public class ContactFragment extends BaseFragment {
                                 });
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         break;
+                    // 科室、医院、我的群
                     case R.layout.item_contact_header_top:
                         final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
                         holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
                         if ("我的群".equals(contactTopHeaderBean.getTxt())) {
-                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
+                            holder.setImageResource(R.id.iv_avatar_arrow, R.drawable.icon_qlt);
                         }
                         holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -250,10 +256,15 @@ public class ContactFragment extends BaseFragment {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mContacts);
 
+        // 存储每一个Tag下的最后一个元素
+        mTagLast = new HashMap<>();
+        for (Contact c : mContacts) {
+            mTagLast.put(c.getBaseIndexTag(), c);
+        }
+
         mAdapter.setDatas(mContacts);
         mHeaderAdapter.notifyDataSetChanged();
         mDatas.addAll(mContacts);
-
 
         mIndexBar.setmSourceDatas(mDatas)//设置数据
                 .invalidate();
@@ -269,10 +280,21 @@ public class ContactFragment extends BaseFragment {
 
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
-            ImageView imageView = holder.getView(R.id.iv_avatar);
+            String tag = contact.getBaseIndexTag();
+            Contact lastContact = mTagLast.get(tag);
+            if (lastContact.getFriendId().equals(contact.getFriendId()) && holder.getLayoutPosition()
+                    != mContacts.size() - 1
+                    ) {
+                holder.setVisible(R.id.v_divider, false);
+            } else {
+                holder.setVisible(R.id.v_divider, true);
+            }
+
+            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
             Glide.with(getActivity()).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
-            holder.setText(R.id.tv_nickname, contact.getTarget());
+            holder.setText(R.id.tv_nickname, contact.getTarget() +
+                    holder.getLayoutPosition());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

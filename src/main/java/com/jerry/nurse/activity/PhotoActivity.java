@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.jerry.nurse.R;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.PictureUtil;
 
 import butterknife.Bind;
@@ -23,7 +24,6 @@ public class PhotoActivity extends BaseActivity {
 
     @Bind(R.id.iv_photo)
     ImageView mPhotoImageView;
-
 
     public static Intent getIntent(Context context, String localPath, String remotePath) {
         Intent intent = new Intent(context, PhotoActivity.class);
@@ -42,6 +42,8 @@ public class PhotoActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         String localPath = getIntent().getStringExtra(EXTRA_LOCAL_PATH);
         String remotePath = getIntent().getStringExtra(EXTRA_REMOTE_PATH);
+        L.i("图片本地路径:" + localPath);
+        L.i("图片远程路径:" + remotePath);
         if (!TextUtils.isEmpty(localPath)) {
             Bitmap bitmap = PictureUtil.getScaleBitmap(localPath, this);
             mPhotoImageView.setImageBitmap(bitmap);

@@ -412,6 +412,8 @@
         </activity>
         <activity android:name=".activity.FallDownEventActivity">
         </activity>
+        <activity android:name=".activity.HospitalAccountActivity">
+        </activity>
     </application>
 
 </manifest>

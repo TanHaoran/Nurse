@@ -40,7 +40,7 @@ public class MeFragment extends BaseFragment {
 
     private static final String EVENT_REPORT_URL = ServiceConstant.EVENT_REPORT_IP + "?from=103&Ruid=";
 
-    @Bind(R.id.civ_avatar)
+    @Bind(R.id.iv_avatar)
     ImageView mAvatarImageView;
 
     @Bind(R.id.tv_name)

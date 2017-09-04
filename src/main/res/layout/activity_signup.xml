@@ -107,7 +107,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/line_paddingLeft"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/send_verification_code"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/normal_textSize"/>
@@ -193,13 +193,13 @@
                 android:paddingRight="@dimen/line_paddingLeft">
 
                 <LinearLayout
-                    android:visibility="gone"
                     android:id="@+id/ll_agree"
                     android:layout_width="@dimen/checkbox_width"
                     android:layout_height="@dimen/checkbox_width"
                     android:layout_marginRight="@dimen/checkbox_marginRight"
                     android:background="@drawable/border_around_bg"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_agree"
@@ -231,10 +231,10 @@
             </LinearLayout>
 
             <View
-                android:visibility="gone"
                 android:id="@+id/v_block"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/block_marinTop"/>
+                android:layout_height="@dimen/block_marinTop"
+                android:visibility="gone"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_signup"

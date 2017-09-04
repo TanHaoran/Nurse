@@ -25,7 +25,6 @@ import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginManager;
@@ -54,6 +53,9 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class LoginActivity extends BaseActivity {
 
+    /**
+     * 选择医院请求码
+     */
     public static final int REQUEST_COUNTRY = 0x00000101;
 
     @Bind(R.id.tv_country_code)
@@ -71,6 +73,7 @@ public class LoginActivity extends BaseActivity {
     // 腾讯官方获取的APPID
     private TencentLoginManager mTencentLoginManager;
 
+    // 用户登录信息
     private LoginInfo mLoginInfo;
 
     /**
@@ -90,7 +93,6 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
         // 初始化登录按钮为不可用
         setButtonEnable(this, mLoginButton, false);
 
@@ -243,8 +245,7 @@ public class LoginActivity extends BaseActivity {
      * @param password
      */
     private void login(String countryCode, final String cellphone, final String password) {
-        mProgressDialogManager.setMessage("登录中...");
-        mProgressDialogManager.show();
+        mProgressDialogManager.show("登录中...");
         // 构建登录类
         Register register = new Register(cellphone, password, countryCode);
         // 设置推送的Id
@@ -258,12 +259,12 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                        LoginInfoResult result = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
                             // 用登录管理器登录成功后保存登录信息
-                            onLoginSuccess(loginInfoResult);
+                            onLoginSuccess(result);
                         } else {
-                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
+                            T.showShort(LoginActivity.this, result.getMsg());
                         }
                     }
                 });
@@ -380,12 +381,12 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                        LoginInfoResult result = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
                             // 使用登录管理器登录成功后保存登录信息
-                            onLoginSuccess(loginInfoResult);
+                            onLoginSuccess(result);
                         } else {
-                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
+                            T.showShort(LoginActivity.this, result.getMsg());
                         }
                     }
                 });
@@ -501,12 +502,12 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                        LoginInfoResult result = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
                             // 使用登录管理器登录成功后保存登录信息
-                            onLoginSuccess(loginInfoResult);
+                            onLoginSuccess(result);
                         } else {
-                            T.showShort(LoginActivity.this, loginInfoResult.getMsg());
+                            T.showShort(LoginActivity.this, result.getMsg());
                         }
                     }
                 });

@@ -54,7 +54,7 @@ public class ContactDetailActivity extends BaseActivity {
     @Bind(R.id.ll_contact_option)
     LinearLayout mOptionLayout;
 
-    @Bind(R.id.iv_avatar)
+    @Bind(R.id.iv_avatar_arrow)
     ImageView mAvatarImageView;
 
     @Bind(R.id.tv_name)

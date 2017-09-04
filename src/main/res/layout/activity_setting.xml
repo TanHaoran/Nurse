@@ -46,13 +46,13 @@
 
                 <TextView
                     android:id="@+id/tv_cellphone"
-                    android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/normal_textSize"
-                    android:paddingRight="@dimen/line_paddingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/iv_arrow_cellphone"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
                     tools:text="13******238"/>
 
             </RelativeLayout>
@@ -76,13 +76,13 @@
 
                 <TextView
                     android:id="@+id/tv_wechat"
-                    android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/normal_textSize"
-                    android:paddingRight="@dimen/line_paddingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/iv_arrow_wechat"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
                     tools:text="林山夕风"/>
 
             </RelativeLayout>
@@ -106,13 +106,13 @@
 
                 <TextView
                     android:id="@+id/tv_qq"
-                    android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/normal_textSize"
-                    android:paddingRight="@dimen/line_paddingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/iv_arrow_qq"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
                     tools:text="林山夕风"/>
 
 
@@ -137,19 +137,21 @@
 
                 <TextView
                     android:id="@+id/tv_microblog"
-                    android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/normal_textSize"
-                    android:paddingRight="@dimen/line_paddingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/iv_arrow_microblog"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
                     tools:text="林山夕风"/>
 
             </RelativeLayout>
 
             <View
-                style="@style/DividerLineStyle"/>
+
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
                 android:id="@+id/rl_hospital_account"
@@ -166,13 +168,13 @@
 
                 <TextView
                     android:id="@+id/tv_hospital_account"
-                    android:textColor="@color/gray_textColor"
-                    android:textSize="@dimen/normal_textSize"
-                    android:paddingRight="@dimen/line_paddingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/iv_hospital_account"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
                     tools:text="林山夕风"/>
 
             </RelativeLayout>

@@ -12,9 +12,7 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -36,12 +34,10 @@ public class PasswordActivity extends BaseActivity {
     EditText mPasswordEditText;
 
     private String mRegisterId;
-    private ProgressDialogManager mProgressDialogManager;
 
     public static Intent getIntent(Context context, String registerId) {
         Intent intent = new Intent(context, PasswordActivity.class);
         intent.putExtra(EXTRA_REGISTER_ID, registerId);
-
         return intent;
     }
 
@@ -52,17 +48,14 @@ public class PasswordActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
-
         mRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
-//        mCellphone = getIntent().getStringExtra(EXTRA_CELLPHONE);
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
-                String errorMessage = localValidate();
-                if (errorMessage != null) {
-                    T.showLong(PasswordActivity.this, errorMessage);
+                int result = localValidate();
+                if (result != 0) {
+                    T.showLong(PasswordActivity.this, result);
                     return;
                 }
                 String password = mPasswordEditText.getText().toString().trim();
@@ -77,14 +70,14 @@ public class PasswordActivity extends BaseActivity {
      *
      * @return
      */
-    private String localValidate() {
+    private int localValidate() {
         String password = mPasswordEditText.getText().toString().trim();
         // 本地验证密码
         if (password.isEmpty() || password.length() < 4 || password
                 .length() > 12) {
-            return "密码长度应在4和12之间";
+            return R.string.password_length_invalid;
         }
-        return null;
+        return 0;
     }
 
     /**
@@ -107,16 +100,14 @@ public class PasswordActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                            L.i("设置密码成功");
-
+                        CommonResult result = new Gson().fromJson(response, CommonResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
                             // 调用登陆管理器登陆并保存登陆信息
                             LoginManager loginManager = new LoginManager(PasswordActivity.this,
                                     mProgressDialogManager);
                             loginManager.getLoginInfoByRegisterId(mRegisterId);
                         } else {
-                            L.i("设置密码失败");
+                            T.showShort(PasswordActivity.this, result.getMsg());
                         }
                     }
                 });

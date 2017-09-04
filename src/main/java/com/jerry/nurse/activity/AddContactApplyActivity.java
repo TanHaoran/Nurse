@@ -120,7 +120,7 @@ public class AddContactApplyActivity extends BaseActivity {
                     // 设置昵称位置显示内容
                     holder.setText(R.id.tv_title, info.getDisplayName());
                     holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
-                    ImageView imageView = holder.getView(R.id.iv_avatar);
+                    ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
                     Glide.with(AddContactApplyActivity.this).load(apply.getAvatar())
                             .error(R.drawable.icon_avatar_default).into(imageView);
                 }

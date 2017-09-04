@@ -3,7 +3,10 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,7 +19,6 @@ import com.jerry.nurse.model.Register;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.BottomDialogManager;
 import com.jerry.nurse.util.LoginManager;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -30,6 +32,7 @@ import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.activity.LoginActivity.setButtonEnable;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class HospitalLoginActivity extends BaseActivity {
@@ -49,9 +52,15 @@ public class HospitalLoginActivity extends BaseActivity {
     @Bind(R.id.et_password)
     EditText mPasswordEditText;
 
+    @Bind(R.id.btn_login)
+    Button mLoginButton;
 
     private List<HospitalResult.Hospital> mHospitals;
     private List<String> mHospitalNames;
+
+    private HospitalResult.Hospital mHospital;
+
+    private int mType;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, HospitalLoginActivity.class);
@@ -65,19 +74,45 @@ public class HospitalLoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        mProgressDialogManager = new ProgressDialogManager(this);
-
+        setButtonEnable(this, mLoginButton, false);
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 finish();
             }
         });
+        mPasswordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // 当所有信息都填写完毕，登录按钮可用
+                if (mHospitalTextView.getText().toString().length() > 0 &&
+                        mTypeTextView.getText().toString().length() > 0 &&
+                        mAccountEditText.getText().toString().length() > 0 &&
+                        mPasswordEditText.getText().toString().length() > 0) {
+                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
+                } else {
+                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        // 获取所有医院信息
         getHospitals();
     }
 
+    /**
+     * 获取所有医院信息
+     */
     private void getHospitals() {
         OkHttpUtils.get().url(ServiceConstant.GET_ALL_HOSPITALS)
                 .build()
@@ -95,6 +130,11 @@ public class HospitalLoginActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 点击选择医院
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_hospital)
     void onHospital(View view) {
         if (mHospitals == null) {
@@ -106,42 +146,55 @@ public class HospitalLoginActivity extends BaseActivity {
                 mHospitalNames.add(h.getName());
             }
         }
-        BottomDialogManager bottomDialogManager = new BottomDialogManager(HospitalLoginActivity.this);
-        bottomDialogManager.setOnItemSelectedListener(mHospitalNames, new BottomDialogManager.OnItemSelectedListener() {
+        // 创建并显示底布弹出选择框
+        BottomDialogManager dialog = new BottomDialogManager(HospitalLoginActivity.this);
+        dialog.setOnItemSelectedListener(mHospitalNames, new BottomDialogManager.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int position, String item) {
                 mHospitalTextView.setText(item);
+                mHospital = mHospitals.get(position);
             }
         });
-        bottomDialogManager.showSelectDialog(mHospitalTextView.getText().toString());
-        bottomDialogManager.setTitle("请选择医院");
+        dialog.showSelectDialog(mHospitalTextView.getText().toString());
+        dialog.setTitle("请选择医院");
     }
 
+    /**
+     * 点击选择类别
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_type)
     void onType(View view) {
-        BottomDialogManager bottomDialogManager = new BottomDialogManager(this);
+        BottomDialogManager dialog = new BottomDialogManager(this);
         List<String> items = new ArrayList<>();
         items.add("护理不良事件");
         items.add("学分");
-        bottomDialogManager.setOnItemSelectedListener(items, new BottomDialogManager.OnItemSelectedListener() {
+        dialog.setOnItemSelectedListener(items, new BottomDialogManager.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int position, String item) {
                 mTypeTextView.setText(item);
+                mType = position;
             }
         });
-        bottomDialogManager.showSelectDialog(mTypeTextView.getText().toString());
-        bottomDialogManager.setTitle("请选择类别");
+        dialog.showSelectDialog(mTypeTextView.getText().toString());
+        dialog.setTitle("请选择类别");
     }
 
-    @OnClick(R.id.acb_login)
+    /**
+     * 登录
+     *
+     * @param view
+     */
+    @OnClick(R.id.btn_login)
     void onLogin(View view) {
         String account = mAccountEditText.getText().toString();
         String password = mPasswordEditText.getText().toString();
 
-        //验证用户名和密码格式是否符合
-        String errorMessage = localValidate(account, password);
-        if (errorMessage != null) {
-            T.showShort(this, errorMessage);
+        // 本地验证用户名和密码格式是否符合
+        int result = localValidate(account, password);
+        if (result != 0) {
+            T.showShort(this, result);
             return;
         }
 
@@ -152,18 +205,18 @@ public class HospitalLoginActivity extends BaseActivity {
     /**
      * 本地验证注册
      */
-    public static String localValidate(String account, String password) {
+    public static int localValidate(String account, String password) {
         // 本地验证账号
         if (account.isEmpty()) {
-            return "账号号不能为空";
+            return R.string.account_empty;
         }
 
         // 本地验证验证码
         if (password.isEmpty()) {
-            return "密码不能为空";
+            return R.string.password_empty;
         }
 
-        return null;
+        return 0;
     }
 
     /**
@@ -185,18 +238,23 @@ public class HospitalLoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        final LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
-                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                        LoginInfoResult result = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
+                            // 登录成功并保存登录信息
                             LoginManager loginManager = new LoginManager(HospitalLoginActivity.this, null);
-                            loginManager.saveAndEnter(loginInfoResult.getBody());
+                            loginManager.saveAndEnter(result.getBody());
                         } else {
-                            T.showShort(HospitalLoginActivity.this, loginInfoResult.getMsg());
+                            T.showShort(HospitalLoginActivity.this, result.getMsg());
                         }
                     }
                 });
     }
 
-
+    /**
+     * 使用账号登录
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_account_login)
     void onAccountLogin(View view) {
         finish();

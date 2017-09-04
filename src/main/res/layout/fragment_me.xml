@@ -32,7 +32,7 @@
             app:cardElevation="0dp">
 
             <ImageView
-                android:id="@+id/civ_avatar"
+                android:id="@+id/iv_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/icon_avatar_default"
@@ -87,7 +87,7 @@
                 android:id="@+id/tv_nickname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/civ_avatar"
+                android:layout_toRightOf="@id/iv_avatar"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="@color/monsoon"

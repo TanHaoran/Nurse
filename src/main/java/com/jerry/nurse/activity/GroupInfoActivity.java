@@ -255,10 +255,10 @@ public class GroupInfoActivity extends BaseActivity {
         @Override
         protected void convert(com.zhy.adapter.recyclerview.base.ViewHolder holder, final Contact contact, final int position) {
             if (position == mDatas.size() - 1) {
-                holder.setImageResource(R.id.iv_avatar, R.drawable.group_add_contact);
+                holder.setImageResource(R.id.iv_avatar_arrow, R.drawable.group_add_contact);
             } else {
                 holder.setText(R.id.tv_nickname, contact.getTarget());
-                ImageView imageView = holder.getView(R.id.iv_avatar);
+                ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
                 Glide.with(GroupInfoActivity.this).load(contact.getAvatar())
                         .placeholder(R.drawable.icon_avatar_default).into(imageView);
             }

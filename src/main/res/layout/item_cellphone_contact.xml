@@ -33,7 +33,7 @@
             app:cardElevation="0dp">
 
             <ImageView
-                android:id="@+id/iv_avatar"
+                android:id="@+id/iv_avatar_arrow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -129,7 +129,13 @@
 
 
     <View
+        android:id="@+id/v_divider"
         style="@style/DividerLineStyle"
         android:layout_marginLeft="@dimen/contact_item_divider_line_marginLef"/>
+
+    <View
+        android:visibility="gone"
+        android:id="@+id/v_divider_fill"
+        style="@style/DividerLineStyle"/>
 
 </LinearLayout>

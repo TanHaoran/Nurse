@@ -227,9 +227,9 @@ public class ChangeCellphoneActivity extends BaseActivity {
         String cellphone = mCellphoneEditText.getText().toString();
         String verificationCode = mVerificationCodeEditText.getText().toString();
 
-        String errorMessage = SignupActivity.localValidate(cellphone, verificationCode);
-        if (errorMessage != null) {
-            T.showLong(this, errorMessage);
+        int result = SignupActivity.localValidate(cellphone, verificationCode);
+        if (result != 0) {
+            T.showLong(this, result);
             return;
         }
 

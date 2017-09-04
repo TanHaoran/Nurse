@@ -14,6 +14,14 @@ public class ShortMessage {
     private int Type;
     private String DeviceRegId;
 
+    /**
+     * 创建短信验证类
+     *
+     * @param registerId 用户注册Id
+     * @param phone      用户手机号
+     * @param code       验证码
+     * @param type       验证类型
+     */
     public ShortMessage(String registerId, String phone, String code, int type) {
         RegisterId = registerId;
         Phone = phone;

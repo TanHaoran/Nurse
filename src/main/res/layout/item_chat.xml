@@ -20,7 +20,7 @@
         android:paddingTop="@dimen/contact_item_paddingTop">
 
         <ImageView
-            android:id="@+id/iv_avatar"
+            android:id="@+id/iv_avatar_arrow"
             android:layout_width="@dimen/contact_item_avatar_width"
             android:layout_height="@dimen/contact_item_avatar_width"
             android:layout_centerVertical="true"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
             android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-            android:layout_toRightOf="@id/iv_avatar"
+            android:layout_toRightOf="@id/iv_avatar_arrow"
             android:textSize="@dimen/contact_item_nickname_textSize"
             tools:text="紫萱"/>
 
@@ -43,7 +43,7 @@
             android:layout_below="@id/tv_nickname"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
             android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-            android:layout_toRightOf="@id/iv_avatar"
+            android:layout_toRightOf="@id/iv_avatar_arrow"
             android:textSize="@dimen/contact_item_message_textSize"
             tools:text="在吗"/>
 

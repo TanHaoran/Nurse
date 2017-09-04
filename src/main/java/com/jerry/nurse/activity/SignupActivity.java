@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,7 +25,6 @@ import com.jerry.nurse.model.SignupResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.LoginManager;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -35,14 +34,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.OnClick;
 import cn.jpush.android.api.JPushInterface;
-import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_CODE;
 import static com.jerry.nurse.activity.CountryActivity.EXTRA_COUNTRY_NAME;
+import static com.jerry.nurse.activity.LoginActivity.REQUEST_COUNTRY;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 
@@ -73,11 +71,6 @@ public class SignupActivity extends BaseActivity {
     // 默认显示国家号码
     public static final String DEFAULT_COUNTRY_CODE = "+86";
 
-    private static final int REQUEST_COUNTRY = 0x00000101;
-
-    private static final int MESSAGE_SIGNUP_SUCCESS = 0;
-    private static final int MESSAGE_SIGNUP_FAILED = 1;
-
     @Bind(R.id.tb_signup)
     TitleBar mTitleBar;
 
@@ -105,14 +98,8 @@ public class SignupActivity extends BaseActivity {
     @Bind(R.id.v_block)
     View mBlock;
 
-    @BindColor(R.color.primary)
-    int mPrimaryColor;
-
-    @BindColor(R.color.gray_textColor)
-    int mGrayColor;
-
     // 是否同意协议
-    private boolean mIsAgree = true;
+    private boolean mAgree = true;
 
     private int mType = TYPE_REGISTER;
 
@@ -121,43 +108,29 @@ public class SignupActivity extends BaseActivity {
     /**
      * 验证码获取间隔
      */
-    private int mValidateCountDown = 60;
+    private int mCountdown = 60;
 
     private Runnable mValidateRunnable = new Runnable() {
         @Override
         public void run() {
             // 验证码倒计时
-            mValidateCountDown--;
-            if (mValidateCountDown == 0) {
+            mCountdown--;
+            if (mCountdown == 0) {
+                // 验证码重新归零，重置按钮状态
                 mGetVerificationCodeTextView.setText(R.string.send_verification_code);
-                mValidateCountDown = 60;
+                mCountdown = 60;
                 mGetVerificationCodeTextView.setEnabled(true);
-                mGetVerificationCodeTextView.setTextColor(mPrimaryColor);
+                mGetVerificationCodeTextView.setTextColor(
+                        ContextCompat.getColor(SignupActivity.this, R.color.primary));
                 mHandler.removeCallbacks(mValidateRunnable);
             } else {
-                mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
+                mGetVerificationCodeTextView.setText("(" + mCountdown + "秒)");
                 mHandler.postDelayed(mValidateRunnable, 1000);
             }
         }
     };
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                // 注册成功
-                case MESSAGE_SIGNUP_SUCCESS:
-                    onSignupSuccess();
-                    break;
-                // 注册失败
-                case MESSAGE_SIGNUP_FAILED:
-                    onSignupFailed();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    private Handler mHandler = new Handler();
 
     public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, SignupActivity.class);
@@ -173,8 +146,7 @@ public class SignupActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
-
+        // 初始化登录按钮不可用
         LoginActivity.setButtonEnable(this, mSignupButton, false);
 
         // 根据mType判断进入类型
@@ -214,6 +186,7 @@ public class SignupActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 当手机号和验证码有值的时候可以点击注册按钮
                 if (mCellphoneEditText.getText().toString().length() > 0 &&
                         mVerificationCodeEditText.getText().toString().length() > 0) {
                     LoginActivity.setButtonEnable(SignupActivity.this, mSignupButton, true);
@@ -256,8 +229,7 @@ public class SignupActivity extends BaseActivity {
         // 向服务端发送请求，接收验证码
         try {
             countryCode = URLEncoder.encode(countryCode, "UTF-8");
-            mProgressDialogManager.setMessage("发送验证码...");
-            mProgressDialogManager.show();
+            mProgressDialogManager.show("发送验证码...");
             OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
                     .addParams("Phone", cellphone)
                     .addParams("CountryCode", countryCode)
@@ -267,18 +239,21 @@ public class SignupActivity extends BaseActivity {
 
                         @Override
                         public void onFilterResponse(String response, int id) {
-                            CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                            if (commonResult.getCode() == RESPONSE_SUCCESS) {
-                                // 控制发送验证码的状态
-                                mVerificationCodeEditText.setFocusable(true);
+                            CommonResult result = new Gson().fromJson(response, CommonResult.class);
+                            if (result.getCode() == RESPONSE_SUCCESS) {
+                                // 聚焦到验证码输入框
                                 mVerificationCodeEditText.requestFocus();
+                                // 控制发送验证码的状态
                                 mGetVerificationCodeTextView.setEnabled(false);
-                                mGetVerificationCodeTextView.setTextColor(mGrayColor);
-                                mGetVerificationCodeTextView.setText("(" + mValidateCountDown + "秒)");
+                                mGetVerificationCodeTextView
+                                        .setTextColor(ContextCompat
+                                                .getColor(SignupActivity
+                                                        .this, R.color.gray_textColor));
+                                mGetVerificationCodeTextView.setText("(" + mCountdown + "秒)");
                                 mHandler.postDelayed(mValidateRunnable, 1000);
                                 T.showLong(SignupActivity.this, R.string.get_verification_finished);
                             } else {
-                                T.showLong(SignupActivity.this, commonResult.getMsg());
+                                T.showLong(SignupActivity.this, result.getMsg());
                             }
                         }
                     });
@@ -299,15 +274,15 @@ public class SignupActivity extends BaseActivity {
         String cellphone = mCellphoneEditText.getText().toString();
         String verificationCode = mVerificationCodeEditText.getText().toString();
 
-        String errorMessage = localValidate(cellphone, verificationCode);
+        int result = localValidate(cellphone, verificationCode);
 
-        if (errorMessage != null) {
-            T.showShort(this, errorMessage);
+        if (result != 0) {
+            T.showShort(this, result);
             return;
         }
 
         // 勾选同意
-        if (!mIsAgree) {
+        if (!mAgree) {
             T.showLong(this, R.string.please_agree);
             return;
         }
@@ -326,7 +301,6 @@ public class SignupActivity extends BaseActivity {
         ShortMessage shortMessage = new ShortMessage("", cellphone, code, mType);
         shortMessage.setDeviceRegId(JPushInterface.getRegistrationID(this));
         // 发送请求
-        mProgressDialogManager.setMessage("请稍后...");
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
@@ -334,10 +308,6 @@ public class SignupActivity extends BaseActivity {
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {
-                    @Override
-                    public void onFilterError(Call call, Exception e, int id) {
-                        onSignupFailed();
-                    }
 
                     @Override
                     public void onFilterResponse(String response, int id) {
@@ -348,6 +318,7 @@ public class SignupActivity extends BaseActivity {
                             case TYPE_FORGET_PASSWORD:
                                 SignupResult signupResult = new Gson().fromJson(response, SignupResult.class);
                                 if (signupResult.getCode() == RESPONSE_SUCCESS) {
+                                    // 验证成功
                                     mRegisterId = signupResult.getBody().getRegisterId();
                                     Intent intent = PasswordActivity.getIntent(SignupActivity.this, mRegisterId);
                                     startActivity(intent);
@@ -357,9 +328,9 @@ public class SignupActivity extends BaseActivity {
                                 break;
                             // 验证码登录
                             case TYPE_VERIFICATION_CODE:
-                                LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                                LoginInfoResult loginResult = new Gson().fromJson(response, LoginInfoResult.class);
                                 LoginManager loginManager = new LoginManager(SignupActivity.this, null);
-                                loginManager.saveAndEnter(loginInfoResult);
+                                loginManager.saveAndEnter(loginResult);
                                 break;
                             default:
                                 break;
@@ -373,47 +344,25 @@ public class SignupActivity extends BaseActivity {
     /**
      * 本地验证注册
      */
-    public static String localValidate(String cellphone, String verificationCode) {
+    public static int localValidate(String cellphone, String
+            verificationCode) {
         // 本地验证手机号
         if (cellphone.isEmpty()) {
-            return "手机号不能为空";
+            return R.string.cellphone_empty;
         }
         if (!AccountValidatorUtil.isMobile(cellphone)) {
-            return "手机号不合法";
+            return R.string.cellphone_invalid;
         }
 
         // 本地验证验证码
         if (verificationCode.isEmpty()) {
-            return "验证码不能为空";
+            return R.string.verification_empty;
         }
 
         if (verificationCode.length() != 6) {
-            return "验证码长度不正确";
+            return R.string.verification_code_length_invalid;
         }
-        return null;
-    }
-
-    /**
-     * 注册成功
-     */
-    private void onSignupSuccess() {
-        if (mType != TYPE_VERIFICATION_CODE) {
-            T.showLong(this, R.string.signup_success);
-
-            Intent intent = PasswordActivity.getIntent(this, mRegisterId);
-            startActivity(intent);
-            mHandler.removeCallbacks(mValidateRunnable);
-        } else {
-            LoginManager loginUtil = new LoginManager(this, mProgressDialogManager);
-            loginUtil.getLoginInfoByRegisterId(mRegisterId);
-        }
-    }
-
-    /**
-     * 注册失败
-     */
-    private void onSignupFailed() {
-        T.showShort(this, "注册失败");
+        return 0;
     }
 
     /**
@@ -430,22 +379,31 @@ public class SignupActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 格格协议
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
         Intent intent = HtmlActivity.getIntent(this, "", "格格服务协议");
         startActivity(intent);
     }
 
+    /**
+     * 同意协议
+     *
+     * @param v
+     */
     @OnClick({R.id.ll_agree, R.id.tv_agree})
     void onAgree(View v) {
-        if (mIsAgree) {
+        if (mAgree) {
             mAgreeImageView.setVisibility(View.INVISIBLE);
         } else {
             mAgreeImageView.setVisibility(View.VISIBLE);
         }
-        mIsAgree = !mIsAgree;
+        mAgree = !mAgree;
     }
-
 
     @Override
     protected void onDestroy() {

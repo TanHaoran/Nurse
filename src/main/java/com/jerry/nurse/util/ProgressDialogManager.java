@@ -22,16 +22,30 @@ public class ProgressDialogManager {
         mProgressDialog.setMessage("请稍后...");
     }
 
-    public void setMessage(String message) {
-        mProgressDialog.setMessage(message);
-    }
-
+    /**
+     * 显示对话框
+     */
     public void show() {
         if (!mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }
     }
 
+    /**
+     * 显示对话框
+     *
+     * @param message
+     */
+    public void show(String message) {
+        mProgressDialog.setMessage(message);
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    /**
+     * 隐藏对话框
+     */
     public void dismiss() {
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();

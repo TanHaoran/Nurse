@@ -42,7 +42,9 @@ import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import okhttp3.MediaType;
@@ -85,6 +87,8 @@ public class CreateGroupActivity extends BaseActivity {
     private String mGroupId;
 
     private List<Contact> mGroupContacts;
+
+    private Map<String, Contact> mTagLast;
 
     public static Intent getIntent(Context context, String groupId, List<Contact> contacts) {
         Intent intent = new Intent(context, CreateGroupActivity.class);
@@ -328,6 +332,12 @@ public class CreateGroupActivity extends BaseActivity {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 
+        // 存储每一个Tag下的最后一个元素
+        mTagLast = new HashMap<>();
+        for (Contact c : mBodyDatas) {
+            mTagLast.put(c.getBaseIndexTag(), c);
+        }
+
         mAdapter.setDatas(mBodyDatas);
         mHeaderAdapter.notifyDataSetChanged();
         mSourceDatas.addAll(mBodyDatas);
@@ -376,7 +386,17 @@ public class CreateGroupActivity extends BaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
-            ImageView imageView = holder.getView(R.id.iv_avatar);
+            String tag = contact.getBaseIndexTag();
+            Contact lastContact = mTagLast.get(tag);
+            if (lastContact.getFriendId().equals(contact.getFriendId()) && holder.getLayoutPosition()
+                    != mBodyDatas.size() - 1
+                    ) {
+                holder.setVisible(R.id.v_divider, false);
+            } else {
+                holder.setVisible(R.id.v_divider, true);
+            }
+
+            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
             Glide.with(CreateGroupActivity.this).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
             final SelectView selectView = holder.getView(R.id.sv_choose);

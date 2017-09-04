@@ -46,12 +46,11 @@ import okhttp3.Call;
 import okhttp3.MediaType;
 
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class PersonalInfoActivity extends BaseActivity {
 
-    @Bind(R.id.civ_avatar)
+    @Bind(R.id.iv_avatar)
     ImageView mAvatarView;
 
     @Bind(R.id.rl_avatar)
@@ -211,11 +210,7 @@ public class PersonalInfoActivity extends BaseActivity {
         if (mUserInfo != null) {
             // 头像
             if (!TextUtils.isEmpty(mUserInfo.getAvatar())) {
-                if (mUserInfo.getAvatar().startsWith("http")) {
-                    Glide.with(this).load(mUserInfo.getAvatar()).into(mAvatarView);
-                } else {
-                    Glide.with(this).load(AVATAR_ADDRESS + mUserInfo.getAvatar()).into(mAvatarView);
-                }
+                Glide.with(this).load(mUserInfo.getAvatar()).into(mAvatarView);
             }
 
             // 个人信息
@@ -335,7 +330,6 @@ public class PersonalInfoActivity extends BaseActivity {
      * @return
      */
     private String getWorkingTime(String firstWorkDate) {
-        L.i("计算工龄方法执行一次");
         Date firstDate = DateUtil.parseMysqlDateToDate(firstWorkDate);
         Date now = new Date();
         int mouths = DateUtil.getMonthsBetweenTwoDate(firstDate, now);
@@ -487,4 +481,11 @@ public class PersonalInfoActivity extends BaseActivity {
         Intent intent = InputActivity.getIntent(this, "工号", mUserInfo.getEmployeeId());
         startActivity(intent);
     }
+
+    @OnClick(R.id.iv_avatar)
+    void onAvatar(View view) {
+        Intent intent = PhotoActivity.getIntent(this, null, mUserInfo.getAvatar());
+        startActivity(intent);
+    }
+
 }

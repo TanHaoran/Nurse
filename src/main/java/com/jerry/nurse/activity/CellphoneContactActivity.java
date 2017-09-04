@@ -30,7 +30,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import okhttp3.MediaType;
@@ -63,6 +65,8 @@ public class CellphoneContactActivity extends BaseActivity {
     private SuspensionDecoration mDecoration;
 
     private LoginInfo mLoginInfo;
+
+    private Map<String, CellphoneContact> mTagLast;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, CellphoneContactActivity.class);
@@ -151,6 +155,12 @@ public class CellphoneContactActivity extends BaseActivity {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 
+        // 存储每一个Tag下的最后一个元素
+        mTagLast = new HashMap<>();
+        for (CellphoneContact c : mBodyDatas) {
+            mTagLast.put(c.getBaseIndexTag(), c);
+        }
+
         mAdapter.setDatas(mBodyDatas);
         mSourceDatas.addAll(mBodyDatas);
 
@@ -169,6 +179,17 @@ public class CellphoneContactActivity extends BaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final CellphoneContact cellphoneContact) {
+            String tag = cellphoneContact.getBaseIndexTag();
+            CellphoneContact lastContact = mTagLast.get(tag);
+            if (lastContact.getRegisterId().equals(cellphoneContact
+                    .getRegisterId()) && holder.getLayoutPosition()
+                    != mBodyDatas.size() - 1
+                    ) {
+                holder.setVisible(R.id.v_divider, false);
+            } else {
+                holder.setVisible(R.id.v_divider, true);
+            }
+
             // 没有使用我们的软件
             if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_USAGE) {
                 holder.setVisible(R.id.tv_is_friend, false);
