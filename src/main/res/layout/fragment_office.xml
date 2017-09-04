@@ -19,13 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <me.relex.circleindicator.CircleIndicator
+        <com.jerry.nurse.view.CircleIndicator
             android:id="@+id/ci_banner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/indicator_height"
             android:layout_alignParentBottom="true"
             app:ci_drawable="@drawable/indicator_selected"
-            app:ci_drawable_unselected="@drawable/indicator_unselected"/>
+            app:ci_drawable_unselected="@drawable/indicator_unselected"
+            app:ci_height="@dimen/indicator_width"
+            app:ci_width="@dimen/indicator_width"/>
     </RelativeLayout>
 
     <RelativeLayout

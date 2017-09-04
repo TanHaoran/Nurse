@@ -83,6 +83,7 @@
     <dimen name="event_dialog_line_height">45dp</dimen>
     <dimen name="event_line_edit_max_width">150dp</dimen>
     <dimen name="event_line_edit_height">120dp</dimen>
+    <dimen name="indicator_width">5dp</dimen>
 
     <!--联系人-->
     <dimen name="contact_item_height">56dp</dimen>

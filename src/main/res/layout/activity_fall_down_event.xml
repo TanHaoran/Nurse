@@ -8,6 +8,12 @@
     android:orientation="vertical"
     tools:context="com.jerry.nurse.activity.FallDownEventActivity">
 
+    <com.jerry.nurse.view.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="@string/fall_down_event"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

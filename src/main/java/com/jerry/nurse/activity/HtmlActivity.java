@@ -22,6 +22,7 @@ import com.jerry.nurse.util.BackUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.view.TitleBar;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -191,7 +192,12 @@ public class HtmlActivity extends BaseActivity {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
                                     long contentLength) {
-            Uri uri = Uri.parse(url);
+            Uri uri = null;
+            try {
+                uri = Uri.parse(new String(url.getBytes("UTF-8"), "ISO-8859-1"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         }

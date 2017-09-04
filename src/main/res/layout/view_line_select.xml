@@ -44,6 +44,7 @@
             android:layout_toLeftOf="@id/tv_value"
             android:background="@drawable/edit_no_border"
             android:gravity="right"
+            android:inputType="number"
             android:maxWidth="@dimen/event_line_edit_max_width"
             android:paddingRight="@dimen/login_paddingLeft"
             android:singleLine="true"

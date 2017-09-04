@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.jerry.nurse.R;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -34,6 +35,10 @@ public class BottomDialogManager {
 
     private List<String> mItems;
 
+    private TextView mTitleTextView;
+
+    private String mCurrent;
+
     public void setOnItemSelectedListener
             (List<String> items, OnItemSelectedListener listener) {
         mItems = items;
@@ -48,13 +53,16 @@ public class BottomDialogManager {
         mContext = context;
     }
 
-    public void showSelectDialog() {
+    public void showSelectDialog(String current) {
+        mCurrent = current;
         mDialog = new Dialog(mContext, R.style.my_dialog);
         // 设置点击周围可以消失
         mDialog.setCanceledOnTouchOutside(true);
 
         LinearLayout root = (LinearLayout) LayoutInflater.from(mContext).inflate(
                 R.layout.view_bottom_select, null);
+
+        mTitleTextView = (TextView) root.findViewById(R.id.tv_title);
         RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.rv_data);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -83,10 +91,10 @@ public class BottomDialogManager {
         lp.width = mContext.getResources().getDisplayMetrics()
                 .widthPixels;
         // 设置高度
-        if (mItems.size() <= 5) {
-            lp.height = mItems.size() * DensityUtil.dp2px(mContext, LINE_HEIGHT);
+        if (mItems.size() <= 6) {
+            lp.height = (mItems.size() + 1) * DensityUtil.dp2px(mContext, LINE_HEIGHT);
         } else {
-            lp.height = 5 * DensityUtil.dp2px(mContext, LINE_HEIGHT);
+            lp.height = 6 * DensityUtil.dp2px(mContext, LINE_HEIGHT);
         }
         root.measure(0, 0);
         // 设置透明度
@@ -97,20 +105,37 @@ public class BottomDialogManager {
         mDialog.show();
     }
 
+    /**
+     * 设置标题
+     *
+     * @param title
+     */
+    public void setTitle(String title) {
+        mTitleTextView.setText(title);
+    }
+
     class SelectAdapter extends CommonAdapter<String> {
         public SelectAdapter(Context context, int layoutId, List datas) {
             super(context, layoutId, datas);
         }
 
         @Override
-        protected void convert(ViewHolder holder, final String item, final int position) {
+        protected void convert(final ViewHolder holder, final String item, final int position) {
             holder.setText(R.id.tv_string, item);
+            if (item.equals(mCurrent)) {
+                holder.setVisible(R.id.iv_choose, true);
+            } else {
+                holder.setVisible(R.id.iv_choose, false);
+            }
             holder.setOnClickListener(R.id.ll_main, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mListener != null) {
                         mListener.onItemSelected(position, item);
                     }
+                    mCurrent = item;
+                    holder.setVisible(R.id.iv_choose, true);
+                    notifyDataSetChanged();
                     mDialog.dismiss();
                 }
             });

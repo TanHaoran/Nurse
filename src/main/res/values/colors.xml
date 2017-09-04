@@ -9,6 +9,8 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="delete">#ED5E5E</color>
 
+    <color name="index_text">#666666</color>
+
     <color name="button_disable">#9ED0ff</color>
     <color name="button_click">#4396E5</color>
 

@@ -17,7 +17,6 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AnnouncementActivity;
 import com.jerry.nurse.activity.AnnouncementDetailActivity;
 import com.jerry.nurse.activity.CreditCheckActivity;
-import com.jerry.nurse.activity.EventReportActivity;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.ScheduleActivity;
 import com.jerry.nurse.adapter.BannerAdapter;
@@ -30,6 +29,7 @@ import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.view.CircleIndicator;
 import com.jerry.nurse.view.ViewPagerScroller;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -40,7 +40,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import me.relex.circleindicator.CircleIndicator;
 import okhttp3.Call;
 
 import static com.jerry.nurse.constant.ServiceConstant.AUDIT_SUCCESS;
@@ -292,6 +291,7 @@ public class OfficeFragment extends BaseFragment {
 
             // 设置Banner导航点
             mIndicator.setViewPager(mViewPager);
+
             // 设置Banner滚动速度
             ViewPagerScroller scroller = new ViewPagerScroller(getActivity());
             scroller.setScrollDuration(SCROLLER_DURATION);
@@ -350,9 +350,9 @@ public class OfficeFragment extends BaseFragment {
                     .show();
             return;
         }
-//        Intent intent = HtmlActivity.getIntent(getActivity(),
-//                REPORT_EVENT_URL + info.getReguserId(), null);
-        Intent intent = EventReportActivity.getIntent(getActivity());
+        Intent intent = HtmlActivity.getIntent(getActivity(),
+                REPORT_EVENT_URL + info.getReguserId(), null);
+//        Intent intent = EventReportActivity.getIntent(getActivity());
         startActivity(intent);
     }
 

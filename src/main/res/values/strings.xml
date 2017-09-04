@@ -208,6 +208,7 @@
     <string name="certificate_level">资格级别</string>
     <string name="please_certificate_level">请输入资格级别</string>
     <string name="type">类别</string>
+    <string name="please_select_type">请选择类别</string>
     <string name="please_type">请输入类别</string>
     <string name="approve_date">批准日期</string>
     <string name="sign_organization">签发单位</string>
@@ -260,6 +261,7 @@
     <string name="practising_certificate">护士执业证书</string>
     <string name="nursing_age">护龄</string>
     <string name="hospital">医院</string>
+    <string name="please_hospital">请选择医院</string>
     <string name="job_number">工号</string>
 
     <string name="change_avatar">修改头像</string>

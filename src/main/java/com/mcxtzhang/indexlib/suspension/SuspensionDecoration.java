@@ -144,9 +144,9 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
 
         mPaint.setColor(COLOR_DIVIDER);
         // 画上侧线
-        c.drawLine(left, (float) (child.getTop() - params.topMargin - mTitleHeight + 0.5), right, child.getTop() - params.topMargin - mTitleHeight + 1, mPaint);
+        c.drawLine(left, child.getTop() - params.topMargin - mTitleHeight + 0.5f, right, child.getTop() - params.topMargin - mTitleHeight + 0.5f, mPaint);
         // 画下侧线
-        c.drawRect(left, child.getTop() - params.topMargin - 2, right, child.getTop() - params.topMargin, mPaint);
+        c.drawRect(left, child.getTop() - params.topMargin - 0.5f, right, child.getTop() - params.topMargin, mPaint);
     }
 
     @Override
@@ -192,9 +192,9 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         mPaint.setColor(COLOR_DIVIDER);
 
         // 画上侧线
-        c.drawLine(parent.getPaddingLeft(), (float) (parent.getPaddingTop() + 0.5), parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + 1, mPaint);
+        c.drawLine(parent.getPaddingLeft(), parent.getPaddingTop() + 0.5f, parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + 0.5f, mPaint);
         // 画下侧线
-        c.drawRect(parent.getPaddingLeft(), parent.getPaddingTop() + mTitleHeight - 2, parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + mTitleHeight, mPaint);
+        c.drawRect(parent.getPaddingLeft(), parent.getPaddingTop() + mTitleHeight - 0.5f, parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + mTitleHeight, mPaint);
         if (flag)
             c.restore();//恢复画布到之前保存的状态
 

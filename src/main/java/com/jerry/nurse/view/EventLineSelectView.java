@@ -117,7 +117,7 @@ public class EventLineSelectView extends RelativeLayout {
                 }
             }
         });
-        manager.showSelectDialog();
+        manager.showSelectDialog(mValueTextView.getText().toString());
     }
 
     /**

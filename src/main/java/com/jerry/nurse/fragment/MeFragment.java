@@ -208,6 +208,4 @@ public class MeFragment extends BaseFragment {
         Intent intent = SettingActivity.getIntent(getActivity());
         startActivity(intent);
     }
-
-
 }
