@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -198,6 +199,7 @@ public class AudioRecordButton extends AppCompatButton implements AudioManager.A
     private void changeState(int state) {
         if (mCurrentState != state) {
             mCurrentState = state;
+            setTextColor(ContextCompat.getColor(getContext(), R.color.normal_textColor));
             switch (state) {
                 case STATE_NORMAL:
                     setBackgroundResource(R.drawable.record_button_normal);

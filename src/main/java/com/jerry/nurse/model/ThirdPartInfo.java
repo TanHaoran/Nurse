@@ -12,6 +12,11 @@ public class ThirdPartInfo {
     private WeChat WXData;
     private MicroBlog WBData;
 
+    /**
+     *  0 院内账号、1 qq、2微信  3 微博，绑定解绑时候使用
+     */
+    private int Type;
+
     public String getRegisterId() {
         return RegisterId;
     }
@@ -50,5 +55,13 @@ public class ThirdPartInfo {
 
     public void setWBData(MicroBlog WBData) {
         this.WBData = WBData;
+    }
+
+    public int getType() {
+        return Type;
+    }
+
+    public void setType(int type) {
+        Type = type;
     }
 }

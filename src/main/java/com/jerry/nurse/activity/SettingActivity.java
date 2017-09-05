@@ -158,6 +158,7 @@ public class SettingActivity extends BaseActivity {
                     ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
                     thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
                     thirdPartInfo.setQQData(info);
+                    thirdPartInfo.setType(1);
                     bind(thirdPartInfo);
                 }
             };
@@ -175,6 +176,7 @@ public class SettingActivity extends BaseActivity {
                             Qq qq = new Qq();
                             qq.setOpenId(mBindInfo.getQQOpenId());
                             thirdPartInfo.setQQData(qq);
+                            thirdPartInfo.setType(1);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -216,6 +218,7 @@ public class SettingActivity extends BaseActivity {
                             WeChat weChat = new WeChat();
                             weChat.setOpenId(mBindInfo.getWeixinOpenId());
                             thirdPartInfo.setWXData(weChat);
+                            thirdPartInfo.setType(2);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -248,6 +251,7 @@ public class SettingActivity extends BaseActivity {
                             MicroBlog microBlog = new MicroBlog();
                             microBlog.setIdstr(mBindInfo.getWeiboOpenId());
                             thirdPartInfo.setWBData(microBlog);
+                            thirdPartInfo.setType(3);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -304,6 +308,7 @@ public class SettingActivity extends BaseActivity {
                                         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
                                         thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
                                         thirdPartInfo.setWBData(microBlog);
+                                        thirdPartInfo.setType(3);
                                         bind(thirdPartInfo);
                                     }
                                 });
@@ -331,7 +336,8 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_hospital_account)
     void onHospitalAccount(View view) {
-
+        Intent intent = HospitalAccountActivity.getIntent(this);
+        startActivity(intent);
     }
 
     @OnClick(R.id.rl_change_password)

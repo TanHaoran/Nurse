@@ -28,7 +28,6 @@ import com.jerry.nurse.model.BannersResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.view.CircleIndicator;
 import com.jerry.nurse.view.ViewPagerScroller;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -76,7 +75,6 @@ public class OfficeFragment extends BaseFragment {
     private List<Banner> mBanners;
     private List<Announcement> mAnnouncements;
 
-
     private Runnable mBannerRunnable;
 
     private Handler mHandler = new Handler() {
@@ -111,7 +109,6 @@ public class OfficeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(getActivity());
     }
 
     @Override
@@ -133,6 +130,7 @@ public class OfficeFragment extends BaseFragment {
      * @param departmentId
      */
     private void getBanner(String hospitalId, String departmentId) {
+        // 是否认证通过并绑定好了医院、科室
         if (!checkPermission()) {
             hospitalId = "";
             departmentId = "";
@@ -144,7 +142,7 @@ public class OfficeFragment extends BaseFragment {
                 departmentId = "";
             }
         }
-//        mProgressDialogManager.show();
+
         OkHttpUtils.get().url(ServiceConstant.GET_BANNER)
                 .addParams("HospitalId", hospitalId)
                 .addParams("DepartmentId", departmentId)
@@ -171,11 +169,8 @@ public class OfficeFragment extends BaseFragment {
                             updateBanners();
                             if (mBanners.size() > 0) {
                                 //添加新数据到数据库
-
                                 DataSupport.deleteAll(Banner.class);
                                 DataSupport.saveAll(result.getBody());
-
-                                List<Banner> banners = DataSupport.findAll(Banner.class);
                             }
                         } else {
                             L.i(result.getMsg());
@@ -204,7 +199,7 @@ public class OfficeFragment extends BaseFragment {
                 officeId = "";
             }
         }
-//        mProgressDialogManager.show();
+
         OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
                 .addParams("pageNumber", String.valueOf(page))
                 .addParams("HospitalId", hospitalId)

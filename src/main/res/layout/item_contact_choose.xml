@@ -62,7 +62,6 @@
 
     <View
         android:id="@+id/v_divider"
-        style="@style/DividerLineStyle"
-        android:layout_marginLeft="@dimen/contact_item_divider_line_marginLef"/>
+        style="@style/DividerLineStyle"/>
 
 </LinearLayout>

@@ -183,6 +183,9 @@
     <dimen name="image_round_radius">5dp</dimen>
     <dimen name="audit_failed_text_padding">10dp</dimen>
     <dimen name="me_name_layout_width">140dp</dimen>
+    <dimen name="hospital_account_bind_marginTop">30dp</dimen>
+    <dimen name="hospital_account_bind_marginBottom">30dp</dimen>
+    <dimen name="hospital_account_logo_width">60dp</dimen>
 
     <dimen name="personal_info_height">90dp</dimen>
     <dimen name="business_info_height">45dp</dimen>

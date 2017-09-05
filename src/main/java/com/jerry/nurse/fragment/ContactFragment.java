@@ -282,9 +282,8 @@ public class ContactFragment extends BaseFragment {
         public void convert(ViewHolder holder, final Contact contact) {
             String tag = contact.getBaseIndexTag();
             Contact lastContact = mTagLast.get(tag);
-            if (lastContact.getFriendId().equals(contact.getFriendId()) && holder.getLayoutPosition()
-                    != mContacts.size() - 1
-                    ) {
+            if (lastContact.getFriendId().equals(contact.getFriendId()) &&
+                    holder.getLayoutPosition() != mContacts.size()) {
                 holder.setVisible(R.id.v_divider, false);
             } else {
                 holder.setVisible(R.id.v_divider, true);
@@ -293,8 +292,7 @@ public class ContactFragment extends BaseFragment {
             ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
             Glide.with(getActivity()).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
-            holder.setText(R.id.tv_nickname, contact.getTarget() +
-                    holder.getLayoutPosition());
+            holder.setText(R.id.tv_nickname, contact.getTarget());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

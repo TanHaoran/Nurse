@@ -1,6 +1,5 @@
 package com.jerry.nurse.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -38,7 +37,6 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnPhotographFinishListener;
 import com.jerry.nurse.listener.OnSelectFromAlbumListener;
-import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.GroupInfo;
@@ -249,14 +247,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         chatMessage.setFrom(emMessage.getFrom());
                         chatMessage.save();
 
+                        // 保存聊天消息并更新界面
+                        mChatMessages.add(chatMessage);
+                        mAdapter.notifyDataSetChanged();
+
                         // TODO 滚动问题
                         int itemCount = mAdapter.getItemCount();
                         if (mRecyclerView != null) {
                             mRecyclerView.scrollToPosition(itemCount);
                         }
-                        // 保存聊天消息并更新界面
-                        mChatMessages.add(chatMessage);
-                        mAdapter.notifyDataSetChanged();
                     }
                     break;
                 case MESSAGE_READ:
@@ -297,21 +296,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // TODO 权限申请？
-        BaseActivity.requestRuntimePermission(new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-        }, new PermissionListener() {
-            @Override
-            public void onGranted() {
-
-            }
-
-            @Override
-            public void onDenied(List<String> deniedPermission) {
-
-            }
-        });
 
         // 获取传递过来的值
         mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
@@ -684,8 +668,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         public SendItemDelagate() {
             // 首先获取屏幕宽度
             int screenWidth = ScreenUtil.getScreenWidth(ChatActivity.this);
-            mMaxItemWidth = (int) (screenWidth * 0.7f);
-            mMinItemWidth = (int) (screenWidth * 0.15f);
+            mMaxItemWidth = (int) (screenWidth * 0.8f);
+            mMinItemWidth = (int) (screenWidth * 0.1f);
         }
 
         @Override
@@ -723,14 +707,17 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, false);
+                    holder.setVisible(R.id.tv_voice, false);
                     break;
                 // 语音消息
                 case ChatMessage.TYPE_VOICE:
                     holder.setVisible(R.id.tv_message, false);
                     holder.setVisible(R.id.fl_anim, true);
                     holder.setVisible(R.id.tv_record_length, true);
+                    holder.setVisible(R.id.tv_voice, true);
                     holder.setVisible(R.id.iv_image, false);
-                    holder.setText(R.id.tv_record_length, (int) chatMessage.getSecond() + "''");
+                    holder.setText(R.id.tv_record_length, (int)chatMessage.getSecond() + "''");
+                    holder.setText(R.id.tv_voice, (int)chatMessage.getSecond()+ "''");
                     ViewGroup.LayoutParams lp = holder.getView(R.id.fl_anim).getLayoutParams();
                     lp.width = (int) (mMinItemWidth + (mMaxItemWidth / 60f * chatMessage.getSecond()));
                     holder.setOnClickListener(R.id.fl_anim, new View.OnClickListener() {
@@ -763,6 +750,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.fl_anim, false);
                     holder.setVisible(R.id.tv_record_length, false);
                     holder.setVisible(R.id.iv_image, true);
+                    holder.setVisible(R.id.tv_voice, false);
                     // 压缩原图
                     // TODO 显示接受图片的时候大小有问题
                     Bitmap in = PictureUtil.getScaleBitmap(chatMessage.getLocalUrl(), 150, 150);
@@ -852,6 +840,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setText(R.id.tv_record_length, (int) chatMessage.getSecond() + "''");
                     ViewGroup.LayoutParams lp = holder.getView(R.id.fl_anim).getLayoutParams();
                     lp.width = (int) (mMinItemWidth + (mMaxItemWidth / 60f * chatMessage.getSecond()));
+                    holder.getView(R.id.fl_anim).setLayoutParams(lp);
                     holder.setOnClickListener(R.id.fl_anim, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -870,7 +859,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                                 @Override
                                 public void onCompletion(MediaPlayer mp) {
                                     // 播放完毕重新归位
-                                    mSendAnimView.setBackgroundResource(R.drawable.talk_yy_me_3);
+                                    mSendAnimView.setBackgroundResource(R.drawable.talk_yy_you_3);
                                 }
                             });
                         }

@@ -337,7 +337,7 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.ll_in_hospital)
     void onHospitalLogin(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this);
+        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_EVENT_REPORT_LOGIN);
         startActivity(intent);
     }
 

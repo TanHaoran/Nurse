@@ -3,6 +3,6 @@
        android:shape="rectangle">
 
     <solid android:color="@color/chat_time_bg"/>
-    <corners android:radius="4dp"/>
+    <corners android:radius="5dp"/>
 
 </shape>

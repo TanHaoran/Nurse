@@ -197,7 +197,6 @@
                 style="@style/DividerLineStyle"/>
 
             <android.support.v7.widget.AppCompatButton
-
                 android:id="@+id/acb_add_friend"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"

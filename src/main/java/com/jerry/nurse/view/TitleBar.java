@@ -205,6 +205,19 @@ public class TitleBar extends RelativeLayout {
     }
 
     /**
+     * 是否显示返回按钮
+     *
+     * @param show
+     */
+    public void showBack(boolean show) {
+        if (show) {
+            mBackImageView.setVisibility(VISIBLE);
+        } else {
+            mBackImageView.setVisibility(INVISIBLE);
+        }
+    }
+
+    /**
      * 设置右侧按钮文字
      *
      * @param text

@@ -25,39 +25,22 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <View
-                style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
-
-            <RelativeLayout
-                style="@style/BusinessLineStyle"
-                android:clickable="false">
-
-                <TextView
-                    style="@style/PersonalInfoLineLeftTextStyle"
-                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
-                    android:text="@string/hospital"/>
-
-                <TextView
-                    android:hint="@string/please_hospital"
-                    android:textColorHint="@color/gray_textColor"
-                    android:id="@+id/tv_hospital"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/in_hospital_edit_marginLeft"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/line_paddingLeft"
-                    android:paddingRight="@dimen/line_paddingLeft"
-                    android:textColor="@color/normal_textColor"
-                    android:textSize="@dimen/normal_textSize"/>
-
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_logo"
+                android:layout_width="@dimen/hospital_account_logo_width"
+                android:layout_height="@dimen/hospital_account_logo_width"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/hospital_account_bind_marginBottom"
+                android:layout_marginTop="@dimen/hospital_account_bind_marginTop"
+                android:src="@drawable/yn"
+                android:visibility="gone"/>
 
             <View
                 style="@style/DividerLineStyle"
                 android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <RelativeLayout
+                android:id="@+id/rl_type"
                 style="@style/BusinessLineStyle"
                 android:clickable="false">
 
@@ -67,23 +50,54 @@
                     android:text="@string/type"/>
 
                 <TextView
-                    android:hint="@string/please_select_type"
-                    android:textColorHint="@color/gray_textColor"
                     android:id="@+id/tv_type"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/in_hospital_edit_marginLeft"
                     android:gravity="center_vertical"
+                    android:hint="@string/please_select_type"
                     android:paddingLeft="@dimen/line_paddingLeft"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/normal_textColor"
+                    android:textColorHint="@color/gray_textColor"
                     android:textSize="@dimen/normal_textSize"/>
+
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             </RelativeLayout>
 
-            <View
-                style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+            <RelativeLayout
+                android:id="@+id/rl_hospital"
+                style="@style/BusinessLineStyle"
+                android:clickable="false"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/hospital"/>
+
+                <TextView
+                    android:id="@+id/tv_hospital"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/in_hospital_edit_marginLeft"
+                    android:gravity="center_vertical"
+                    android:hint="@string/please_hospital"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textColorHint="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="@dimen/line_paddingLeft"/>
+            </RelativeLayout>
 
 
             <RelativeLayout
@@ -113,11 +127,12 @@
                     android:textCursorDrawable="@null"
                     android:textSize="@dimen/normal_textSize"/>
 
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="@dimen/line_paddingLeft"/>
             </RelativeLayout>
 
-            <View
-                style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
             <RelativeLayout
                 style="@style/BusinessLineStyle"
@@ -149,11 +164,11 @@
                     android:textCursorDrawable="@null"
                     android:textSize="@dimen/normal_textSize"/>
 
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="@dimen/line_paddingLeft"/>
             </RelativeLayout>
-
-            <View
-                style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
 
 
             <Button

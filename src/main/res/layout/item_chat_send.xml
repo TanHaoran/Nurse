@@ -117,17 +117,36 @@
                 android:scaleType="fitXY"/>
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_status"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/unread_marginRight"
             android:layout_toLeftOf="@id/rl_content"
-            android:text="@string/unread"
-            android:textColor="@color/primary"
-            android:textSize="@dimen/small_textSize"
-            android:visibility="visible"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginRight="@dimen/record_length_marginRight"
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unread"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/small_textSize"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/tv_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unread"
+                tools:text="6'"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/normal_textSize"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

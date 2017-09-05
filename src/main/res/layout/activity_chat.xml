@@ -100,7 +100,7 @@
             android:id="@+id/ib_add"
             android:layout_width="@dimen/chat_button_width"
             android:layout_height="@dimen/chat_button_width"
-            android:background="@drawable/icon_add"/>
+            android:background="@drawable/add"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/acb_send"

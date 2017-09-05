@@ -8,19 +8,22 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.HospitalResult;
 import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Register;
+import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.BottomDialogManager;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.StringUtil;
-import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -34,8 +37,33 @@ import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.LoginActivity.setButtonEnable;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
+import static com.jerry.nurse.util.T.showShort;
 
 public class HospitalLoginActivity extends BaseActivity {
+
+    public static final int TYPE_EVENT_REPORT_LOGIN = 0;
+    public static final int TYPE_CREDIT_LOGIN = 1;
+    public static final int TYPE_EXAM_LOGIN = 2;
+
+    public static final int TYPE_EVENT_REPORT_BIND = 3;
+    public static final int TYPE_CREDIT_BIND = 4;
+    public static final int TYPE_EXAM_BIND = 5;
+
+    private static final String EVENT_REPORT = "护理不良事件";
+    private static final String CREDIT = "学分";
+    private static final String EXAM = "考试";
+
+
+    public static final String EXTRA_TYPE = "extra_type";
+
+    @Bind(R.id.rl_hospital)
+    RelativeLayout mHospitalLayout;
+
+    @Bind(R.id.rl_type)
+    RelativeLayout mTypeLayout;
+
+    @Bind(R.id.iv_logo)
+    ImageView mLogoImageView;
 
     @Bind(R.id.tb_login)
     TitleBar mTitleBar;
@@ -55,6 +83,9 @@ public class HospitalLoginActivity extends BaseActivity {
     @Bind(R.id.btn_login)
     Button mLoginButton;
 
+    @Bind(R.id.tv_account_login)
+    TextView mAccountLoginTextView;
+
     private List<HospitalResult.Hospital> mHospitals;
     private List<String> mHospitalNames;
 
@@ -62,8 +93,9 @@ public class HospitalLoginActivity extends BaseActivity {
 
     private int mType;
 
-    public static Intent getIntent(Context context) {
+    public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, HospitalLoginActivity.class);
+        intent.putExtra(EXTRA_TYPE, type);
         return intent;
     }
 
@@ -74,11 +106,50 @@ public class HospitalLoginActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        setButtonEnable(this, mLoginButton, false);
+        mType = getIntent().getIntExtra(EXTRA_TYPE, 0);
+        switch (mType) {
+            case TYPE_EVENT_REPORT_LOGIN:
+            case TYPE_CREDIT_LOGIN:
+            case TYPE_EXAM_LOGIN:
+                mLogoImageView.setVisibility(View.GONE);
+                break;
+            case TYPE_EVENT_REPORT_BIND:
+                mHospitalLayout.setVisibility(View.GONE);
+                mTitleBar.setTitle("护理不良事件账号绑定");
+                setupBindState();
+                break;
+            case TYPE_CREDIT_BIND:
+                mTitleBar.setTitle("学分账号绑定");
+                mHospitalLayout.setVisibility(View.VISIBLE);
+                setupBindState();
+                break;
+            case TYPE_EXAM_BIND:
+                mTitleBar.setTitle("考试账号绑定");
+                mHospitalLayout.setVisibility(View.VISIBLE);
+                setupBindState();
+                break;
+        }
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
                 finish();
+            }
+        });
+        mAccountEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 检测信息是否填写完整
+                checkIfEmpty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         mPasswordEditText.addTextChangedListener(new TextWatcher() {
@@ -89,15 +160,8 @@ public class HospitalLoginActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // 当所有信息都填写完毕，登录按钮可用
-                if (mHospitalTextView.getText().toString().length() > 0 &&
-                        mTypeTextView.getText().toString().length() > 0 &&
-                        mAccountEditText.getText().toString().length() > 0 &&
-                        mPasswordEditText.getText().toString().length() > 0) {
-                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
-                } else {
-                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, false);
-                }
+                // 检测信息是否填写完整
+                checkIfEmpty();
             }
 
             @Override
@@ -108,6 +172,37 @@ public class HospitalLoginActivity extends BaseActivity {
 
         // 获取所有医院信息
         getHospitals();
+    }
+
+    private void setupBindState() {
+        mTypeLayout.setVisibility(View.GONE);
+        mLoginButton.setText(R.string.bind);
+        mLogoImageView.setVisibility(View.VISIBLE);
+        mTitleBar.setRightText("");
+        mTitleBar.showBack(true);
+        mAccountLoginTextView.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * 检测信息是否填写完整
+     */
+    private void checkIfEmpty() {
+        // 当所有信息都填写完毕，登录按钮可用
+        if (mTypeTextView.getText().toString().length() > 0 &&
+                mAccountEditText.getText().toString().length() > 0 &&
+                mPasswordEditText.getText().toString().length() > 0) {
+            if (mHospitalLayout.getVisibility() == View.VISIBLE) {
+                if (mHospitalTextView.getText().toString().length() > 0) {
+                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
+                } else {
+                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, false);
+                }
+            } else {
+                setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
+            }
+        } else {
+            setButtonEnable(HospitalLoginActivity.this, mLoginButton, false);
+        }
     }
 
     /**
@@ -124,7 +219,7 @@ public class HospitalLoginActivity extends BaseActivity {
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             mHospitals = result.getBody();
                         } else {
-                            T.showShort(HospitalLoginActivity.this, result.getMsg());
+                            showShort(HospitalLoginActivity.this, result.getMsg());
                         }
                     }
                 });
@@ -138,7 +233,7 @@ public class HospitalLoginActivity extends BaseActivity {
     @OnClick(R.id.tv_hospital)
     void onHospital(View view) {
         if (mHospitals == null) {
-            T.showShort(this, "医院列表为空");
+            showShort(this, "医院列表为空");
             return;
         } else {
             mHospitalNames = new ArrayList<>();
@@ -153,6 +248,8 @@ public class HospitalLoginActivity extends BaseActivity {
             public void onItemSelected(int position, String item) {
                 mHospitalTextView.setText(item);
                 mHospital = mHospitals.get(position);
+                // 检测信息是否填写完整
+                checkIfEmpty();
             }
         });
         dialog.showSelectDialog(mHospitalTextView.getText().toString());
@@ -168,13 +265,28 @@ public class HospitalLoginActivity extends BaseActivity {
     void onType(View view) {
         BottomDialogManager dialog = new BottomDialogManager(this);
         List<String> items = new ArrayList<>();
-        items.add("护理不良事件");
-        items.add("学分");
+        items.add(EVENT_REPORT);
+        items.add(CREDIT);
+        items.add(EXAM);
         dialog.setOnItemSelectedListener(items, new BottomDialogManager.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int position, String item) {
                 mTypeTextView.setText(item);
                 mType = position;
+                switch (item) {
+                    case EVENT_REPORT:
+                        mHospitalLayout.setVisibility(View.GONE);
+                        break;
+                    case CREDIT:
+                        mHospitalLayout.setVisibility(View.VISIBLE);
+                        break;
+                    case EXAM:
+                        mHospitalLayout.setVisibility(View.VISIBLE);
+                        break;
+                }
+
+                // 检测信息是否填写完整
+                checkIfEmpty();
             }
         });
         dialog.showSelectDialog(mTypeTextView.getText().toString());
@@ -194,7 +306,7 @@ public class HospitalLoginActivity extends BaseActivity {
         // 本地验证用户名和密码格式是否符合
         int result = localValidate(account, password);
         if (result != 0) {
-            T.showShort(this, result);
+            showShort(this, result);
             return;
         }
 
@@ -229,6 +341,10 @@ public class HospitalLoginActivity extends BaseActivity {
         mProgressDialogManager.show();
         Register register = new Register(account, password);
         register.setDeviceRegId(JPushInterface.getRegistrationID(this));
+        if (mType != TYPE_EVENT_REPORT_LOGIN) {
+            register.setHospitalId(mHospital.getHospitalId());
+        }
+        register.setHospitalLoginType(mType);
         OkHttpUtils.postString()
                 .url(ServiceConstant.HOSPITAL_LOGIN)
                 .content(StringUtil.addModelWithJson(register))
@@ -244,7 +360,32 @@ public class HospitalLoginActivity extends BaseActivity {
                             LoginManager loginManager = new LoginManager(HospitalLoginActivity.this, null);
                             loginManager.saveAndEnter(result.getBody());
                         } else {
-                            T.showShort(HospitalLoginActivity.this, result.getMsg());
+                            showShort(HospitalLoginActivity.this, result.getMsg());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 绑定账号
+     *
+     * @param thirdPartInfo
+     */
+    private void bind(final ThirdPartInfo thirdPartInfo) {
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.BIND)
+                .content(StringUtil.addModelWithJson(thirdPartInfo))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                        } else {
+                            showShort(HospitalLoginActivity.this, commonResult.getMsg());
                         }
                     }
                 });

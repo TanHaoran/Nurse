@@ -9,10 +9,8 @@ import android.view.View;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.model.GroupInfo;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -70,9 +68,6 @@ public class GroupListActivity extends BaseActivity {
     private void setListData() {
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
 
         mAdapter = new GroupAdapter(this, R.layout.item_contact, mGroupInfos);
         mRecyclerView.setAdapter(mAdapter);

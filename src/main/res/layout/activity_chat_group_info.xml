@@ -135,7 +135,7 @@
                 android:layout_marginTop="@dimen/block_marinTop"
                 android:background="@drawable/delete_friend"
                 android:text="@string/quit_group"
-                android:textColor="@color/delete"
+                android:textColor="@color/white"
                 android:textSize="@dimen/normal_textSize"/>
 
         </LinearLayout>

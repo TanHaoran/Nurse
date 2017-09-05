@@ -1,10 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jerry.nurse.activity.HospitalAccountActivity">
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.SettingActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_setting"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="@string/hospital_account"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tb_setting">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_event_report"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/event_report"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_event_report"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_event_report"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_event_report"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="13******238"/>
+
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_credit"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/credit"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_credit"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_credit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_credit"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="林山夕风"/>
+
+                <View
+                    style="@style/DividerLineStyle"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_exam"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/exam"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_exam"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_exam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_exam"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="林山夕风"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

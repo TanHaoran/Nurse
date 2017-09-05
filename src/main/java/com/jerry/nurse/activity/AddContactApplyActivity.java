@@ -178,6 +178,28 @@ public class AddContactApplyActivity extends BaseActivity {
                     }
                 }
             });
+
+            // 点击跳转到聊天界面
+            holder.setOnClickListener(R.id.rl_apply, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = ChatActivity.getIntent(AddContactApplyActivity.this, apply.getContactId(), false);
+                    startActivity(intent);
+                }
+            });
+
+            // 删除这条记录
+            holder.getView(R.id.btn_delete).
+
+                    setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            L.i("执行删除");
+                            mApplies.remove(apply);
+                            apply.delete();
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
         }
     }
 

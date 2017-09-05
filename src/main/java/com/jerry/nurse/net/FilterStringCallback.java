@@ -3,7 +3,6 @@ package com.jerry.nurse.net;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ProgressDialogManager;
-import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -46,7 +45,7 @@ public abstract class FilterStringCallback extends StringCallback {
         if (mProgressDialogManager != null) {
             mProgressDialogManager.dismiss();
         }
-        response = StringUtil.dealJsonString(response);
+//        response = StringUtil.dealJsonString(response);
         L.i("请求成功" + response);
         onFilterResponse(response, id);
     }

@@ -96,6 +96,7 @@ public class BottomDialogManager {
         } else {
             lp.height = 6 * DensityUtil.dp2px(mContext, LINE_HEIGHT);
         }
+        lp.height += DensityUtil.dp2px(mContext, 12);
         root.measure(0, 0);
         // 设置透明度
         lp.alpha = 9f;
