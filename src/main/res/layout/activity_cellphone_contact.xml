@@ -6,7 +6,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-
     <com.jerry.nurse.view.TitleBar
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
@@ -21,9 +20,7 @@
             android:id="@+id/rv_contact"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white">
-
-        </android.support.v7.widget.RecyclerView>
+            android:background="@android:color/white"/>
 
         <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
             android:id="@+id/ib_index"
@@ -48,6 +45,5 @@
             tools:text="A"
             tools:visibility="visible"/>
     </FrameLayout>
-
 
 </LinearLayout>

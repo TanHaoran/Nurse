@@ -12,13 +12,11 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CellphoneContactResult;
-import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CellphoneContact;
 import com.jerry.nurse.util.CellphoneContactUtil;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.ViewHolder;
@@ -26,8 +24,6 @@ import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
 import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +46,6 @@ public class CellphoneContactActivity extends BaseActivity {
     @Bind(R.id.ib_index)
     IndexBar mIndexBar;
 
-    private LinearLayoutManager mManager;
-
-    private ProgressDialogManager mProgressDialogManager;
-
     //设置给InexBar、ItemDecoration的完整数据集
     private List<BaseIndexPinyinBean> mSourceDatas;
 
@@ -64,7 +56,6 @@ public class CellphoneContactActivity extends BaseActivity {
 
     private SuspensionDecoration mDecoration;
 
-    private LoginInfo mLoginInfo;
 
     private Map<String, CellphoneContact> mTagLast;
 
@@ -80,9 +71,6 @@ public class CellphoneContactActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
-
         String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         CellphoneContact me = new CellphoneContact();
         me.setRegisterId(registerId);
@@ -126,7 +114,8 @@ public class CellphoneContactActivity extends BaseActivity {
      */
     private void updateView(boolean isUpdate) {
 
-        mRecyclerView.setLayoutManager(mManager = new LinearLayoutManager(this));
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(manager);
 
         mSourceDatas = new ArrayList<>();
 
@@ -137,10 +126,9 @@ public class CellphoneContactActivity extends BaseActivity {
         if (!isUpdate) {
             mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(this, mSourceDatas));
         }
-        mIndexBar.setmPressedShowTextView(mTvSideBarHint)//设置HintTextView
+        mIndexBar.setmPressedShowTextView(mTvSideBarHint) //设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
-        ;
+                .setmLayoutManager(manager);//设置RecyclerView的LayoutManager
 
         initDatas();
     }

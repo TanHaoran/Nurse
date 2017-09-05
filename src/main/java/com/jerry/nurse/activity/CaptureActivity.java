@@ -46,12 +46,6 @@ import java.util.Vector;
 
 import butterknife.OnClick;
 
-
-/**
- * Initial the camera
- *
- * @author Ryan.Tang
- */
 public class CaptureActivity extends BaseActivity implements Callback {
 
     private static final int REQUEST_CODE_SCAN_GALLERY = 100;

@@ -122,7 +122,8 @@ public class AddContactApplyActivity extends BaseActivity {
                     holder.setText(R.id.tv_content, "验证信息:" + apply.getReason());
                     ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
                     Glide.with(AddContactApplyActivity.this).load(apply.getAvatar())
-                            .error(R.drawable.icon_avatar_default).into(imageView);
+                            .placeholder(R.drawable.icon_avatar_default).into
+                            (imageView);
                 }
             }.getContactInfo(mRegisterId, apply.getContactId());
 
@@ -131,6 +132,7 @@ public class AddContactApplyActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     try {
+                        // 调用环信接口成为好友
                         EMClient.getInstance().contactManager().acceptInvitation(apply.getContactId());
                         setDisplayStatus(holder, AddFriendApply
                                 .STATUS_AGREE);
@@ -138,10 +140,12 @@ public class AddContactApplyActivity extends BaseActivity {
                         new LocalContactCache() {
                             @Override
                             protected void onLoadContactInfoSuccess(ContactInfo info) {
+                                // 设置成为好友
                                 info.setFriend(true);
+                                // 保存并更新数据库
                                 info.save();
-                                // 更新数据库
                                 MessageManager.updateApplyData(apply, true, info);
+                                // 向我们服务器发送好友关系
                                 addAsFriend(mRegisterId, apply.getContactId());
                             }
                         }.getContactInfo(EMClient.getInstance().getCurrentUser(),
@@ -159,6 +163,7 @@ public class AddContactApplyActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     try {
+                        // 调用环信接口拒绝好友
                         EMClient.getInstance().contactManager().declineInvitation(apply.getContactId());
                         setDisplayStatus(holder, AddFriendApply
                                 .STATUS_REFUSE);
@@ -183,23 +188,24 @@ public class AddContactApplyActivity extends BaseActivity {
             holder.setOnClickListener(R.id.rl_apply, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = ChatActivity.getIntent(AddContactApplyActivity.this, apply.getContactId(), false);
-                    startActivity(intent);
+                    // 只有同意才可以跳转到聊天界面
+                    if (apply.getStatus() == STATUS_AGREE) {
+                        Intent intent = ChatActivity.getIntent(AddContactApplyActivity.this, apply.getContactId(), false);
+                        startActivity(intent);
+                    }
                 }
             });
 
             // 删除这条记录
-            holder.getView(R.id.btn_delete).
-
-                    setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            L.i("执行删除");
-                            mApplies.remove(apply);
-                            apply.delete();
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
+            holder.getView(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 删除这条请求数据并更新界面
+                    mApplies.remove(apply);
+                    apply.delete();
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 
@@ -211,24 +217,28 @@ public class AddContactApplyActivity extends BaseActivity {
      */
     private void setDisplayStatus(ViewHolder holder, int status) {
         switch (status) {
+            // 发出申请
             case AddFriendApply.STATUS_SEND_ING:
                 holder.setVisible(R.id.acb_agree, false);
                 holder.setVisible(R.id.acb_refuse, false);
                 holder.setVisible(R.id.tv_result, true);
                 holder.setText(R.id.tv_result, "已发出申请");
                 break;
+            // 已拒绝
             case AddFriendApply.STATUS_REFUSE:
                 holder.setVisible(R.id.acb_agree, false);
                 holder.setVisible(R.id.acb_refuse, false);
                 holder.setVisible(R.id.tv_result, true);
                 holder.setText(R.id.tv_result, "已拒绝");
                 break;
+            // 已同意
             case STATUS_AGREE:
                 holder.setVisible(R.id.acb_agree, false);
                 holder.setVisible(R.id.acb_refuse, false);
                 holder.setVisible(R.id.tv_result, true);
                 holder.setText(R.id.tv_result, "已同意");
                 break;
+            // 收到请求，做出选择
             case AddFriendApply.STATUS_RECEIVE_ING:
                 holder.setVisible(R.id.acb_agree, true);
                 holder.setVisible(R.id.acb_refuse, true);

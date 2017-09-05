@@ -17,12 +17,10 @@ import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.ViewHolder;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -44,8 +42,6 @@ public class AnnouncementActivity extends BaseActivity {
 
     private List<Announcement> mAnnouncements;
 
-    private ProgressDialogManager mProgressDialogManager;
-
     private LoginInfo mLoginInfo;
 
     private int mCurrentPage = 1;
@@ -62,35 +58,37 @@ public class AnnouncementActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         // 设置间隔线
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
+        RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
         mAnnouncements = new ArrayList<>();
         mAdapter = new AnnouncementAdapter(this, R.layout.item_announcement, mAnnouncements);
         mRecyclerView.setAdapter(mAdapter);
-
+        // 设置可以下拉加载更多
         mRecyclerView.setLoadingMoreEnabled(false);
-
+        // 列表加载的监听
         mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            /**
+             * 下拉刷新
+             */
             @Override
             public void onRefresh() {
-                L.i("onRefresh");
+                L.i("下拉刷新");
                 getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
             }
 
+            /**
+             * 加载更多
+             */
             @Override
             public void onLoadMore() {
-                L.i("onLoadMore");
+                L.i("加载更多");
 
             }
         });
 
         // 获取公告数据
-        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         getAnnouncement(mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
     }
 
@@ -102,6 +100,7 @@ public class AnnouncementActivity extends BaseActivity {
      * @param officeId
      */
     private void getAnnouncement(int page, String hospitalId, String officeId) {
+        // 检测院内权限
         if (!OfficeFragment.checkPermission()) {
             hospitalId = "";
             officeId = "";
@@ -113,13 +112,13 @@ public class AnnouncementActivity extends BaseActivity {
                 officeId = "";
             }
         }
-        mProgressDialogManager.show();
+
         OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
                 .addParams("pageNumber", String.valueOf(page))
                 .addParams("HospitalId", hospitalId)
                 .addParams("DepartmentId", officeId)
                 .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
+                .execute(new FilterStringCallback() {
 
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
@@ -137,10 +136,12 @@ public class AnnouncementActivity extends BaseActivity {
                         AnnouncementsResult result = new Gson().fromJson(response, AnnouncementsResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             List<Announcement> announcements = result.getBody();
-                            if (announcements == null) {
+                            if (announcements == null || announcements
+                                    .size() == 0) {
                                 announcements = new ArrayList<>();
                                 T.showShort(AnnouncementActivity.this, "没有更多数据了");
                             }
+                            // 添加的公告集合中
                             updateAnnouncements(announcements);
                             if (mAnnouncements.size() > 0) {
                                 //添加新数据到数据库
@@ -148,12 +149,15 @@ public class AnnouncementActivity extends BaseActivity {
                                 DataSupport.saveAll(result.getBody());
                             }
                         } else {
-                            L.i(result.getMsg());
+                            T.showShort(AnnouncementActivity.this, result.getMsg());
                         }
                     }
                 });
     }
 
+    /**
+     * 加载失败时，读取本地数据
+     */
     private void setAnnouncements() {
         mAdapter.setDatas(mAnnouncements);
         mAdapter.notifyDataSetChanged();
@@ -161,7 +165,7 @@ public class AnnouncementActivity extends BaseActivity {
 
 
     /**
-     * 更新公告列表显示
+     * 加载成功后，添加数据并更新显示
      *
      * @param announcements
      */
@@ -185,11 +189,11 @@ public class AnnouncementActivity extends BaseActivity {
             holder.getView(R.id.rl_announcement).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // 点击跳转详情
                     Intent intent = AnnouncementDetailActivity.getIntent(AnnouncementActivity.this, announcement);
                     startActivity(intent);
                 }
             });
         }
-
     }
 }

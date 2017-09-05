@@ -1,6 +1,10 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
 import java.util.List;
+
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 
 /**
  * Created by Jerry on 2017/8/9.
@@ -61,7 +65,14 @@ public class SearchUsersResult {
         private String RegisterId;
 
         public String getAvatar() {
-            return Avatar;
+            if (!TextUtils.isEmpty(Avatar)) {
+                if (Avatar.startsWith("http")) {
+                    return Avatar;
+                } else {
+                    return AVATAR_ADDRESS + Avatar;
+                }
+            }
+            return "";
         }
 
         public void setAvatar(String Avatar) {
@@ -107,5 +118,7 @@ public class SearchUsersResult {
         public void setRegisterId(String RegisterId) {
             this.RegisterId = RegisterId;
         }
+
+
     }
 }

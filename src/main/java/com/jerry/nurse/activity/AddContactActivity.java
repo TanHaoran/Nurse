@@ -22,12 +22,10 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.SearchUsersResult;
 import com.jerry.nurse.net.FilterStringCallback;
-import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
+import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
-import com.jerry.nurse.view.RecycleViewDivider;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -41,11 +39,11 @@ import butterknife.OnClick;
 
 import static com.jerry.nurse.activity.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN;
 import static com.jerry.nurse.activity.CaptureActivity.RESULT_CODE_QR_SCAN;
-import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class AddContactActivity extends BaseActivity {
 
+    // 扫描二维吗的请求码
     private static final int REQUEST_SCAN_QR_CODE = 0x101;
 
     @Bind(R.id.et_keyword)
@@ -60,12 +58,6 @@ public class AddContactActivity extends BaseActivity {
     @Bind(R.id.rv_contact)
     RecyclerView mRecyclerView;
 
-    private List<SearchUsersResult.User> mUsers;
-    private UserAdapter mAdapter;
-
-    private ProgressDialogManager mProgressDialogManager;
-
-
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AddContactActivity.class);
         return intent;
@@ -78,13 +70,14 @@ public class AddContactActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
+        // 设置关键字搜索监听
         mKeywordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String keyword = mKeywordEditText.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
+                        // 关键字不为空的时候，进行搜索查询
                         getUserListByKeyWord(keyword);
                     } else {
                         T.showShort(AddContactActivity.this, "关键字不能为空");
@@ -101,7 +94,7 @@ public class AddContactActivity extends BaseActivity {
      * @param keyword
      */
     private void getUserListByKeyWord(String keyword) {
-
+        // 隐藏操作列表
         mAddWayLayout.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mCancelTextView.setVisibility(View.VISIBLE);
@@ -116,36 +109,42 @@ public class AddContactActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        SearchUsersResult searchUsersResult = new Gson().fromJson(response, SearchUsersResult.class);
-                        if (searchUsersResult.getCode() == RESPONSE_SUCCESS) {
-                            mUsers = searchUsersResult.getBody();
-                            if (mUsers == null) {
-                                mUsers = new ArrayList<>();
+                        SearchUsersResult result = new Gson().fromJson(response, SearchUsersResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
+                            List<SearchUsersResult.User> users =
+                                    result.getBody();
+                            if (users == null) {
+                                users = new ArrayList<>();
                             }
-                            setUsersData();
+                            setUsersData(users);
                         } else {
-                            T.showShort(AddContactActivity.this, searchUsersResult.getMsg());
+                            T.showShort(AddContactActivity.this, result.getMsg());
                         }
                     }
                 });
     }
 
-    void setUsersData() {
+    /**
+     * 填充数据
+     *
+     * @param users
+     */
+    void setUsersData(final List<SearchUsersResult.User> users) {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // 设置间隔线
-        mRecyclerView.addItemDecoration(new RecycleViewDivider(this,
-                LinearLayoutManager.HORIZONTAL, DensityUtil.dp2px(this, 0.5f),
-                getResources().getColor(R.color.divider_line)));
+        RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
 
-        mAdapter = new UserAdapter(this, R.layout.item_user, mUsers);
-        mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+        UserAdapter adapter = new UserAdapter(this, R.layout.item_user,
+                users);
+        mRecyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                L.i("点击事件");
-                String userRegisterId = mUsers.get(position).getRegisterId();
+                // 点击跳转到这个人的详细页面
+                String userRegisterId = users.get(position).getRegisterId();
                 Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, userRegisterId);
                 startActivity(intent);
             }
@@ -157,14 +156,21 @@ public class AddContactActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 二维码添加好友
+     *
+     * @param view
+     */
     @OnClick(R.id.ll_scan)
     void onScan(View view) {
+        // 申请权限
         BaseActivity.requestRuntimePermission(new String[]{Manifest
                         .permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 new PermissionListener() {
                     @Override
                     public void onGranted() {
+                        // 跳转二维码扫描窗口
                         Intent intent = new Intent(AddContactActivity.this, CaptureActivity.class);
                         startActivityForResult(intent, REQUEST_SCAN_QR_CODE);
                     }
@@ -174,29 +180,13 @@ public class AddContactActivity extends BaseActivity {
 
                     }
                 });
-
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SCAN_QR_CODE && resultCode == RESULT_CODE_QR_SCAN) {
-            Bundle bundle = data.getExtras();
-            String result = bundle.getString(INTENT_EXTRA_KEY_QR_SCAN);
-            L.i("扫描结果是：" + result);
-            String register = String.valueOf((Integer.parseInt(result) + 1) / 3);
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < 10 - register.length();i++) {
-                sb.append("0");
-            }
-            sb.append(register);
-            L.i("解码后是：" + sb.toString());
-
-            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString());
-            startActivity(intent);
-
-        }
-    }
-
+    /**
+     * 手机联系人添加好友
+     *
+     * @param view
+     */
     @OnClick(R.id.ll_cellphone_contact)
     void onCellphoneContact(View view) {
         BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.READ_CONTACTS},
@@ -214,10 +204,36 @@ public class AddContactActivity extends BaseActivity {
                 });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SCAN_QR_CODE && resultCode == RESULT_CODE_QR_SCAN) {
+            Bundle bundle = data.getExtras();
+            String result = bundle.getString(INTENT_EXTRA_KEY_QR_SCAN);
+            L.i("扫描结果是：" + result);
+            String register = String.valueOf((Integer.parseInt(result) + 1) / 3);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 10 - register.length(); i++) {
+                sb.append("0");
+            }
+            sb.append(register);
+            L.i("解码后是：" + sb.toString());
+
+            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString());
+            startActivity(intent);
+
+        }
+    }
+
+    /**
+     * 取消关键字搜索
+     *
+     * @param view
+     */
     @OnClick(R.id.tv_cancel)
     void onCancel(View view) {
+        // 隐藏关键字，显示操作列表
         mAddWayLayout.setVisibility(View.VISIBLE);
-        mRecyclerView.setItemViewCacheSize(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
         mCancelTextView.setVisibility(View.GONE);
         mKeywordEditText.setText("");
     }
@@ -232,13 +248,7 @@ public class AddContactActivity extends BaseActivity {
             holder.setText(R.id.tv_nickname, user.getNickName());
             holder.setText(R.id.tv_cellphone, user.getPhone());
             ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
-            if (!TextUtils.isEmpty(user.getAvatar())) {
-                if (user.getAvatar().startsWith("http")) {
-                    Glide.with(AddContactActivity.this).load(user.getAvatar()).into(imageView);
-                } else {
-                    Glide.with(AddContactActivity.this).load(AVATAR_ADDRESS + user.getAvatar()).into(imageView);
-                }
-            }
+            Glide.with(AddContactActivity.this).load(user.getAvatar()).into(imageView);
         }
     }
 }

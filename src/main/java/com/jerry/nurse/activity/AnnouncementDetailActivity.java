@@ -28,7 +28,6 @@ public class AnnouncementDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ANNOUNCEMENT = "extra_announcement";
 
-
     public static Intent getIntent(Context context, Announcement announcement) {
         Intent intent = new Intent(context, AnnouncementDetailActivity.class);
         intent.putExtra(EXTRA_ANNOUNCEMENT, announcement);
@@ -46,6 +45,7 @@ public class AnnouncementDetailActivity extends BaseActivity {
                 (Announcement) getIntent().getSerializableExtra(EXTRA_ANNOUNCEMENT);
         L.i(announcement.toString());
         if (announcement != null) {
+            // 显示数据
             mTitleTextView.setText(announcement.getTitle());
             mInstitutionTextView.setText(announcement.getAgency());
             mTimeTextView.setText(DateUtil.parseMysqlDateToString(announcement.getNoticeTime()));
