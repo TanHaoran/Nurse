@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.OkHttpClient;
 
+import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_READ;
 import static com.jerry.nurse.activity.MainActivity.ACTION_CHAT_MESSAGE_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.ACTION_FRIEND_APPLY_RECEIVE;
 import static com.jerry.nurse.activity.MainActivity.EXTRA_CHAT_MESSAGE;
@@ -218,23 +219,7 @@ public class MyApplication extends LitePalApplication {
                     return;
                 }
                 L.i("收到已读回执");
-                for (EMMessage emMessage : messages) {
-                    // 单聊
-                    if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
-
-                        // 从数据库中找到这条数据设置消息状态已读
-                        List<ChatMessage> cms = DataSupport.where("mFrom=? and mTo=? and mRead=?",
-                                emMessage.getFrom(), emMessage.getTo(), "0").find(ChatMessage.class);
-                        for (ChatMessage cm : cms) {
-                            if (!cm.isRead()) {
-                                cm.setRead(true);
-                                cm.save();
-                                L.i("设置一条已读");
-                            }
-                        }
-                    }
-                    // TODO 群聊
-                }
+                updateChatMessageAndSendBroadcast(messages);
             }
 
             @Override
@@ -281,6 +266,39 @@ public class MyApplication extends LitePalApplication {
         // 发送广播
         Intent intent = new Intent(ACTION_CHAT_MESSAGE_RECEIVE);
         intent.putExtra(EXTRA_CHAT_MESSAGE, chatMessage);
+        getContext().sendBroadcast(intent);
+    }
+
+    /**
+     * 更新聊天信息状态并发送广播
+     *
+     * @param emMessages
+     */
+    private void updateChatMessageAndSendBroadcast(List<EMMessage> emMessages) {
+
+        for (EMMessage emMessage : emMessages) {
+            // 单聊
+            if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+
+                // 从数据库中找到这条数据设置消息状态已读
+                List<ChatMessage> cms = DataSupport.where("mFrom=? and mTo=? and mRead=?",
+                        emMessage.getFrom(), emMessage.getTo(), "0").find(ChatMessage.class);
+                for (ChatMessage cm : cms) {
+                    if (!cm.isRead()) {
+                        cm.setRead(true);
+                        cm.save();
+                        L.i("设置一条已读");
+                    }
+                }
+            }
+            // TODO 群聊
+            else {
+
+            }
+        }
+
+        // 发送广播
+        Intent intent = new Intent(ACTION_CHAT_MESSAGE_READ);
         getContext().sendBroadcast(intent);
     }
 

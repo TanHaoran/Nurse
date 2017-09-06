@@ -180,6 +180,8 @@
     <string name="select_contact">选择联系人</string>
     <string name="unread">未读</string>
     <string name="read">已读</string>
+    <string name="unread_status">[未读]</string>
+    <string name="read_status">[已读]</string>
 
     <!--我的-->
     <string name="mine">我的</string>

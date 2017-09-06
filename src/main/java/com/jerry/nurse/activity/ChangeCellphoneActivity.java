@@ -254,6 +254,7 @@ public class ChangeCellphoneActivity extends BaseActivity {
         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
         thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
         thirdPartInfo.setPhone(cellphone);
+        thirdPartInfo.setType(4);
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(url)

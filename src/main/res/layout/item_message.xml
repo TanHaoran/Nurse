@@ -65,19 +65,49 @@
                 android:textSize="@dimen/normal_textSize"
                 tools:text="紫萱"/>
 
-            <TextView
-                android:id="@+id/tv_content"
+            <LinearLayout
+                android:id="@+id/ll_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_title"
                 android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
                 android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
-                android:layout_toLeftOf="@id/tv_time"
                 android:layout_toRightOf="@id/cv_avatar"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_read"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/read_status"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/small_textSize"/>
+
+                <TextView
+                    android:id="@+id/tv_unread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unread_status"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/small_textSize"/>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_title"
+                android:layout_marginLeft="@dimen/message_item_content_marginLeft"
+                android:layout_marginTop="@dimen/contact_item_nickname_marginTop"
+                android:layout_toLeftOf="@id/tv_time"
+                android:layout_toRightOf="@id/ll_status"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="@color/gray_textColor"
-                android:textSize="@dimen/contact_item_message_textSize"
+                android:textSize="@dimen/small_textSize"
                 tools:text="在吗"/>
 
         </RelativeLayout>

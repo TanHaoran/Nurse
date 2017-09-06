@@ -22,7 +22,6 @@ import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.CreateGroupResult;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
-import com.jerry.nurse.model.UserRegisterInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
@@ -159,18 +158,21 @@ public class CreateGroupActivity extends BaseActivity {
             public void onRightClick(View view) {
                 // 创建群
                 if (mGroupId == null) {
-                    List<UserRegisterInfo> infos = new ArrayList<>();
-                    UserRegisterInfo me = new UserRegisterInfo();
-                    me.setRegisterId(mLoginInfo.getRegisterId());
-                    infos.add(me);
+                    List<Contact> contacts = new ArrayList<>();
+                    Contact me = new Contact();
+                    me.setFriendId(mLoginInfo.getRegisterId());
+                    contacts.add(me);
                     for (Contact c : mBodyDatas) {
                         if (c.isChoose()) {
-                            UserRegisterInfo friend = new UserRegisterInfo();
-                            friend.setRegisterId(c.getFriendId());
-                            infos.add(friend);
+                            Contact friend = new Contact();
+                            friend.setFriendId(c.getFriendId());
+                            contacts.add(friend);
                         }
                     }
-                    createChatGroup(infos);
+                    GroupInfo groupInfo = new GroupInfo();
+                    groupInfo.setHXNickName(me.getTarget() + "创建的群");
+                    groupInfo.setGroupMemberList(contacts);
+                    createChatGroup(groupInfo);
                 }
                 // 添加群成员
                 else {
@@ -192,13 +194,13 @@ public class CreateGroupActivity extends BaseActivity {
     /**
      * 创建群组
      *
-     * @param infos
+     * @param groupInfo
      */
-    private void createChatGroup(List<UserRegisterInfo> infos) {
+    private void createChatGroup(GroupInfo groupInfo) {
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.CREATE_GROUP)
-                .content(StringUtil.addModelWithJson(infos))
+                .content(StringUtil.addModelWithJson(groupInfo))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {

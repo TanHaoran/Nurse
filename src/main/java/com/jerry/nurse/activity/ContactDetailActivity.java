@@ -167,7 +167,10 @@ public class ContactDetailActivity extends BaseActivity {
             mAddFriendButton.setText(R.string.add_friend);
             mAddFriendButton.setTextColor(getResources().getColor(R.color.white));
             mAddFriendButton.setBackgroundResource(R.drawable.make_call_button);
-        } else {
+            mRemarkTextView.setVisibility(View.INVISIBLE);
+        }
+        // 如果是好友
+        else {
             mHospitalLayout.setVisibility(View.VISIBLE);
             mOfficeLayout.setVisibility(View.VISIBLE);
             mOptionLayout.setVisibility(View.VISIBLE);
@@ -178,6 +181,7 @@ public class ContactDetailActivity extends BaseActivity {
             mAddFriendButton.setBackgroundResource(R.drawable.delete_friend);
             mCellphoneTextView.setText(contact.getPhone());
         }
+        // 如果是院内同事
         if (mContact.isInternalHospital()) {
             mHospitalLayout.setVisibility(View.VISIBLE);
             mOfficeLayout.setVisibility(View.VISIBLE);
@@ -188,7 +192,11 @@ public class ContactDetailActivity extends BaseActivity {
         Glide.with(this).load(contact.getAvatar()).into(mAvatarImageView);
         mNameTextView.setText(contact.getName());
         mNicknameTextView.setText(contact.getNickName());
-        mRemarkTextView.setText(contact.getRemark());
+        if (!TextUtils.isEmpty(contact.getRemark())) {
+            mRemarkTextView.setText(contact.getRemark());
+        } else {
+            mRemarkTextView.setText("(备注)");
+        }
         mSexTextView.setText(contact.getSex());
         mHospitalTextView.setText(contact.getHospitalName());
         mOfficeTextView.setText(contact.getDepartmentName());

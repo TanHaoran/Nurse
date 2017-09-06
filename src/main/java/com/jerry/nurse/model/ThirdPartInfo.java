@@ -13,7 +13,7 @@ public class ThirdPartInfo {
     private MicroBlog WBData;
 
     /**
-     *  0 院内账号、1 qq、2微信  3 微博，绑定解绑时候使用
+     *  0 院内账号、1 qq、2微信  3 微博，绑定解绑时候使用，4 手机
      */
     private int Type;
 

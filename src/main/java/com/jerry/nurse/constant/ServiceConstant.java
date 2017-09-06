@@ -46,7 +46,8 @@ public class ServiceConstant {
     public static final String BANNER_ADDRESS = MAIN_IP + "Banner/";
     public static final String APK_ADDRESS = MAIN_IP + "APK/";
 
-    public static final String PROTOCOL_URL = "";
+    // 服务协议
+    public static final String PROTOCOL_URL = "http://zhihu.buzzlysoft.com/agreement.html";
 
     /**
      * 获取验证码
@@ -288,11 +289,5 @@ public class ServiceConstant {
      * 获取微博基本信息
      */
     public static final String MICRO_BLOG_GET_USER_INFO = "https://api.weibo.com/2/users/show.json";
-
-    /**
-     * 获取所有医院信息
-     */
-    public static final String GET_ALL_HOSPITALS = IP + "GetHospitalAll";
-
 
 }

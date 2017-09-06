@@ -198,7 +198,7 @@ public class MeFragment extends BaseFragment {
 
     }
 
-    @OnClick(R.id.rl_exam)
+    @OnClick(R.id.rl_schedule)
     void onExam(View view) {
 
     }

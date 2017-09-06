@@ -210,7 +210,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/rl_exam"
+        android:id="@+id/rl_schedule"
         style="@style/BusinessLineStyle"
         android:visibility="gone">
 

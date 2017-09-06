@@ -90,24 +90,24 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rl_exam"
+                android:id="@+id/rl_schedule"
                 style="@style/PersonalInfoLineStyle"
                 android:layout_height="@dimen/personal_info_line_height">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
-                    android:text="@string/exam"/>
+                    android:text="@string/schedule"/>
 
                 <ImageView
-                    android:id="@+id/iv_arrow_exam"
+                    android:id="@+id/iv_arrow_schedule"
                     style="@style/ArrowEnterStyle"/>
 
                 <TextView
-                    android:id="@+id/tv_exam"
+                    android:id="@+id/tv_schedule"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/iv_arrow_exam"
+                    android:layout_toLeftOf="@id/iv_arrow_schedule"
                     android:paddingRight="@dimen/line_paddingLeft"
                     android:textColor="@color/gray_textColor"
                     android:textSize="@dimen/normal_textSize"

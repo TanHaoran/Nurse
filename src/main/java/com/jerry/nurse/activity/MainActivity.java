@@ -50,6 +50,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 public class MainActivity extends BaseActivity {
 
     public static final String ACTION_CHAT_MESSAGE_RECEIVE = "action_chat_message_receive";
+    public static final String ACTION_CHAT_MESSAGE_READ = "action_chat_message_read";
     public static final String ACTION_FRIEND_APPLY_RECEIVE = "action_friend_apply_receive";
 
     public static final String EXTRA_CHAT_MESSAGE = "extra_chat_message";
@@ -120,6 +121,8 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction(ACTION_CHAT_MESSAGE_RECEIVE);
         // 2. 接收环信添加好友通知
         intentFilter.addAction(ACTION_FRIEND_APPLY_RECEIVE);
+        // 3. 接受已读消息回执通知
+        intentFilter.addAction(ACTION_CHAT_MESSAGE_READ);
         registerReceiver(mMessageReceiver, intentFilter);
 
         // 获取好友列表，并更新本地数据库
@@ -333,7 +336,7 @@ public class MainActivity extends BaseActivity {
                     pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     // 读取这个人的个人信息
-                    info= DataSupport.where("mRegisterId=?", apply.getContactId()).findFirst(ContactInfo.class);
+                    info = DataSupport.where("mRegisterId=?", apply.getContactId()).findFirst(ContactInfo.class);
 
                     notification = new Notification.Builder(MainActivity.this)
                             .setTicker("新消息")
@@ -347,6 +350,14 @@ public class MainActivity extends BaseActivity {
 
                     notificationManager = NotificationManagerCompat.from(context);
                     notificationManager.notify(0, notification);
+                    break;
+                // 收到已读回执
+                case ACTION_CHAT_MESSAGE_READ:
+                    L.i("接收消息已读回执");
+                    if (mMessageFragment.isVisible()) {
+                        mMessageFragment.refresh();
+                        return;
+                    }
                     break;
                 default:
                     break;

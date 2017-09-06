@@ -60,13 +60,13 @@ public class HospitalAccountActivity extends BaseActivity {
     }
 
     /**
-     * 考试
+     * 排班
      *
      * @param view
      */
-    @OnClick(R.id.rl_exam)
-    void onExam(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_EXAM_BIND);
+    @OnClick(R.id.rl_schedule)
+    void onSchedule(View view) {
+        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_SCHEDULE_BIND);
         startActivity(intent);
     }
 

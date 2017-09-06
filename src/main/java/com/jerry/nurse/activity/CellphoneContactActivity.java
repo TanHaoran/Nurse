@@ -56,7 +56,6 @@ public class CellphoneContactActivity extends BaseActivity {
 
     private SuspensionDecoration mDecoration;
 
-
     private Map<String, CellphoneContact> mTagLast;
 
     public static Intent getIntent(Context context) {
@@ -169,8 +168,8 @@ public class CellphoneContactActivity extends BaseActivity {
         public void convert(ViewHolder holder, final CellphoneContact cellphoneContact) {
             String tag = cellphoneContact.getBaseIndexTag();
             CellphoneContact lastContact = mTagLast.get(tag);
-            if (lastContact.getRegisterId().equals(cellphoneContact
-                    .getRegisterId()) && holder.getLayoutPosition()
+            if (lastContact.getPhone().equals(cellphoneContact
+                    .getPhone()) && holder.getLayoutPosition()
                     != mBodyDatas.size() - 1
                     ) {
                 holder.setVisible(R.id.v_divider, false);

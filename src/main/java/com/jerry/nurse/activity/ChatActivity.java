@@ -124,7 +124,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     private LoginInfo mLoginInfo;
     private String mContactId;
-    private boolean mIsGroup;
+    private boolean mGroup;
 
     // 从数据库中读取的联系人资料
     private ContactInfo mContactInfo;
@@ -188,7 +188,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         }
 
                         // 单聊
-                        if (!mIsGroup) {
+                        if (!mGroup) {
                             // 设置消息已读
                             makeMessagesRead();
                             chatMessage.setTo(mLoginInfo.getRegisterId());
@@ -299,7 +299,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         // 获取传递过来的值
         mContactId = getIntent().getStringExtra(EXTRA_CONTACT_ID);
-        mIsGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
+        mGroup = getIntent().getBooleanExtra(EXTRA_IS_GROUP, false);
         // 获取我的信息
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
@@ -308,7 +308,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
 
         // 单聊
-        if (!mIsGroup) {
+        if (!mGroup) {
             L.i("联系人的Id是：" + mContactId);
             // 查询联系人的信息
             mContactInfo = DataSupport.where("mRegisterId=?",
@@ -411,7 +411,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 EMMessage emMessage = EMMessage.createVoiceSendMessage(filePath,
                         (int) seconds, mContactId);
                 // 单聊
-                if (!mIsGroup) {
+                if (!mGroup) {
                     emMessage.setChatType(EMMessage.ChatType.Chat);
                 }
                 // 群聊
@@ -476,7 +476,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         EMMessage emMessage = EMMessage.createImageSendMessage(
                 file.getAbsolutePath(), true, mContactId);
         // 单聊
-        if (!mIsGroup) {
+        if (!mGroup) {
             emMessage.setChatType(EMMessage.ChatType.Chat);
         }
         // 群聊
@@ -500,7 +500,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         mMessageEditText.setText("");
         // 创建文字消息
         EMMessage emMessage = EMMessage.createTxtSendMessage(message, mContactId);
-        if (!mIsGroup) {
+        if (!mGroup) {
             emMessage.setChatType(EMMessage.ChatType.Chat);
         } else {
             emMessage.setChatType(EMMessage.ChatType.GroupChat);
@@ -636,7 +636,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
     @OnClick(R.id.iv_create_group)
     void onCreateGroup(View view) {
-        if (!mIsGroup) {
+        if (!mGroup) {
             Intent intent = CreateGroupActivity.getIntent(this, null, null);
             startActivity(intent);
         } else {
@@ -805,7 +805,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             final ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             // 单聊
-            if (!mIsGroup) {
+            if (!mGroup) {
                 Glide.with(ChatActivity.this).load(mContactInfo.getAvatar())
                         .placeholder(R.drawable.icon_avatar_default).into(imageView);
                 holder.setVisible(R.id.tv_nickname, false);

@@ -121,6 +121,7 @@ public class MessageFragment extends BaseFragment {
                     imageView.setImageResource(message.getImageResource());
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
+                    holder.setVisible(R.id.ll_status, false);
                     break;
                 // 单聊聊天消息
                 case Message.TYPE_CHAT:
@@ -141,8 +142,18 @@ public class MessageFragment extends BaseFragment {
                                 Glide.with(getActivity()).load(info.getAvatar())
                                         .error(R.drawable.icon_avatar_default).into(imageView);
                                 holder.setText(R.id.tv_title, info.getDisplayName());
+                                holder.setVisible(R.id.ll_status, true);
                                 if (chatMessage != null) {
                                     if (chatMessage.getType() == ChatMessage.TYPE_TXT) {
+                                        // 读取并设置已读未读的状态
+                                        boolean read = chatMessage.isRead();
+                                        if (read) {
+                                            holder.setVisible(R.id.tv_read, true);
+                                            holder.setVisible(R.id.tv_unread, false);
+                                        } else {
+                                            holder.setVisible(R.id.tv_unread, true);
+                                            holder.setVisible(R.id.tv_read, false);
+                                        }
                                         holder.setText(R.id.tv_content, chatMessage.getContent());
                                     } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {
                                         holder.setText(R.id.tv_content, "语音消息");
@@ -178,6 +189,7 @@ public class MessageFragment extends BaseFragment {
                                 }
                                 if (groupMessage != null) {
                                     holder.setText(R.id.tv_content, groupMessage.getContent());
+                                    holder.setVisible(R.id.ll_status, false);
                                 } else {
                                     setEmptyContent(holder);
                                 }
@@ -192,6 +204,7 @@ public class MessageFragment extends BaseFragment {
                     holder.setText(R.id.tv_title, message.getTitle());
                     holder.setText(R.id.tv_content, message.getContent());
                     imageView.setImageResource(message.getImageResource());
+                    holder.setVisible(R.id.ll_status, false);
                     break;
 
             }

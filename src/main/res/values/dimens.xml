@@ -61,6 +61,7 @@
 
     <!--消息-->
     <dimen name="message_item_divider_line_marginLef">64dp</dimen>
+    <dimen name="message_item_content_marginLeft">4dp</dimen>
 
     <!--院务-->
     <dimen name="banner_height">150dp</dimen>

@@ -21,6 +21,7 @@ import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.BaiduLocationManager;
 import com.jerry.nurse.util.BottomDialogManager;
 import com.jerry.nurse.util.LoginManager;
 import com.jerry.nurse.util.StringUtil;
@@ -41,17 +42,18 @@ import static com.jerry.nurse.util.T.showShort;
 
 public class HospitalLoginActivity extends BaseActivity {
 
-    public static final int TYPE_EVENT_REPORT_LOGIN = 0;
-    public static final int TYPE_CREDIT_LOGIN = 1;
-    public static final int TYPE_EXAM_LOGIN = 2;
+    public static final int TYPE_LOGIN = -1;
 
-    public static final int TYPE_EVENT_REPORT_BIND = 3;
-    public static final int TYPE_CREDIT_BIND = 4;
-    public static final int TYPE_EXAM_BIND = 5;
+    public static final int TYPE_EVENT_REPORT_BIND = 0;
+    public static final int TYPE_CREDIT_BIND = 1;
+    public static final int TYPE_EXAM_BIND = 2;
+    public static final int TYPE_SCHEDULE_BIND = 3;
+
 
     private static final String EVENT_REPORT = "护理不良事件";
     private static final String CREDIT = "学分";
     private static final String EXAM = "考试";
+    private static final String SCHEDULE = "排班";
 
 
     public static final String EXTRA_TYPE = "extra_type";
@@ -93,6 +95,8 @@ public class HospitalLoginActivity extends BaseActivity {
 
     private int mType;
 
+    private BaiduLocationManager mLocationManager;
+
     public static Intent getIntent(Context context, int type) {
         Intent intent = new Intent(context, HospitalLoginActivity.class);
         intent.putExtra(EXTRA_TYPE, type);
@@ -108,9 +112,7 @@ public class HospitalLoginActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         mType = getIntent().getIntExtra(EXTRA_TYPE, 0);
         switch (mType) {
-            case TYPE_EVENT_REPORT_LOGIN:
-            case TYPE_CREDIT_LOGIN:
-            case TYPE_EXAM_LOGIN:
+            case TYPE_LOGIN:
                 mLogoImageView.setVisibility(View.GONE);
                 break;
             case TYPE_EVENT_REPORT_BIND:
@@ -124,6 +126,11 @@ public class HospitalLoginActivity extends BaseActivity {
                 setupBindState();
                 break;
             case TYPE_EXAM_BIND:
+                mTitleBar.setTitle("考试账号绑定");
+                mHospitalLayout.setVisibility(View.VISIBLE);
+                setupBindState();
+                break;
+            case TYPE_SCHEDULE_BIND:
                 mTitleBar.setTitle("考试账号绑定");
                 mHospitalLayout.setVisibility(View.VISIBLE);
                 setupBindState();
@@ -170,8 +177,16 @@ public class HospitalLoginActivity extends BaseActivity {
             }
         });
 
-        // 获取所有医院信息
-        getHospitals();
+        mLocationManager = new BaiduLocationManager(this);
+        mLocationManager.setLocationListener(new BaiduLocationManager.LocationListener() {
+            @Override
+            public void onLocationFinished(double latitude, double longitude) {
+                // 获取所有医院信息
+                getHospitals(latitude, longitude);
+            }
+        });
+        mLocationManager.start();
+
     }
 
     private void setupBindState() {
@@ -207,9 +222,14 @@ public class HospitalLoginActivity extends BaseActivity {
 
     /**
      * 获取所有医院信息
+     *
+     * @param latitude
+     * @param longitude
      */
-    private void getHospitals() {
-        OkHttpUtils.get().url(ServiceConstant.GET_ALL_HOSPITALS)
+    private void getHospitals(double latitude, double longitude) {
+        OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_LIST)
+                .addParams("lat", String.valueOf(latitude))
+                .addParams("lng", String.valueOf(longitude))
                 .build()
                 .execute(new FilterStringCallback(mProgressDialogManager) {
 
@@ -267,7 +287,7 @@ public class HospitalLoginActivity extends BaseActivity {
         List<String> items = new ArrayList<>();
         items.add(EVENT_REPORT);
         items.add(CREDIT);
-        items.add(EXAM);
+        items.add(SCHEDULE);
         dialog.setOnItemSelectedListener(items, new BottomDialogManager.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int position, String item) {
@@ -278,9 +298,8 @@ public class HospitalLoginActivity extends BaseActivity {
                         mHospitalLayout.setVisibility(View.GONE);
                         break;
                     case CREDIT:
-                        mHospitalLayout.setVisibility(View.VISIBLE);
-                        break;
                     case EXAM:
+                    case SCHEDULE:
                         mHospitalLayout.setVisibility(View.VISIBLE);
                         break;
                 }
@@ -341,7 +360,7 @@ public class HospitalLoginActivity extends BaseActivity {
         mProgressDialogManager.show();
         Register register = new Register(account, password);
         register.setDeviceRegId(JPushInterface.getRegistrationID(this));
-        if (mType != TYPE_EVENT_REPORT_LOGIN) {
+        if (mType != TYPE_EVENT_REPORT_BIND) {
             register.setHospitalId(mHospital.getHospitalId());
         }
         register.setHospitalLoginType(mType);
@@ -399,5 +418,15 @@ public class HospitalLoginActivity extends BaseActivity {
     @OnClick(R.id.tv_account_login)
     void onAccountLogin(View view) {
         finish();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mLocationManager.isStarted()) {
+            mLocationManager.stop();
+        }
     }
 }

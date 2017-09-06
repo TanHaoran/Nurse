@@ -206,7 +206,7 @@ public class SettingActivity extends BaseActivity {
             req.state = "diandi_wx_login";
             MyApplication.sWxApi.sendReq(req);
 
-        } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
+        } else if (!TextUtils.isEmpty(mBindInfo.getWeixinOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
                     .setMessage("确定解除绑定 " + mBindInfo.getWeixinNickName() + " 吗?")
