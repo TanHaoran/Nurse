@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -15,18 +16,23 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.HospitalResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Register;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.BaiduLocationManager;
 import com.jerry.nurse.util.BottomDialogManager;
+import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.LoginManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,25 +44,23 @@ import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.LoginActivity.setButtonEnable;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
+import static com.jerry.nurse.model.ThirdPartInfo.TYPE_CREDIT;
+import static com.jerry.nurse.model.ThirdPartInfo.TYPE_EVENT_REPORT;
+import static com.jerry.nurse.model.ThirdPartInfo.TYPE_SCHEDULE;
 import static com.jerry.nurse.util.T.showShort;
 
 public class HospitalLoginActivity extends BaseActivity {
 
-    public static final int TYPE_LOGIN = -1;
-
-    public static final int TYPE_EVENT_REPORT_BIND = 0;
-    public static final int TYPE_CREDIT_BIND = 1;
-    public static final int TYPE_EXAM_BIND = 2;
-    public static final int TYPE_SCHEDULE_BIND = 3;
-
+    public static final int TYPE_LOGIN = 0;
+    public static final int TYPE_BIND = 1;
 
     private static final String EVENT_REPORT = "护理不良事件";
     private static final String CREDIT = "学分";
-    private static final String EXAM = "考试";
     private static final String SCHEDULE = "排班";
 
 
     public static final String EXTRA_TYPE = "extra_type";
+    public static final String EXTRA_ACCOUNT_TYPE = "extra_account_type";
 
     @Bind(R.id.rl_hospital)
     RelativeLayout mHospitalLayout;
@@ -93,13 +97,17 @@ public class HospitalLoginActivity extends BaseActivity {
 
     private HospitalResult.Hospital mHospital;
 
+    // 登录或者绑定
     private int mType;
+    // 账号类型
+    private int mAccountType;
 
     private BaiduLocationManager mLocationManager;
 
-    public static Intent getIntent(Context context, int type) {
+    public static Intent getIntent(Context context, int type, int accountType) {
         Intent intent = new Intent(context, HospitalLoginActivity.class);
         intent.putExtra(EXTRA_TYPE, type);
+        intent.putExtra(EXTRA_ACCOUNT_TYPE, accountType);
         return intent;
     }
 
@@ -111,30 +119,29 @@ public class HospitalLoginActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         mType = getIntent().getIntExtra(EXTRA_TYPE, 0);
-        switch (mType) {
-            case TYPE_LOGIN:
-                mLogoImageView.setVisibility(View.GONE);
-                break;
-            case TYPE_EVENT_REPORT_BIND:
-                mHospitalLayout.setVisibility(View.GONE);
-                mTitleBar.setTitle("护理不良事件账号绑定");
-                setupBindState();
-                break;
-            case TYPE_CREDIT_BIND:
-                mTitleBar.setTitle("学分账号绑定");
-                mHospitalLayout.setVisibility(View.VISIBLE);
-                setupBindState();
-                break;
-            case TYPE_EXAM_BIND:
-                mTitleBar.setTitle("考试账号绑定");
-                mHospitalLayout.setVisibility(View.VISIBLE);
-                setupBindState();
-                break;
-            case TYPE_SCHEDULE_BIND:
-                mTitleBar.setTitle("考试账号绑定");
-                mHospitalLayout.setVisibility(View.VISIBLE);
-                setupBindState();
-                break;
+        mAccountType = getIntent().getIntExtra(EXTRA_ACCOUNT_TYPE, 0);
+        if (mType == TYPE_LOGIN) {
+            mLogoImageView.setVisibility(View.GONE);
+        } else {
+            mLogoImageView.setVisibility(View.VISIBLE);
+
+            switch (mAccountType) {
+                case TYPE_EVENT_REPORT:
+                    mHospitalLayout.setVisibility(View.GONE);
+                    mTitleBar.setTitle("护理不良事件账号绑定");
+                    setupBindState();
+                    break;
+                case TYPE_CREDIT:
+                    mTitleBar.setTitle("学分账号绑定");
+                    mHospitalLayout.setVisibility(View.VISIBLE);
+                    setupBindState();
+                    break;
+                case TYPE_SCHEDULE:
+                    mTitleBar.setTitle("考试账号绑定");
+                    mHospitalLayout.setVisibility(View.VISIBLE);
+                    setupBindState();
+                    break;
+            }
         }
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -181,12 +188,14 @@ public class HospitalLoginActivity extends BaseActivity {
         mLocationManager.setLocationListener(new BaiduLocationManager.LocationListener() {
             @Override
             public void onLocationFinished(double latitude, double longitude) {
+                mProgressDialogManager.dismiss();
                 // 获取所有医院信息
                 getHospitals(latitude, longitude);
             }
         });
-        mLocationManager.start();
 
+        mProgressDialogManager.show();
+        mLocationManager.start();
     }
 
     private void setupBindState() {
@@ -218,6 +227,18 @@ public class HospitalLoginActivity extends BaseActivity {
         } else {
             setButtonEnable(HospitalLoginActivity.this, mLoginButton, false);
         }
+        if (mType == TYPE_BIND) {
+            if (mHospitalLayout.getVisibility() == View.VISIBLE) {
+                if (mHospitalTextView.getText().toString().length() > 0 &&
+                        mAccountEditText.getText().toString().length() > 0 &&
+                        mPasswordEditText.getText().toString().length() > 0) {
+                    setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
+                }
+            } else if (mAccountEditText.getText().toString().length() > 0 &&
+                    mPasswordEditText.getText().toString().length() > 0) {
+                setButtonEnable(HospitalLoginActivity.this, mLoginButton, true);
+            }
+        }
     }
 
     /**
@@ -227,6 +248,7 @@ public class HospitalLoginActivity extends BaseActivity {
      * @param longitude
      */
     private void getHospitals(double latitude, double longitude) {
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_LIST)
                 .addParams("lat", String.valueOf(latitude))
                 .addParams("lng", String.valueOf(longitude))
@@ -292,14 +314,16 @@ public class HospitalLoginActivity extends BaseActivity {
             @Override
             public void onItemSelected(int position, String item) {
                 mTypeTextView.setText(item);
-                mType = position;
                 switch (item) {
                     case EVENT_REPORT:
+                        mAccountType = ThirdPartInfo.TYPE_EVENT_REPORT;
                         mHospitalLayout.setVisibility(View.GONE);
                         break;
                     case CREDIT:
-                    case EXAM:
+                        mAccountType = ThirdPartInfo.TYPE_CREDIT;
+                        mHospitalLayout.setVisibility(View.VISIBLE);
                     case SCHEDULE:
+                        mAccountType = ThirdPartInfo.TYPE_SCHEDULE;
                         mHospitalLayout.setVisibility(View.VISIBLE);
                         break;
                 }
@@ -329,8 +353,22 @@ public class HospitalLoginActivity extends BaseActivity {
             return;
         }
 
-        // 远端登录
-        login(account, password);
+        // 判断是登录还是绑定
+
+        if (mType == TYPE_LOGIN) {
+            login(account, password);
+        } else {
+            String registerId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
+            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+            thirdPartInfo.setRegisterId(registerId);
+            thirdPartInfo.setLoginType(mAccountType);
+            if (mAccountType != ThirdPartInfo.TYPE_EVENT_REPORT) {
+                thirdPartInfo.setHospitalId(mHospital.getHospitalId());
+            }
+            thirdPartInfo.setLoginName(account);
+            thirdPartInfo.setPassword(password);
+            bind(thirdPartInfo);
+        }
     }
 
     /**
@@ -360,10 +398,10 @@ public class HospitalLoginActivity extends BaseActivity {
         mProgressDialogManager.show();
         Register register = new Register(account, password);
         register.setDeviceRegId(JPushInterface.getRegistrationID(this));
-        if (mType != TYPE_EVENT_REPORT_BIND) {
+        if (mAccountType != TYPE_EVENT_REPORT) {
             register.setHospitalId(mHospital.getHospitalId());
         }
-        register.setHospitalLoginType(mType);
+        register.setLoginType(mAccountType);
         OkHttpUtils.postString()
                 .url(ServiceConstant.HOSPITAL_LOGIN)
                 .content(StringUtil.addModelWithJson(register))
@@ -401,10 +439,20 @@ public class HospitalLoginActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
-                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                        LoginInfoResult result = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (result.getCode() == RESPONSE_SUCCESS) {
+                            LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+                            if (!TextUtils.isEmpty(result.getBody().getReguserId())) {
+                                loginInfo.setReguserId(result.getBody().getReguserId());
+                            } else if (!TextUtils.isEmpty(result.getBody().getXFId())) {
+                                loginInfo.setXFId(result.getBody().getXFId());
+                            } else if (!TextUtils.isEmpty(result.getBody().getPBId())) {
+                                loginInfo.setPBId(result.getBody().getPBId());
+                            }
+                            LitePalUtil.saveLoginInfo(HospitalLoginActivity.this, loginInfo);
+                            T.showShort(HospitalLoginActivity.this, "绑定成功");
                         } else {
-                            showShort(HospitalLoginActivity.this, commonResult.getMsg());
+                            T.showShort(HospitalLoginActivity.this, result.getMsg());
                         }
                     }
                 });

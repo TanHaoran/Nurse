@@ -148,8 +148,6 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_qq)
     void onQQ(View view) {
-        // 解绑qq
-        L.i("绑定的数量是：" + mBindInfo.getBindCount());
         // 绑定qq
         if (TextUtils.isEmpty(mBindInfo.getQQOpenId())) {
             mTencentLoginManager = new TencentLoginManager(this) {
@@ -158,13 +156,15 @@ public class SettingActivity extends BaseActivity {
                     ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
                     thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
                     thirdPartInfo.setQQData(info);
-                    thirdPartInfo.setType(1);
+                    thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_QQ);
                     bind(thirdPartInfo);
                 }
             };
             mTencentLoginManager.login();
 
-        } else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
+        }
+        // 解绑qq
+        else if (!TextUtils.isEmpty(mBindInfo.getQQOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
                     .setMessage("确定解除绑定 " + mBindInfo.getQQNickName() + " 吗?")
@@ -176,7 +176,7 @@ public class SettingActivity extends BaseActivity {
                             Qq qq = new Qq();
                             qq.setOpenId(mBindInfo.getQQOpenId());
                             thirdPartInfo.setQQData(qq);
-                            thirdPartInfo.setType(1);
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_QQ);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -192,8 +192,6 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_weixin)
     void onWeChat(View view) {
-        // 解绑微信
-        L.i("绑定的数量是：" + mBindInfo.getBindCount());
         // 绑定微信
         if (TextUtils.isEmpty(mBindInfo.getWeixinOpenId())) {
             if (!MyApplication.sWxApi.isWXAppInstalled()) {
@@ -206,7 +204,9 @@ public class SettingActivity extends BaseActivity {
             req.state = "diandi_wx_login";
             MyApplication.sWxApi.sendReq(req);
 
-        } else if (!TextUtils.isEmpty(mBindInfo.getWeixinOpenId()) && mBindInfo.getBindCount() > 1) {
+        }
+        // 解绑微信
+        else if (!TextUtils.isEmpty(mBindInfo.getWeixinOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
                     .setMessage("确定解除绑定 " + mBindInfo.getWeixinNickName() + " 吗?")
@@ -218,7 +218,7 @@ public class SettingActivity extends BaseActivity {
                             WeChat weChat = new WeChat();
                             weChat.setOpenId(mBindInfo.getWeixinOpenId());
                             thirdPartInfo.setWXData(weChat);
-                            thirdPartInfo.setType(2);
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_WE_CHAT);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -234,12 +234,12 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_microblog)
     void onMicroBlog(View view) {
-        // 解绑微博
-        L.i("绑定的数量是：" + mBindInfo.getBindCount());
         // 绑定微博
         if (TextUtils.isEmpty(mBindInfo.getWeiboOpenId())) {
             mSsoHandler.authorize(new SelfWbAuthListener());
-        } else if (!TextUtils.isEmpty(mBindInfo.getWeiboOpenId()) && mBindInfo.getBindCount() > 1) {
+        }
+        // 解绑微博
+        else if (!TextUtils.isEmpty(mBindInfo.getWeiboOpenId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
                     .setMessage("确定解除绑定 " + mBindInfo.getWeiboNickName() + " 吗?")
@@ -251,7 +251,7 @@ public class SettingActivity extends BaseActivity {
                             MicroBlog microBlog = new MicroBlog();
                             microBlog.setIdstr(mBindInfo.getWeiboOpenId());
                             thirdPartInfo.setWBData(microBlog);
-                            thirdPartInfo.setType(3);
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_MICRO_BLOG);
                             unBind(thirdPartInfo);
                         }
                     })
@@ -308,7 +308,7 @@ public class SettingActivity extends BaseActivity {
                                         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
                                         thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
                                         thirdPartInfo.setWBData(microBlog);
-                                        thirdPartInfo.setType(3);
+                                        thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_MICRO_BLOG);
                                         bind(thirdPartInfo);
                                     }
                                 });
@@ -336,7 +336,7 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_hospital_account)
     void onHospitalAccount(View view) {
-        Intent intent = HospitalAccountActivity.getIntent(this);
+        Intent intent = HospitalAccountActivity.getIntent(this, mBindInfo);
         startActivity(intent);
     }
 
@@ -348,7 +348,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_help)
     void onHelp(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "https://www.baidu.com", "帮助");
+        Intent intent = HtmlActivity.getIntent(this, ServiceConstant.HELP_URL, "帮助");
         startActivity(intent);
     }
 
@@ -495,7 +495,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.rl_about)
     void onAbout(View view) {
-        Intent intent = HtmlActivity.getIntent(this, "", "关于");
+        Intent intent = HtmlActivity.getIntent(this, ServiceConstant.ABOUT_URL, "关于");
         startActivity(intent);
     }
 
@@ -535,11 +535,6 @@ public class SettingActivity extends BaseActivity {
                 .execute(new FilterStringCallback(mProgressDialogManager) {
 
                     @Override
-                    public void onError(Call call, Exception e, int id) {
-                        super.onError(call, e, id);
-                    }
-
-                    @Override
                     public void onFilterResponse(String response, int id) {
                         BindInfoResult bindInfoResult = new Gson().fromJson(response, BindInfoResult.class);
                         if (bindInfoResult.getCode() == RESPONSE_SUCCESS) {
@@ -547,6 +542,7 @@ public class SettingActivity extends BaseActivity {
                             // 更新界面显示绑定信息
                             updateBindInfo(mBindInfo);
                         } else {
+                            mBindInfo = new BindInfo();
                             showShort(SettingActivity.this, bindInfoResult.getMsg());
                         }
                     }

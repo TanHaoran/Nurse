@@ -35,6 +35,7 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
     private String FriendId;
     private boolean isChoose;
     private boolean IsInternalHospital;
+    private String MyId;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(Avatar)) {
@@ -168,6 +169,14 @@ public class Contact extends BaseIndexPinyinBean implements Serializable {
 
     public void setChoose(boolean choose) {
         isChoose = choose;
+    }
+
+    public String getMyId() {
+        return MyId;
+    }
+
+    public void setMyId(String myId) {
+        MyId = myId;
     }
 
     @Override

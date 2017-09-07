@@ -28,6 +28,7 @@ import com.jerry.nurse.model.BannersResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.CircleIndicator;
 import com.jerry.nurse.view.ViewPagerScroller;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -77,6 +78,8 @@ public class OfficeFragment extends BaseFragment {
 
     private Runnable mBannerRunnable;
 
+    private LoginInfo mInfo;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -109,6 +112,8 @@ public class OfficeFragment extends BaseFragment {
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        mInfo = DataSupport.findFirst(LoginInfo.class);
     }
 
     @Override
@@ -224,7 +229,6 @@ public class OfficeFragment extends BaseFragment {
                             if (mAnnouncements == null) {
                                 mAnnouncements = new ArrayList<>();
                             }
-                            updateAnnouncements();
                             if (mAnnouncements.size() > 0) {
                                 //添加新数据到数据库
 
@@ -233,8 +237,9 @@ public class OfficeFragment extends BaseFragment {
                             } else {
                                 mMoreTextView.setVisibility(View.INVISIBLE);
                             }
+                            updateAnnouncements();
                         } else {
-                            L.i(result.getMsg());
+                            T.showShort(getActivity(), result.getMsg());
                         }
                     }
                 });
@@ -336,19 +341,25 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
-        LoginInfo info = DataSupport.findFirst(LoginInfo.class);
-        if (TextUtils.isEmpty(info.getReguserId())) {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.tips)
-                    .setMessage("抱歉，你没有开通这个业务")
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
+        if (TextUtils.isEmpty(mInfo.getReguserId())) {
+            showBindTipDialog();
             return;
         }
         Intent intent = HtmlActivity.getIntent(getActivity(),
-                REPORT_EVENT_URL + info.getReguserId(), null);
+                REPORT_EVENT_URL + mInfo.getReguserId(), null);
 //        Intent intent = EventReportActivity.getIntent(getActivity());
         startActivity(intent);
+    }
+
+    /**
+     * 显示提示框
+     */
+    private void showBindTipDialog() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.tips)
+                .setMessage("请先绑定院内账号，即可开启此功能！")
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     @OnClick(R.id.ll_nurse_class)
@@ -359,12 +370,20 @@ public class OfficeFragment extends BaseFragment {
 
     @OnClick(R.id.ll_credit_check)
     void onCreditCheck(View view) {
+        if (TextUtils.isEmpty(mInfo.getReguserId())) {
+            showBindTipDialog();
+            return;
+        }
         Intent intent = CreditCheckActivity.getIntent(getActivity());
         startActivity(intent);
     }
 
     @OnClick(R.id.ll_schedule_check)
     void onScheduleCheck(View view) {
+        if (TextUtils.isEmpty(mInfo.getReguserId())) {
+            showBindTipDialog();
+            return;
+        }
         Intent intent = ScheduleActivity.getIntent(getActivity());
         startActivity(intent);
     }

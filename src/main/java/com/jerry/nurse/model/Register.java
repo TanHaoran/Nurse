@@ -18,9 +18,9 @@ public class Register {
     private String DeviceRegId;
 
     /**
-     * 0不良事件 1 学分  2  考试
+     * 0不良事件，4学分，5考试，6排班
      */
-    private int HospitalLoginType;
+    private int LoginType;
 
     /**
      * 学分、考试需要此字段
@@ -85,13 +85,6 @@ public class Register {
         DeviceRegId = deviceRegId;
     }
 
-    public int getHospitalLoginType() {
-        return HospitalLoginType;
-    }
-
-    public void setHospitalLoginType(int hospitalLoginType) {
-        HospitalLoginType = hospitalLoginType;
-    }
 
     public String getHospitalId() {
         return HospitalId;
@@ -101,4 +94,11 @@ public class Register {
         HospitalId = hospitalId;
     }
 
+    public int getLoginType() {
+        return LoginType;
+    }
+
+    public void setLoginType(int loginType) {
+        LoginType = loginType;
+    }
 }

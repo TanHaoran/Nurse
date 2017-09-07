@@ -32,7 +32,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -48,6 +48,14 @@ public class ServiceConstant {
 
     // 服务协议
     public static final String PROTOCOL_URL = "http://zhihu.buzzlysoft.com/agreement.html";
+
+    // 帮助
+    public static final String HELP_URL = "http://zhihu.buzzlysoft.com/Screenshots/help.html";
+
+    // 关于
+    public static final String ABOUT_URL = "http://zhihu.buzzlysoft.com/guanyu.html";
+
+
 
     /**
      * 获取验证码

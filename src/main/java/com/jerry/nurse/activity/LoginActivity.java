@@ -8,9 +8,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.app.MyApplication;
@@ -21,10 +23,12 @@ import com.jerry.nurse.model.MicroBlog;
 import com.jerry.nurse.model.MicroBlogResult;
 import com.jerry.nurse.model.Qq;
 import com.jerry.nurse.model.Register;
+import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LoginManager;
+import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.TencentLoginManager;
@@ -70,6 +74,9 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.btn_login)
     Button mLoginButton;
 
+    @Bind(R.id.iv_avatar)
+    ImageView mAvatarImageView;
+
     // 腾讯官方获取的APPID
     private TencentLoginManager mTencentLoginManager;
 
@@ -95,6 +102,10 @@ public class LoginActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         // 初始化登录按钮为不可用
         setButtonEnable(this, mLoginButton, false);
+
+        String avatarUrl = (String) SPUtil.get(this, SPUtil.AVATAR, "");
+        Glide.with(this).load(avatarUrl).placeholder(R.mipmap.ic_launcher)
+                .into(mAvatarImageView);
 
         // 入口处判断用户是否已经登录，如果已经登录直接跳转到主界面
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
@@ -337,7 +348,8 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.ll_in_hospital)
     void onHospitalLogin(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_LOGIN);
+        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_LOGIN,
+                ThirdPartInfo.TYPE_EVENT_REPORT);
         startActivity(intent);
     }
 

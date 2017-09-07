@@ -21,6 +21,18 @@ public class BindInfo implements Serializable {
     private String WeiboOpenId;
     private String WeiboNickName;
 
+    // 护理不良事件
+    private String BLSJId;
+    private String BLSJOpenId;
+
+    // 学分
+    private String XFId;
+    private String XFOpenId;
+
+    // 排班
+    private String PBId;
+    private String PBOpenId;
+
     public int getBindCount() {
         return BindCount;
     }
@@ -91,5 +103,53 @@ public class BindInfo implements Serializable {
 
     public void setWeiboNickName(String weiboNickName) {
         WeiboNickName = weiboNickName;
+    }
+
+    public String getBLSJId() {
+        return BLSJId;
+    }
+
+    public void setBLSJId(String BLSJId) {
+        this.BLSJId = BLSJId;
+    }
+
+    public String getBLSJOpenId() {
+        return BLSJOpenId;
+    }
+
+    public void setBLSJOpenId(String BLSJOpenId) {
+        this.BLSJOpenId = BLSJOpenId;
+    }
+
+    public String getXFId() {
+        return XFId;
+    }
+
+    public void setXFId(String XFId) {
+        this.XFId = XFId;
+    }
+
+    public String getXFOpenId() {
+        return XFOpenId;
+    }
+
+    public void setXFOpenId(String XFOpenId) {
+        this.XFOpenId = XFOpenId;
+    }
+
+    public String getPBId() {
+        return PBId;
+    }
+
+    public void setPBId(String PBId) {
+        this.PBId = PBId;
+    }
+
+    public String getPBOpenId() {
+        return PBOpenId;
+    }
+
+    public void setPBOpenId(String PBOpenId) {
+        this.PBOpenId = PBOpenId;
     }
 }

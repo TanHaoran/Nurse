@@ -16,6 +16,7 @@ public class SPUtil
 
     public static final String NAME = "name";
     public static final String NICKNAME = "nickname";
+    public static final String AVATAR = "avatar";
     public static final String REGISTER_ID = "register_id";
     public static final String IS_FIRST_IN = "is_first_in";
     public static final String ALARM_ON = "alarm_on";

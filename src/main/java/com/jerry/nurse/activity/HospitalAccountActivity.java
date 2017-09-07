@@ -1,13 +1,18 @@
 package com.jerry.nurse.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.model.BindInfo;
 import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
@@ -15,6 +20,7 @@ import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 
@@ -22,8 +28,22 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class HospitalAccountActivity extends BaseActivity {
 
-    public static Intent getIntent(Context context) {
+    public static final String EXTRA_BIND_INFO = "extra_bind_info";
+
+    @Bind(R.id.tv_event_report)
+    TextView mEventReportTextView;
+
+    @Bind(R.id.tv_credit)
+    TextView mCreditTextView;
+
+    @Bind(R.id.tv_schedule)
+    TextView mScheduleTextView;
+
+    private BindInfo mBindInfo;
+
+    public static Intent getIntent(Context context, BindInfo bindInfo) {
         Intent intent = new Intent(context, HospitalAccountActivity.class);
+        intent.putExtra(EXTRA_BIND_INFO, bindInfo);
         return intent;
     }
 
@@ -34,7 +54,16 @@ public class HospitalAccountActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mBindInfo = (BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
+        setBindData(mBindInfo);
+    }
 
+    private void setBindData(BindInfo bindInfo) {
+        if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId())) {
+            mEventReportTextView.setText(bindInfo.getBLSJId());
+        }
+        mCreditTextView.setText("");
+        mScheduleTextView.setText("");
     }
 
     /**
@@ -44,8 +73,29 @@ public class HospitalAccountActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_event_report)
     void onEventReport(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_EVENT_REPORT_BIND);
-        startActivity(intent);
+        // 绑定护理不良事件
+        if (TextUtils.isEmpty(mBindInfo.getBLSJOpenId())) {
+            Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_BIND, ThirdPartInfo.TYPE_EVENT_REPORT);
+            startActivity(intent);
+        }
+        // 解绑护理不良事件
+        else {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.tips)
+                    .setMessage("确定解除绑定 " + mBindInfo.getBLSJId() + " 吗?")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                            thirdPartInfo.setLoginName(mBindInfo.getBLSJId());
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_QQ);
+                            unBind(thirdPartInfo);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
     }
 
     /**
@@ -55,8 +105,31 @@ public class HospitalAccountActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_credit)
     void onCredit(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_CREDIT_BIND);
-        startActivity(intent);
+        // 绑定学分
+        if (TextUtils.isEmpty(mBindInfo.getBLSJOpenId())) {
+//            Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_BIND, ThirdPartInfo.TYPE_CREDIT);
+//            startActivity(intent);
+        }
+        // 解绑学分
+        else {
+//            new AlertDialog.Builder(this)
+//                    .setTitle(R.string.tips)
+//                    .setMessage("确定解除绑定 " + mBindInfo.getBLSJId() + " 吗?")
+//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+//                            Qq qq = new Qq();
+//                            qq.setOpenId(mBindInfo.getQQOpenId());
+//                            thirdPartInfo.setQQData(qq);
+//                            thirdPartInfo.setType(ThirdPartInfo.TYPE_QQ);
+//                            unBind(thirdPartInfo);
+//                        }
+//                    })
+//                    .setNegativeButton(R.string.cancel, null)
+//                    .show();
+        }
     }
 
     /**
@@ -66,8 +139,31 @@ public class HospitalAccountActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_schedule)
     void onSchedule(View view) {
-        Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_SCHEDULE_BIND);
-        startActivity(intent);
+        // 绑定排班
+        if (TextUtils.isEmpty(mBindInfo.getBLSJOpenId())) {
+//            Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_BIND, ThirdPartInfo.TYPE_SCHEDULE);
+//            startActivity(intent);
+        }
+        // 解绑排班
+        else {
+//            new AlertDialog.Builder(this)
+//                    .setTitle(R.string.tips)
+//                    .setMessage("确定解除绑定 " + mBindInfo.getBLSJId() + " 吗?")
+//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+//                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+//                            Qq qq = new Qq();
+//                            qq.setOpenId(mBindInfo.getQQOpenId());
+//                            thirdPartInfo.setQQData(qq);
+//                            thirdPartInfo.setType(ThirdPartInfo.TYPE_QQ);
+//                            unBind(thirdPartInfo);
+//                        }
+//                    })
+//                    .setNegativeButton(R.string.cancel, null)
+//                    .show();
+        }
     }
 
     /**

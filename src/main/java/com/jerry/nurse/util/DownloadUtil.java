@@ -39,6 +39,7 @@ public class DownloadUtil {
      * @param listener
      */
     public void download(final String url, final String fileName, final OnDownloadListener listener) {
+        L.i("文件下载地址:" + url);
         Request request = new Request.Builder().url(url).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override

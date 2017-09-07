@@ -160,7 +160,7 @@ public class CreateGroupActivity extends BaseActivity {
                 if (mGroupId == null) {
                     List<Contact> contacts = new ArrayList<>();
                     Contact me = new Contact();
-                    me.setFriendId(mLoginInfo.getRegisterId());
+                    me.setMyId(mLoginInfo.getRegisterId());
                     contacts.add(me);
                     for (Contact c : mBodyDatas) {
                         if (c.isChoose()) {
@@ -170,6 +170,7 @@ public class CreateGroupActivity extends BaseActivity {
                         }
                     }
                     GroupInfo groupInfo = new GroupInfo();
+                    groupInfo.setRegisterId(mLoginInfo.getRegisterId());
                     groupInfo.setHXNickName(me.getTarget() + "创建的群");
                     groupInfo.setGroupMemberList(contacts);
                     createChatGroup(groupInfo);

@@ -37,6 +37,8 @@ public class LoginInfo extends DataSupport {
     private int QStatus;
     private String RegisterId;
     private String ReguserId;
+    private String XFId ;
+    private String PBId ;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(Avatar)) {
@@ -139,5 +141,21 @@ public class LoginInfo extends DataSupport {
 
     public void setReguserId(String reguserId) {
         ReguserId = reguserId;
+    }
+
+    public String getXFId() {
+        return XFId;
+    }
+
+    public void setXFId(String XFId) {
+        this.XFId = XFId;
+    }
+
+    public String getPBId() {
+        return PBId;
+    }
+
+    public void setPBId(String PBId) {
+        this.PBId = PBId;
     }
 }

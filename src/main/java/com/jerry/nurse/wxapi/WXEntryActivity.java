@@ -193,7 +193,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
         thirdPartInfo.setRegisterId(registerId);
         thirdPartInfo.setWXData(weChat);
-        thirdPartInfo.setType(2);
+        thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_WE_CHAT);
         OkHttpUtils.postString()
                 .url(ServiceConstant.BIND)
                 .content(StringUtil.addModelWithJson(thirdPartInfo))
