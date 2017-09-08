@@ -415,6 +415,8 @@
         </activity>
         <activity android:name=".activity.HospitalAccountActivity">
         </activity>
+        <activity android:name=".activity.IndicatorActivity">
+        </activity>
     </application>
 
 </manifest>

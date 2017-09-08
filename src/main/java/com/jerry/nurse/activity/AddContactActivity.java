@@ -247,7 +247,7 @@ public class AddContactActivity extends BaseActivity {
         protected void convert(ViewHolder holder, SearchUsersResult.User user, int position) {
             holder.setText(R.id.tv_nickname, user.getNickName());
             holder.setText(R.id.tv_cellphone, user.getPhone());
-            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(AddContactActivity.this).load(user.getAvatar()).into(imageView);
         }
     }

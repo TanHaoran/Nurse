@@ -126,7 +126,7 @@ public class ContactListActivity extends BaseActivity {
 
         @Override
         protected void convert(ViewHolder holder, final Contact contact, int position) {
-            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(ContactListActivity.this).load(contact.getAvatar())
                     .error(R.drawable.icon_avatar_default).into(imageView);
             holder.setText(R.id.tv_nickname, contact.getTarget());

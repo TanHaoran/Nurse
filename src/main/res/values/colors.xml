@@ -8,6 +8,7 @@
     <color name="background">#F8F8F8</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="delete">#ED5E5E</color>
+    <color name="unread">#6ab6ff</color>
 
     <color name="index_text">#666666</color>
 

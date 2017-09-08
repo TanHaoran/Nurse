@@ -38,7 +38,6 @@ public class ServiceConstant {
 
     public static final String IP = MAIN_IP + "UserService.svc/";
 
-
     public static final String AVATAR_ADDRESS = MAIN_IP + "Avatar/";
     public static final String PROFESSIONAL_ADDRESS = MAIN_IP + "QC/";
     public static final String PRACTISING_ADDRESS = MAIN_IP + "PC/";
@@ -54,8 +53,6 @@ public class ServiceConstant {
 
     // 关于
     public static final String ABOUT_URL = "http://zhihu.buzzlysoft.com/guanyu.html";
-
-
 
     /**
      * 获取验证码

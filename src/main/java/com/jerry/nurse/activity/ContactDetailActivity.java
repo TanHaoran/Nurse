@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
@@ -51,7 +53,7 @@ public class ContactDetailActivity extends BaseActivity {
     @Bind(R.id.ll_contact_option)
     LinearLayout mOptionLayout;
 
-    @Bind(R.id.iv_avatar_arrow)
+    @Bind(R.id.iv_avatar)
     ImageView mAvatarImageView;
 
     @Bind(R.id.tv_name)
@@ -107,6 +109,13 @@ public class ContactDetailActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
 
         mProgressDialogManager = new ProgressDialogManager(this);
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
@@ -177,8 +186,8 @@ public class ContactDetailActivity extends BaseActivity {
             mNameTextView.setVisibility(View.VISIBLE);
             mAddFriendButton.setText(R.string.delete_friend);
             mAddFriendButton.setVisibility(View.VISIBLE);
-            mAddFriendButton.setTextColor(getResources().getColor(R.color.white));
-            mAddFriendButton.setBackgroundResource(R.drawable.delete_friend);
+            mAddFriendButton.setTextColor(getResources().getColor(R.color.normal_textColor));
+            mAddFriendButton.setBackgroundResource(R.drawable.border_around_bg);
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 如果是院内同事

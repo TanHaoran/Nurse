@@ -29,7 +29,7 @@
             app:cardCornerRadius="@dimen/image_round_radius"
             app:cardElevation="0dp">
             <ImageView
-                android:id="@+id/iv_avatar_arrow"
+                android:id="@+id/iv_avatar"
                 android:layout_width="@dimen/contact_item_avatar_width"
                 android:layout_height="@dimen/contact_item_avatar_width"
                 android:scaleType="fitXY"

@@ -112,9 +112,16 @@ public class MessageFragment extends BaseFragment {
 
         @Override
         protected void convert(final ViewHolder holder, final Message message, final int position) {
+            if (position == mMessages.size() - 1) {
+                holder.setVisible(R.id.v_last_line, true);
+                holder.setVisible(R.id.v_divider, false);
+            } else {
+                holder.setVisible(R.id.v_last_line, false);
+                holder.setVisible(R.id.v_divider, true);
+            }
             final int type = message.getType();
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(message.getTime())));
-            final ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            final ImageView imageView = holder.getView(R.id.iv_avatar);
             switch (type) {
                 // 好友申请消息
                 case Message.TYPE_ADD_FRIEND_APPLY:

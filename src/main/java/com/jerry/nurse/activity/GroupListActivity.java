@@ -82,7 +82,7 @@ public class GroupListActivity extends BaseActivity {
 
         @Override
         protected void convert(ViewHolder holder, final GroupInfo groupInfo, int position) {
-            holder.setImageResource(R.id.iv_avatar_arrow, R.drawable.icon_qlt);
+            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
             holder.setText(R.id.tv_nickname, groupInfo.getHXNickName());
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override

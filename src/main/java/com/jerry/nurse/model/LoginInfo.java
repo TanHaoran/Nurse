@@ -39,6 +39,7 @@ public class LoginInfo extends DataSupport {
     private String ReguserId;
     private String XFId ;
     private String PBId ;
+    private int DepartmentUserCount;
 
     public String getAvatar() {
         if (!TextUtils.isEmpty(Avatar)) {
@@ -157,5 +158,13 @@ public class LoginInfo extends DataSupport {
 
     public void setPBId(String PBId) {
         this.PBId = PBId;
+    }
+
+    public int getDepartmentUserCount() {
+        return DepartmentUserCount;
+    }
+
+    public void setDepartmentUserCount(int departmentUserCount) {
+        DepartmentUserCount = departmentUserCount;
     }
 }

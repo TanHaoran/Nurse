@@ -685,7 +685,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
             // 发消息群聊和单聊没有区别
-            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(ChatActivity.this).load(mLoginInfo.getAvatar())
                     .error(R.drawable.icon_avatar_default).into(imageView);
             // 时间要处理成和微信一致的效果
@@ -802,7 +802,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
         @Override
         public void convert(final ViewHolder holder, final ChatMessage chatMessage, int position) {
-            final ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            final ImageView imageView = holder.getView(R.id.iv_avatar);
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             // 单聊
             if (!mGroup) {
@@ -889,7 +889,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                 default:
                     break;
             }
-            holder.setOnClickListener(R.id.iv_avatar_arrow, new View.OnClickListener() {
+            holder.setOnClickListener(R.id.iv_avatar, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = ContactDetailActivity.getIntent(ChatActivity.this, chatMessage.getFrom());

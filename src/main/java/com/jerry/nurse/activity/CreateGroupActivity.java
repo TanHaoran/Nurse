@@ -399,7 +399,7 @@ public class CreateGroupActivity extends BaseActivity {
                 holder.setVisible(R.id.v_divider, true);
             }
 
-            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(CreateGroupActivity.this).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
             final SelectView selectView = holder.getView(R.id.sv_choose);

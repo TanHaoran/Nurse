@@ -539,6 +539,7 @@ public class SettingActivity extends BaseActivity {
                         BindInfoResult bindInfoResult = new Gson().fromJson(response, BindInfoResult.class);
                         if (bindInfoResult.getCode() == RESPONSE_SUCCESS) {
                             mBindInfo = bindInfoResult.getBody();
+                            calculateBindCount(mBindInfo);
                             // 更新界面显示绑定信息
                             updateBindInfo(mBindInfo);
                         } else {
@@ -547,6 +548,32 @@ public class SettingActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    private void calculateBindCount(BindInfo bindInfo) {
+        int count = 0;
+        if (!TextUtils.isEmpty(bindInfo.getPhone())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getWeixinOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getQQOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getWeiboOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getXFOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(bindInfo.getPBOpenId())) {
+            count++;
+        }
+        bindInfo.setBindCount(count);
     }
 
     /**

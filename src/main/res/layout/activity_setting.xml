@@ -214,7 +214,7 @@
 
                 <com.jerry.nurse.view.ToggleButton
                     android:id="@+id/tb_alarm"
-                    android:layout_width="100dp"
+                    android:layout_width="@dimen/sex_toggle_width"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
@@ -331,6 +331,7 @@
                 android:layout_marginLeft="@dimen/line_paddingLeft"
                 android:layout_marginRight="@dimen/line_paddingLeft"
                 android:layout_marginTop="@dimen/block_marinTop"
+                android:background="@drawable/button_bg_delete"
                 android:gravity="center"
                 android:text="@string/logout"
                 android:textColor="@color/white"

@@ -20,6 +20,7 @@ public class SPUtil
     public static final String REGISTER_ID = "register_id";
     public static final String IS_FIRST_IN = "is_first_in";
     public static final String ALARM_ON = "alarm_on";
+    public static final String IS_FIRST_OPEN = "is_first_open";
 
     /** 
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法 

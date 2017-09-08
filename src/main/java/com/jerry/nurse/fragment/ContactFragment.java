@@ -190,8 +190,20 @@ public class ContactFragment extends BaseFragment {
                         final ContactTopHeaderBean contactTopHeaderBean = (ContactTopHeaderBean) o;
                         holder.setText(R.id.tv_nickname, contactTopHeaderBean.getTxt());
                         if ("我的群".equals(contactTopHeaderBean.getTxt())) {
-                            holder.setImageResource(R.id.iv_avatar_arrow, R.drawable.icon_qlt);
+                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_qlt);
+                            if (mContacts.size() == 0) {
+                                holder.setVisible(R.id.v_divider, true);
+                            } else {
+                                holder.setVisible(R.id.v_divider, false);
+                            }
+                        } else if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getDepartmentName())) {
+                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_ks);
+                            holder.setText(R.id.tv_count, " (" + mLoginInfo.getDepartmentUserCount() + "人)");
+                        } else if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getHospitalName())) {
+                            holder.setImageResource(R.id.iv_avatar, R.drawable.icon_yy);
                         }
+
+
                         holder.getView(R.id.ll_group).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -289,7 +301,7 @@ public class ContactFragment extends BaseFragment {
                 holder.setVisible(R.id.v_divider, true);
             }
 
-            ImageView imageView = holder.getView(R.id.iv_avatar_arrow);
+            ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(getActivity()).load(contact.getAvatar())
                     .placeholder(R.drawable.icon_avatar_default).into(imageView);
             holder.setText(R.id.tv_nickname, contact.getTarget());

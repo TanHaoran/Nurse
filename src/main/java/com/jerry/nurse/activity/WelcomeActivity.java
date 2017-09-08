@@ -82,7 +82,7 @@ public class WelcomeActivity extends BaseActivity {
                     public void run() {
                         try {
                             Thread.sleep(STAY_DURATION);
-                            Intent intent = LoginActivity.getIntent(WelcomeActivity.this);
+                            Intent intent = IndicatorActivity.getIntent(WelcomeActivity.this);
                             startActivity(intent);
                             finish();
                         } catch (InterruptedException e) {

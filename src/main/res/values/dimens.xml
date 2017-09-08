@@ -7,12 +7,16 @@
     <dimen name="normal_textSize">15sp</dimen>
     <dimen name="small_textSize">14sp</dimen>
     <dimen name="smaller_textSize">10sp</dimen>
+
     <dimen name="line_paddingLeft">12dp</dimen>
     <dimen name="line_paddingRight">13dp</dimen>
     <dimen name="divider_line_height">0.5dp</dimen>
     <dimen name="tab_menu_drawable_padding">2dp</dimen>
     <dimen name="tab_menu_text_paddingTop">3dp</dimen>
     <dimen name="tab_menu_height">50dp</dimen>
+
+    <dimen name="use_width">140dp</dimen>
+    <dimen name="use_height">40dp</dimen>
 
     <!--注册-->
     <dimen name="signup_text_marginLeft">5dp</dimen>
@@ -87,6 +91,7 @@
     <dimen name="indicator_width">5dp</dimen>
 
     <!--联系人-->
+    <dimen name="status_bar_height">20dp</dimen>
     <dimen name="contact_item_height">56dp</dimen>
     <dimen name="contact_item_paddingTop">10dp</dimen>
     <dimen name="contact_item_paddingBottom">8dp</dimen>
