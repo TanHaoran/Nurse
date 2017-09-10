@@ -43,7 +43,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         mDatas = datas;
         mPaint = new Paint();
         mBounds = new Rect();
-        mTitleHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 33, context.getResources().getDisplayMetrics());
+        mTitleHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 23, context.getResources().getDisplayMetrics());
         mTitleFontSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 13, context.getResources().getDisplayMetrics());
         mPaint.setTextSize(mTitleFontSize);
         mPaint.setAntiAlias(true);
@@ -51,7 +51,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
     }
 
 
-    public SuspensionDecoration setmTitleHeight(int mTitleHeight) {
+    public SuspensionDecoration setTitleHeight(int mTitleHeight) {
         this.mTitleHeight = mTitleHeight;
         return this;
     }
@@ -72,7 +72,8 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
-    public SuspensionDecoration setmDatas(List<? extends ISuspensionInterface> mDatas) {
+    public SuspensionDecoration setDatas(List<? extends
+            ISuspensionInterface> mDatas) {
         this.mDatas = mDatas;
         return this;
     }

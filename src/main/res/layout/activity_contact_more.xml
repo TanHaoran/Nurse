@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.SettingActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_more"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="@string/hospital_account"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tb_more">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginTop="@dimen/block_marinTop"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_remark"
+                style="@style/PersonalInfoLineStyle"
+                android:layout_height="@dimen/personal_info_line_height">
+
+                <TextView
+                    android:id="@+id/tv_remark_text"
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:text="@string/remark"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_remark"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_remark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_arrow_remark"
+                    android:layout_toRightOf="@id/tv_remark_text"
+                    android:ellipsize="end"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:singleLine="true"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"
+                    tools:text="13******238"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -188,13 +188,11 @@ public class HospitalLoginActivity extends BaseActivity {
         mLocationManager.setLocationListener(new BaiduLocationManager.LocationListener() {
             @Override
             public void onLocationFinished(double latitude, double longitude) {
-                mProgressDialogManager.dismiss();
                 // 获取所有医院信息
                 getHospitals(latitude, longitude);
             }
         });
 
-        mProgressDialogManager.show();
         mLocationManager.start();
     }
 
@@ -248,7 +246,6 @@ public class HospitalLoginActivity extends BaseActivity {
      * @param longitude
      */
     private void getHospitals(double latitude, double longitude) {
-        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_LIST)
                 .addParams("lat", String.valueOf(latitude))
                 .addParams("lng", String.valueOf(longitude))
@@ -260,8 +257,6 @@ public class HospitalLoginActivity extends BaseActivity {
                         HospitalResult result = new Gson().fromJson(response, HospitalResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             mHospitals = result.getBody();
-                        } else {
-                            showShort(HospitalLoginActivity.this, result.getMsg());
                         }
                     }
                 });

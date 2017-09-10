@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.model.Announcement;
 import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.L;
 
 import butterknife.Bind;
 
@@ -43,7 +42,6 @@ public class AnnouncementDetailActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
         Announcement announcement =
                 (Announcement) getIntent().getSerializableExtra(EXTRA_ANNOUNCEMENT);
-        L.i(announcement.toString());
         if (announcement != null) {
             // 显示数据
             mTitleTextView.setText(announcement.getTitle());

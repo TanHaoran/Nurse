@@ -79,7 +79,7 @@ public class HospitalAccountActivity extends BaseActivity {
             startActivity(intent);
         }
         // 解绑护理不良事件
-        else {
+        else if (!TextUtils.isEmpty(mBindInfo.getBLSJId()) && mBindInfo.getBindCount() > 1) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.tips)
                     .setMessage("确定解除绑定 " + mBindInfo.getBLSJId() + " 吗?")
@@ -89,7 +89,7 @@ public class HospitalAccountActivity extends BaseActivity {
                             ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
                             thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
                             thirdPartInfo.setLoginName(mBindInfo.getBLSJId());
-                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_QQ);
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_EVENT_REPORT);
                             unBind(thirdPartInfo);
                         }
                     })

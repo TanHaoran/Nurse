@@ -2,7 +2,7 @@
 <litepal>
     <dbname value="nurse"></dbname>
 
-    <version value="5"></version>
+    <version value="1"></version>
 
     <list>
         <mapping class="com.jerry.nurse.model.LoginInfo"></mapping>

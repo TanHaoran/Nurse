@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,10 +35,14 @@ import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.ScreenUtil;
 import com.jerry.nurse.util.T;
 import com.umeng.analytics.MobclickAgent;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -80,6 +85,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     private OnPhotographFinishListener mOnPhotographFinishListener;
 
     protected ProgressDialogManager mProgressDialogManager;
+
+    /**
+     * 0是拍照，1是从相册选择
+     */
+    private int mPhotoType = 0;
+    private int mPhotoIndex = -1;
 
     /**
      * 获取当前页面的布局
@@ -503,6 +514,49 @@ public abstract class BaseActivity extends AppCompatActivity {
             dealAlbum(data);
         } else if (requestCode == REQUEST_CHAT_PHOTOGRAPH) {
             dealPhotograph(data);
+        } //裁切成功
+        else if (requestCode == UCrop.REQUEST_CROP) {
+            Uri croppedFileUri = UCrop.getOutput(data);
+            //获取默认的下载目录
+            String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            String filename = String.format("%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
+            File saveFile = new File(downloadsDirectoryPath, filename);
+            //保存下载的图片
+            FileInputStream inStream = null;
+            FileOutputStream outStream = null;
+            FileChannel inChannel = null;
+            FileChannel outChannel = null;
+            try {
+                inStream = new FileInputStream(new File(croppedFileUri.getPath()));
+                outStream = new FileOutputStream(saveFile);
+                inChannel = inStream.getChannel();
+                outChannel = outStream.getChannel();
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (mPhotoType == 0) {
+                    if (mOnPhotoSelectListeners.size() >= mPhotoIndex + 1) {
+                        mOnPhotoSelectListeners.get(mPhotoIndex)
+                                .onPhotoSelected(BitmapFactory.decodeFile(saveFile
+                                        .getAbsolutePath()), saveFile);
+                    }
+                } else {
+                    if (mOnPhotoSelectListeners.size() >= mPhotoIndex + 1) {
+                        mOnPhotoSelectListeners.get(mPhotoIndex)
+                                .onPhotoSelected(BitmapFactory.decodeFile(saveFile
+                                        .getAbsolutePath()), saveFile);
+                    }
+                }
+                try {
+                    outChannel.close();
+                    outStream.close();
+                    inChannel.close();
+                    inStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -524,9 +578,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         photoBitmap = PictureUtil.getScaleBitmap
                 (realFilePath, this);
         file = new File(realFilePath);
-        if (mOnPhotoSelectListeners.size() >= index + 1) {
-            mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
-        }
+
+        uri = Uri.fromFile(file);
+        mPhotoIndex = index;
+        mPhotoType = 1;
+        startCrop(uri);
+//        if (mOnPhotoSelectListeners.size() >= index + 1) {
+//            mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
+//        }
     }
 
     /**
@@ -600,9 +659,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                     (realFilePath, this);
             file = new File(realFilePath);
         }
-        if (mOnPhotoSelectListeners.size() >= index + 1) {
-            mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
-        }
+        uri = Uri.fromFile(file);
+        mPhotoIndex = index;
+        mPhotoType = 0;
+        startCrop(uri);
+//        if (mOnPhotoSelectListeners.size() >= index + 1) {
+//            mOnPhotoSelectListeners.get(index).onPhotoSelected(photoBitmap, file);
+//        }
     }
 
     /**
@@ -656,5 +719,41 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mOnPhotographFinishListener != null) {
             mOnPhotographFinishListener.onPhotographFinished(photoBitmap, file);
         }
+    }
+
+    /**
+     * 启动裁剪窗口
+     *
+     * @param source
+     */
+    private void startCrop(Uri source) {
+        //裁剪后保存到文件中
+        Uri destinationUri = Uri.fromFile(new File(getCacheDir(),
+                new Date().getTime() + ".jpg"));
+        UCrop.Options options = setupUCropOption();
+        UCrop.of(source, destinationUri).withAspectRatio(16, 9).withMaxResultSize(300, 300)
+                .withOptions(options).start
+                (this);
+    }
+
+    /**
+     * 设置裁剪窗口的样式
+     *
+     * @return
+     */
+    @NonNull
+    private UCrop.Options setupUCropOption() {
+        UCrop.Options options = new UCrop.Options();
+        //设置裁剪图片可操作的手势
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL);
+        //是否隐藏底部容器，默认显示
+        options.setHideBottomControls(true);
+        //设置toolbar颜色
+        options.setToolbarColor(ActivityCompat.getColor(this, R.color.primary));
+        //设置状态栏颜色
+        options.setStatusBarColor(ActivityCompat.getColor(this, R.color.primary));
+        //是否能调整裁剪框
+        options.setFreeStyleCropEnabled(true);
+        return options;
     }
 }

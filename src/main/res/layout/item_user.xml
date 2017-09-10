@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_contact"
+    android:id="@+id/ll_contact"
     android:layout_width="match_parent"
     android:layout_height="@dimen/contact_item_height"
     android:background="@drawable/plugin_line_selector"
@@ -43,7 +43,9 @@
 
         <TextView
             android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"
@@ -55,8 +57,10 @@
             tools:text="紫萱"/>
 
         <TextView
+            android:ellipsize="end"
+            android:singleLine="true"
             android:id="@+id/tv_cellphone"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/contact_item_nickname_marginLeft"

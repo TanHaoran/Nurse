@@ -135,7 +135,6 @@ public class AddContactActivity extends BaseActivity {
         // 设置间隔线
         RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
 
-
         UserAdapter adapter = new UserAdapter(this, R.layout.item_user,
                 users);
         mRecyclerView.setAdapter(adapter);
@@ -248,7 +247,8 @@ public class AddContactActivity extends BaseActivity {
             holder.setText(R.id.tv_nickname, user.getNickName());
             holder.setText(R.id.tv_cellphone, user.getPhone());
             ImageView imageView = holder.getView(R.id.iv_avatar);
-            Glide.with(AddContactActivity.this).load(user.getAvatar()).into(imageView);
+            Glide.with(AddContactActivity.this).load(user.getAvatar())
+                    .placeholder(R.drawable.icon_avatar_default).into(imageView);
         }
     }
 }

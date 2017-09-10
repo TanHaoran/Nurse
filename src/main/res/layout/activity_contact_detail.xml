@@ -213,11 +213,12 @@
 
     <com.jerry.nurse.view.TitleBar
         android:layout_marginTop="@dimen/status_bar_height"
-        android:id="@+id/tb_input"
+        android:id="@+id/tb_contact_detail"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
         app:bg_color="@color/transparent"
         app:button_textSize="@dimen/normal_textSize"
+        app:right_text="@string/more"
         app:show_back="true"/>
 
 </RelativeLayout>

@@ -41,11 +41,12 @@ public class InputActivity extends BaseActivity {
     public static final String JOB_NUMBER = "工号";
     public static final String VALIDATE_MESSAGE = "验证消息";
     public static final String GROUP_NICKNAME = "群昵称";
+    public static final String REMARK = "备注";
 
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_VALUE = "value";
 
-    @Bind(R.id.tb_input)
+    @Bind(R.id.tb_contact_detail)
     TitleBar mTitleBar;
 
     @Bind(R.id.cet_input)
@@ -87,15 +88,15 @@ public class InputActivity extends BaseActivity {
                     return;
                 }
                 if (mTitle.equals(NICKNAME)) {
-                    String nickname = mInputEditText.getText().toString();
-                    postNickname(nickname);
+                    postNickname(content);
                 } else if (mTitle.equals(JOB_NUMBER)) {
-                    String jobNumber = mInputEditText.getText().toString();
-                    postJobNumber(jobNumber);
+                    postJobNumber(content);
                 } else if (mTitle.equals(VALIDATE_MESSAGE)) {
                     sendValidateMessage(content);
                 } else if (mTitle.equals(GROUP_NICKNAME)) {
                     updateGroupNickname(content);
+                } else if (mTitle.equals(REMARK)) {
+                    sendRemark(content);
                 }
             }
         });
@@ -112,6 +113,18 @@ public class InputActivity extends BaseActivity {
         if (!TextUtils.isEmpty(mInputEditText.getText().toString())) {
             mInputEditText.setHint("请输入" + mTitle);
         }
+    }
+
+    /**
+     * 发送备注
+     *
+     * @param content
+     */
+    private void sendRemark(String content) {
+        Intent intent = new Intent();
+        intent.putExtra(ContactMoreActivity.EXTRA_REMARK, content);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     /**

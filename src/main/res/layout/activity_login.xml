@@ -37,6 +37,7 @@
                     android:id="@+id/iv_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="fitXY"
                     android:src="@drawable/logo"/>
             </android.support.v7.widget.CardView>
 
@@ -306,7 +307,8 @@
 
                 <LinearLayout
                     android:id="@+id/ll_microblog"
-                    style="@style/Third_Party_login_Layout_Style">
+                    style="@style/Third_Party_login_Layout_Style"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="@dimen/third_party_login_width"

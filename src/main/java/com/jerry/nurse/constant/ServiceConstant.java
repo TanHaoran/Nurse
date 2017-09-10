@@ -6,10 +6,11 @@ package com.jerry.nurse.constant;
 
 public class ServiceConstant {
     // 微信AppId
-    public static String WX_APP_ID = "wx96c5f62ab4cd1676";
+    public static String WX_APP_ID = "wx16ed3337dc7a17d9";
     // 微信AppSecret
-    public static final String WX_APP_SECRET = "9495559c8f0bb79577076d6e88adece6";
+    public static final String WX_APP_SECRET = "4000b61634f1e0510143e5150a0c88b5";
 
+    // 微博相关数据
     public static final String SINA_APP_KEY = "3324408859";
     public static final String SINA_REDIRECT_URL = "http://api.weibo.com/oauth?/default.html";
     public static final String SINA_SCOPE =
@@ -32,7 +33,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -150,6 +151,11 @@ public class ServiceConstant {
      * 更新用户注册信息
      */
     public static final String UPDATE_REGISTER_INFO = IP + "UpdateUserRegisterInfo";
+
+    /**
+     * 更新好友备注信息
+     */
+    public static final String UPDATE_CONTACT_REMARK = IP + "UpdateFriend";
 
     /**
      * 更新用户基础信息

@@ -35,14 +35,10 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
-    public static final int WE_CHAT_RESULT = 0x110;
-    public static final String EXTRA_WE_CHAT = "extra_we_chat";
-
     private static final int RETURN_MSG_TYPE_LOGIN = 1;
     private static final int RETURN_MSG_TYPE_SHARE = 2;
 
     private ProgressDialogManager mProgressDialogManager;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

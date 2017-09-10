@@ -2,11 +2,13 @@ package com.jerry.nurse.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,6 +56,10 @@ public class IndicatorActivity extends BaseActivity {
         }
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Window window = this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setNavigationBarColor(this.getResources().getColor(R.color.transparent));
+        }
 
         mImageList = new ArrayList<>();
         mViewPager.setAdapter(new PagerAdapter() {
@@ -118,5 +124,6 @@ public class IndicatorActivity extends BaseActivity {
         Intent intent = LoginActivity.getIntent(this);
         startActivity(intent);
         SPUtil.put(this, SPUtil.IS_FIRST_OPEN, false);
+        finish();
     }
 }

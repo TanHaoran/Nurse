@@ -254,7 +254,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         // TODO 滚动问题
                         int itemCount = mAdapter.getItemCount();
                         if (mRecyclerView != null) {
-                            mRecyclerView.scrollToPosition(itemCount);
+                            mRecyclerView.smoothScrollToPosition(itemCount);
                         }
                     }
                     break;
@@ -358,7 +358,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             mAdapter = new ChatAdapter(this, mChatMessages);
             mRecyclerView.setAdapter(mAdapter);
             // TODO 滑动问题
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount());
+            mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         }
 
         // 设置输入框的监听事件
@@ -514,7 +514,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      *
      * @param emMessage
      */
-    private void easeMobSendMessage(EMMessage emMessage) {
+    private void easeMobSendMessage(final EMMessage emMessage) {
         // 调用环信SDK发送信息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
         // 监听消息发送状态
@@ -541,7 +541,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         mChatMessages.add(chatMessage);
         mAdapter.notifyDataSetChanged();
         // TODO 滑动问题
-        mRecyclerView.scrollToPosition(mChatMessages.size());
+        mRecyclerView.smoothScrollToPosition(mChatMessages.size());
     }
 
     @OnClick(R.id.ib_left)
@@ -716,8 +716,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.setVisible(R.id.tv_record_length, true);
                     holder.setVisible(R.id.tv_voice, true);
                     holder.setVisible(R.id.iv_image, false);
-                    holder.setText(R.id.tv_record_length, (int)chatMessage.getSecond() + "''");
-                    holder.setText(R.id.tv_voice, (int)chatMessage.getSecond()+ "''");
+                    holder.setText(R.id.tv_record_length, (int) chatMessage.getSecond() + "''");
+                    holder.setText(R.id.tv_voice, (int) chatMessage.getSecond() + "''");
                     ViewGroup.LayoutParams lp = holder.getView(R.id.fl_anim).getLayoutParams();
                     lp.width = (int) (mMinItemWidth + (mMaxItemWidth / 60f * chatMessage.getSecond()));
                     holder.setOnClickListener(R.id.fl_anim, new View.OnClickListener() {

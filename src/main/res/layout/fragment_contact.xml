@@ -1,116 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_height"
-        android:background="@color/primary">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/contact"
-            android:textColor="@color/white"
-            android:textSize="@dimen/big_textSize"/>
-
-        <ImageView
-            android:id="@+id/ib_add"
-            android:layout_width="@dimen/contact_action_button_width"
-            android:layout_height="@dimen/contact_action_button_width"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/contact_action_button__padding"
-            android:src="@drawable/top_add"/>
-
-        <ImageView
-            android:id="@+id/ib_search"
-            android:layout_width="@dimen/contact_action_button_width"
-            android:layout_height="@dimen/contact_action_button_width"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/ib_add"
-            android:padding="@dimen/contact_action_button__padding"
-            android:src="@drawable/top_search"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background">
 
     <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/ll_search"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_edit_height"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_keyword"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/edit_up_down_bg"
-            android:drawableLeft="@drawable/contact_search"
-            android:drawablePadding="@dimen/line_paddingLeft"
-            android:hint="@string/please_input_cellphone"
-            android:imeOptions="actionSearch"
-            android:paddingLeft="@dimen/line_paddingLeft"
-            android:singleLine="true"
-            android:textColor="@color/normal_textColor"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/normal_textSize"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:background="@color/primary">
 
-        <TextView
-            android:id="@+id/tv_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/line_paddingLeft"
-            android:paddingRight="@dimen/line_paddingLeft"
-            android:text="@string/cancel"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/small_textSize"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/contact"
+                android:textColor="@color/white"
+                android:textSize="@dimen/big_textSize"/>
+
+            <ImageView
+                android:id="@+id/ib_add"
+                android:layout_width="@dimen/contact_action_button_width"
+                android:layout_height="@dimen/contact_action_button_width"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/contact_action_button__padding"
+                android:src="@drawable/top_add"/>
+
+            <ImageView
+                android:id="@+id/ib_search"
+                android:layout_width="@dimen/contact_action_button_width"
+                android:layout_height="@dimen/contact_action_button_width"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/ib_add"
+                android:padding="@dimen/contact_action_button__padding"
+                android:src="@drawable/top_search"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_edit_height"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/et_keyword"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/edit_up_down_bg"
+                android:drawableLeft="@drawable/contact_search"
+                android:drawablePadding="@dimen/line_paddingLeft"
+                android:hint="@string/please_input_cellphone"
+                android:imeOptions="actionSearch"
+                android:paddingLeft="@dimen/line_paddingLeft"
+                android:singleLine="true"
+                android:textColor="@color/normal_textColor"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/line_paddingLeft"
+                android:paddingRight="@dimen/line_paddingLeft"
+                android:text="@string/cancel"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
+                android:id="@+id/ib_index"
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:paddingBottom="120dp"
+                android:paddingTop="120dp"
+                app:indexBarPressBackground="@color/partTranslucent"
+                app:indexBarTextSize="@dimen/small_textSize"/>
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/v_divider"
+            style="@style/DividerLineStyle"/>
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white">
-
-        </android.support.v7.widget.RecyclerView>
-
-        <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
-            android:id="@+id/ib_index"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:paddingBottom="120dp"
-            android:paddingTop="120dp"
-            app:indexBarPressBackground="@color/partTranslucent"
-            app:indexBarTextSize="@dimen/small_textSize"/>
-
-        <TextView
-            android:id="@+id/tv_side_bar_hint"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:background="@drawable/shape_side_bar_bg"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="48sp"
-            android:visibility="gone"
-            tools:text="A"
-            tools:visibility="visible"/>
-    </FrameLayout>
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_side_bar_bg"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="48sp"
+        android:visibility="gone"
+        tools:text="A"
+        tools:visibility="visible"/>
 
 
-</LinearLayout>
+</RelativeLayout>

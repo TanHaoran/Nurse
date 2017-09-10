@@ -19,6 +19,7 @@
     <string name="welcome_text">西安巴斯光年软件科技有限公司提供服务</string>
     <string name="bind">绑定</string>
     <string name="use_immediately">立刻体验</string>
+    <string name="remark">备注</string>
 
     <!--注册-->
     <string name="new_user_signup">新用户注册</string>

@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class ChatMessage extends DataSupport implements Serializable {
 
+    private String mId;
     private long mTime;
     private String mFrom;
     private String mTo;
@@ -147,5 +148,13 @@ public class ChatMessage extends DataSupport implements Serializable {
 
     public void setRead(boolean read) {
         mRead = read;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
     }
 }

@@ -21,7 +21,6 @@ import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.AccountValidatorUtil;
 import com.jerry.nurse.util.L;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.view.TitleBar;
@@ -88,8 +87,6 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     private int mType;
 
-    private ProgressDialogManager mProgressDialogManager;
-
     /**
      * 验证码获取间隔
      */
@@ -128,8 +125,6 @@ public class ChangeCellphoneActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mProgressDialogManager = new ProgressDialogManager(this);
-
         mBindInfo = (BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
 
         String cellphone = mBindInfo.getPhone();

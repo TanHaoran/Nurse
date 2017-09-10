@@ -59,6 +59,7 @@ public class SelectView extends android.support.v7.widget.AppCompatImageView {
     public void setSelected(boolean select) {
         if (select) {
             setBackgroundResource(R.drawable.select_view_selected);
+            setImageResource(R.drawable.check_white);
         } else {
             setBackgroundResource(R.drawable.select_view_normal);
         }

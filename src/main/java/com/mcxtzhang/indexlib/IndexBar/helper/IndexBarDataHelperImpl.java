@@ -5,7 +5,9 @@ import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 介绍：IndexBar 的 数据相关帮助类 实现
@@ -20,6 +22,14 @@ import java.util.List;
  */
 
 public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
+
+    private Map<String, BaseIndexPinyinBean> mTagLast = new
+            HashMap<>();
+
+    public BaseIndexPinyinBean getLast(String tag) {
+        return mTagLast.get(tag);
+    }
+
     /**
      * 如果需要，
      * 字符->拼音，
@@ -61,7 +71,7 @@ public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
      * @param datas
      */
     @Override
-    public IIndexBarDataHelper fillInexTag(List<? extends BaseIndexPinyinBean> datas) {
+    public IIndexBarDataHelper fillIndexTag(List<? extends BaseIndexPinyinBean> datas) {
         if (null == datas || datas.isEmpty()) {
             return this;
         }
@@ -87,7 +97,7 @@ public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
             return this;
         }
         convert(datas);
-        fillInexTag(datas);
+        fillIndexTag(datas);
         //对数据源进行排序
         Collections.sort(datas, new Comparator<BaseIndexPinyinBean>() {
             @Override
@@ -105,6 +115,10 @@ public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
                 }
             }
         });
+        // 统计每一个字母下的最后一个元素
+        for (BaseIndexPinyinBean bean : datas) {
+            mTagLast.put(bean.getBaseIndexTag(), bean);
+        }
         return this;
     }
 

@@ -113,10 +113,8 @@ public class MessageFragment extends BaseFragment {
         @Override
         protected void convert(final ViewHolder holder, final Message message, final int position) {
             if (position == mMessages.size() - 1) {
-                holder.setVisible(R.id.v_last_line, true);
                 holder.setVisible(R.id.v_divider, false);
             } else {
-                holder.setVisible(R.id.v_last_line, false);
                 holder.setVisible(R.id.v_divider, true);
             }
             final int type = message.getType();
@@ -154,12 +152,15 @@ public class MessageFragment extends BaseFragment {
                                     if (chatMessage.getType() == ChatMessage.TYPE_TXT) {
                                         // 读取并设置已读未读的状态
                                         boolean read = chatMessage.isRead();
-                                        if (read) {
-                                            holder.setVisible(R.id.tv_read, true);
-                                            holder.setVisible(R.id.tv_unread, false);
-                                        } else {
-                                            holder.setVisible(R.id.tv_unread, true);
-                                            holder.setVisible(R.id.tv_read, false);
+                                        // 只有发送的消息才会显示已读未读
+                                        if (chatMessage.isSend()) {
+                                            if (read) {
+                                                holder.setVisible(R.id.tv_read, true);
+                                                holder.setVisible(R.id.tv_unread, false);
+                                            } else {
+                                                holder.setVisible(R.id.tv_unread, true);
+                                                holder.setVisible(R.id.tv_read, false);
+                                            }
                                         }
                                         holder.setText(R.id.tv_content, chatMessage.getContent());
                                     } else if (chatMessage.getType() == ChatMessage.TYPE_VOICE) {

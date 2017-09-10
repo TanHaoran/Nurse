@@ -36,10 +36,10 @@
                 <TextView
                     android:id="@+id/tv_name"
                     style="@style/PersonalInfoLineLeftTextStyle"
-                    tools:text="李静静"/>
+                    tools:text="Lucy"/>
 
                 <ImageView
-                    android:id="@+id/iv_avatar"
+                    android:id="@+id/iv_avatar_arrow"
                     style="@style/ArrowEnterStyle"/>
 
                 <android.support.v7.widget.CardView
@@ -47,7 +47,7 @@
                     android:layout_height="@dimen/personal_Info_avatar_width"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/line_paddingRight"
-                    android:layout_toLeftOf="@id/iv_avatar"
+                    android:layout_toLeftOf="@id/iv_avatar_arrow"
                     app:cardCornerRadius="@dimen/image_round_radius"
                     app:cardElevation="0dp">
 
@@ -85,6 +85,7 @@
                     android:layout_toRightOf="@id/tv_nickname_text"
                     android:ellipsize="end"
                     android:gravity="right"
+                    android:singleLine="true"
                     tools:text="静静"/>
 
 

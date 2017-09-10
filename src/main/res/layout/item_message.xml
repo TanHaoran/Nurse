@@ -76,6 +76,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_read"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -84,6 +85,7 @@
                     android:textSize="@dimen/small_textSize"/>
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_unread"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -115,11 +117,6 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="@dimen/message_item_divider_line_marginLef"/>
 
-        <View
-            android:visibility="gone"
-            android:id="@+id/v_last_line"
-            style="@style/DividerLineStyle"
-            android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
     <Button

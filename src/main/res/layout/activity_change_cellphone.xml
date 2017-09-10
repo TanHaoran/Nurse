@@ -192,13 +192,7 @@
                     android:textSize="@dimen/normal_textSize"/>
             </android.support.design.widget.TextInputLayout>
 
-
         </RelativeLayout>
-
-        <View
-            style="@style/DividerLineStyle"
-            android:layout_marginLeft="@dimen/line_paddingLeft"/>
-
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/acb_next"
@@ -211,8 +205,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/normal_textSize"/>
 
-
     </LinearLayout>
-
 
 </LinearLayout>

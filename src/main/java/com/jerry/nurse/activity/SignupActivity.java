@@ -67,6 +67,8 @@ public class SignupActivity extends BaseActivity {
     public static final int TYPE_BIND_CELLPHONE = 5;
     // 进入类型：解绑手机
     public static final int TYPE_UNBIND_CELLPHONE = 6;
+    // 发送邀请短信
+    public static final int TYPE_INVITE = 7;
 
     // 默认显示国家号码
     public static final String DEFAULT_COUNTRY_CODE = "+86";

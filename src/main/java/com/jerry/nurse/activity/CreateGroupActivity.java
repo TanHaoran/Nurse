@@ -41,7 +41,6 @@ import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +60,7 @@ public class CreateGroupActivity extends BaseActivity {
     @Bind(R.id.rv)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.tv_side_bar_hint)
+    @Bind(R.id.tv_hint)
     TextView mHintTextView;
 
     @Bind(R.id.ib_index)
@@ -161,6 +160,8 @@ public class CreateGroupActivity extends BaseActivity {
                     List<Contact> contacts = new ArrayList<>();
                     Contact me = new Contact();
                     me.setMyId(mLoginInfo.getRegisterId());
+                    me.setNickName(mLoginInfo.getNickName());
+                    me.setName(mLoginInfo.getName());
                     contacts.add(me);
                     for (Contact c : mBodyDatas) {
                         if (c.isChoose()) {
@@ -318,9 +319,9 @@ public class CreateGroupActivity extends BaseActivity {
             mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(CreateGroupActivity.this, mSourceDatas)
                     .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size()));
         }
-        mIndexBar.setmPressedShowTextView(mHintTextView)//设置HintTextView
+        mIndexBar.setPressedShowTextView(mHintTextView)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
+                .setLayoutManager(mManager)//设置RecyclerView的LayoutManager
                 .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaderDatas.size());
 
         initDatas();
@@ -335,20 +336,14 @@ public class CreateGroupActivity extends BaseActivity {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mBodyDatas);
 
-        // 存储每一个Tag下的最后一个元素
-        mTagLast = new HashMap<>();
-        for (Contact c : mBodyDatas) {
-            mTagLast.put(c.getBaseIndexTag(), c);
-        }
-
         mAdapter.setDatas(mBodyDatas);
         mHeaderAdapter.notifyDataSetChanged();
         mSourceDatas.addAll(mBodyDatas);
 
 
-        mIndexBar.setmSourceDatas(mSourceDatas)//设置数据
+        mIndexBar.setSourceDatas(mSourceDatas)//设置数据
                 .invalidate();
-        mDecoration.setmDatas(mSourceDatas);
+        mDecoration.setDatas(mSourceDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
     }
@@ -390,10 +385,8 @@ public class CreateGroupActivity extends BaseActivity {
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
             String tag = contact.getBaseIndexTag();
-            Contact lastContact = mTagLast.get(tag);
-            if (lastContact.getFriendId().equals(contact.getFriendId()) && holder.getLayoutPosition()
-                    != mBodyDatas.size() - 1
-                    ) {
+            Contact lastContact = (Contact) mIndexBar.getDataHelper().getLast(tag);
+            if (lastContact.getFriendId().equals(contact.getFriendId())) {
                 holder.setVisible(R.id.v_divider, false);
             } else {
                 holder.setVisible(R.id.v_divider, true);
@@ -408,8 +401,14 @@ public class CreateGroupActivity extends BaseActivity {
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    contact.setChoose(!contact.isChoose());
-                    selectView.toggle();
+                    if (contact.isChoose()) {
+                        contact.setChoose(false);
+                        selectView.setSelected(false);
+                    } else {
+                        contact.setChoose(true);
+                        selectView.setSelected(true);
+                    }
+                    setDatas(mBodyDatas);
                     notifyDataSetChanged();
                 }
             });

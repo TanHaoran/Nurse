@@ -30,9 +30,9 @@ import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
-import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.T;
+import com.jerry.nurse.view.TitleBar;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
@@ -49,6 +49,9 @@ public class ContactDetailActivity extends BaseActivity {
     private static final int REQUEST_ADD_FRIEND = 0x101;
 
     public static final String EXTRA_VALIDATE_MESSAGE = "extra_validate_message";
+
+    @Bind(R.id.tb_contact_detail)
+    TitleBar mTitleBar;
 
     @Bind(R.id.ll_contact_option)
     LinearLayout mOptionLayout;
@@ -86,8 +89,6 @@ public class ContactDetailActivity extends BaseActivity {
     @Bind(R.id.rl_office)
     LinearLayout mOfficeLayout;
 
-    private ProgressDialogManager mProgressDialogManager;
-
     public static final String EXTRA_REGISTER_ID = "extra_register_id";
 
     private String mRegisterId;
@@ -117,10 +118,23 @@ public class ContactDetailActivity extends BaseActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
-        mProgressDialogManager = new ProgressDialogManager(this);
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         mToAddRegisterId = getIntent().getStringExtra(EXTRA_REGISTER_ID);
-        getUserDetail(mRegisterId, mToAddRegisterId);
+
+        mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
+            @Override
+            public void onRightClick(View view) {
+
+                Intent intent = ContactMoreActivity.getIntent(ContactDetailActivity.this, mContact);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getContactDetail(mRegisterId, mToAddRegisterId);
     }
 
     /**
@@ -129,7 +143,7 @@ public class ContactDetailActivity extends BaseActivity {
      * @param registerId
      * @param userRegisterId
      */
-    private void getUserDetail(String registerId, String userRegisterId) {
+    private void getContactDetail(String registerId, String userRegisterId) {
         mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_USER_DETAIL_INFO)
                 .addParams("MyId", registerId)
@@ -177,6 +191,7 @@ public class ContactDetailActivity extends BaseActivity {
             mAddFriendButton.setTextColor(getResources().getColor(R.color.white));
             mAddFriendButton.setBackgroundResource(R.drawable.make_call_button);
             mRemarkTextView.setVisibility(View.INVISIBLE);
+            mTitleBar.setRightText("");
         }
         // 如果是好友
         else {

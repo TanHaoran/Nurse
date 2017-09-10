@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical">
+              android:background="@color/background">
 
-    <com.jerry.nurse.view.TitleBar
-        android:id="@+id/tb_group"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_height"
-        app:button_textSize="@dimen/normal_textSize"
-        app:right_text="@string/ok"
-        app:title_text="@string/select_contact"
-        app:show_back="true"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv"
+        android:layout_height="wrap_content">
+        <com.jerry.nurse.view.TitleBar
+            android:id="@+id/tb_group"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white">
+            android:layout_height="@dimen/title_bar_height"
+            app:button_textSize="@dimen/normal_textSize"
+            app:right_text="@string/ok"
+            app:title_text="@string/select_contact"
+            app:show_back="true"/>
 
-        </android.support.v7.widget.RecyclerView>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
-            android:id="@+id/ib_index"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:paddingBottom="120dp"
-            android:paddingTop="120dp"
-            app:indexBarPressBackground="@color/partTranslucent"
-            app:indexBarTextSize="@dimen/small_textSize"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
 
-        <TextView
-            android:id="@+id/tv_side_bar_hint"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:background="@drawable/shape_side_bar_bg"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="48sp"
-            android:visibility="gone"
-            tools:text="A"
-            tools:visibility="visible"/>
-    </FrameLayout>
+            </android.support.v7.widget.RecyclerView>
 
+            <com.mcxtzhang.indexlib.IndexBar.widget.IndexBar
+                android:id="@+id/ib_index"
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:paddingBottom="120dp"
+                android:paddingTop="120dp"
+                app:indexBarPressBackground="@color/partTranslucent"
+                app:indexBarTextSize="@dimen/small_textSize"/>
 
-</LinearLayout>
+        </FrameLayout>
+
+        <View
+            android:id="@+id/v_divider"
+            style="@style/DividerLineStyle"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_side_bar_bg"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="48sp"
+        android:visibility="gone"
+        tools:text="A"
+        tools:visibility="visible"/>
+
+</RelativeLayout>

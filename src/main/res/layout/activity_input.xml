@@ -9,7 +9,7 @@
     tools:context="com.jerry.nurse.activity.InputActivity">
 
     <com.jerry.nurse.view.TitleBar
-        android:id="@+id/tb_input"
+        android:id="@+id/tb_contact_detail"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
         app:button_textSize="@dimen/normal_textSize"
