@@ -51,7 +51,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
     }
 
 
-    public SuspensionDecoration setmTitleHeight(int mTitleHeight) {
+    public SuspensionDecoration setTitleHeight(int mTitleHeight) {
         this.mTitleHeight = mTitleHeight;
         return this;
     }
@@ -72,7 +72,8 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
-    public SuspensionDecoration setmDatas(List<? extends ISuspensionInterface> mDatas) {
+    public SuspensionDecoration setDatas(List<? extends
+            ISuspensionInterface> mDatas) {
         this.mDatas = mDatas;
         return this;
     }

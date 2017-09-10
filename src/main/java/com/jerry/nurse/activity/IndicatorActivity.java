@@ -118,5 +118,6 @@ public class IndicatorActivity extends BaseActivity {
         Intent intent = LoginActivity.getIntent(this);
         startActivity(intent);
         SPUtil.put(this, SPUtil.IS_FIRST_OPEN, false);
+        finish();
     }
 }

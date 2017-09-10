@@ -60,7 +60,6 @@ public class AddContactApplyActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
         // 加载本地数据库中的消息
         loadLocalMessage();

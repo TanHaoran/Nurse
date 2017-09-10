@@ -33,7 +33,6 @@ import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public class ContactFragment extends BaseFragment {
     @Bind(R.id.rv)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.tv_side_bar_hint)
+    @Bind(R.id.tv_hint)
     TextView mHintTextView;
 
     @Bind(R.id.ib_index)
@@ -251,9 +250,9 @@ public class ContactFragment extends BaseFragment {
             mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getActivity(), mDatas)
                     .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaders.size()));
         }
-        mIndexBar.setmPressedShowTextView(mHintTextView)//设置HintTextView
+        mIndexBar.setPressedShowTextView(mHintTextView)//设置HintTextView
                 .setNeedRealIndex(true)//设置需要真实的索引
-                .setmLayoutManager(mManager)//设置RecyclerView的LayoutManager
+                .setLayoutManager(mManager)//设置RecyclerView的LayoutManager
                 .setHeaderViewCount(mHeaderAdapter.getHeaderViewCount() - mHeaders.size());
 
         initDatas();
@@ -268,19 +267,13 @@ public class ContactFragment extends BaseFragment {
         //先排序
         mIndexBar.getDataHelper().sortSourceDatas(mContacts);
 
-        // 存储每一个Tag下的最后一个元素
-        mTagLast = new HashMap<>();
-        for (Contact c : mContacts) {
-            mTagLast.put(c.getBaseIndexTag(), c);
-        }
-
         mAdapter.setDatas(mContacts);
         mHeaderAdapter.notifyDataSetChanged();
         mDatas.addAll(mContacts);
 
-        mIndexBar.setmSourceDatas(mDatas)//设置数据
+        mIndexBar.setSourceDatas(mDatas)//设置数据
                 .invalidate();
-        mDecoration.setmDatas(mDatas);
+        mDecoration.setDatas(mDatas);
 
         mHeaderAdapter.notifyDataSetChanged();
     }
@@ -293,7 +286,7 @@ public class ContactFragment extends BaseFragment {
         @Override
         public void convert(ViewHolder holder, final Contact contact) {
             String tag = contact.getBaseIndexTag();
-            Contact lastContact = mTagLast.get(tag);
+            Contact lastContact = (Contact) mIndexBar.getDataHelper().getLast(tag);
             if (lastContact.getFriendId().equals(contact.getFriendId()) &&
                     holder.getLayoutPosition() != mContacts.size()) {
                 holder.setVisible(R.id.v_divider, false);

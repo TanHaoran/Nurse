@@ -377,46 +377,78 @@
             android:name=".activity.AnnouncementDetailActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.AddContactActivity">
+        <activity
+            android:name=".activity.AddContactActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.CellphoneContactActivity">
+        <activity
+            android:name=".activity.CellphoneContactActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activity.CaptureActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.GroupInfoActivity">
+        <activity
+            android:name=".activity.GroupInfoActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.CreateGroupActivity">
+        <activity
+            android:name=".activity.CreateGroupActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.AddContactApplyActivity">
+        <activity
+            android:name=".activity.AddContactApplyActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <service android:name=".service.EaseMobService"/>
 
-        <activity android:name=".activity.GroupListActivity">
+        <activity
+            android:name=".activity.GroupListActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.HospitalLoginActivity">
+        <activity
+            android:name=".activity.HospitalLoginActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.CreditCheckActivity">
+        <activity
+            android:name=".activity.CreditCheckActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ScheduleActivity">
+        <activity
+            android:name=".activity.ScheduleActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.PhotoActivity">
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.EventReportActivity">
+        <activity
+            android:name=".activity.EventReportActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.FallDownEventActivity">
+        <activity
+            android:name=".activity.FallDownEventActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.HospitalAccountActivity">
+        <activity
+            android:name=".activity.HospitalAccountActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.IndicatorActivity">
+        <activity
+            android:name=".activity.IndicatorActivity"
+            android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

@@ -135,7 +135,6 @@ public class AddContactActivity extends BaseActivity {
         // 设置间隔线
         RecyclerViewDecorationUtil.addItemDecoration(this, mRecyclerView);
 
-
         UserAdapter adapter = new UserAdapter(this, R.layout.item_user,
                 users);
         mRecyclerView.setAdapter(adapter);

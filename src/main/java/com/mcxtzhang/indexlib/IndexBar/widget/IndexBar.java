@@ -150,7 +150,7 @@ public class IndexBar extends View {
         mPaint.setColor(getResources().getColor(R.color.index_text));
 
         //设置index触摸监听器
-        setmOnIndexPressedListener(new onIndexPressedListener() {
+        setOnIndexPressedListener(new onIndexPressedListener() {
             @Override
             public void onIndexPressed(int index, String text) {
                 if (mPressedShowTextView != null) { //显示hintTexView
@@ -294,11 +294,11 @@ public class IndexBar extends View {
 
     private onIndexPressedListener mOnIndexPressedListener;
 
-    public onIndexPressedListener getmOnIndexPressedListener() {
+    public onIndexPressedListener getOnIndexPressedListener() {
         return mOnIndexPressedListener;
     }
 
-    public void setmOnIndexPressedListener(onIndexPressedListener mOnIndexPressedListener) {
+    public void setOnIndexPressedListener(onIndexPressedListener mOnIndexPressedListener) {
         this.mOnIndexPressedListener = mOnIndexPressedListener;
     }
 
@@ -308,18 +308,18 @@ public class IndexBar extends View {
      * @return
      */
 
-    public IndexBar setmPressedShowTextView(TextView mPressedShowTextView) {
+    public IndexBar setPressedShowTextView(TextView mPressedShowTextView) {
         this.mPressedShowTextView = mPressedShowTextView;
         return this;
     }
 
-    public IndexBar setmLayoutManager(LinearLayoutManager mLayoutManager) {
+    public IndexBar setLayoutManager(LinearLayoutManager mLayoutManager) {
         this.mLayoutManager = mLayoutManager;
         return this;
     }
 
     /**
-     * 一定要在设置数据源{@link #setmSourceDatas(List)}之前调用
+     * 一定要在设置数据源{@link #setSourceDatas(List)}之前调用
      *
      * @param needRealIndex
      * @return
@@ -338,7 +338,7 @@ public class IndexBar extends View {
         }
     }
 
-    public IndexBar setmSourceDatas(List<? extends BaseIndexPinyinBean> mSourceDatas) {
+    public IndexBar setSourceDatas(List<? extends BaseIndexPinyinBean> mSourceDatas) {
         this.mSourceDatas = mSourceDatas;
         initSourceDatas();//对数据源进行初始化
         return this;
@@ -362,7 +362,7 @@ public class IndexBar extends View {
             //汉语->拼音
             mDataHelper.convert(mSourceDatas);
             //拼音->tag
-            mDataHelper.fillInexTag(mSourceDatas);
+            mDataHelper.fillIndexTag(mSourceDatas);
         }
         if (isNeedRealIndex) {
             mDataHelper.getSortedIndexDatas(mSourceDatas, mIndexDatas);

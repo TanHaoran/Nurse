@@ -38,7 +38,7 @@
             app:indexBarTextSize="@dimen/small_textSize"/>
 
         <TextView
-            android:id="@+id/tv_side_bar_hint"
+            android:id="@+id/tv_hint"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"

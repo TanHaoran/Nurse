@@ -21,11 +21,13 @@ public interface IIndexBarDataHelper {
     IIndexBarDataHelper convert(List<? extends BaseIndexPinyinBean> data);
 
     //拼音->tag
-    IIndexBarDataHelper fillInexTag(List<? extends BaseIndexPinyinBean> data);
+    IIndexBarDataHelper fillIndexTag(List<? extends BaseIndexPinyinBean> data);
 
     //对源数据进行排序（RecyclerView）
     IIndexBarDataHelper sortSourceDatas(List<? extends BaseIndexPinyinBean> datas);
 
     //对IndexBar的数据源进行排序(右侧栏),在 sortSourceDatas 方法后调用
     IIndexBarDataHelper getSortedIndexDatas(List<? extends BaseIndexPinyinBean> sourceDatas, List<String> datas);
+
+    BaseIndexPinyinBean getLast(String tag);
 }

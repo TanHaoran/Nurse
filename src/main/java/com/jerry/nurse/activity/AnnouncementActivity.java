@@ -163,7 +163,6 @@ public class AnnouncementActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-
     /**
      * 加载成功后，添加数据并更新显示
      *
