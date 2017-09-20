@@ -3,6 +3,7 @@ package com.jerry.nurse.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.TextView;
 
 import com.jerry.nurse.R;
@@ -49,5 +50,7 @@ public class AnnouncementDetailActivity extends BaseActivity {
             mTimeTextView.setText(DateUtil.parseMysqlDateToString(announcement.getNoticeTime()));
             mContentTextView.setText(announcement.getContent());
         }
+
+        mContentTextView.setText(Html.fromHtml(announcement.getContent()));
     }
 }

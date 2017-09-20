@@ -1,8 +1,12 @@
 package com.jerry.nurse.activity;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,8 +15,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
+import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.CellphoneContactResult;
-import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CellphoneContact;
 import com.jerry.nurse.util.CellphoneContactUtil;
@@ -26,15 +30,12 @@ import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
 import com.mcxtzhang.indexlib.suspension.SuspensionDecoration;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import okhttp3.MediaType;
 
-import static com.jerry.nurse.activity.SignupActivity.TYPE_INVITE;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class CellphoneContactActivity extends BaseActivity {
@@ -190,13 +191,34 @@ public class CellphoneContactActivity extends BaseActivity {
                 holder.setVisible(R.id.acb_add, false);
                 holder.setVisible(R.id.acb_invite, false);
             }
-            holder.setText(R.id.tv_nickname, cellphoneContact.getTarget());
+            holder.setText(R.id.tv_name, cellphoneContact.getTarget());
             holder.setText(R.id.tv_cellphone, cellphoneContact.getPhone());
             // 没有使用格格软件的情况
             holder.setOnClickListener(R.id.acb_invite, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    sendInviteSms(cellphoneContact.getPhone());
+
+                    new AlertDialog.Builder(CellphoneContactActivity.this)
+                            .setTitle(R.string.tips)
+                            .setMessage("是否发送邀请短信")
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    BaseActivity.requestRuntimePermission(new String[]{Manifest.permission.SEND_SMS}, new PermissionListener() {
+                                        @Override
+                                        public void onGranted() {
+                                            sendSMS(cellphoneContact.getPhone());
+                                        }
+
+                                        @Override
+                                        public void onDenied(List<String> deniedPermission) {
+
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show();
                 }
             });
             // 使用格格但不是好友的情况
@@ -212,30 +234,15 @@ public class CellphoneContactActivity extends BaseActivity {
         }
     }
 
-    private void sendInviteSms(String cellphone) {
-        String countryCode = null;
-        try {
-            countryCode = URLEncoder.encode("+86", "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        OkHttpUtils.get().url(ServiceConstant.GET_VERIFICATION_CODE)
-                .addParams("Phone", cellphone)
-                .addParams("CountryCode", countryCode)
-                .addParams("Type", String.valueOf(TYPE_INVITE))
-                .build()
-                .execute(new FilterStringCallback(mProgressDialogManager) {
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        CommonResult result = new Gson().fromJson(response, CommonResult.class);
-                        if (result.getCode() == RESPONSE_SUCCESS) {
-
-                            T.showLong(CellphoneContactActivity.this, "已发送邀请短信");
-                        } else {
-                            T.showLong(CellphoneContactActivity.this, result.getMsg());
-                        }
-                    }
-                });
+    /**
+     * 发送手机短信
+     *
+     * @param cellphone
+     */
+    private void sendSMS(String cellphone) {
+        Uri smsToUri = Uri.parse("smsto:" + cellphone);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, smsToUri);
+        intent.putExtra("sms_body", "我在使用格格app，非常好用哦，推荐你也来下载使用吧。下载地址：http://www.buzzlysoft.com");
+        startActivity(intent);
     }
 }

@@ -82,6 +82,9 @@ public class SettingActivity extends BaseActivity {
     @Bind(R.id.tv_microblog)
     TextView mMicroblogTextView;
 
+    @Bind(R.id.tv_hospital_account)
+    TextView mHospitalAccountTextView;
+
     @Bind(R.id.tb_alarm)
     ToggleButton mAlarmButton;
 
@@ -336,7 +339,7 @@ public class SettingActivity extends BaseActivity {
      */
     @OnClick(R.id.rl_hospital_account)
     void onHospitalAccount(View view) {
-        Intent intent = HospitalAccountActivity.getIntent(this, mBindInfo);
+        Intent intent = HospitalAccountActivity.getIntent(this);
         startActivity(intent);
     }
 
@@ -539,7 +542,6 @@ public class SettingActivity extends BaseActivity {
                         BindInfoResult bindInfoResult = new Gson().fromJson(response, BindInfoResult.class);
                         if (bindInfoResult.getCode() == RESPONSE_SUCCESS) {
                             mBindInfo = bindInfoResult.getBody();
-                            calculateBindCount(mBindInfo);
                             // 更新界面显示绑定信息
                             updateBindInfo(mBindInfo);
                         } else {
@@ -550,31 +552,6 @@ public class SettingActivity extends BaseActivity {
                 });
     }
 
-    private void calculateBindCount(BindInfo bindInfo) {
-        int count = 0;
-        if (!TextUtils.isEmpty(bindInfo.getPhone())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getWeixinOpenId())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getQQOpenId())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getWeiboOpenId())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getXFOpenId())) {
-            count++;
-        }
-        if (!TextUtils.isEmpty(bindInfo.getPBOpenId())) {
-            count++;
-        }
-        bindInfo.setBindCount(count);
-    }
 
     /**
      * 更新界面显示绑定信息
@@ -605,6 +582,14 @@ public class SettingActivity extends BaseActivity {
             mMicroblogTextView.setText(bindInfo.getWeiboNickName());
         } else {
             mMicroblogTextView.setText("");
+        }
+
+        // 显示是否绑定院内账号
+        if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId()) || !TextUtils.isEmpty(bindInfo.getPBOpenId()) ||
+                !TextUtils.isEmpty(bindInfo.getXFOpenId())) {
+            mHospitalAccountTextView.setText("已绑定");
+        } else {
+            mHospitalAccountTextView.setText("");
         }
     }
 

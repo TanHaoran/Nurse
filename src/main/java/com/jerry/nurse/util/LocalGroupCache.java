@@ -51,6 +51,27 @@ public abstract class LocalGroupCache {
                     });
         } else {
             onLoadGroupInfoSuccess(info);
+            OkHttpUtils.get().url(ServiceConstant.GET_GROUP_INFO)
+                    .addParams("RegisterId", registerId)
+                    .addParams("GroupId", groupId)
+                    .build()
+                    .execute(new FilterStringCallback() {
+
+                        @Override
+                        public void onFilterResponse(String response, int id) {
+                            GroupInfoResult result = new Gson().fromJson(response, GroupInfoResult.class);
+                            if (result.getCode() == RESPONSE_SUCCESS) {
+                                if (result.getBody() != null) {
+                                    GroupInfo group = result.getBody();
+                                    if (group != null) {
+                                        MainActivity.updateGroupInfoData(group);
+                                    }
+                                }
+                            } else {
+                                L.i(result.getMsg());
+                            }
+                        }
+                    });
         }
     }
 

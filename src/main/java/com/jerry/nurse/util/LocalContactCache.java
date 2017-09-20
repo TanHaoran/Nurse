@@ -54,6 +54,28 @@ public abstract class LocalContactCache {
                     });
         } else {
             onLoadContactInfoSuccess(info);
+            OkHttpUtils.get().url(ServiceConstant.GET_USER_DETAIL_INFO)
+                    .addParams("MyId", registerId)
+                    .addParams("FriendId", contactId)
+                    .build()
+                    .execute(new FilterStringCallback() {
+
+                        @Override
+                        public void onFilterResponse(String response, int id) {
+                            ContactDetailResult result = new Gson().fromJson(response, ContactDetailResult.class);
+                            if (result.getCode() == RESPONSE_SUCCESS) {
+                                if (result.getBody() != null) {
+                                    Contact contact = result.getBody();
+                                    if (contact != null) {
+                                        // 更新本地数据库
+                                       MainActivity.updateContactInfoData(contact);
+                                    }
+                                }
+                            } else {
+                                L.i(result.getMsg());
+                            }
+                        }
+                    });
         }
     }
 

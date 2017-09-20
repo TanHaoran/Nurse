@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
@@ -182,6 +184,8 @@ public class GroupInfoActivity extends BaseActivity {
                             T.showShort(GroupInfoActivity.this, "群昵称设置成功");
                             mGroupInfo.getGroupMemberList().remove(mGroupInfo.getGroupMemberList().size() - 1);
                             MainActivity.updateGroupInfoData(mGroupInfo);
+                            // 发送一条修改群昵称的消息
+                            sendChangeGroupNicknameMessage(mGroupInfo.getHXGroupId(), mGroupInfo.getHXNickName());
                             // 更新界面
                             setContactsData(mGroupInfo.getGroupMemberList());
                         } else {
@@ -189,6 +193,20 @@ public class GroupInfoActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * 发送修改群昵称的消息
+     *
+     * @param hxGroupId
+     * @param hxNickName
+     */
+    private void sendChangeGroupNicknameMessage(String hxGroupId, String hxNickName) {
+        EMMessage message = EMMessage.createTxtSendMessage("我修改了群昵称为 " + hxNickName, hxGroupId);
+        //如果是群聊，设置chattype，默认是单聊
+        message.setChatType(EMMessage.ChatType.GroupChat);
+        //发送消息
+        EMClient.getInstance().chatManager().sendMessage(message);
     }
 
     @OnClick(R.id.rl_group_qr_code)

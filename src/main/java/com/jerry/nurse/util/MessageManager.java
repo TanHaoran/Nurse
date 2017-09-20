@@ -72,8 +72,7 @@ public class MessageManager {
      * 发送消息：
      * 将消息数据保存在本地数据库
      */
-    public static ChatMessage saveChatMessageData(
-            EMMessage emMessage, boolean isSend) {
+    public static ChatMessage saveChatMessageData(EMMessage emMessage, boolean isSend) {
         Message message = null;
         ChatMessage chatMessage;
         /**

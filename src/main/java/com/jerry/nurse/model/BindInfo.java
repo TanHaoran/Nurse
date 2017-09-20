@@ -1,5 +1,7 @@
 package com.jerry.nurse.model;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public class BindInfo implements Serializable {
@@ -34,7 +36,29 @@ public class BindInfo implements Serializable {
     private String PBOpenId;
 
     public int getBindCount() {
-        return BindCount;
+        int count = 0;
+        if (!TextUtils.isEmpty(getPhone())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getWeixinOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getQQOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getWeiboOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getBLSJOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getXFOpenId())) {
+            count++;
+        }
+        if (!TextUtils.isEmpty(getPBOpenId())) {
+            count++;
+        }
+        return count;
     }
 
     public void setBindCount(int BindCount) {

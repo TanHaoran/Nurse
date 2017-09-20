@@ -127,8 +127,8 @@
     <dimen name="contact_action_button_width">40dp</dimen>
     <dimen name="contact_action_button__padding">11dp</dimen>
     <dimen name="search_edit_height">45dp</dimen>
-    <dimen name="contact_add_button_width">51dp</dimen>
-    <dimen name="contact_add_button_height">33dp</dimen>
+    <dimen name="contact_add_button_width">44dp</dimen>
+    <dimen name="contact_add_button_height">28dp</dimen>
     <dimen name="contact_nickname_marginLeft">3dp</dimen>
     <dimen name="contact_group_line_height">44dp</dimen>
     <dimen name="add_friend_button_height">44dp</dimen>

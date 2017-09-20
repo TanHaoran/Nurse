@@ -81,10 +81,9 @@
                 android:id="@+id/tv_cellphone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/contact_nickname_marginLeft"
                 android:textColor="@color/gray_textColor"
                 android:textEditSideNoPasteWindowLayout="@dimen/normal_textSize"
-                android:textSize="@dimen/smaller_textSize"
+                android:textSize="@dimen/small_textSize"
                 tools:text="13688459575"/>
 
 
@@ -123,7 +122,7 @@
             android:background="@drawable/contact_invite_button_bg"
             android:text="@string/invite"
             android:textColor="@color/primary"
-            android:textSize="@dimen/normal_textSize"/>
+            android:textSize="@dimen/small_textSize"/>
 
     </RelativeLayout>
 

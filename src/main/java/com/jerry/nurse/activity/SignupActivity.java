@@ -303,7 +303,7 @@ public class SignupActivity extends BaseActivity {
         ShortMessage shortMessage = new ShortMessage("", cellphone, code, mType);
         shortMessage.setDeviceRegId(JPushInterface.getRegistrationID(this));
         // 发送请求
-        mProgressDialogManager.show();
+        mProgressDialogManager.show("请稍后");
         OkHttpUtils.postString()
                 .url(ServiceConstant.VALIDATE_VERIFICATION_CODE)
                 .content(StringUtil.addModelWithJson(shortMessage))

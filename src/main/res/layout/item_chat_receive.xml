@@ -54,15 +54,27 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/cv_avatar">
 
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="@dimen/chat_receive_nickname_width"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="6dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="@dimen/smaller_textSize"
+                android:visibility="visible"
+                tools:text="天使"/>
+
             <FrameLayout
                 android:id="@+id/fl_anim"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_below="@id/tv_nickname"
                 android:background="@drawable/chat_receive_normal"
                 android:minHeight="@dimen/chat_avatar_width"
                 android:padding="@dimen/chat_text_padding"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <View
                     android:id="@+id/v_anim"
@@ -77,25 +89,14 @@
                 android:id="@+id/tv_record_length"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/record_length_marginRight"
+                android:layout_marginTop="25dp"
                 android:layout_toRightOf="@id/fl_anim"
                 android:textColor="@color/gray_textColor"
                 android:textSize="@dimen/normal_textSize"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:text="34'"/>
 
-            <TextView
-                android:id="@+id/tv_nickname"
-                android:layout_width="@dimen/chat_receive_nickname_width"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="6dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textSize="@dimen/smaller_textSize"
-                android:visibility="gone"
-                tools:text="天使"/>
 
             <TextView
                 android:id="@+id/tv_message"
@@ -119,6 +120,7 @@
                 android:id="@+id/iv_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tv_nickname"
                 android:gravity="center_vertical"
                 android:maxHeight="300dp"
                 android:minHeight="@dimen/chat_avatar_width"
@@ -134,9 +136,9 @@
             android:layout_marginLeft="@dimen/unread_marginRight"
             android:layout_toRightOf="@id/rl_content"
             android:text="@string/unread"
-            android:visibility="gone"
             android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/small_textSize"/>
+            android:textSize="@dimen/small_textSize"
+            android:visibility="gone"/>
 
 
     </RelativeLayout>

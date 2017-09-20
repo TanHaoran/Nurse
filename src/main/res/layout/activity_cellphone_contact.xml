@@ -42,6 +42,7 @@
         </FrameLayout>
 
         <View
+            android:layout_marginRight="24dp"
             android:id="@+id/v_divider"
             style="@style/DividerLineStyle"/>
 

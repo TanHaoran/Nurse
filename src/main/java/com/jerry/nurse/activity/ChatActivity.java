@@ -267,23 +267,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         }
     };
 
-    /**
-     * 将环信给的图片路径转换成可以查询到的路径
-     *
-     * @param localUrl
-     * @return
-     */
-    @NonNull
-    public static String parseImagePath(String localUrl) {
-        int index = localUrl.lastIndexOf("/");
-        String fileName = localUrl.substring(index + 1);
-        localUrl = localUrl.substring(0, index + 1);
-        String path = localUrl + "thumb_" + fileName;
-        path = path.substring(0, path.length() - 4);
-        return path;
-    }
-
-
     @Override
     public int getContentViewResId() {
         return R.layout.activity_chat;
@@ -915,6 +898,23 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         L.i("点击了中间区域");
         mOptionLayout.setVisibility(View.GONE);
         KeyBoardUtil.closeKeybord(mMessageEditText, this);
+    }
+
+
+    /**
+     * 将环信给的图片路径转换成可以查询到的路径
+     *
+     * @param localUrl
+     * @return
+     */
+    @NonNull
+    public static String parseImagePath(String localUrl) {
+        int index = localUrl.lastIndexOf("/");
+        String fileName = localUrl.substring(index + 1);
+        localUrl = localUrl.substring(0, index + 1);
+        String path = localUrl + "thumb_" + fileName;
+        path = path.substring(0, path.length() - 4);
+        return path;
     }
 
 

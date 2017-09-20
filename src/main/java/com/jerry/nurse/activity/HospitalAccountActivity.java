@@ -13,12 +13,16 @@ import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.BindInfo;
+import com.jerry.nurse.model.BindInfoResult;
 import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.litepal.crud.DataSupport;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -28,7 +32,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class HospitalAccountActivity extends BaseActivity {
 
-    public static final String EXTRA_BIND_INFO = "extra_bind_info";
+    private  static final int REQUEST_BIND = 0x101;
 
     @Bind(R.id.tv_event_report)
     TextView mEventReportTextView;
@@ -39,11 +43,11 @@ public class HospitalAccountActivity extends BaseActivity {
     @Bind(R.id.tv_schedule)
     TextView mScheduleTextView;
 
+    private LoginInfo mLoginInfo;
     private BindInfo mBindInfo;
 
-    public static Intent getIntent(Context context, BindInfo bindInfo) {
+    public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, HospitalAccountActivity.class);
-        intent.putExtra(EXTRA_BIND_INFO, bindInfo);
         return intent;
     }
 
@@ -54,13 +58,46 @@ public class HospitalAccountActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        mBindInfo = (BindInfo) getIntent().getSerializableExtra(EXTRA_BIND_INFO);
-        setBindData(mBindInfo);
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 获取用户所有绑定信息
+        getBindInfo(mLoginInfo.getRegisterId());
+    }
+
+    /**
+     * 获取用户所有绑定信息
+     */
+    private void getBindInfo(final String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_BIND_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        BindInfoResult bindInfoResult = new Gson().fromJson(response, BindInfoResult.class);
+                        if (bindInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            mBindInfo = bindInfoResult.getBody();
+                            setBindData(mBindInfo);
+                        } else {
+                            mBindInfo = new BindInfo();
+                            T.showShort(HospitalAccountActivity.this, bindInfoResult.getMsg());
+                        }
+                    }
+                });
     }
 
     private void setBindData(BindInfo bindInfo) {
         if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId())) {
             mEventReportTextView.setText(bindInfo.getBLSJId());
+        } else {
+            mEventReportTextView.setText("");
         }
         mCreditTextView.setText("");
         mScheduleTextView.setText("");
@@ -182,6 +219,9 @@ public class HospitalAccountActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            T.showShort(HospitalAccountActivity.this, "解绑成功");
+                            // 获取用户所有绑定信息
+                            getBindInfo(mLoginInfo.getRegisterId());
                         } else {
                             T.showShort(HospitalAccountActivity.this, commonResult.getMsg());
                         }

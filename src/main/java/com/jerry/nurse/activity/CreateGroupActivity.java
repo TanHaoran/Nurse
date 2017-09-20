@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.CommonResult;
@@ -216,6 +218,8 @@ public class CreateGroupActivity extends BaseActivity {
                             groupInfo.save();
                             MessageManager.saveCreateGroupLocalData(groupInfo);
                             T.showShort(CreateGroupActivity.this, "创建成功");
+                            // 创建完群后立刻发送一条消息
+                            sendGroupFirstMessage(groupInfo.getHXGroupId(), "我创建了一个群，一起聊天吧！");
                             finish();
                             Intent intent = ChatActivity.getIntent(CreateGroupActivity.this,
                                     result.getBody().getHXGroupId(), true);
@@ -225,6 +229,19 @@ public class CreateGroupActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * 发送环信的第一条信息
+     *
+     * @param hxGroupId
+     */
+    private void sendGroupFirstMessage(String hxGroupId, String content) {
+        EMMessage message = EMMessage.createTxtSendMessage(content, hxGroupId);
+        //如果是群聊，设置chattype，默认是单聊
+        message.setChatType(EMMessage.ChatType.GroupChat);
+        //发送消息
+        EMClient.getInstance().chatManager().sendMessage(message);
     }
 
     /**
@@ -351,7 +368,7 @@ public class CreateGroupActivity extends BaseActivity {
     /**
      * 添加群成员
      */
-    private void addGroupMember(String groupId, List<Contact> contacts) {
+    private void addGroupMember(final String groupId, final List<Contact> contacts) {
         GroupInfo info = new GroupInfo();
         info.setHXGroupId(groupId);
         info.setGroupMemberList(contacts);
@@ -369,6 +386,12 @@ public class CreateGroupActivity extends BaseActivity {
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(CreateGroupActivity.this, "操作成功");
                             setResult(RESULT_OK);
+                            StringBuilder sb = new StringBuilder();
+                            for (Contact c : contacts) {
+                                sb.append(c.getTarget() + ",");
+                            }
+                            sendGroupFirstMessage(groupId,
+                                    "我邀请了" + sb.substring(0, sb.length() - 1) + "加入本群");
                             finish();
                         } else {
                             T.showShort(CreateGroupActivity.this, commonResult.getMsg());
@@ -398,6 +421,7 @@ public class CreateGroupActivity extends BaseActivity {
             final SelectView selectView = holder.getView(R.id.sv_choose);
             selectView.setSelected(contact.isChoose());
             holder.setText(R.id.tv_nickname, contact.getTarget());
+
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

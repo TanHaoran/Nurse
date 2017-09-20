@@ -58,6 +58,45 @@ public class LoginManager {
                 });
     }
 
+    /**
+     * 更新登陆信息
+     *
+     * @param registerId
+     */
+    public void updateLoginInfoByRegisterId(final String registerId) {
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_LOGIN_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterError(Call call, Exception e, int id) {
+                        T.showShort(mContext, "更新信息失败");
+                    }
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        // 如果登陆成功保存登陆信息并跳转页面
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            save(loginInfoResult.getBody());
+                        } else {
+                            T.showShort(mContext, loginInfoResult.getMsg());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 保存登陆信息
+     *
+     * @param loginInfo
+     */
+    public void save(LoginInfo loginInfo) {
+        // 保存登陆信息到数据库
+        LitePalUtil.saveLoginInfo(mContext, loginInfo);
+    }
+
 
     /**
      * 保存登陆信息并跳转页面

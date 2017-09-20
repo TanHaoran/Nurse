@@ -17,10 +17,12 @@ import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.AddFriendApply;
 import com.jerry.nurse.model.ChatMessage;
 import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.util.ActivityCollector;
 import com.jerry.nurse.util.AlarmManager;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
+import com.jerry.nurse.util.LocalGroupCache;
 import com.jerry.nurse.util.MessageManager;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
@@ -202,6 +204,16 @@ public class MyApplication extends LitePalApplication {
                             saveChatMessageAndSendBroadcast(emMessage);
                         }
                     }.getContactInfo(EMClient.getInstance().getCurrentUser(), emMessage.getFrom());
+
+                    if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                        new LocalGroupCache() {
+                            @Override
+                            protected void onLoadGroupInfoSuccess(GroupInfo info) {
+                                L.i("更新后的群昵称是:" + info.getHXNickName());
+                            }
+                        }.getGroupInfo(EMClient.getInstance().getCurrentUser(),
+                                emMessage.getTo());
+                    }
                 }
             }
 
@@ -380,7 +392,6 @@ public class MyApplication extends LitePalApplication {
         };
         EMClient.getInstance().contactManager().setContactListener(emContactListener);
     }
-
 
     /**
      * 初始化OkHttp封装类

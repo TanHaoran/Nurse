@@ -444,8 +444,12 @@ public class HospitalLoginActivity extends BaseActivity {
                             } else if (!TextUtils.isEmpty(result.getBody().getPBId())) {
                                 loginInfo.setPBId(result.getBody().getPBId());
                             }
-                            LitePalUtil.saveLoginInfo(HospitalLoginActivity.this, loginInfo);
+                            LitePalUtil.updateLoginInfo(HospitalLoginActivity.this, loginInfo);
                             T.showShort(HospitalLoginActivity.this, "绑定成功");
+                            LoginManager loginManager = new LoginManager(HospitalLoginActivity.this,
+                                    mProgressDialogManager);
+                            loginManager.updateLoginInfoByRegisterId(loginInfo.getRegisterId());
+                            finish();
                         } else {
                             T.showShort(HospitalLoginActivity.this, result.getMsg());
                         }

@@ -190,24 +190,22 @@ public class LoginActivity extends BaseActivity {
      * 本地验证登录
      */
     private int localValidate(String cellphone, String password) {
-        int result = 0;
-
         if (cellphone.isEmpty()) {
-            result = R.string.cellphone_empty;
+            return R.string.cellphone_empty;
         }
         if (!AccountValidatorUtil.isMobile(cellphone)) {
-            result = R.string.cellphone_invalid;
+            return R.string.cellphone_invalid;
         }
 
         if (password.isEmpty()) {
-            result = R.string.password_empty;
+            return R.string.password_empty;
         }
 
         // 密码的长度要介于4和10之间
         if (password.length() < 4 || password.length() > 12) {
-            result = R.string.password_length_invalid;
+            return R.string.password_length_invalid;
         }
-        return result;
+        return 0;
     }
 
     /**

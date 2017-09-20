@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -192,10 +193,12 @@ public class ContactFragment extends BaseFragment {
                             } else {
                                 holder.setVisible(R.id.v_divider, false);
                             }
-                        } else if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getDepartmentName())) {
+                        } else if (!TextUtils.isEmpty(contactTopHeaderBean.getTxt()) &&
+                                contactTopHeaderBean.getTxt().equals(mLoginInfo.getDepartmentName())) {
                             holder.setImageResource(R.id.iv_avatar, R.drawable.icon_ks);
                             holder.setText(R.id.tv_count, " (" + mLoginInfo.getDepartmentUserCount() + "人)");
-                        } else if (contactTopHeaderBean.getTxt().equals(mLoginInfo.getHospitalName())) {
+                        } else if (!TextUtils.isEmpty(contactTopHeaderBean.getTxt()) &&
+                                contactTopHeaderBean.getTxt().equals(mLoginInfo.getHospitalName())) {
                             holder.setImageResource(R.id.iv_avatar, R.drawable.icon_yy);
                         }
 
