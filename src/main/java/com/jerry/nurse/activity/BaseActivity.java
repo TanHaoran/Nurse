@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnDateSelectListener;
@@ -216,12 +217,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                //  首先如果原日期不为空就先设置成原日期
-                if (origin != null) {
-                    calendar.setTime(origin);
-                } else {
-                    calendar.setTime(new Date());
-                }
+                calendar.setTime(origin);
 
                 final DatePickerDialog datePickerDialog =
                         new DatePickerDialog(ActivityCollector.getTopActivity(), null,
@@ -273,19 +269,33 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param onDateSelectListener
      */
     public void setDateSelectListener(View view, final Date origin, final OnDateSelectListener onDateSelectListener) {
+        setDateSelectListener(view, origin, false, onDateSelectListener);
+    }
 
+    /**
+     * 给一个View设置日期选择控件
+     * @param view
+     * @param textView
+     * @param onDateSelectListener
+     */
+    public void setDateSelectListener(View view, final TextView textView, final OnDateSelectListener onDateSelectListener) {
+        setDateSelectListener(view, textView, false, onDateSelectListener);
+    }
+
+    /**
+     * 给一个View设置日期选择控件
+     *
+     * @param view
+     * @param textView
+     * @param biggerThanToday
+     * @param onDateSelectListener
+     */
+    public void setDateSelectListener(View view, final TextView textView, final boolean biggerThanToday, final OnDateSelectListener onDateSelectListener) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                //  首先如果原日期不为空就先设置成原日期
-                if (origin != null) {
-                    calendar.setTime(origin);
-                } else {
-                    calendar.set(Calendar.YEAR, 1900);
-                    calendar.set(Calendar.MONTH, 0);
-                    calendar.set(Calendar.DAY_OF_MONTH, 1);
-                }
+                calendar.setTime(DateUtil.parseStringToDate(textView.getText().toString()));
 
                 final DatePickerDialog datePickerDialog =
                         new DatePickerDialog(ActivityCollector.getTopActivity(), null,
@@ -304,9 +314,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 int day = datePicker.getDayOfMonth();
                                 String date = year + "-" + (month + 1) + "-" + day;
                                 Date nowDate = new Date();
-                                if (DateUtil.parseStringToDate(date).getTime() > nowDate.getTime()) {
-                                    T.showShort(ActivityCollector.getTopActivity(), "日期设置不能大于当天");
-                                    return;
+                                if (!biggerThanToday) {
+                                    if (DateUtil.parseStringToDate(date).getTime() > nowDate.getTime()) {
+                                        T.showShort(ActivityCollector.getTopActivity(), "日期设置不能大于当天");
+                                        return;
+                                    }
                                 }
                                 if (onDateSelectListener != null) {
                                     onDateSelectListener.onDateSelected(DateUtil.parseStringToDate(date));
@@ -325,7 +337,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
-
     }
 
     /**

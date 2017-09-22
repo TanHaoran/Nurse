@@ -124,7 +124,6 @@ public class ContactDetailActivity extends BaseActivity {
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
             public void onRightClick(View view) {
-
                 Intent intent = ContactMoreActivity.getIntent(ContactDetailActivity.this, mContact);
                 startActivity(intent);
             }

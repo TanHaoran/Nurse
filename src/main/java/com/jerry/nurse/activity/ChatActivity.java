@@ -675,12 +675,16 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             holder.setText(R.id.tv_time, DateUtil.parseDateToChatDate(new Date(chatMessage.getTime())));
             // 设置已读和未读状态
             TextView statusTextView = holder.getView(R.id.tv_status);
-            if (chatMessage.isRead()) {
-                statusTextView.setText(R.string.read);
-                statusTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+            if (chatMessage.isGroup()) {
+                statusTextView.setVisibility(View.GONE);
             } else {
-                statusTextView.setText(R.string.unread);
-                statusTextView.setTextColor(getResources().getColor(R.color.primary));
+                if (chatMessage.isRead()) {
+                    statusTextView.setText(R.string.read);
+                    statusTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
+                } else {
+                    statusTextView.setText(R.string.unread);
+                    statusTextView.setTextColor(getResources().getColor(R.color.primary));
+                }
             }
             switch (chatMessage.getType()) {
                 // 文字消息

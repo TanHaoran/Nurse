@@ -299,19 +299,20 @@ public class ProfessionalCertificateActivity extends BaseActivity {
         mSexTextView.setVisibility(View.INVISIBLE);
         mSubmitButton.setVisibility(View.VISIBLE);
 
-        setDateSelectListener(mBirthdayLayout, null, new OnDateSelectListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                mBirthdayTextView.setText(DateUtil.parseDateToString(date));
-            }
-        });
-        setDateSelectListener(mApproveDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mBirthdayLayout, mBirthdayTextView,
+                new OnDateSelectListener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        mBirthdayTextView.setText(DateUtil.parseDateToString(date));
+                    }
+                });
+        setDateSelectListener(mApproveDateLayout, mApproveDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mApproveDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mSignDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mSignDateLayout, mSignDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mSignDateTextView.setText(DateUtil.parseDateToString(date));

@@ -72,7 +72,6 @@ public class LitePalUtil {
         userInfo.save();
     }
 
-
     /**
      * 更新SP中的数据
      *

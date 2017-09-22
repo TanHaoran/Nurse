@@ -244,8 +244,8 @@ public class PersonalInfoActivity extends BaseActivity {
             mJobNumberTextView.setText(mUserInfo.getEmployeeId());
 
             // 设置生日数据和监听
-            setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday())
-                    , new OnDateSelectListener() {
+            setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday()),
+                    new OnDateSelectListener() {
                         @Override
                         public void onDateSelected(Date date) {
                             UserBasicInfo userBasicInfo = new UserBasicInfo();

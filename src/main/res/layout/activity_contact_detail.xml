@@ -28,10 +28,10 @@
 
 
                 <android.support.v7.widget.CardView
-                    android:layout_marginTop="@dimen/title_bar_height"
                     android:id="@+id/cv_avatar"
                     android:layout_width="@dimen/contact_detail_avatar_width"
                     android:layout_height="@dimen/contact_detail_avatar_width"
+                    android:layout_marginTop="@dimen/title_bar_height"
                     app:cardCornerRadius="@dimen/image_round_radius"
                     app:cardElevation="0dp">
 
@@ -56,9 +56,14 @@
 
                 <TextView
                     android:id="@+id/tv_remark"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/block_marinTop"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:singleLine="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_textSize"
                     tools:text="护理培训的护士长"/>
@@ -212,10 +217,10 @@
     </ScrollView>
 
     <com.jerry.nurse.view.TitleBar
-        android:layout_marginTop="@dimen/status_bar_height"
         android:id="@+id/tb_contact_detail"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
+        android:layout_marginTop="@dimen/status_bar_height"
         app:bg_color="@color/transparent"
         app:button_textSize="@dimen/normal_textSize"
         app:right_text="@string/more"

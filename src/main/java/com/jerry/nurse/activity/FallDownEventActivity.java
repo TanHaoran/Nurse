@@ -49,7 +49,7 @@ public class FallDownEventActivity extends BaseActivity {
     @Override
     public void init(Bundle savedInstanceState) {
         // 发生时间
-        setDateSelectListener(mHappenedTimeView, null, new OnDateSelectListener() {
+        setDateSelectListener(mHappenedTimeView, new Date(), new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mHappenedTimeView.setValue(DateUtil

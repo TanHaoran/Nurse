@@ -376,37 +376,37 @@ public class PractisingCertificateActivity extends BaseActivity {
 
         mTitleBar.setRightVisible(View.INVISIBLE);
 
-        setDateSelectListener(mBirthdayLayout, null, true, new OnDateSelectListener() {
+        setDateSelectListener(mBirthdayLayout, mBirthdayTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mBirthdayTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mFirstSignDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mFirstSignDateLayout, mFirstSignDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mFirstSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mLastSignDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mLastSignDateLayout, mLastSignDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mLastSignDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mLastSignDateValidLayout, null, true, new OnDateSelectListener() {
+        setDateSelectListener(mLastSignDateValidLayout, mLastSignDateValidTextView, true, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mLastSignDateValidTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mCertificateDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mCertificateDateLayout, mCertificateDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mCertificateDateTextView.setText(DateUtil.parseDateToString(date));
             }
         });
-        setDateSelectListener(mFirstWordDateLayout, null, new OnDateSelectListener() {
+        setDateSelectListener(mFirstWordDateLayout, mFirstWorkDateTextView, new OnDateSelectListener() {
             @Override
             public void onDateSelected(Date date) {
                 mFirstWorkDateTextView.setText(DateUtil.parseDateToString(date));

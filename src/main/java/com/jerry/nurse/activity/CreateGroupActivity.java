@@ -184,6 +184,10 @@ public class CreateGroupActivity extends BaseActivity {
                     for (Contact c : mBodyDatas) {
                         if (c.isChoose()) {
                             Contact contact = new Contact();
+                            contact.setName(c.getName());
+                            contact.setNickName(c.getNickName());
+                            contact.setPhone(c.getPhone());
+                            contact.setAvatar(c.getAvatar());
                             contact.setFriendId(c.getFriendId());
                             cs.add(contact);
                         }
@@ -237,11 +241,12 @@ public class CreateGroupActivity extends BaseActivity {
      * @param hxGroupId
      */
     private void sendGroupFirstMessage(String hxGroupId, String content) {
-        EMMessage message = EMMessage.createTxtSendMessage(content, hxGroupId);
+        EMMessage emMessage = EMMessage.createTxtSendMessage(content, hxGroupId);
         //如果是群聊，设置chattype，默认是单聊
-        message.setChatType(EMMessage.ChatType.GroupChat);
+        emMessage.setChatType(EMMessage.ChatType.GroupChat);
         //发送消息
-        EMClient.getInstance().chatManager().sendMessage(message);
+        EMClient.getInstance().chatManager().sendMessage(emMessage);
+        MessageManager.saveChatMessageData(emMessage, true);
     }
 
     /**

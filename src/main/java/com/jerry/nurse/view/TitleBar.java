@@ -186,6 +186,9 @@ public class TitleBar extends RelativeLayout {
         mRightTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(mRightTextView.getText().toString())) {
+                    return;
+                }
                 if (mOnRightClickListener != null) {
                     mOnRightClickListener.onRightClick(v);
                 }
