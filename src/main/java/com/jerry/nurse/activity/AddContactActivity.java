@@ -111,8 +111,7 @@ public class AddContactActivity extends BaseActivity {
                     public void onFilterResponse(String response, int id) {
                         SearchUsersResult result = new Gson().fromJson(response, SearchUsersResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
-                            List<SearchUsersResult.User> users =
-                                    result.getBody();
+                            List<SearchUsersResult.User> users = result.getBody();
                             if (users == null) {
                                 users = new ArrayList<>();
                             }
@@ -138,6 +137,10 @@ public class AddContactActivity extends BaseActivity {
         UserAdapter adapter = new UserAdapter(this, R.layout.item_user,
                 users);
         mRecyclerView.setAdapter(adapter);
+
+        if (users.size() ==0) {
+            T.showShort(this, "搜索结果为空");
+        }
 
         adapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override

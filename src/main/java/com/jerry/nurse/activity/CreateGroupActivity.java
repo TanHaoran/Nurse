@@ -374,6 +374,10 @@ public class CreateGroupActivity extends BaseActivity {
      * 添加群成员
      */
     private void addGroupMember(final String groupId, final List<Contact> contacts) {
+        if (contacts.size() == 0) {
+            finish();
+            return;
+        }
         GroupInfo info = new GroupInfo();
         info.setHXGroupId(groupId);
         info.setGroupMemberList(contacts);

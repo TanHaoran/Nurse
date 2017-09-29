@@ -283,7 +283,9 @@ public class OfficeFragment extends BaseFragment {
                         startActivity(intent);
                     }
                 });
-                mBannerViews.add(imageView);
+                if (mBanners.get(i).getIsFlag() == 1) {
+                    mBannerViews.add(imageView);
+                }
             }
 
             BannerAdapter bannerAdapter = new BannerAdapter(mBannerViews);
