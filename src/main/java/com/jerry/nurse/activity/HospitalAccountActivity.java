@@ -18,6 +18,7 @@ import com.jerry.nurse.model.CommonResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.ThirdPartInfo;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -220,6 +221,11 @@ public class HospitalAccountActivity extends BaseActivity {
                         CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(HospitalAccountActivity.this, "解绑成功");
+                            LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+                            loginInfo.setReguserId("");
+                            loginInfo.setHospitalId("");
+                            loginInfo.setDepartmentId("");
+                            LitePalUtil.updateLoginInfo(HospitalAccountActivity.this, loginInfo);
                             // 获取用户所有绑定信息
                             getBindInfo(mLoginInfo.getRegisterId());
                         } else {

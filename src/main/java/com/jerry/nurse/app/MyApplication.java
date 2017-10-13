@@ -152,7 +152,6 @@ public class MyApplication extends LitePalApplication {
         startContactListener();
     }
 
-
     /**
      * 获取app名称
      *

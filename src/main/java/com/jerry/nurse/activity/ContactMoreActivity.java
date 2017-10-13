@@ -91,8 +91,8 @@ public class ContactMoreActivity extends BaseActivity {
                             L.i("设置备注成功");
                             // 更新数据库
                             mContact.setRemark(remark);
+                            mRemarkTextView.setText(mContact.getRemark());
                             MainActivity.updateContactInfoData(mContact);
-                            finish();
                         } else {
                             L.i("设置备注失败");
                             T.showShort(ContactMoreActivity.this, commonResult.getMsg());

@@ -274,6 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 给一个View设置日期选择控件
+     *
      * @param view
      * @param textView
      * @param onDateSelectListener
@@ -742,9 +743,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Uri destinationUri = Uri.fromFile(new File(getCacheDir(),
                 new Date().getTime() + ".jpg"));
         UCrop.Options options = setupUCropOption();
-        UCrop.of(source, destinationUri).withAspectRatio(16, 9).withMaxResultSize(300, 300)
-                .withOptions(options).start
-                (this);
+        UCrop.of(source, destinationUri).withAspectRatio(1, 1).withMaxResultSize(300, 300)
+                .withOptions(options).start(this);
     }
 
     /**

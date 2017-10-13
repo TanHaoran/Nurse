@@ -93,13 +93,22 @@ public class MeFragment extends BaseFragment {
             Glide.with(this).load(mLoginInfo.getAvatar()).placeholder(R.drawable.icon_avatar_default)
                     .into(mAvatarImageView);
         }
+
+        // 显示姓名
         if (mLoginInfo.getName() != null) {
             mNameTextView.setText(mLoginInfo.getName());
+            mNameTextView.setVisibility(View.VISIBLE);
         } else {
             mNameTextView.setVisibility(View.GONE);
         }
+
+        // 判断权限，是否显示已认证
+        if (OfficeFragment.checkPermission()) {
+        }
+
         if (mLoginInfo.getNickName() != null) {
             mNicknameTextView.setText(mLoginInfo.getNickName());
+            mNicknameTextView.setVisibility(View.VISIBLE);
         } else {
             mNicknameTextView.setVisibility(View.GONE);
         }
@@ -108,11 +117,6 @@ public class MeFragment extends BaseFragment {
             mNicknameTextView.setVisibility(View.VISIBLE);
             mNicknameTextView.setText("未设置");
             mNicknameTextView.setTextColor(getResources().getColor(R.color.gray_textColor));
-        }
-
-        // 判断权限，是否显示已认证
-        if (OfficeFragment.checkPermission()) {
-            mValidatedView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -185,7 +189,11 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_credit)
     void onCredit(View view) {
-
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.tips)
+                .setMessage("抱歉，你没有开通这个业务")
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     @OnClick(R.id.rl_collection)
@@ -195,7 +203,11 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_schedule)
     void onSchedule(View view) {
-
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.tips)
+                .setMessage("抱歉，你没有开通这个业务")
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     @OnClick(R.id.rl_schedule)

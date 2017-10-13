@@ -96,6 +96,10 @@ public class OfficeListActivity extends BaseActivity {
         mHospitalId = getIntent().getStringExtra(EXTRA_HOSPITAL_ID);
         mType = getIntent().getIntExtra(EXTRA_TYPE, 0);
 
+        if (mType == 1) {
+            mTitleBar.setRightText("");
+        }
+
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
 
         getOfficeList(mHospitalId);

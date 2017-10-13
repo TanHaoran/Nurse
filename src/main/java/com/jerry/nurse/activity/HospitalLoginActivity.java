@@ -439,6 +439,7 @@ public class HospitalLoginActivity extends BaseActivity {
                             LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
                             if (!TextUtils.isEmpty(result.getBody().getReguserId())) {
                                 loginInfo.setReguserId(result.getBody().getReguserId());
+                                loginInfo.setName(result.getBody().getName());
                             } else if (!TextUtils.isEmpty(result.getBody().getXFId())) {
                                 loginInfo.setXFId(result.getBody().getXFId());
                             } else if (!TextUtils.isEmpty(result.getBody().getPBId())) {
@@ -446,9 +447,6 @@ public class HospitalLoginActivity extends BaseActivity {
                             }
                             LitePalUtil.updateLoginInfo(HospitalLoginActivity.this, loginInfo);
                             T.showShort(HospitalLoginActivity.this, "绑定成功");
-                            LoginManager loginManager = new LoginManager(HospitalLoginActivity.this,
-                                    mProgressDialogManager);
-                            loginManager.updateLoginInfoByRegisterId(loginInfo.getRegisterId());
                             finish();
                         } else {
                             T.showShort(HospitalLoginActivity.this, result.getMsg());

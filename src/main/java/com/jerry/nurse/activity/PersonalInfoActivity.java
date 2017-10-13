@@ -347,7 +347,11 @@ public class PersonalInfoActivity extends BaseActivity {
 
     private String getAuditString(int status) {
         if (status == ServiceConstant.AUDIT_EMPTY) {
-            return "未认证";
+            if (mLoginInfo.getReguserId() != null) {
+                return "请完善个人信息";
+            } else {
+                return "未认证";
+            }
         } else if (status == ServiceConstant.AUDIT_ING) {
             return "认证中";
         } else if (status == ServiceConstant.AUDIT_FAILED) {
@@ -444,11 +448,14 @@ public class PersonalInfoActivity extends BaseActivity {
     void onHospital(View view) {
         // 如果是院务账号就不让修改医院信息
         if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
-            T.showShort(this, R.string.in_hospital_account_please_edit_on_pc);
+            T.showShort(this, R.string.please_contact_admin_to_change);
+            return;
+        }else {
+            T.showShort(this, "请绑定院内账号");
             return;
         }
-        Intent intent = HospitalActivity.getIntent(this);
-        startActivity(intent);
+//        Intent intent = HospitalActivity.getIntent(this);
+//        startActivity(intent);
     }
 
     /**
@@ -460,15 +467,18 @@ public class PersonalInfoActivity extends BaseActivity {
     void onOffice(View view) {
         // 如果是院务账号就不让修改医院信息
         if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
-            T.showShort(this, R.string.in_hospital_account_please_edit_on_pc);
+            T.showShort(this, R.string.please_contact_admin_to_change);
+            return;
+        } else {
+            T.showShort(this, "请绑定院内账号");
             return;
         }
-        if (!TextUtils.isEmpty(mUserInfo.getHospitalId())) {
-            Intent intent = OfficeListActivity.getIntent(this, mUserInfo.getHospitalId(), 0);
-            startActivity(intent);
-        } else {
-            T.showShort(this, R.string.please_select_hospital_first);
-        }
+//        if (!TextUtils.isEmpty(mUserInfo.getHospitalId())) {
+//            Intent intent = OfficeListActivity.getIntent(this, mUserInfo.getHospitalId(), 0);
+//            startActivity(intent);
+//        } else {
+//            T.showShort(this, R.string.please_select_hospital_first);
+//        }
     }
 
     /**

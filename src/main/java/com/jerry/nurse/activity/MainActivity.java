@@ -381,7 +381,7 @@ public class MainActivity extends BaseActivity {
                         if (friendListResult.getCode() == RESPONSE_SUCCESS) {
                             List<Contact> contacts = friendListResult.getBody();
                             if (contacts != null) {
-                                L.i("读取到联系人个数:" + contacts.size());
+//                                L.i("读取到联系人个数:" + contacts.size());
                                 updateContactInfoData(contacts);
                             }
                         }
@@ -407,7 +407,7 @@ public class MainActivity extends BaseActivity {
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             List<GroupInfo> groupInfo = result.getBody();
                             if (groupInfo != null) {
-                                L.i("初始化读取到了" + groupInfo.size() + "个群");
+//                                L.i("初始化读取到了" + groupInfo.size() + "个群");
                                 updateGroupInfoData(groupInfo);
                             }
                         }
@@ -441,7 +441,7 @@ public class MainActivity extends BaseActivity {
                 ContactInfo localContact = localContacts.get(i);
                 if (localContact.getRegisterId().equals(contact.getFriendId())) {
                     updateLocalContact(localContact, contact);
-                    L.i("更新一条联系人信息");
+//                    L.i("更新一条联系人信息");
                     break;
                 }
             }
@@ -450,7 +450,7 @@ public class MainActivity extends BaseActivity {
                 ContactInfo localContact = new ContactInfo();
                 updateLocalContact(localContact, contact);
                 count++;
-                L.i("新增一条联系人信息");
+//                L.i("新增一条联系人信息");
             }
         }
         return count;
@@ -479,7 +479,7 @@ public class MainActivity extends BaseActivity {
             // 如果两个信息相同就更新
             ContactInfo localContact = localContacts.get(i);
             if (localContact.getRegisterId().equals(contact.getFriendId())) {
-                L.i("更新一条联系人信息");
+//                L.i("更新一条联系人信息");
                 return updateLocalContact(localContact, contact);
             }
         }
@@ -542,7 +542,7 @@ public class MainActivity extends BaseActivity {
                 if (localGroup.getHXGroupId().equals(group.getHXGroupId())) {
                     updateLocalGroup(localGroup, group);
                     // 更新联系人信息
-                    L.i("更新了一条群信息");
+//                    L.i("更新了一条群信息");
                     break;
                 }
             }
@@ -550,7 +550,7 @@ public class MainActivity extends BaseActivity {
             if (i == localGroups.size()) {
                 GroupInfo localGroup = new GroupInfo();
                 updateLocalGroup(localGroup, group);
-                L.i("新增了一条群信息");
+//                L.i("新增了一条群信息");
                 count++;
             }
         }

@@ -147,6 +147,7 @@ public class MessageManager {
          * 保存聊天消息
          */
         chatMessage = new ChatMessage();
+        chatMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
         chatMessage.setId(emMessage.getMsgId());
         // 按照消息类型分
         if (emMessage.getType() == EMMessage.Type.TXT) {

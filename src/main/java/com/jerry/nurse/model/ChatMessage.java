@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class ChatMessage extends DataSupport implements Serializable {
 
+    private String mRegisterId;
     private String mId;
     private long mTime;
     private String mFrom;
@@ -52,6 +53,14 @@ public class ChatMessage extends DataSupport implements Serializable {
     public static final int TYPE_VOICE = 2;
 
     public ChatMessage() {
+    }
+
+    public String getRegisterId() {
+        return mRegisterId;
+    }
+
+    public void setRegisterId(String registerId) {
+        mRegisterId = registerId;
     }
 
     public long getTime() {

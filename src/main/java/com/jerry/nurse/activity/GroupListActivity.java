@@ -58,7 +58,7 @@ public class GroupListActivity extends BaseActivity {
         mRegisterId = (String) SPUtil.get(this, SPUtil.REGISTER_ID, "");
 
 //        getGroupList(mRegisterId);
-        mGroupInfos = DataSupport.where("RegisterId=?", mRegisterId).find(GroupInfo.class);
+        mGroupInfos = DataSupport.where("RegisterId=?", mRegisterId).order("CreateTime desc").find(GroupInfo.class);
         if (mGroupInfos == null) {
             mGroupInfos = new ArrayList<>();
         }

@@ -165,6 +165,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     for (final EMMessage emMessage : messages) {
                         L.i("收到一条消息:" + emMessage.getMsgId());
                         ChatMessage chatMessage = new ChatMessage();
+                        chatMessage.setRegisterId(mLoginInfo.getRegisterId());
                         if (emMessage.getType() == EMMessage.Type.TXT) {
                             EMTextMessageBody messageBody = (EMTextMessageBody) emMessage.getBody();
                             chatMessage.setContent(messageBody.getMessage());
@@ -247,14 +248,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                         chatMessage.setFrom(emMessage.getFrom());
                         chatMessage.save();
 
-                        // 保存聊天消息并更新界面
-                        mChatMessages.add(chatMessage);
-                        mAdapter.notifyDataSetChanged();
-
-                        // TODO 滚动问题
-                        int itemCount = mAdapter.getItemCount();
-                        if (mRecyclerView != null) {
-                            mRecyclerView.smoothScrollToPosition(itemCount);
+                        // 判断是否是当前聊天界面从而更新
+                        if (!mGroup && emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                            if (mContactId.equals(emMessage.getFrom())) {
+                                updateChatMessageList(chatMessage);
+                            }
+                        } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                            if (mContactId.equals(emMessage.getTo())) {
+                                updateChatMessageList(chatMessage);
+                            }
                         }
                     }
                     break;
@@ -266,6 +268,19 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
         }
     };
+
+    // 更新聊天界面
+    private void updateChatMessageList(ChatMessage chatMessage) {
+        // 保存聊天消息并更新界面
+        mChatMessages.add(chatMessage);
+        mAdapter.notifyDataSetChanged();
+
+        // TODO 滚动问题
+        int itemCount = mAdapter.getItemCount();
+        if (mRecyclerView != null) {
+            mRecyclerView.smoothScrollToPosition(itemCount);
+        }
+    }
 
     @Override
     public int getContentViewResId() {
@@ -303,8 +318,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             // 读取数据库中存在的数据并显示
             try {
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mFrom=? and mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
+                mChatMessages = DataSupport.where("mRegisterId=? and((mFrom=? and mTo=?) or (mFrom=? and mTo=?))",
+                        mLoginInfo.getRegisterId(), mLoginInfo.getRegisterId(), mContactId,
                         mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
 
             } catch (Exception e) {
@@ -318,6 +333,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             // TODO 滑动问题
             mRecyclerView.scrollToPosition(mAdapter.getItemCount());
         }
+
         // 群聊
         else {
             L.i("群组的Id是：" + mContactId);
@@ -327,9 +343,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
             // 读取数据库中存在的数据并显示
             try {
-                DataSupport.findAll(ChatMessage.class);
-                mChatMessages = DataSupport.where("(mFrom=? and mTo=?) or (mTo=?)",
-                        mLoginInfo.getRegisterId(), mContactId,
+                mChatMessages = DataSupport.where("mRegisterId=? and ((mFrom=? and mTo=?) or (mTo=?))",
+                        mLoginInfo.getRegisterId(), mLoginInfo.getRegisterId(), mContactId,
                         mContactId).find(ChatMessage.class);
 
             } catch (Exception e) {
@@ -470,6 +485,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     }
 
     /**
+     * 发送文字信息
+     *
      * @param view
      */
     @OnClick(R.id.acb_send)
@@ -498,6 +515,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
      * @param emMessage
      */
     private void easeMobSendMessage(final EMMessage emMessage) {
+        // 给消息添加本人的头像和昵称
+        emMessage.setAttribute("avatar", mLoginInfo.getAvatar());
+        emMessage.setAttribute("nick", mLoginInfo.getNickName());
         // 调用环信SDK发送信息
         EMClient.getInstance().chatManager().sendMessage(emMessage);
         // 监听消息发送状态

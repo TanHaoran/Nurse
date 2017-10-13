@@ -27,6 +27,7 @@ import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.StringUtil;
@@ -242,6 +243,9 @@ public class CreateGroupActivity extends BaseActivity {
      */
     private void sendGroupFirstMessage(String hxGroupId, String content) {
         EMMessage emMessage = EMMessage.createTxtSendMessage(content, hxGroupId);
+        // 给消息添加本人的头像和昵称
+        emMessage.setAttribute("avatar", mLoginInfo.getAvatar());
+        emMessage.setAttribute("nick", mLoginInfo.getNickName());
         //如果是群聊，设置chattype，默认是单聊
         emMessage.setChatType(EMMessage.ChatType.GroupChat);
         //发送消息
@@ -399,8 +403,7 @@ public class CreateGroupActivity extends BaseActivity {
                             for (Contact c : contacts) {
                                 sb.append(c.getTarget() + ",");
                             }
-                            sendGroupFirstMessage(groupId,
-                                    "我邀请了" + sb.substring(0, sb.length() - 1) + "加入本群");
+                            sendGroupFirstMessage(groupId, "我邀请了" + sb.substring(0, sb.length() - 1) + "加入本群");
                             finish();
                         } else {
                             T.showShort(CreateGroupActivity.this, commonResult.getMsg());
@@ -431,6 +434,8 @@ public class CreateGroupActivity extends BaseActivity {
             selectView.setSelected(contact.isChoose());
             holder.setText(R.id.tv_nickname, contact.getTarget());
 
+            holder.setOnClickListener(R.id.sv_choose, null);
+
             holder.getView(R.id.rl_contact).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -443,6 +448,27 @@ public class CreateGroupActivity extends BaseActivity {
                     }
                     setDatas(mBodyDatas);
                     notifyDataSetChanged();
+
+                    if (mGroupId == null) {
+                        List<Contact> contacts = new ArrayList<>();
+                        Contact me = new Contact();
+                        me.setMyId(mLoginInfo.getRegisterId());
+                        me.setNickName(mLoginInfo.getNickName());
+                        me.setName(mLoginInfo.getName());
+                        contacts.add(me);
+                        for (Contact c : mBodyDatas) {
+                            if (c.isChoose()) {
+                                Contact friend = new Contact();
+                                friend.setFriendId(c.getFriendId());
+                                contacts.add(friend);
+                            }
+                        }
+                        GroupInfo groupInfo = new GroupInfo();
+                        groupInfo.setRegisterId(mLoginInfo.getRegisterId());
+                        groupInfo.setHXNickName(me.getTarget() + "创建的群");
+                        groupInfo.setGroupMemberList(contacts);
+                        L.i("选择了人数：" + groupInfo.getGroupMemberList().size());
+                    }
                 }
             });
         }

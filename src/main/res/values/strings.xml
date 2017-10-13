@@ -258,7 +258,7 @@
     <string name="audit_failed_text">认证未通过原因</string>
     <string name="scan_qr_code_and_be_my_friend">扫描二维码，添加我为好友</string>
     <string name="please_select_hospital_first">请先选择医院</string>
-    <string name="in_hospital_account_please_edit_on_pc">院内账号请在PC端修改</string>
+    <string name="please_contact_admin_to_change">请联系运维人员修改</string>
 
     <string name="personal_info">个人信息</string>
     <string name="nickname">昵称</string>

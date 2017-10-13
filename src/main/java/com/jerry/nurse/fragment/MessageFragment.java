@@ -47,6 +47,8 @@ public class MessageFragment extends BaseFragment {
 
     private String mRegisterId;
 
+    private int mCurrentPosition;
+
     /**
      * 实例化方法
      *
@@ -72,6 +74,15 @@ public class MessageFragment extends BaseFragment {
         super.onStart();
         // 刷新界面
         refresh();
+        mRecyclerView.scrollToPosition(mCurrentPosition);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        mCurrentPosition = lm.findFirstVisibleItemPosition();
+        L.i("消息界面不见了");
     }
 
     /**

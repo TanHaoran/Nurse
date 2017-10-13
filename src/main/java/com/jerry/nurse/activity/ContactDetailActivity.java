@@ -302,15 +302,11 @@ public class ContactDetailActivity extends BaseActivity {
                             info.delete();
                             ContactDetailResult contactDetailResult = new Gson().fromJson(response, ContactDetailResult.class);
                             if (contactDetailResult.getCode() == RESPONSE_SUCCESS) {
-                                if (contactDetailResult.getBody() != null) {
-                                    T.showShort(ContactDetailActivity.this, "删除好友成功");
-                                    // 删除消息列表中的聊天记录
-                                    List<Message> msgs = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
-                                            mRegisterId, mContact.getFriendId(), "1").find(Message.class);
-                                    for (Message m : msgs) {
-                                        m.delete();
-                                    }
-                                }
+                                T.showShort(ContactDetailActivity.this, "删除好友成功");
+                                // 删除消息列表中的聊天记录
+                                Message msg = DataSupport.where("mRegisterId=? and mContactId=? and mType=?",
+                                        mRegisterId, mContact.getFriendId(), "1").findFirst(Message.class);
+                                msg.delete();
                             } else {
                                 T.showShort(ContactDetailActivity.this, contactDetailResult.getMsg());
                             }

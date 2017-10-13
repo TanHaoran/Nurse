@@ -255,9 +255,7 @@ public class OfficeFragment extends BaseFragment {
         if (!TextUtils.isEmpty(loginInfo.getReguserId())) {
             return true;
         }
-        if (loginInfo.getPStatus() == AUDIT_SUCCESS && loginInfo.getQStatus() == AUDIT_SUCCESS
-                && !TextUtils.isEmpty(loginInfo.getHospitalId())
-                && !TextUtils.isEmpty(loginInfo.getDepartmentId())) {
+        if (loginInfo.getPStatus() == AUDIT_SUCCESS && loginInfo.getQStatus() == AUDIT_SUCCESS) {
             return true;
         } else {
             return false;

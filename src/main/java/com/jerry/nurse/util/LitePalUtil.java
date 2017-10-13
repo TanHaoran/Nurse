@@ -69,6 +69,8 @@ public class LitePalUtil {
     public static void updateUserInfo(Context context, UserInfo userInfo) {
         // 保存到SP
         updateSP(context, userInfo);
+
+
         userInfo.save();
     }
 

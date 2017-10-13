@@ -79,7 +79,7 @@ public class LoginManager {
                         // 如果登陆成功保存登陆信息并跳转页面
                         LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
                         if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
-                            save(loginInfoResult.getBody());
+                            LitePalUtil.saveLoginInfo(mContext, loginInfoResult.getBody());
                         } else {
                             T.showShort(mContext, loginInfoResult.getMsg());
                         }
