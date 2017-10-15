@@ -46,6 +46,7 @@ import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.KeyBoardUtil;
 import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.LocalContactCache;
+import com.jerry.nurse.util.LocalGroupCache;
 import com.jerry.nurse.util.MediaManager;
 import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.PictureUtil;
@@ -188,76 +189,96 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                             }
                         }
 
+                        // 判断是否是当前聊天界面从而更新
+                        if (!mGroup && emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                            if (mContactId.equals(emMessage.getFrom())) {
+                                // 设置消息已读
+                                makeMessagesRead();
+                                updateChatMessageList(chatMessage);
+                            }
+                        } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
+                            if (mContactId.equals(emMessage.getTo())) {
+                                // 设置消息已读
+                                makeMessagesRead();
+                                updateChatMessageList(chatMessage);
+                            }
+                        }
+
                         // 单聊
-                        if (!mGroup) {
-                            // 设置消息已读
-                            makeMessagesRead();
+                        if (emMessage.getChatType() == EMMessage.ChatType.Chat) {
+                            chatMessage.setGroup(false);
                             chatMessage.setTo(mLoginInfo.getRegisterId());
                             // 构建首页消息
-                            com.jerry.nurse.model.Message message = null;
-                            try {
-                                message = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "1",
-                                        EMClient.getInstance().getCurrentUser(), mContactId)
-                                        .findFirst(com.jerry.nurse.model.Message.class);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (message == null) {
-                                message = new com.jerry.nurse.model.Message();
-                            }
-                            message.setType(com.jerry.nurse.model.Message.TYPE_CHAT);
-                            message.setImageUrl(mContactInfo.getAvatar());
-                            message.setTitle(mContactInfo.getNickName());
-                            message.setTime(new Date().getTime());
-                            message.setRegisterId(EMClient.getInstance().getCurrentUser());
-                            message.setContactId(mContactId);
-                            message.save();
-                        }
-                        // 群聊
-                        else {
-                            chatMessage.setTo(mContactId);
-                            // 因为这里要异步获取发消息人的信息，所以使用了全局变量来记录
                             mHomePageMessage = null;
                             try {
-                                mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "2",
-                                        EMClient.getInstance().getCurrentUser(), mContactId)
+                                mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "1",
+                                        EMClient.getInstance()
+                                                .getCurrentUser(),
+                                        emMessage.getFrom())
                                         .findFirst(com.jerry.nurse.model.Message.class);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                             new LocalContactCache() {
                                 @Override
                                 protected void onLoadContactInfoSuccess(ContactInfo info) {
                                     if (mHomePageMessage == null) {
                                         mHomePageMessage = new com.jerry.nurse.model.Message();
                                     }
-                                    mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
-                                    mHomePageMessage.setImageResource(R.drawable.icon_qlt);
-                                    mHomePageMessage.setTitle(mGroupInfo.getHXNickName());
+                                    mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT);
+                                    mHomePageMessage.setImageUrl(info.getAvatar());
+                                    mHomePageMessage.setTitle(info.getNickName());
                                     mHomePageMessage.setTime(new Date().getTime());
                                     mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
-                                    mHomePageMessage.setContactId(mContactId);
+                                    mHomePageMessage.setContactId(emMessage.getFrom());
                                     mHomePageMessage.save();
                                 }
                             }.getContactInfo(EMClient.getInstance().getCurrentUser(),
                                     emMessage.getFrom());
+                        }
+                        // 群聊
+                        else if (emMessage.getChatType() == EMMessage
+                                .ChatType.GroupChat) {
+                            chatMessage.setGroup(true);
+                            chatMessage.setTo(emMessage.getTo());
+                            // 因为这里要异步获取发消息人的信息，所以使用了全局变量来记录
+                            mHomePageMessage = null;
+                            try {
+                                mHomePageMessage = DataSupport.where("mType=? and mRegisterId=? and mContactId=?", "2",
+                                        EMClient.getInstance().getCurrentUser(), emMessage.getTo())
+                                        .findFirst(com.jerry.nurse.model.Message.class);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
+                            new LocalGroupCache() {
+                                @Override
+                                protected void onLoadGroupInfoSuccess
+                                        (final GroupInfo gInfo) {
+                                    new LocalContactCache() {
+                                        @Override
+                                        protected void onLoadContactInfoSuccess(ContactInfo info) {
+                                            if (mHomePageMessage == null) {
+                                                mHomePageMessage = new com.jerry.nurse.model.Message();
+                                            }
+                                            mHomePageMessage.setType(com.jerry.nurse.model.Message.TYPE_CHAT_GROUP);
+                                            mHomePageMessage.setImageResource(R.drawable.icon_qlt);
+                                            mHomePageMessage.setTitle(gInfo.getHXNickName());
+                                            mHomePageMessage.setTime(new Date().getTime());
+                                            mHomePageMessage.setRegisterId(EMClient.getInstance().getCurrentUser());
+                                            mHomePageMessage.setContactId(emMessage.getTo());
+                                            mHomePageMessage.save();
+                                        }
+                                    }.getContactInfo(EMClient.getInstance().getCurrentUser(),
+                                            emMessage.getFrom());
+
+                                }
+                            }.getGroupInfo(EMClient.getInstance().getCurrentUser(),
+                                    emMessage.getTo());
                         }
                         chatMessage.setTime(emMessage.getMsgTime());
                         chatMessage.setFrom(emMessage.getFrom());
                         chatMessage.save();
-
-                        // 判断是否是当前聊天界面从而更新
-                        if (!mGroup && emMessage.getChatType() == EMMessage.ChatType.Chat) {
-                            if (mContactId.equals(emMessage.getFrom())) {
-                                updateChatMessageList(chatMessage);
-                            }
-                        } else if (emMessage.getChatType() == EMMessage.ChatType.GroupChat) {
-                            if (mContactId.equals(emMessage.getTo())) {
-                                updateChatMessageList(chatMessage);
-                            }
-                        }
                     }
                     break;
                 case MESSAGE_READ:
@@ -304,7 +325,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         // 设置消息已读
         makeMessagesRead();
 
-
         // 单聊
         if (!mGroup) {
             L.i("联系人的Id是：" + mContactId);
@@ -318,7 +338,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
             // 读取数据库中存在的数据并显示
             try {
-                mChatMessages = DataSupport.where("mRegisterId=? and((mFrom=? and mTo=?) or (mFrom=? and mTo=?))",
+                mChatMessages = DataSupport.where("mRegisterId=? and " +
+                                "mIsGroup=0 " +
+                                "and((mFrom=? and mTo=?) or (mFrom=? and mTo=?))",
                         mLoginInfo.getRegisterId(), mLoginInfo.getRegisterId(), mContactId,
                         mContactId, mLoginInfo.getRegisterId()).find(ChatMessage.class);
 
@@ -343,7 +365,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             }
             // 读取数据库中存在的数据并显示
             try {
-                mChatMessages = DataSupport.where("mRegisterId=? and ((mFrom=? and mTo=?) or (mTo=?))",
+                mChatMessages = DataSupport.where("mRegisterId=? and " +
+                                "mIsGroup=1 " +
+                                "and ((mFrom=? and mTo=?) or (mTo=?))",
                         mLoginInfo.getRegisterId(), mLoginInfo.getRegisterId(), mContactId,
                         mContactId).find(ChatMessage.class);
 
@@ -937,7 +961,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         String fileName = localUrl.substring(index + 1);
         localUrl = localUrl.substring(0, index + 1);
         String path = localUrl + "thumb_" + fileName;
-        path = path.substring(0, path.length() - 4);
+        // IOS会没有这个后缀
+        if (path.endsWith(".jpg")) {
+            path = path.substring(0, path.length() - 4);
+        }
         return path;
     }
 
