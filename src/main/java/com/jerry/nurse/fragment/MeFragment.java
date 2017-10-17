@@ -104,6 +104,7 @@ public class MeFragment extends BaseFragment {
 
         // 判断权限，是否显示已认证
         if (OfficeFragment.checkPermission()) {
+            mValidatedView.setVisibility(View.VISIBLE);
         }
 
         if (mLoginInfo.getNickName() != null) {

@@ -439,12 +439,16 @@ public class HospitalLoginActivity extends BaseActivity {
                             LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
                             if (!TextUtils.isEmpty(result.getBody().getReguserId())) {
                                 loginInfo.setReguserId(result.getBody().getReguserId());
-                                loginInfo.setName(result.getBody().getName());
                             } else if (!TextUtils.isEmpty(result.getBody().getXFId())) {
                                 loginInfo.setXFId(result.getBody().getXFId());
                             } else if (!TextUtils.isEmpty(result.getBody().getPBId())) {
                                 loginInfo.setPBId(result.getBody().getPBId());
                             }
+                            loginInfo.setName(result.getBody().getName());
+                            loginInfo.setDepartmentId(result.getBody().getDepartmentId());
+                            loginInfo.setDepartmentName(result.getBody().getDepartmentName());
+                            loginInfo.setHospitalId(result.getBody().getHospitalId());
+                            loginInfo.setHospitalName(result.getBody().getHospitalName());
                             LitePalUtil.updateLoginInfo(HospitalLoginActivity.this, loginInfo);
                             T.showShort(HospitalLoginActivity.this, "绑定成功");
                             finish();

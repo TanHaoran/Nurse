@@ -423,6 +423,9 @@ public class MainActivity extends BaseActivity {
      * @return 新增联系人的数量
      */
     public static int updateContactInfoData(List<Contact> contacts) {
+        if (contacts == null) {
+            return 0;
+        }
         int count = 0;
         List<ContactInfo> localContacts = null;
         try {

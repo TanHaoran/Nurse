@@ -238,10 +238,13 @@ public class PersonalInfoActivity extends BaseActivity {
                 mNursingAgeTextView.setText(nursingAge);
             }
 
-            // 医院信息
-            mHospitalTextView.setText(mUserInfo.getHospitalName());
-            mOfficeTextView.setText(mUserInfo.getDepartmentName());
-            mJobNumberTextView.setText(mUserInfo.getEmployeeId());
+            if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
+                // 医院信息
+                mHospitalTextView.setText(mUserInfo.getHospitalName());
+                mOfficeTextView.setText(mUserInfo.getDepartmentName());
+                mJobNumberTextView.setText(mUserInfo.getEmployeeId());
+            }
+
 
             // 设置生日数据和监听
             setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday()),
@@ -450,7 +453,7 @@ public class PersonalInfoActivity extends BaseActivity {
         if (!TextUtils.isEmpty(mLoginInfo.getReguserId())) {
             T.showShort(this, R.string.please_contact_admin_to_change);
             return;
-        }else {
+        } else {
             T.showShort(this, "请绑定院内账号");
             return;
         }
