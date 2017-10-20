@@ -16,9 +16,22 @@
         app:show_back="true"
         app:title_text="@string/credit_check"/>
 
+    <TextView
+        android:id="@+id/tv_credit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/credit_height"
+        android:layout_margin="@dimen/line_paddingLeft"
+        android:background="@drawable/credit_detail"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:padding="@dimen/line_paddingLeft"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_textSize"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rl_credit"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/line_paddingLeft"/>
 
 </LinearLayout>

@@ -230,8 +230,9 @@ public class ContactFragment extends BaseFragment {
             }
         };
 
-        // 如果都通过审核了就可以显示医院和科室的信息
-        if (OfficeFragment.checkPermission()) {
+        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
+        // 如果是院务账号直接通过权限验证
+        if (!TextUtils.isEmpty(loginInfo.getReguserId())) {
             mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
                     new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
             mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,

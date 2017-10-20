@@ -339,6 +339,10 @@ public class OfficeFragment extends BaseFragment {
         startActivity(intent);
     }
 
+    /**
+     * 护理不良事件
+     * @param view
+     */
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
         if (TextUtils.isEmpty(mInfo.getReguserId())) {
@@ -368,12 +372,16 @@ public class OfficeFragment extends BaseFragment {
 //        startActivity(intent);
     }
 
+    /**
+     * 学分查看
+     * @param view
+     */
     @OnClick(R.id.ll_credit_check)
     void onCreditCheck(View view) {
-        if (TextUtils.isEmpty(mInfo.getReguserId())) {
-            showBindTipDialog();
-            return;
-        }
+//        if (TextUtils.isEmpty(mInfo.getReguserId())) {
+//            showBindTipDialog();
+//            return;
+//        }
         Intent intent = CreditCheckActivity.getIntent(getActivity());
         startActivity(intent);
     }

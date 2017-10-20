@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_credit"
+        style="@style/BusinessLineStyle">
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_toRightOf="@id/iv_event_report"
+            android:text="@string/event_report"/>
+
+        <ImageView
+            android:id="@+id/iv_credit"
+            style="@style/ArrowEnterStyle"/>
+
+        <TextView
+            android:id="@+id/tv_credit"
+            style="@style/personal_info_line_right_text_style"
+            tools:text="12"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toLeftOf="@id/iv_credit"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:singleLine="true"/>
+
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+</LinearLayout>

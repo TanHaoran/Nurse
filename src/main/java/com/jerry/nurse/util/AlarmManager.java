@@ -17,7 +17,7 @@ public class AlarmManager {
      * @param context
      */
     public static void playAlarm(Context context) {
-        boolean alarmOn = (boolean) SPUtil.get(context, SPUtil.ALARM_ON, false);
+        boolean alarmOn = (boolean) SPUtil.get(context, SPUtil.ALARM_ON, true);
         if (alarmOn) {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             if (notification == null) return;

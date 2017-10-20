@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jerry.nurse.R;
-import com.jerry.nurse.transform.RotatePageTransformer;
+import com.jerry.nurse.transform.DepthPageTransformer;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.view.MyViewPager;
 
@@ -123,7 +123,7 @@ public class IndicatorActivity extends BaseActivity {
 
             }
         });
-        mViewPager.setPageTransformer(true, new RotatePageTransformer());
+        mViewPager.setPageTransformer(true, new DepthPageTransformer());
     }
 
     @OnClick(R.id.btn_use)

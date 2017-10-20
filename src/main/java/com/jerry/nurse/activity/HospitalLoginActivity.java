@@ -444,6 +444,7 @@ public class HospitalLoginActivity extends BaseActivity {
                             } else if (!TextUtils.isEmpty(result.getBody().getPBId())) {
                                 loginInfo.setPBId(result.getBody().getPBId());
                             }
+                            loginInfo.setDepartmentUserCount(result.getBody().getDepartmentUserCount());
                             loginInfo.setName(result.getBody().getName());
                             loginInfo.setDepartmentId(result.getBody().getDepartmentId());
                             loginInfo.setDepartmentName(result.getBody().getDepartmentName());

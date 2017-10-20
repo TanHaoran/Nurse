@@ -10,8 +10,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
@@ -173,19 +175,25 @@ public class CellphoneContactActivity extends BaseActivity {
                 holder.setVisible(R.id.v_divider, true);
             }
 
-            // 没有使用我们的软件
+            ImageView imageView = holder.getView(R.id.iv_avatar);
+            Glide.with(CellphoneContactActivity.this).load(cellphoneContact.getAvatar())
+                    .placeholder(R.drawable.icon_avatar_default).into(imageView);
+
+            // TODO 这里需要做一下排序，使用我们软件的放在最前列，然后按照字幕排序
+
+            // 没有使用我们的软件-0
             if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_USAGE) {
                 holder.setVisible(R.id.tv_is_friend, false);
                 holder.setVisible(R.id.acb_add, false);
                 holder.setVisible(R.id.acb_invite, true);
             }
-            // 使用我们的软件，但不是好友
+            // 使用我们的软件，但不是好友-1
             else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_NOT_FRIEND) {
                 holder.setVisible(R.id.tv_is_friend, false);
                 holder.setVisible(R.id.acb_add, true);
                 holder.setVisible(R.id.acb_invite, false);
             }
-            // 使用我们的软件，而且是好友
+            // 使用我们的软件，而且是好友-2
             else if (cellphoneContact.getStatus() == CellphoneContact.TYPE_IS_FRIEND) {
                 holder.setVisible(R.id.tv_is_friend, true);
                 holder.setVisible(R.id.acb_add, false);

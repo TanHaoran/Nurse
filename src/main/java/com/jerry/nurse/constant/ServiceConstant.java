@@ -33,7 +33,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -262,7 +262,6 @@ public class ServiceConstant {
      * 创建群组
      */
     public static final String CREATE_GROUP = IP + "CreateGroup";
-
 
     /**
      * 获取某个群组的信息

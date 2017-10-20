@@ -159,7 +159,7 @@ public class AudioRecordButton extends AppCompatButton implements AudioManager.A
                                     reset();
                                 }
                                 // 录音时间过短
-                                if (!mIsRecording || mTime < 0.6f) {
+                                if (!mIsRecording || mTime < 1.0f) {
                                     mDialogManager.tooShort();
                                     mAudioManager.cancel();
                                     mHandler.sendEmptyMessageDelayed(MESSAGE_DIALOG_DISMISS, 1300);

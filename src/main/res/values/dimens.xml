@@ -89,6 +89,7 @@
     <dimen name="event_line_edit_max_width">150dp</dimen>
     <dimen name="event_line_edit_height">120dp</dimen>
     <dimen name="indicator_width">5dp</dimen>
+    <dimen name="credit_height">45dp</dimen>
 
     <!--联系人-->
     <dimen name="status_bar_height">20dp</dimen>
@@ -116,7 +117,7 @@
     <dimen name="chat_layout_paddingLeft">5dp</dimen>
     <dimen name="chat_edit_padding">4dp</dimen>
     <dimen name="chat_avatar_width">40dp</dimen>
-    <dimen name="chat_message_max_width">200dp</dimen>
+    <dimen name="chat_message_max_width">190dp</dimen>
     <dimen name="chat_line_paddingTop">7dp</dimen>
     <dimen name="chat_line_paddingLeft">70dp</dimen>
     <dimen name="chat_line_paddingRight">12dp</dimen>

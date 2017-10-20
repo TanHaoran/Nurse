@@ -114,7 +114,7 @@ public class SettingActivity extends BaseActivity {
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         // 初始化微博登录的对象
         mSsoHandler = new SsoHandler(this);
-        mAlarmOn = (boolean) SPUtil.get(this, SPUtil.ALARM_ON, false);
+        mAlarmOn = (boolean) SPUtil.get(this, SPUtil.ALARM_ON, true);
         L.i("读取到的值是:" + mAlarmOn);
         mAlarmButton.setOpen(mAlarmOn);
         mAlarmButton.setOnToggleListener(new ToggleButton.OnToggleListener() {

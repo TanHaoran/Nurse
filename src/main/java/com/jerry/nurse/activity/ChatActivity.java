@@ -42,6 +42,7 @@ import com.jerry.nurse.model.ContactInfo;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.ActivityCollector;
+import com.jerry.nurse.util.AlarmManager;
 import com.jerry.nurse.util.DateUtil;
 import com.jerry.nurse.util.KeyBoardUtil;
 import com.jerry.nurse.util.L;
@@ -161,6 +162,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     if (!name.equals("activity.ChatActivity")) {
                         return;
                     }
+
+                    // 播放系统提示音
+                    AlarmManager.playAlarm(getApplicationContext());
+
                     // 一条一条解析消息
                     List<EMMessage> messages = (List<EMMessage>) msg.obj;
                     for (final EMMessage emMessage : messages) {

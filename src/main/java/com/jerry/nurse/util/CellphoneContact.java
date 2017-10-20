@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 
+import static com.jerry.nurse.constant.ServiceConstant.AVATAR_ADDRESS;
+
 /**
  * 手机通讯录联系人
  */
@@ -24,7 +26,14 @@ public class CellphoneContact extends BaseIndexPinyinBean {
     private int status;
 
     public String getAvatar() {
-        return Avatar;
+        if (!TextUtils.isEmpty(Avatar)) {
+            if (Avatar.startsWith("http")) {
+                return Avatar;
+            } else {
+                return AVATAR_ADDRESS + Avatar;
+            }
+        }
+        return "";
     }
 
     public void setAvatar(String Avatar) {

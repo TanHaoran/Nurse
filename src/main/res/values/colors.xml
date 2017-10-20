@@ -40,6 +40,8 @@
     <color name="plugin_line_divider">#EEEEEE</color>
     <color name="plugin_title_text_color">#333333</color>
     <color name="plugin_line_normal_color">#FFFFFF</color>
+    <color name="credit_light">#ffac27</color>
+    <color name="credit_dark">#ff771c</color>
 
     <!--联系人-->
     <color name="partTranslucent">#39000000</color>

@@ -233,6 +233,7 @@ public class GroupInfoActivity extends BaseActivity {
      * 退出群聊
      */
     private void quitGroup() {
+        mGroupInfo.setRegisterId(mRegisterId);
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.QUIT_GROUP)

@@ -233,6 +233,14 @@ public class TitleBar extends RelativeLayout {
     }
 
     /**
+     * 获取右侧文字
+     * @return
+     */
+    public String getRightText() {
+        return mRightTextView.getText().toString();
+    }
+
+    /**
      * 设置左侧按钮的监听事件
      *
      * @param onLeftClickListener
