@@ -99,6 +99,10 @@
     <string name="profession_event">职业暴露</string>
     <string name="other_event">其他事件</string>
     <string name="zero_event">零事件</string>
+    <string name="score">分</string>
+    <string name="license_units">授权单位: </string>
+    <string name="activity_time">活动时间: </string>
+
     <!--跌倒事件-->
     <string name="happened_time">发生时间</string>
     <string name="patient_number">患者住院号</string>

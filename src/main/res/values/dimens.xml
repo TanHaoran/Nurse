@@ -90,6 +90,7 @@
     <dimen name="event_line_edit_height">120dp</dimen>
     <dimen name="indicator_width">5dp</dimen>
     <dimen name="credit_height">45dp</dimen>
+    <dimen name="credit_detail_line_height">33dp</dimen>
 
     <!--联系人-->
     <dimen name="status_bar_height">20dp</dimen>
