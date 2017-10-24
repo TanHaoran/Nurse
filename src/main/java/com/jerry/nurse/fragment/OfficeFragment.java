@@ -341,12 +341,13 @@ public class OfficeFragment extends BaseFragment {
 
     /**
      * 护理不良事件
+     *
      * @param view
      */
     @OnClick(R.id.ll_event_report)
     void onEventReport(View view) {
         if (TextUtils.isEmpty(mInfo.getReguserId())) {
-            showBindTipDialog();
+            showBindTipDialog("不良事件");
             return;
         }
         Intent intent = HtmlActivity.getIntent(getActivity(),
@@ -358,10 +359,10 @@ public class OfficeFragment extends BaseFragment {
     /**
      * 显示提示框
      */
-    private void showBindTipDialog() {
+    private void showBindTipDialog(String msg) {
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.tips)
-                .setMessage("请先绑定院内账号，即可开启此功能！")
+                .setMessage("请先绑定" + msg + "账号，即可开启此功能！")
                 .setPositiveButton(R.string.ok, null)
                 .show();
     }
@@ -374,24 +375,25 @@ public class OfficeFragment extends BaseFragment {
 
     /**
      * 学分查看
+     *
      * @param view
      */
     @OnClick(R.id.ll_credit_check)
     void onCreditCheck(View view) {
-//        if (TextUtils.isEmpty(mInfo.getReguserId())) {
-//            showBindTipDialog();
-//            return;
-//        }
+        if (TextUtils.isEmpty(mInfo.getXFId())) {
+            showBindTipDialog("学分");
+            return;
+        }
         Intent intent = CreditCheckActivity.getIntent(getActivity());
         startActivity(intent);
     }
 
     @OnClick(R.id.ll_schedule_check)
     void onScheduleCheck(View view) {
-        if (TextUtils.isEmpty(mInfo.getReguserId())) {
-            showBindTipDialog();
-            return;
-        }
+//        if (TextUtils.isEmpty(mInfo.getPBId())) {
+//            showBindTipDialog("排班");
+//            return;
+//        }
         Intent intent = ScheduleActivity.getIntent(getActivity());
         startActivity(intent);
     }

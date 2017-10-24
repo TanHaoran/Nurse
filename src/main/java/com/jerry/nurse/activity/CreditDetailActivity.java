@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.TextView;
 
 import com.jerry.nurse.R;
@@ -54,20 +53,7 @@ public class CreditDetailActivity extends BaseActivity {
 
         @Override
         protected void convert(ViewHolder holder, CreditDetail credit, int position) {
-            TextView textView = holder.getView(R.id.tv_credit);
-            textView.setText(credit.getScore() + "");
-            if (credit.getScore() == 0.0f) {
-                textView.setTextColor(mContext.getResources().getColor(R.color.gray_textColor));
-            } else {
-                textView.setTextColor(mContext.getResources().getColor(R.color.credit_dark));
-            }
-            holder.setText(R.id.tv_name, credit.getName());
-            holder.setOnClickListener(R.id.rl_credit, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                }
-            });
         }
     }
 }

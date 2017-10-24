@@ -911,16 +911,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     // 指定背景形状
                     Bitmap bg = BitmapFactory.decodeResource(getResources(), R.drawable.chat_receive_normal);
                     // 裁剪前景后放入背景
-                    Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
-                    holder.setImageBitmap(R.id.iv_image, bmp);
-                    holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = PhotoActivity.getIntent(ChatActivity.this,
-                                    null, chatMessage.getRemoteUrl());
-                            startActivity(intent);
-                        }
-                    });
+                    if (in != null) {
+                        Bitmap bmp = StreamUtil.getRoundCornerImage(bg, in);
+                        holder.setImageBitmap(R.id.iv_image, bmp);
+                        holder.setOnClickListener(R.id.iv_image, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = PhotoActivity.getIntent(ChatActivity.this,
+                                        null, chatMessage.getRemoteUrl());
+                                startActivity(intent);
+                            }
+                        });
+                    }
                     break;
                 default:
                     break;

@@ -94,13 +94,21 @@ public class HospitalAccountActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 设置绑定信息
+     * @param bindInfo
+     */
     private void setBindData(BindInfo bindInfo) {
         if (!TextUtils.isEmpty(bindInfo.getBLSJOpenId())) {
             mEventReportTextView.setText(bindInfo.getBLSJId());
         } else {
             mEventReportTextView.setText("");
         }
-        mCreditTextView.setText("");
+        if (!TextUtils.isEmpty(bindInfo.getXFOpenId())) {
+            mCreditTextView.setText(bindInfo.getXFId());
+        } else {
+            mCreditTextView.setText("");
+        }
         mScheduleTextView.setText("");
     }
 
@@ -144,29 +152,28 @@ public class HospitalAccountActivity extends BaseActivity {
     @OnClick(R.id.rl_credit)
     void onCredit(View view) {
         // 绑定学分
-        if (TextUtils.isEmpty(mBindInfo.getBLSJOpenId())) {
-//            Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_BIND, ThirdPartInfo.TYPE_CREDIT);
-//            startActivity(intent);
+        if (TextUtils.isEmpty(mBindInfo.getXFOpenId())) {
+            Intent intent = HospitalLoginActivity.getIntent(this, HospitalLoginActivity.TYPE_BIND, ThirdPartInfo.TYPE_CREDIT);
+            startActivity(intent);
         }
         // 解绑学分
-        else {
-//            new AlertDialog.Builder(this)
-//                    .setTitle(R.string.tips)
-//                    .setMessage("确定解除绑定 " + mBindInfo.getBLSJId() + " 吗?")
-//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
-//                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
-//                            Qq qq = new Qq();
-//                            qq.setOpenId(mBindInfo.getQQOpenId());
-//                            thirdPartInfo.setQQData(qq);
-//                            thirdPartInfo.setType(ThirdPartInfo.TYPE_QQ);
-//                            unBind(thirdPartInfo);
-//                        }
-//                    })
-//                    .setNegativeButton(R.string.cancel, null)
-//                    .show();
+        else if (!TextUtils.isEmpty(mBindInfo.getXFOpenId()) && mBindInfo.getBindCount() > 1) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.tips)
+                    .setMessage("确定解除绑定 " + mBindInfo.getXFId() + " 吗?")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            ThirdPartInfo thirdPartInfo = new ThirdPartInfo();
+                            thirdPartInfo.setRegisterId(mBindInfo.getRegisterId());
+                            thirdPartInfo.setLoginName(mBindInfo.getXFId());
+                            thirdPartInfo.setLoginType(ThirdPartInfo.TYPE_CREDIT);
+                            unBind(thirdPartInfo);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
     }
 
@@ -207,7 +214,7 @@ public class HospitalAccountActivity extends BaseActivity {
     /**
      * 解绑账号
      */
-    private void unBind(ThirdPartInfo thirdPartInfo) {
+    private void unBind(final ThirdPartInfo thirdPartInfo) {
         mProgressDialogManager.show();
         OkHttpUtils.postString()
                 .url(ServiceConstant.UNBIND)
@@ -222,9 +229,15 @@ public class HospitalAccountActivity extends BaseActivity {
                         if (commonResult.getCode() == RESPONSE_SUCCESS) {
                             T.showShort(HospitalAccountActivity.this, "解绑成功");
                             LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
-                            loginInfo.setReguserId("");
-                            loginInfo.setHospitalId("");
-                            loginInfo.setDepartmentId("");
+                            if (thirdPartInfo.getLoginType() == ThirdPartInfo.TYPE_EVENT_REPORT) {
+                                loginInfo.setReguserId("");
+                                loginInfo.setHospitalId("");
+                                loginInfo.setDepartmentId("");
+                            } else if (thirdPartInfo.getLoginType() == ThirdPartInfo.TYPE_CREDIT) {
+                                loginInfo.setXFId("");
+                                loginInfo.setHospitalId("");
+                                loginInfo.setDepartmentId("");
+                            }
                             LitePalUtil.updateLoginInfo(HospitalAccountActivity.this, loginInfo);
                             // 获取用户所有绑定信息
                             getBindInfo(mLoginInfo.getRegisterId());

@@ -33,7 +33,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://zh.buzzlysoft.com/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -283,6 +283,10 @@ public class ServiceConstant {
      * 修改群昵称
      */
     public static final String UPDATE_GROUP_NICKNAME = IP + "UpdateGroupNickName";
+    /**
+     * 查询学分
+     */
+    public static final String GET_CREIDT_SCORE = IP + "GetCreditScore";
 
 
     /**
@@ -299,5 +303,6 @@ public class ServiceConstant {
      * 获取微博基本信息
      */
     public static final String MICRO_BLOG_GET_USER_INFO = "https://api.weibo.com/2/users/show.json";
+
 
 }

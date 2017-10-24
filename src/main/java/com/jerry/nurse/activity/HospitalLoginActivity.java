@@ -183,17 +183,6 @@ public class HospitalLoginActivity extends BaseActivity {
 
             }
         });
-
-        mLocationManager = new BaiduLocationManager(this);
-        mLocationManager.setLocationListener(new BaiduLocationManager.LocationListener() {
-            @Override
-            public void onLocationFinished(double latitude, double longitude) {
-                // 获取所有医院信息
-                getHospitals(latitude, longitude);
-            }
-        });
-
-        mLocationManager.start();
     }
 
     private void setupBindState() {
@@ -246,6 +235,7 @@ public class HospitalLoginActivity extends BaseActivity {
      * @param longitude
      */
     private void getHospitals(double latitude, double longitude) {
+        mProgressDialogManager.show();
         OkHttpUtils.get().url(ServiceConstant.GET_NEARBY_HOSPITAL_LIST)
                 .addParams("lat", String.valueOf(latitude))
                 .addParams("lng", String.valueOf(longitude))
@@ -257,6 +247,29 @@ public class HospitalLoginActivity extends BaseActivity {
                         HospitalResult result = new Gson().fromJson(response, HospitalResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             mHospitals = result.getBody();
+
+                            if (mHospitals == null) {
+                                T.showShort(HospitalLoginActivity.this, "医院列表为空");
+                                return;
+                            } else {
+                                mHospitalNames = new ArrayList<>();
+                                for (HospitalResult.Hospital h : mHospitals) {
+                                    mHospitalNames.add(h.getName());
+                                }
+                            }
+                            // 创建并显示底布弹出选择框
+                            BottomDialogManager dialog = new BottomDialogManager(HospitalLoginActivity.this);
+                            dialog.setOnItemSelectedListener(mHospitalNames, new BottomDialogManager.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(int position, String item) {
+                                    mHospitalTextView.setText(item);
+                                    mHospital = mHospitals.get(position);
+                                    // 检测信息是否填写完整
+                                    checkIfEmpty();
+                                }
+                            });
+                            dialog.showSelectDialog(mHospitalTextView.getText().toString());
+                            dialog.setTitle("请选择医院");
                         }
                     }
                 });
@@ -269,28 +282,18 @@ public class HospitalLoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_hospital)
     void onHospital(View view) {
-        if (mHospitals == null) {
-            showShort(this, "医院列表为空");
-            return;
-        } else {
-            mHospitalNames = new ArrayList<>();
-            for (HospitalResult.Hospital h : mHospitals) {
-                mHospitalNames.add(h.getName());
-            }
-        }
-        // 创建并显示底布弹出选择框
-        BottomDialogManager dialog = new BottomDialogManager(HospitalLoginActivity.this);
-        dialog.setOnItemSelectedListener(mHospitalNames, new BottomDialogManager.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(int position, String item) {
-                mHospitalTextView.setText(item);
-                mHospital = mHospitals.get(position);
-                // 检测信息是否填写完整
-                checkIfEmpty();
-            }
-        });
-        dialog.showSelectDialog(mHospitalTextView.getText().toString());
-        dialog.setTitle("请选择医院");
+
+        // 获取所有医院信息
+        getHospitals(34.228983, 108.894341);
+
+//        mLocationManager = new BaiduLocationManager(this);
+//        mLocationManager.setLocationListener(new BaiduLocationManager.LocationListener() {
+//            @Override
+//            public void onLocationFinished(double latitude, double longitude) {
+//            }
+//        });
+//
+//        mLocationManager.start();
     }
 
     /**
@@ -317,6 +320,7 @@ public class HospitalLoginActivity extends BaseActivity {
                     case CREDIT:
                         mAccountType = ThirdPartInfo.TYPE_CREDIT;
                         mHospitalLayout.setVisibility(View.VISIBLE);
+                        break;
                     case SCHEDULE:
                         mAccountType = ThirdPartInfo.TYPE_SCHEDULE;
                         mHospitalLayout.setVisibility(View.VISIBLE);
@@ -474,9 +478,9 @@ public class HospitalLoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (mLocationManager.isStarted()) {
-            mLocationManager.stop();
-        }
+//
+//        if (mLocationManager.isStarted()) {
+//            mLocationManager.stop();
+//        }
     }
 }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.activity.CreditCheckActivity;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
 import com.jerry.nurse.activity.SettingActivity;
@@ -55,6 +56,8 @@ public class MeFragment extends BaseFragment {
     private LoginInfo mLoginInfo;
     private ProgressDialogManager mProgressDialogManager;
 
+    private LoginInfo mInfo;
+
     /**
      * 实例化方法
      *
@@ -73,6 +76,7 @@ public class MeFragment extends BaseFragment {
     @Override
     public void init(Bundle savedInstanceState) {
         mProgressDialogManager = new ProgressDialogManager(getActivity());
+        mInfo = DataSupport.findFirst(LoginInfo.class);
     }
 
     @Override
@@ -190,11 +194,16 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_credit)
     void onCredit(View view) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.tips)
-                .setMessage("抱歉，你没有开通这个业务")
-                .setPositiveButton(R.string.ok, null)
-                .show();
+        if (TextUtils.isEmpty(mInfo.getXFId())) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.tips)
+                    .setMessage("请先绑定学分账号，即可开启此功能！")
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+            return;
+        }
+        Intent intent = CreditCheckActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 
     @OnClick(R.id.rl_collection)

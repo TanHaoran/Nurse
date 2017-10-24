@@ -399,8 +399,8 @@ public class MyApplication extends LitePalApplication {
         // 设置连接超时和读取超时时间
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new LoggerInterceptor(L.TAG))
-                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
-                .readTimeout(10000L, TimeUnit.MILLISECONDS)
+                .connectTimeout(15000L, TimeUnit.MILLISECONDS)
+                .readTimeout(15000L, TimeUnit.MILLISECONDS)
                 //其他配置
                 .build();
 
