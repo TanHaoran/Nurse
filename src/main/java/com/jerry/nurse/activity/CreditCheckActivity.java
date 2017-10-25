@@ -44,8 +44,11 @@ public class CreditCheckActivity extends BaseActivity {
     private CreditAdapter mAdapter;
 
     private List<CreditDetail> mCredits;
+    private List<CreditDetail> mOriginCredits;
 
     private LoginInfo mLoginInfo;
+
+    private int mYear;
 
     private static final String[] CREDIT_ITEM = {"国家级学分", "省级学分", "一类学术会学分",
             "核心期刊论文", "院级培训班", "院级专题讲座", "院级操作培训", "院级护理查房", "科室学分",
@@ -65,16 +68,17 @@ public class CreditCheckActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
 
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        mOriginCredits = new ArrayList<>();
         mCredits = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
-        int end = calendar.get(Calendar.YEAR);
+        mYear= calendar.get(Calendar.YEAR);
         final List<String> years = new ArrayList<>();
-        for (int i = 2014; i <= end; i++) {
+        for (int i = 2014; i <= mYear; i++) {
             years.add(i + "");
         }
 
-        mTitleBar.setRightText(end + "");
+        mTitleBar.setRightText(mYear + "");
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
             @Override
@@ -84,6 +88,7 @@ public class CreditCheckActivity extends BaseActivity {
                 dialog.setOnItemSelectedListener(years, new BottomDialogManager.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(int position, String item) {
+                        mTitleBar.setRightText(item);
                         getCredit(mLoginInfo.getXFId(), Integer.parseInt(item));
                     }
                 });
@@ -93,7 +98,7 @@ public class CreditCheckActivity extends BaseActivity {
             }
         });
 
-        getCredit(mLoginInfo.getXFId(), end);
+        getCredit(mLoginInfo.getXFId(), mYear);
     }
 
     /**
@@ -111,9 +116,11 @@ public class CreditCheckActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
+                        mOriginCredits = new ArrayList<>();
                         mCredits = new ArrayList<>();
                         CreditResult result = new Gson().fromJson(response, CreditResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
+                            mOriginCredits = result.getBody();
                             calculationCredit(result.getBody());
                             setCreditData();
                         } else {
@@ -209,7 +216,7 @@ public class CreditCheckActivity extends BaseActivity {
         }
 
         @Override
-        protected void convert(ViewHolder holder, CreditDetail credit, int position) {
+        protected void convert(ViewHolder holder, final CreditDetail credit, int position) {
             holder.setText(R.id.tv_name, credit.getType());
             DecimalFormat decimalFormat = new DecimalFormat("0.0");
             holder.setText(R.id.tv_credit, decimalFormat.format(credit.getScore()));
@@ -219,6 +226,21 @@ public class CreditCheckActivity extends BaseActivity {
             } else {
                 scoreView.setTextColor(getResources().getColor(R.color.gray_textColor));
             }
+            holder.setOnClickListener(R.id.rl_credit, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<CreditDetail> details = new ArrayList<>();
+                    for(CreditDetail cd : mOriginCredits) {
+                        if (cd.getType().equals(credit.getType())) {
+                            details.add(cd);
+                        }
+                    }
+                    if (credit.getScore() != 0.0f) {
+                        Intent intent = CreditDetailActivity.getIntent(CreditCheckActivity.this, details, mYear);
+                        startActivity(intent);
+                    }
+                }
+            });
         }
     }
 }

@@ -16,17 +16,50 @@
         app:show_back="true"
         app:title_text="@string/credit_check"/>
 
-    <TextView
-        android:id="@+id/tv_credit"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/credit_height"
-        android:layout_margin="@dimen/line_paddingLeft"
-        android:background="@drawable/credit_detail"
-        android:ellipsize="end"
+    <LinearLayout
+        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="@dimen/line_paddingLeft"
-        android:textColor="@color/white"
-        android:textSize="@dimen/normal_textSize"/>
+        android:background="@drawable/credit_detail"
+        android:layout_width="match_parent"
+        android:paddingLeft="@dimen/line_paddingLeft"
+        android:paddingRight="@dimen/line_paddingLeft"
+        android:layout_height="@dimen/credit_height"
+        android:layout_margin="@dimen/line_paddingLeft">
+
+        <TextView
+            android:id="@+id/tv_credit_start"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            tools:text="2017年共获得国家级学分"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <TextView
+            tools:text="18.0"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_credit"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_textSize"/>
+
+
+        <TextView
+            tools:text="分"
+            android:id="@+id/tv_credit_end"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_textSize"/>
+
+    </LinearLayout>
+
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rl_credit"

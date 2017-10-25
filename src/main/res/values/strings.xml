@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">格格</string>
+    <string name="app_name">燕尾帽</string>
 
     <!--公共-->
     <string name="back">返回</string>
@@ -34,7 +34,7 @@
     <string name="send_verification_code">发送验证码</string>
     <string name="password">密码</string>
     <string name="read_and_agree">我已阅读并同意</string>
-    <string name="protocol">格格服务协议</string>
+    <string name="protocol">燕尾帽服务协议</string>
     <string name="please_agree">请勾选同意</string>
     <string name="signup">注册</string>
     <string name="vertical_line">|</string>

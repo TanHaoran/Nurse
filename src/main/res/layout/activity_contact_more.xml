@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height"
         app:show_back="true"
-        app:title_text="@string/hospital_account"/>
+        app:title_text="@string/more"/>
 
     <ScrollView
         android:layout_width="match_parent"

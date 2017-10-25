@@ -177,8 +177,6 @@ public class ContactDetailActivity extends BaseActivity {
         L.i("联系人信息是：" + contact.toString());
         // 如果不是好友
         if (!contact.isIsFriend()) {
-            mHospitalLayout.setVisibility(View.GONE);
-            mOfficeLayout.setVisibility(View.GONE);
             mNameTextView.setVisibility(View.INVISIBLE);
             String cellphone = contact.getPhone();
             if (cellphone != null) {

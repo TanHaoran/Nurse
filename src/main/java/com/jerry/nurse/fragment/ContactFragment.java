@@ -232,7 +232,7 @@ public class ContactFragment extends BaseFragment {
 
         LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
         // 如果是院务账号直接通过权限验证
-        if (!TextUtils.isEmpty(loginInfo.getReguserId())) {
+        if (!TextUtils.isEmpty(loginInfo.getXFId())) {
             mHeaderAdapter.setHeaderView(0, R.layout.item_contact_header_top,
                     new ContactTopHeaderBean(mLoginInfo.getDepartmentName()));
             mHeaderAdapter.setHeaderView(1, R.layout.item_contact_header_top,

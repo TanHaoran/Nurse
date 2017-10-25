@@ -92,6 +92,8 @@ public class LitePalUtil {
         }
         if (!TextUtils.isEmpty(loginInfo.getAvatar())) {
             SPUtil.put(context, SPUtil.AVATAR, loginInfo.getAvatar());
+        } else {
+            SPUtil.put(context, SPUtil.AVATAR, "");
         }
     }
 

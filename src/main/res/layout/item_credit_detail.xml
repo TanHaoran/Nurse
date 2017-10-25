@@ -4,100 +4,118 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/line_paddingLeft"
-    android:layout_marginRight="@dimen/line_paddingLeft"
-    android:background="@drawable/round_gray"
+    android:layout_marginBottom="@dimen/line_paddingLeft"
+    android:paddingLeft="@dimen/line_paddingLeft"
+    android:paddingRight="@dimen/line_paddingLeft"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/rl_credit"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/credit_height"
-        android:padding="@dimen/line_paddingLeft">
-
-        <TextView
-            android:id="@+id/tv_name"
-            style="@style/PersonalInfoLineLeftTextStyle"
-            android:layout_toRightOf="@id/iv_event_report"
-            tools:text="项目名称"/>
-
-        <TextView
-            android:layout_marginTop="2dp"
-            android:id="@+id/tv_text_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/score"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/small_textSize"/>
-
-        <TextView
-            android:layout_marginRight="@dimen/line_paddingLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_credit"
-            android:layout_toLeftOf="@id/tv_text_score"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/credit_dark"
-            android:textSize="@dimen/big_textSize"
-            tools:text="12"/>
-
-    </RelativeLayout>
-
-    <View
-        style="@style/DividerLineStyle"
-        android:layout_alignParentBottom="true"
-        android:paddingLeft="@dimen/line_paddingLeft"
-        android:paddingRight="@dimen/line_paddingLeft"/>
-
     <LinearLayout
+        android:background="@drawable/round_gray"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/credit_detail_line_height"
-        android:layout_marginTop="@dimen/line_paddingLeft"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/line_paddingLeft">
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/rl_credit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/credit_height"
+            android:padding="@dimen/line_paddingLeft">
 
-        <TextView
+            <TextView
+                android:layout_marginTop="2dp"
+                android:id="@+id/tv_text_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="@string/score"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/small_textSize"/>
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/license_units"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/normal_textSize"/>
+            <TextView
+                android:layout_marginRight="@dimen/line_paddingLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_credit"
+                android:layout_toLeftOf="@id/tv_text_score"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/credit_dark"
+                android:textSize="@dimen/big_textSize"
+                tools:text="12"/>
 
-        <TextView
-            android:id="@+id/tv_license_units"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/normal_textColor"
-            android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:paddingRight="@dimen/line_paddingLeft"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/tv_credit"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:id="@+id/tv_name"
+                style="@style/PersonalInfoLineLeftTextStyle"
+                android:layout_toRightOf="@id/iv_event_report"
+                tools:text="项目名称"/>
+
+        </RelativeLayout>
+
+        <View
+            style="@style/DividerLineStyle"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="@dimen/line_paddingLeft"
+            android:paddingRight="@dimen/line_paddingLeft"/>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/credit_detail_line_height"
+            android:layout_marginTop="@dimen/line_paddingLeft"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/line_paddingLeft">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/license_units"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:id="@+id/tv_license_units"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/line_paddingLeft"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/credit_detail_line_height"
+            android:layout_marginBottom="@dimen/line_paddingLeft"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/line_paddingLeft">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_time"
+                android:textColor="@color/gray_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+            <TextView
+                android:id="@+id/tv_activity_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/normal_textColor"
+                android:textSize="@dimen/normal_textSize"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/credit_detail_line_height"
-        android:layout_marginBottom="@dimen/line_paddingLeft"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/line_paddingLeft">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/activity_time"
-            android:textColor="@color/gray_textColor"
-            android:textSize="@dimen/normal_textSize"/>
-
-        <TextView
-            android:id="@+id/tv_activity_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/normal_textColor"
-            android:textSize="@dimen/normal_textSize"/>
-
-    </LinearLayout>
 
 </LinearLayout>

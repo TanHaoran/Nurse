@@ -1,6 +1,8 @@
 package com.jerry.nurse.model;
 
-public class CreditDetail {
+import java.io.Serializable;
+
+public class CreditDetail implements Serializable {
         /**
          * Name : 理论
          * Time : /Date(1469980800000+0800)/

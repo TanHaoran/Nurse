@@ -194,7 +194,7 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.rl_credit)
     void onCredit(View view) {
-        if (TextUtils.isEmpty(mInfo.getXFId())) {
+        if (TextUtils.isEmpty(mLoginInfo.getXFId())) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.tips)
                     .setMessage("请先绑定学分账号，即可开启此功能！")
