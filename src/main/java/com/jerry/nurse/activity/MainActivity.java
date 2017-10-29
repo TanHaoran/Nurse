@@ -29,10 +29,12 @@ import com.jerry.nurse.model.FriendListResult;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupListResult;
 import com.jerry.nurse.model.LoginInfo;
+import com.jerry.nurse.model.LoginInfoResult;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.EaseMobManager;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LitePalUtil;
 import com.jerry.nurse.util.SPUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -125,6 +127,8 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction(ACTION_CHAT_MESSAGE_READ);
         registerReceiver(mMessageReceiver, intentFilter);
 
+        // 更新最新的登录信息
+        getLoginInfo(mRegisterId);
         // 获取好友列表，并更新本地数据库
         getFriendList(mRegisterId);
         // 获取群组列表，并更新本地数据库
@@ -363,6 +367,29 @@ public class MainActivity extends BaseActivity {
                     break;
             }
         }
+    }
+
+    /**
+     * 获取用户登录信息，并更新本地数据库
+     */
+    private void getLoginInfo(final String registerId) {
+        mProgressDialogManager.show();
+        OkHttpUtils.get().url(ServiceConstant.GET_USER_LOGIN_INFO)
+                .addParams("RegisterId", registerId)
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        // 如果登陆成功保存登陆信息并跳转页面
+                        LoginInfoResult loginInfoResult = new Gson().fromJson(response, LoginInfoResult.class);
+                        if (loginInfoResult.getCode() == RESPONSE_SUCCESS) {
+                            LitePalUtil.saveLoginInfo(MainActivity.this, loginInfoResult.getBody());
+                        } else {
+                            L.i("更新登录信息失败");
+                        }
+                    }
+                });
     }
 
     /**

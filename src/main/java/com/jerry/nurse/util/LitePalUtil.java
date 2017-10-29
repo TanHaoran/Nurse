@@ -43,6 +43,7 @@ public class LitePalUtil {
         updateSP(context, loginInfo);
 
         loginInfo.save();
+        loginInfo = DataSupport.findFirst(LoginInfo.class);
     }
 
 

@@ -26,6 +26,7 @@ import com.jerry.nurse.listener.PermissionListener;
 import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.ContactDetailResult;
 import com.jerry.nurse.model.ContactInfo;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.Message;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
@@ -174,6 +175,7 @@ public class ContactDetailActivity extends BaseActivity {
      * @param contact
      */
     private void setUserData(Contact contact) {
+        LoginInfo loginInfo = DataSupport.findFirst(LoginInfo.class);
         L.i("联系人信息是：" + contact.toString());
         // 如果不是好友
         if (!contact.isIsFriend()) {
@@ -203,7 +205,9 @@ public class ContactDetailActivity extends BaseActivity {
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 如果是院内同事
-        if (mContact.isInternalHospital()) {
+        if (mContact.isInternalHospital() ||
+                (mContact.getHospitalName().equals(loginInfo.getHospitalName())
+                && mContact.getDepartmentName().equals(loginInfo.getDepartmentName())) ) {
             mHospitalLayout.setVisibility(View.VISIBLE);
             mOfficeLayout.setVisibility(View.VISIBLE);
             mOptionLayout.setVisibility(View.VISIBLE);

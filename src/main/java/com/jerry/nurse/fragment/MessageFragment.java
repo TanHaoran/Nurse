@@ -82,7 +82,6 @@ public class MessageFragment extends BaseFragment {
         super.onStop();
         LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
         mCurrentPosition = lm.findFirstVisibleItemPosition();
-        L.i("消息界面不见了");
     }
 
     /**

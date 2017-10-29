@@ -26,6 +26,7 @@ import com.jerry.nurse.model.ContactTopHeaderBean;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.util.CommonAdapter;
 import com.jerry.nurse.util.HeaderRecyclerAndFooterWrapperAdapter;
+import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.ViewHolder;
 import com.mcxtzhang.indexlib.IndexBar.bean.BaseIndexPinyinBean;
 import com.mcxtzhang.indexlib.IndexBar.widget.IndexBar;
@@ -80,6 +81,10 @@ public class ContactFragment extends BaseFragment {
 
     private LoginInfo mLoginInfo;
 
+
+    // 用来记录跳转页面时候的位置
+    private int mCurrentPosition;
+
     public static ContactFragment newInstance() {
 
         ContactFragment fragment = new ContactFragment();
@@ -102,10 +107,19 @@ public class ContactFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
+        L.i("联系人界面读取到的科室人数是：" + mLoginInfo.getDepartmentUserCount());
         mContacts = new ArrayList<>();
         // 读取好友列表
         loadContacts();
         updateView(true);
+        mRecyclerView.scrollToPosition(mCurrentPosition);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        mCurrentPosition = lm.findFirstVisibleItemPosition();
     }
 
     /**

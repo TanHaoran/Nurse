@@ -97,6 +97,12 @@ public class BottomDialogManager {
             lp.height = 6 * DensityUtil.dp2px(mContext, LINE_HEIGHT);
         }
         lp.height += DensityUtil.dp2px(mContext, 12);
+
+        // 计算是否要显示空白的底布区域
+        if (DensityUtil.hasNavBar(mContext)) {
+            lp.height += DensityUtil.dp2px(mContext, DensityUtil.getNavigationBarHeight(mContext));
+        }
+
         root.measure(0, 0);
         // 设置透明度
         lp.alpha = 9f;

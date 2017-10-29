@@ -140,6 +140,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private com.jerry.nurse.model.Message mHomePageMessage;
 
 
+    // 用来记录跳转页面时候的位置
+    private int mCurrentPosition;
+
+
     /**
      * @param context
      * @param contactId 聊天对方的Id
@@ -388,6 +392,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         }
 
+        mRecyclerView.scrollToPosition(mCurrentPosition);
+
         // 设置输入框的监听事件
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -597,6 +603,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     @Override
     protected void onStop() {
         super.onStop();
+        LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        mCurrentPosition = lm.findFirstVisibleItemPosition();
     }
 
     /**

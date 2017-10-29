@@ -350,7 +350,7 @@ public class PersonalInfoActivity extends BaseActivity {
 
     private String getAuditString(int status) {
         if (status == ServiceConstant.AUDIT_EMPTY) {
-            if (mLoginInfo.getReguserId() != null) {
+            if (mLoginInfo.getReguserId() != null || mLoginInfo.getXFId()!= null) {
                 return "请完善个人信息";
             } else {
                 return "未认证";

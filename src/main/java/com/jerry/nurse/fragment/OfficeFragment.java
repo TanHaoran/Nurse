@@ -18,7 +18,6 @@ import com.jerry.nurse.activity.AnnouncementActivity;
 import com.jerry.nurse.activity.AnnouncementDetailActivity;
 import com.jerry.nurse.activity.CreditCheckActivity;
 import com.jerry.nurse.activity.HtmlActivity;
-import com.jerry.nurse.activity.ScheduleActivity;
 import com.jerry.nurse.adapter.BannerAdapter;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.Announcement;
@@ -391,14 +390,17 @@ public class OfficeFragment extends BaseFragment {
         startActivity(intent);
     }
 
+    /**
+     * 排班查看
+     * @param view
+     */
     @OnClick(R.id.ll_schedule_check)
     void onScheduleCheck(View view) {
-//        if (TextUtils.isEmpty(mInfo.getPBId())) {
-//            showBindTipDialog("排班");
-//            return;
-//        }
-        Intent intent = ScheduleActivity.getIntent(getActivity());
-        startActivity(intent);
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.tips)
+                .setMessage("排班功能正在研发中！")
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     @Override

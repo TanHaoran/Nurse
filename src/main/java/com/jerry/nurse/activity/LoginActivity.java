@@ -296,7 +296,7 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_protocol)
     void onProtocol(View view) {
-        Intent intent = HtmlActivity.getIntent(this, ServiceConstant.PROTOCOL_URL, "格格服务协议");
+        Intent intent = HtmlActivity.getIntent(this, ServiceConstant.PROTOCOL_URL, "服务协议");
         startActivity(intent);
     }
 

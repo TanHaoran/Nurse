@@ -248,6 +248,11 @@ public class AddContactActivity extends BaseActivity {
         @Override
         protected void convert(ViewHolder holder, SearchUsersResult.User user, int position) {
             holder.setText(R.id.tv_nickname, user.getNickName());
+            if (!TextUtils.isEmpty(user.getNickName())) {
+                holder.setVisible(R.id.tv_nickname, true);
+            } else {
+                holder.setVisible(R.id.tv_nickname, false);
+            }
             holder.setText(R.id.tv_cellphone, user.getPhone());
             ImageView imageView = holder.getView(R.id.iv_avatar);
             Glide.with(AddContactActivity.this).load(user.getAvatar())
