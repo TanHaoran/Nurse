@@ -660,7 +660,7 @@ public class MainActivity extends BaseActivity {
         message.setRegisterId(registerId);
         message.setType(Message.TYPE_WELCOME);
         message.setTitle("你好，欢迎回来！");
-        message.setContent("感谢使用格格！");
+        message.setContent("感谢使用燕尾帽！");
         message.setTime(new Date().getTime());
         message.setImageResource(R.drawable.icon_zh);
         message.save();

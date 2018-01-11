@@ -382,7 +382,7 @@ public class SignupActivity extends BaseActivity {
     }
 
     /**
-     * 格格协议
+     * 燕尾帽协议
      *
      * @param view
      */

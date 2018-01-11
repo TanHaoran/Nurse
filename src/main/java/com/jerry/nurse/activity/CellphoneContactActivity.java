@@ -201,7 +201,7 @@ public class CellphoneContactActivity extends BaseActivity {
             }
             holder.setText(R.id.tv_name, cellphoneContact.getTarget());
             holder.setText(R.id.tv_cellphone, cellphoneContact.getPhone());
-            // 没有使用格格软件的情况
+            // 没有使用燕尾帽软件的情况
             holder.setOnClickListener(R.id.acb_invite, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -229,7 +229,7 @@ public class CellphoneContactActivity extends BaseActivity {
                             .show();
                 }
             });
-            // 使用格格但不是好友的情况
+            // 使用燕尾帽但不是好友的情况
             holder.setOnClickListener(R.id.acb_add, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -250,7 +250,7 @@ public class CellphoneContactActivity extends BaseActivity {
     private void sendSMS(String cellphone) {
         Uri smsToUri = Uri.parse("smsto:" + cellphone);
         Intent intent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-        intent.putExtra("sms_body", "我在使用格格app，非常好用哦，推荐你也来下载使用吧。下载地址：http://www.buzzlysoft.com");
+        intent.putExtra("sms_body", "我在使用燕尾帽app，非常好用哦，推荐你也来下载使用吧。下载地址：http://www.buzzlysoft.com");
         startActivity(intent);
     }
 }
