@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.google.gson.Gson;
-import com.jerry.nurse.activity.MainActivity;
+import com.jerry.nurse.activity.MeetingActivity;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.LoginInfoResult;
@@ -131,7 +131,7 @@ public class LoginManager {
      * 跳转到主页面
      */
     private void goToMainActivity() {
-        Intent intent = MainActivity.getIntent(ActivityCollector.getTopActivity());
+        Intent intent = MeetingActivity.getIntent(ActivityCollector.getTopActivity());
         mContext.startActivity(intent);
     }
 }

@@ -239,6 +239,30 @@
         android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
+        android:id="@+id/rl_change"
+        style="@style/BusinessLineStyle">
+
+        <ImageView
+            android:id="@+id/iv_change"
+            style="@style/PlugImageStyle"
+            android:src="@drawable/mine_setting"/>
+
+        <TextView
+            style="@style/PersonalInfoLineLeftTextStyle"
+            android:layout_marginLeft="@dimen/line_paddingLeft"
+            android:layout_toRightOf="@id/iv_change"
+            android:text="切换身份"/>
+
+        <ImageView
+            style="@style/ArrowEnterStyle"/>
+
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
+
+    <RelativeLayout
         android:id="@+id/rl_setting"
         style="@style/BusinessLineStyle">
 

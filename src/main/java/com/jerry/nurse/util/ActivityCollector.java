@@ -25,6 +25,20 @@ public class ActivityCollector {
     }
 
     /**
+     * 移除末位的几个Activity
+     *
+     * @param count
+     */
+    public static void removeLastActivity(int count) {
+        int size = mActivities.size();
+        for (int i = 1; count > 0; i++, count--) {
+            Activity activity = mActivities.get(size - i);
+            activity.finish();
+            mActivities.remove(activity);
+        }
+    }
+
+    /**
      * 从集合中移除一个Activity
      *
      * @param activity

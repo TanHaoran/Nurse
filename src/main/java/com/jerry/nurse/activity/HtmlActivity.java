@@ -75,6 +75,7 @@ public class HtmlActivity extends BaseActivity {
     public void init(Bundle savedInstanceState) {
 
         mUrl = getIntent().getStringExtra(EXTRA_URL);
+        L.i("网址是:" + mUrl);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         if (title != null) {
             mTitleBar.setVisibility(View.VISIBLE);

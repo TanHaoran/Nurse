@@ -113,7 +113,7 @@
         <!-- 设置环信应用的AppKey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
-            android:value="1119170720115073#princess-test"/>
+            android:value="1119170720115073#testdev"/>
         <!-- android:value="1119170720115073#princess"/> -->
         <!-- android:value="1119170720115073#testdev"/> -->
         <!-- 声明SDK所需的service SDK核心功能 -->
@@ -156,7 +156,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity">
+        <activity android:name=".activity.LoginActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activity.SignupActivity"
@@ -456,7 +457,24 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".activity.ContactMoreActivity">
         </activity>
-        <activity android:name=".activity.CreditDetailActivity">
+        <activity android:name=".activity.CreditDetailActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.MeetingActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.ChangeActivity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activity.Feedback1Activity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.Feedback2Activity"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.Feedback3Activity"
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 

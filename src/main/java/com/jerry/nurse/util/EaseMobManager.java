@@ -19,7 +19,7 @@ public class EaseMobManager {
      *
      * @param registerId
      */
-    public void login(String registerId) {
+    public void login(final String registerId) {
         EMClient.getInstance().login(registerId, PASSWORD, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -28,6 +28,8 @@ public class EaseMobManager {
 
             @Override
             public void onError(int code, String error) {
+                L.e("环信登录名:" + registerId);
+                L.e("环信登密码:" + PASSWORD);
                 L.e("环信登陆失败，错误码：" + code + "，错误信息：" + error);
             }
 

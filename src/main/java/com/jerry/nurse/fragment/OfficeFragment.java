@@ -17,6 +17,7 @@ import com.jerry.nurse.R;
 import com.jerry.nurse.activity.AnnouncementActivity;
 import com.jerry.nurse.activity.AnnouncementDetailActivity;
 import com.jerry.nurse.activity.CreditCheckActivity;
+import com.jerry.nurse.activity.Feedback1Activity;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.adapter.BannerAdapter;
 import com.jerry.nurse.constant.ServiceConstant;
@@ -392,6 +393,7 @@ public class OfficeFragment extends BaseFragment {
 
     /**
      * 排班查看
+     *
      * @param view
      */
     @OnClick(R.id.ll_schedule_check)
@@ -401,6 +403,12 @@ public class OfficeFragment extends BaseFragment {
                 .setMessage("排班功能正在研发中！")
                 .setPositiveButton(R.string.ok, null)
                 .show();
+    }
+
+    @OnClick(R.id.ll_feedback)
+    void onFeedback(View view) {
+        Intent intent = Feedback1Activity.getIntent(getActivity());
+        startActivity(intent);
     }
 
     @Override

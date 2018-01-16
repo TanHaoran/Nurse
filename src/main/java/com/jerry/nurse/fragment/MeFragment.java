@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jerry.nurse.R;
+import com.jerry.nurse.activity.ChangeActivity;
 import com.jerry.nurse.activity.CreditCheckActivity;
 import com.jerry.nurse.activity.HtmlActivity;
 import com.jerry.nurse.activity.PersonalInfoActivity;
@@ -152,7 +153,6 @@ public class MeFragment extends BaseFragment {
                         }
                     }
                 });
-
     }
 
     /**
@@ -223,6 +223,12 @@ public class MeFragment extends BaseFragment {
     @OnClick(R.id.rl_schedule)
     void onExam(View view) {
 
+    }
+
+    @OnClick(R.id.rl_change)
+    void onChange(View view) {
+        Intent intent = ChangeActivity.getIntent(getActivity());
+        startActivity(intent);
     }
 
     @OnClick(R.id.rl_setting)

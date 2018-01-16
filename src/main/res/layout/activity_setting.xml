@@ -88,10 +88,12 @@
             </RelativeLayout>
 
             <View
+                android:visibility="invisible"
                 style="@style/DividerLineStyle"
                 android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rl_qq"
                 style="@style/PersonalInfoLineStyle"
                 android:layout_height="@dimen/personal_info_line_height">
@@ -155,6 +157,7 @@
                 android:layout_marginLeft="@dimen/personal_info_line_paddingLeft"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rl_hospital_account"
                 style="@style/PersonalInfoLineStyle"
                 android:layout_height="@dimen/personal_info_line_height">

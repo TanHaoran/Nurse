@@ -267,7 +267,8 @@
 
                 <LinearLayout
                     android:id="@+id/ll_in_hospital"
-                    style="@style/Third_Party_login_Layout_Style">
+                    style="@style/Third_Party_login_Layout_Style"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="@dimen/third_party_login_width"
@@ -286,6 +287,7 @@
 
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/ll_qq"
                     style="@style/Third_Party_login_Layout_Style">
 

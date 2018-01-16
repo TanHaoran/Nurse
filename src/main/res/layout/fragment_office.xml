@@ -169,6 +169,28 @@
     </LinearLayout>
 
     <View
+        style="@style/DividerLineStyle"
+        android:layout_marginLeft="@dimen/plugin_divider_line_marginLeft"/>
+
+    <LinearLayout
+        android:id="@+id/ll_feedback"
+        style="@style/PluginLineStyle">
+
+        <ImageView
+            android:layout_width="@dimen/plugin_img_width"
+            android:layout_height="@dimen/plugin_img_width"
+            android:src="@drawable/icon_gg"/>
+
+        <TextView
+            style="@style/Plug_Text_Style"
+            android:text="有奖调查"/>
+
+
+        <ImageView
+            style="@style/ArrowEnterStyle"/>
+    </LinearLayout>
+
+    <View
         style="@style/DividerLineStyle"/>
 
 </LinearLayout>

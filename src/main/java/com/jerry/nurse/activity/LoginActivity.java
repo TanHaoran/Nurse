@@ -110,7 +110,9 @@ public class LoginActivity extends BaseActivity {
         // 入口处判断用户是否已经登录，如果已经登录直接跳转到主界面
         mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         if (mLoginInfo != null) {
-            goToMainActivity();
+            if (mLoginInfo.getHospitalId() != null) {
+                goToMainActivity();
+            }
         }
 
         // 监听密码的填写状态
@@ -162,6 +164,12 @@ public class LoginActivity extends BaseActivity {
      */
     private void goToMainActivity() {
         Intent intent = MainActivity.getIntent(LoginActivity.this);
+        startActivity(intent);
+        finish();
+    }
+
+    private void goToMeetingActivity() {
+        Intent intent = MeetingActivity.getIntent(LoginActivity.this);
         startActivity(intent);
         finish();
     }

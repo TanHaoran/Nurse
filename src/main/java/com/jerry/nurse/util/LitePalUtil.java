@@ -91,6 +91,7 @@ public class LitePalUtil {
         if (!TextUtils.isEmpty(loginInfo.getNickName())) {
             SPUtil.put(context, SPUtil.NICKNAME, loginInfo.getNickName());
         }
+
         if (!TextUtils.isEmpty(loginInfo.getAvatar())) {
             SPUtil.put(context, SPUtil.AVATAR, loginInfo.getAvatar());
         } else {

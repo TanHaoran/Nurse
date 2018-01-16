@@ -21,7 +21,12 @@ public class DateUtil {
      */
     public static String parseMysqlDateToString(String mysqlDate) {
 
-        Date date = new Date(parseMysqlDateToLong(mysqlDate));
+        Date date;
+        if (mysqlDate == null) {
+            date = new Date();
+        } else {
+            date = new Date(parseMysqlDateToLong(mysqlDate));
+        }
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);

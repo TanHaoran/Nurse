@@ -222,5 +222,6 @@
     <dimen name="sex_select_line_height">40dp</dimen>
     <dimen name="sex_select_line_marginLeft">15dp</dimen>
     <dimen name="sex_select_line_textSize">15sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

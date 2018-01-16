@@ -205,14 +205,14 @@ public class ContactDetailActivity extends BaseActivity {
             mCellphoneTextView.setText(contact.getPhone());
         }
         // 如果是院内同事
-        if (mContact.isInternalHospital() ||
-                (mContact.getHospitalName().equals(loginInfo.getHospitalName())
-                && mContact.getDepartmentName().equals(loginInfo.getDepartmentName())) ) {
-            mHospitalLayout.setVisibility(View.VISIBLE);
-            mOfficeLayout.setVisibility(View.VISIBLE);
-            mOptionLayout.setVisibility(View.VISIBLE);
-            mNameTextView.setVisibility(View.VISIBLE);
-        }
+//        if (mContact.isInternalHospital() ||
+//                (mContact.getHospitalName().equals(loginInfo.getHospitalName())
+//                && mContact.getDepartmentName().equals(loginInfo.getDepartmentName())) ) {
+//            mHospitalLayout.setVisibility(View.VISIBLE);
+//            mOfficeLayout.setVisibility(View.VISIBLE);
+//            mOptionLayout.setVisibility(View.VISIBLE);
+//            mNameTextView.setVisibility(View.VISIBLE);
+//        }
         // 设置头像
         Glide.with(this).load(contact.getAvatar()).into(mAvatarImageView);
         mNameTextView.setText(contact.getName());

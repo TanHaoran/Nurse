@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.FeedbackActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:right_text="下一个"
+        app:show_back="true"
+        app:title_text="有奖调查(2/3)"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/plugin_line_paddingLeft">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/personal_info_line_height"
+            android:gravity="center_vertical"
+            android:text="你对燕尾帽总体使用情况感觉怎么样？"
+            android:textColor="@color/normal_textColor"/>
+
+        <View
+            style="@style/DividerLineStyle"/>
+
+        <RadioGroup
+            android:id="@+id/rg_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_marinTop">
+
+            <RadioButton
+                android:id="@+id/rb_a"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="A. 不怎么样，功能太单一"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:id="@+id/rb_b"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="B. 一般般，还有待观察"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:id="@+id/rb_c"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="C. 非常好，使用起来快捷方便"
+                android:textColor="@color/gray_textColor"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+</LinearLayout>

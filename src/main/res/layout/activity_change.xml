@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.ChangeActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:show_back="true"
+        app:title_text="切换身份"/>
+
+    <View
+        style="@style/DividerLineStyle"
+        android:layout_marginTop="@dimen/block_marinTop"/>
+
+    <LinearLayout
+        android:id="@+id/ll_report"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sex_select_line_height"
+        android:clickable="true"
+        android:background="@drawable/plugin_line_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sex_select_line_marginLeft"
+        android:paddingRight="@dimen/sex_select_line_marginLeft">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="上报"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <ImageView
+            android:id="@+id/iv_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:src="@drawable/choose"/>
+    </LinearLayout>
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+    <LinearLayout
+        android:id="@+id/ll_audit"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sex_select_line_height"
+        android:background="@drawable/plugin_line_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sex_select_line_marginLeft"
+        android:paddingRight="@dimen/sex_select_line_marginLeft">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="审核"
+            android:textColor="@color/normal_textColor"
+            android:textSize="@dimen/normal_textSize"/>
+
+        <ImageView
+            android:id="@+id/iv_audit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/choose"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+    <View
+        style="@style/DividerLineStyle"/>
+
+</LinearLayout>

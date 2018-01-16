@@ -271,5 +271,10 @@
         <item name="@android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
 
+    <style name="AppTheme.Nurse.AppBarOverlay"
+           parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.Nurse.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
 
 </resources>

@@ -226,8 +226,22 @@ public class PersonalInfoActivity extends BaseActivity {
                 mNicknameTextView.setText("未设置");
             }
             mSexTextView.setText(mUserInfo.getSex());
-            mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mUserInfo.getBirthday()));
+            if (mUserInfo.getBirthday() != null) {
+                mBirthdayTextView.setText(DateUtil.parseMysqlDateToString(mUserInfo.getBirthday()));
 
+                // 设置生日数据和监听
+                setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday()),
+                        new OnDateSelectListener() {
+                            @Override
+                            public void onDateSelected(Date date) {
+                                UserBasicInfo userBasicInfo = new UserBasicInfo();
+                                userBasicInfo.setRegisterId(mUserInfo.getRegisterId());
+                                userBasicInfo.setBirthday(DateUtil.parseDateToMysqlDate(date));
+                                postUserBasicInfo(userBasicInfo);
+                            }
+                        }
+                );
+            }
 
             // 执业信息
             mProfessionalCertificateTextView.setText(getAuditString(mUserInfo.getQVerifyStatus()));
@@ -246,18 +260,6 @@ public class PersonalInfoActivity extends BaseActivity {
             }
 
 
-            // 设置生日数据和监听
-            setDateSelectListener(mBirthdayLayout, DateUtil.parseMysqlDateToDate(mUserInfo.getBirthday()),
-                    new OnDateSelectListener() {
-                        @Override
-                        public void onDateSelected(Date date) {
-                            UserBasicInfo userBasicInfo = new UserBasicInfo();
-                            userBasicInfo.setRegisterId(mUserInfo.getRegisterId());
-                            userBasicInfo.setBirthday(DateUtil.parseDateToMysqlDate(date));
-                            postUserBasicInfo(userBasicInfo);
-                        }
-                    }
-            );
         }
     }
 

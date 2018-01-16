@@ -304,5 +304,15 @@ public class ServiceConstant {
      */
     public static final String MICRO_BLOG_GET_USER_INFO = "https://api.weibo.com/2/users/show.json";
 
+    /**
+     * 会议完善信息
+     */
+    public static final String MEETING_COMPLETE = IP + "MeetingComplete";
+
+    /**
+     * 会议切换身份
+     */
+    public static final String MEETING_CHANGE = IP + "MeetingChange";
+
 
 }

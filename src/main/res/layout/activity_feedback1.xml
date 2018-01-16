@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context="com.jerry.nurse.activity.FeedbackActivity">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:right_text="下一个"
+        app:show_back="true"
+        app:title_text="有奖调查(1/3)"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/plugin_line_paddingLeft">
+
+        <TextView
+            android:textSize="@dimen/normal_textSize"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/personal_info_line_height"
+            android:text="你觉得在手机端上报不良事件怎么样？"
+            android:textColor="@color/normal_textColor"/>
+
+        <View
+            style="@style/DividerLineStyle"/>
+
+        <RadioGroup
+            android:id="@+id/rg_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_marinTop">
+
+            <RadioButton
+                android:textSize="@dimen/normal_textSize"
+                android:id="@+id/rb_a"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="A. 数据太多，填的心累"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:textSize="@dimen/normal_textSize"
+                android:id="@+id/rb_b"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="B. 许多选项不明确，不知道怎么填"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:textSize="@dimen/normal_textSize"
+                android:id="@+id/rb_c"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="C. 还可以，和PC端差不多"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:textSize="@dimen/normal_textSize"
+                android:id="@+id/rb_d"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="D. 挺好的，能随时随地上报"
+                android:textColor="@color/gray_textColor"/>
+
+            <RadioButton
+                android:textSize="@dimen/normal_textSize"
+                android:id="@+id/rb_e"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/personal_info_line_height"
+                android:text="E. 太棒了，节省了不少时间呢"
+                android:textColor="@color/gray_textColor"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+</LinearLayout>

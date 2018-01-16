@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <com.jerry.nurse.view.TitleBar
+        android:id="@+id/tb_meeting"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        app:right_text="完成"
+        app:title_text="完善信息"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_hospital"
+                style="@style/BusinessLineStyle">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="医院"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_enter_hospital"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_hospital"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:layout_toLeftOf="@id/iv_arrow_enter_hospital"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_duty"
+                style="@style/BusinessLineStyle">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="职务"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_enter_duty"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_duty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:layout_toLeftOf="@id/iv_arrow_enter_duty"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_role"
+                style="@style/BusinessLineStyle">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="角色"/>
+
+                <ImageView
+                    android:id="@+id/iv_arrow_enter_role"
+                    style="@style/ArrowEnterStyle"/>
+
+                <TextView
+                    android:id="@+id/tv_role"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:layout_toLeftOf="@id/iv_arrow_enter_role"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_name"
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="姓名"/>
+
+                <com.jerry.nurse.view.ClearEditText
+                    android:id="@+id/cet_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:background="@drawable/edit_no_border"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="11"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_cellphone"
+                style="@style/BusinessLineStyle"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/tv_cellphone"
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="电话"/>
+
+                <com.jerry.nurse.view.ClearEditText
+                    android:id="@+id/cet_cellphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:background="@drawable/edit_no_border"
+                    android:gravity="center_vertical"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="11"
+                    android:paddingLeft="@dimen/line_paddingLeft"
+                    android:paddingRight="@dimen/line_paddingLeft"
+                    android:textColor="@color/normal_textColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/normal_textSize"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerLineStyle"
+                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_password"
+                style="@style/BusinessLineStyle"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/PersonalInfoLineLeftTextStyle"
+                    android:layout_marginLeft="@dimen/signup_text_marginLeft"
+                    android:text="@string/password"/>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/signup_edit_marginLeft"
+                    android:layout_marginRight="@dimen/line_paddingLeft"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/signup_password_paddingBottom">
+
+                    <EditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/edit_no_border"
+                        android:gravity="center_vertical"
+                        android:inputType="textPassword"
+                        android:paddingLeft="@dimen/line_paddingLeft"
+                        android:paddingRight="@dimen/line_paddingLeft"
+                        android:textColor="@color/normal_textColor"
+                        android:textSize="@dimen/normal_textSize"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
