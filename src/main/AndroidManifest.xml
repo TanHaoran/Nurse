@@ -114,7 +114,7 @@
         <meta-data
             android:name="EASEMOB_APPKEY"
             android:value="1119170720115073#testdev"/>
-        <!-- android:value="1119170720115073#princess"/> -->
+        <!-- android:value="1119170720115073#princess-test"/> -->
         <!-- android:value="1119170720115073#testdev"/> -->
         <!-- 声明SDK所需的service SDK核心功能 -->
         <service

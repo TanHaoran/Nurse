@@ -55,6 +55,7 @@ public class SignupActivity extends BaseActivity {
 
     // 进入类型：注册
     public static final int TYPE_REGISTER = 0;
+
     // 进入类型：验证码登录
     public static final int TYPE_VERIFICATION_CODE = 1;
     // 进入类型：忘记密码

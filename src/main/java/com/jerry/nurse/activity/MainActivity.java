@@ -300,7 +300,7 @@ public class MainActivity extends BaseActivity {
 
                     // 群聊
                     if (chatMessage.isGroup()) {
-                        newIntent = ChatActivity.getIntent(context, chatMessage.getFrom(), true);
+                        newIntent = ChatActivity.getIntent(context, chatMessage.getTo(), true);
                     }
                     // 单聊
                     else {
@@ -337,6 +337,7 @@ public class MainActivity extends BaseActivity {
 
                     // 发出Notification
                     newIntent = AddContactApplyActivity.getIntent(context);
+
                     pi = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     // 读取这个人的个人信息

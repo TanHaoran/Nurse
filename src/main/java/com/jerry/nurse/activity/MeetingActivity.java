@@ -83,7 +83,11 @@ public class MeetingActivity extends BaseActivity {
         if (mLoginInfo != null) {
             if (mLoginInfo.getHospitalId() != null) {
                 goToMainActivity();
+            } else{
+                getHospitals(0, 0);
             }
+        } else{
+            getHospitals(0, 0);
         }
 
         mTitleBar.setOnRightClickListener(new TitleBar.OnRightClickListener() {
@@ -96,7 +100,6 @@ public class MeetingActivity extends BaseActivity {
                 }
             }
         });
-        getHospitals(0, 0);
     }
 
     /**

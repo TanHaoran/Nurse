@@ -13,6 +13,7 @@ public class ShortMessage {
     private String Code;
     private int Type;
     private String DeviceRegId;
+    private int temp;
 
     /**
      * 创建短信验证类
@@ -67,5 +68,13 @@ public class ShortMessage {
 
     public void setDeviceRegId(String deviceRegId) {
         DeviceRegId = deviceRegId;
+    }
+
+    public int getTemp() {
+        return temp;
+    }
+
+    public void setTemp(int temp) {
+        this.temp = temp;
     }
 }

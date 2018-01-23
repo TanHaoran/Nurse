@@ -380,7 +380,7 @@ public class SettingActivity extends BaseActivity {
                         if (versionResult.getCode() == RESPONSE_SUCCESS) {
 
                             String localVersion = AppUtil.getVersionName(SettingActivity.this);
-                            if (!localVersion.equals(versionResult.getBody().getVersion())) {
+                            if (!localVersion.equals(versionResult.getBody().getVersion() + "")) {
                                 if (!SettingActivity.this.isFinishing()) {
                                     new AlertDialog.Builder(SettingActivity.this)
                                             .setTitle(R.string.tips)
