@@ -47,7 +47,7 @@ public class AnnouncementDetailActivity extends BaseActivity {
             // 显示数据
             mTitleTextView.setText(announcement.getTitle());
             mInstitutionTextView.setText(announcement.getAgency());
-            mTimeTextView.setText(DateUtil.parseMysqlDateToString(announcement.getNoticeTime()));
+            mTimeTextView.setText(announcement.getNoticeTime());
             mContentTextView.setText(announcement.getContent());
         }
 

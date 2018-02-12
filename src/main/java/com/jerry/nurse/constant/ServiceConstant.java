@@ -33,7 +33,8 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+//    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://192.168.0.100:8077/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -211,7 +212,8 @@ public class ServiceConstant {
     /**
      * 获取公告的方法
      */
-    public static final String GET_ANNOUNCEMENT = IP + "GetNotice";
+//    public static final String GET_ANNOUNCEMENT = IP + "GetNotice";
+    public static final String GET_ANNOUNCEMENT = "http://192.168.0.27:8080/notify/";
 
     /**
      * 获取Banner的方法
@@ -286,7 +288,7 @@ public class ServiceConstant {
     /**
      * 查询学分
      */
-    public static final String GET_CREIDT_SCORE = IP + "GetCreditScore";
+    public static final String GET_CREDIT_SCORE = IP + "GetCreditScore";
 
 
     /**

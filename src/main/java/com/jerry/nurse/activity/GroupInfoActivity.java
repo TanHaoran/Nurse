@@ -22,7 +22,9 @@ import com.jerry.nurse.model.Contact;
 import com.jerry.nurse.model.GroupInfo;
 import com.jerry.nurse.model.GroupInfoResult;
 import com.jerry.nurse.model.Message;
+import com.jerry.nurse.model.QrCodeResult;
 import com.jerry.nurse.net.FilterStringCallback;
+import com.jerry.nurse.util.DensityUtil;
 import com.jerry.nurse.util.ProgressDialogManager;
 import com.jerry.nurse.util.SPUtil;
 import com.jerry.nurse.util.StringUtil;
@@ -41,6 +43,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 
+import static com.jerry.nurse.constant.ServiceConstant.QR_CODE_ADDRESS;
 import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 import static org.litepal.crud.DataSupport.where;
 
@@ -209,8 +212,50 @@ public class GroupInfoActivity extends BaseActivity {
         EMClient.getInstance().chatManager().sendMessage(message);
     }
 
+    /**
+     * 显示群二维码
+     *
+     * @param view
+     */
     @OnClick(R.id.rl_group_qr_code)
     void onGroupQrCode(View view) {
+        if (mGroupInfo.getHXGroupId() != null) {
+            mProgressDialogManager.show();
+            OkHttpUtils.get().url(ServiceConstant.GET_QR_CODE)
+                    .addParams("RegisterId", mGroupInfo.getHXGroupId())
+                    .build()
+                    .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                        @Override
+                        public void onFilterResponse(String response, int id) {
+                            QrCodeResult qrCodeResult = new Gson().fromJson(response, QrCodeResult.class);
+                            if (qrCodeResult.getCode() == RESPONSE_SUCCESS) {
+                                showQrCode(qrCodeResult.getBody().getName());
+                            }
+                        }
+                    });
+        }
+    }
+
+    /**
+     * 显示二维码
+     */
+    private void showQrCode(String name) {
+        String url = QR_CODE_ADDRESS + name;
+        View v = this.getLayoutInflater().inflate(R.layout.view_qr_code_group, null);
+        ImageView qrCodeImageView = (ImageView) v.findViewById(R.id.iv_qr_code);
+        Glide.with(this).load(url).into(qrCodeImageView);
+        qrCodeImageView.setImageResource(R.drawable.erm);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        AlertDialog dialog = builder
+                .setView(v)
+                .setCancelable(true)
+                .create();
+        dialog.show();
+        //设置窗口的大小
+        dialog.getWindow().setLayout(DensityUtil.dp2px(this, 300),
+                DensityUtil.dp2px(this, 340));
 
     }
 
@@ -298,4 +343,5 @@ public class GroupInfoActivity extends BaseActivity {
             });
         }
     }
+
 }

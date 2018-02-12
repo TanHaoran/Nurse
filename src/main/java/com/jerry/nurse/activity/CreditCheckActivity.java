@@ -108,7 +108,7 @@ public class CreditCheckActivity extends BaseActivity {
      */
     private void getCredit(String xfId, int year) {
         mProgressDialogManager.show();
-        OkHttpUtils.get().url(ServiceConstant.GET_CREIDT_SCORE)
+        OkHttpUtils.get().url(ServiceConstant.GET_CREDIT_SCORE)
                 .addParams("staffId", xfId)
                 .addParams("year", year + "")
                 .build()

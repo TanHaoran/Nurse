@@ -17,25 +17,37 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.listener.PermissionListener;
+import com.jerry.nurse.model.CommonResult;
+import com.jerry.nurse.model.Contact;
+import com.jerry.nurse.model.GroupInfo;
+import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.model.SearchUsersResult;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.L;
+import com.jerry.nurse.util.LocalGroupCache;
+import com.jerry.nurse.util.MessageManager;
 import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.SPUtil;
+import com.jerry.nurse.util.StringUtil;
 import com.jerry.nurse.util.T;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.MediaType;
 
 import static com.jerry.nurse.activity.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN;
 import static com.jerry.nurse.activity.CaptureActivity.RESULT_CODE_QR_SCAN;
@@ -58,6 +70,8 @@ public class AddContactActivity extends BaseActivity {
     @Bind(R.id.rv_contact)
     RecyclerView mRecyclerView;
 
+    private LoginInfo mLoginInfo;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AddContactActivity.class);
         return intent;
@@ -70,6 +84,7 @@ public class AddContactActivity extends BaseActivity {
 
     @Override
     public void init(Bundle savedInstanceState) {
+        mLoginInfo = DataSupport.findFirst(LoginInfo.class);
         // 设置关键字搜索监听
         mKeywordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -138,7 +153,7 @@ public class AddContactActivity extends BaseActivity {
                 users);
         mRecyclerView.setAdapter(adapter);
 
-        if (users.size() ==0) {
+        if (users.size() == 0) {
             T.showShort(this, "搜索结果为空");
         }
 
@@ -212,18 +227,75 @@ public class AddContactActivity extends BaseActivity {
             Bundle bundle = data.getExtras();
             String result = bundle.getString(INTENT_EXTRA_KEY_QR_SCAN);
             L.i("扫描结果是：" + result);
-            String register = String.valueOf((Integer.parseInt(result) + 1) / 3);
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 10 - register.length(); i++) {
-                sb.append("0");
-            }
-            sb.append(register);
-            L.i("解码后是：" + sb.toString());
 
-            Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, sb.toString());
-            startActivity(intent);
+            // 加群
+            if (!result.startsWith("0")) {
+                addGroupMember(result, mLoginInfo.getRegisterId());
+            } else {
+                Intent intent = ContactDetailActivity.getIntent(AddContactActivity.this, result);
+                startActivity(intent);
+            }
 
         }
+    }
+
+    /**
+     * 添加群成员
+     */
+    private void addGroupMember(final String groupId, final String registerId) {
+        GroupInfo info = new GroupInfo();
+        List<Contact> cs = new ArrayList<>();
+        Contact c = new Contact();
+        c.setFriendId(registerId);
+        cs.add(c);
+        info.setHXGroupId(groupId);
+        info.setGroupMemberList(cs);
+        mProgressDialogManager.show();
+        OkHttpUtils.postString()
+                .url(ServiceConstant.ADD_GROUP_MEMBER)
+                .content(StringUtil.addModelWithJson(info))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new FilterStringCallback(mProgressDialogManager) {
+
+                    @Override
+                    public void onFilterResponse(String response, int id) {
+                        CommonResult commonResult = new Gson().fromJson(response, CommonResult.class);
+                        if (commonResult.getCode() == RESPONSE_SUCCESS) {
+                            T.showShort(AddContactActivity.this, "操作成功");
+                            sendGroupFirstMessage(groupId, mLoginInfo.getDisplayName() + "加入本群");
+                            new LocalGroupCache() {
+                                @Override
+                                protected void onLoadGroupInfoSuccess(GroupInfo info) {
+                                    Intent intent = ChatActivity.getIntent(AddContactActivity.this, groupId, true);
+                                    startActivity(intent);
+                                }
+                            }.getGroupInfo(registerId, groupId);
+                        } else if (commonResult.getCode() == 2) {
+                            Intent intent = ChatActivity.getIntent(AddContactActivity.this, groupId, true);
+                            startActivity(intent);
+                        } else {
+                            T.showShort(AddContactActivity.this, commonResult.getMsg());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 发送环信的第一条信息
+     *
+     * @param hxGroupId
+     */
+    private void sendGroupFirstMessage(String hxGroupId, String content) {
+        EMMessage emMessage = EMMessage.createTxtSendMessage(content, hxGroupId);
+        // 给消息添加本人的头像和昵称
+        emMessage.setAttribute("avatar", mLoginInfo.getAvatar());
+        emMessage.setAttribute("nick", mLoginInfo.getNickName());
+        //如果是群聊，设置chattype，默认是单聊
+        emMessage.setChatType(EMMessage.ChatType.GroupChat);
+        //发送消息
+        EMClient.getInstance().chatManager().sendMessage(emMessage);
+        MessageManager.saveChatMessageData(emMessage, true);
     }
 
     /**

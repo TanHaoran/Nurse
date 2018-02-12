@@ -141,7 +141,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
 
 
     // 用来记录跳转页面时候的位置
-    private int mCurrentPosition;
+//    private int mCurrentPosition;
 
 
     /**
@@ -392,7 +392,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
             mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         }
 
-        mRecyclerView.scrollToPosition(mCurrentPosition);
+//        mRecyclerView.scrollToPosition(mCurrentPosition);
 
         // 设置输入框的监听事件
         mMessageEditText.addTextChangedListener(new TextWatcher() {
@@ -604,7 +604,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     protected void onStop() {
         super.onStop();
         LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-        mCurrentPosition = lm.findFirstVisibleItemPosition();
+//        mCurrentPosition = lm.findFirstVisibleItemPosition();
     }
 
     /**

@@ -37,8 +37,8 @@ public class LoginInfo extends DataSupport {
     private int QStatus;
     private String RegisterId;
     private String ReguserId;
-    private String XFId ;
-    private String PBId ;
+    private String XFId;
+    private String PBId;
     private int DepartmentUserCount;
 
     public String getAvatar() {
@@ -166,5 +166,17 @@ public class LoginInfo extends DataSupport {
 
     public void setDepartmentUserCount(int departmentUserCount) {
         DepartmentUserCount = departmentUserCount;
+    }
+
+    public String getDisplayName() {
+        if (!TextUtils.isEmpty(NickName)) {
+            return NickName;
+        } else if (!TextUtils.isEmpty(Name)) {
+            return Name;
+        } else if (!TextUtils.isEmpty(Name)) {
+            return Name;
+        } else {
+            return " ";
+        }
     }
 }

@@ -206,8 +206,9 @@ public class ContactDetailActivity extends BaseActivity {
         }
         // 如果是院内同事
         if (mContact.isInternalHospital() ||
-                (mContact.getHospitalName().equals(loginInfo.getHospitalName())
-                && mContact.getDepartmentName().equals(loginInfo.getDepartmentName())) ) {
+                (mContact.getHospitalName() != null && mContact.getHospitalName().equals(loginInfo.getHospitalName())
+                        && mContact.getDepartmentName() != null
+                        && mContact.getDepartmentName().equals(loginInfo.getDepartmentName()))) {
             mHospitalLayout.setVisibility(View.VISIBLE);
             mOfficeLayout.setVisibility(View.VISIBLE);
             mOptionLayout.setVisibility(View.VISIBLE);

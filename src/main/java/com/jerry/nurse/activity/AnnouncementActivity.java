@@ -4,24 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.gson.Gson;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
-import com.jerry.nurse.constant.ServiceConstant;
-import com.jerry.nurse.fragment.OfficeFragment;
 import com.jerry.nurse.model.Announcement;
-import com.jerry.nurse.model.AnnouncementsResult;
 import com.jerry.nurse.model.LoginInfo;
-import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
-import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.RecyclerViewDecorationUtil;
-import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.ViewHolder;
-import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -29,14 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import okhttp3.Call;
-
-import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 
 public class AnnouncementActivity extends BaseActivity {
 
     @Bind(R.id.rv_announcement)
-    XRecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     private AnnouncementAdapter mAdapter;
 
@@ -66,27 +54,27 @@ public class AnnouncementActivity extends BaseActivity {
         mAdapter = new AnnouncementAdapter(this, R.layout.item_announcement, mAnnouncements);
         mRecyclerView.setAdapter(mAdapter);
         // 设置可以下拉加载更多
-        mRecyclerView.setLoadingMoreEnabled(false);
-        // 列表加载的监听
-        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-            /**
-             * 下拉刷新
-             */
-            @Override
-            public void onRefresh() {
-                L.i("下拉刷新");
-                getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
-            }
-
-            /**
-             * 加载更多
-             */
-            @Override
-            public void onLoadMore() {
-                L.i("加载更多");
-
-            }
-        });
+//        mRecyclerView.setLoadingMoreEnabled(false);
+//        // 列表加载的监听
+//        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+//            /**
+//             * 下拉刷新
+//             */
+//            @Override
+//            public void onRefresh() {
+//                L.i("下拉刷新");
+//                getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
+//            }
+//
+//            /**
+//             * 加载更多
+//             */
+//            @Override
+//            public void onLoadMore() {
+//                L.i("加载更多");
+//
+//            }
+//        });
 
         // 获取公告数据
         getAnnouncement(mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
@@ -100,59 +88,63 @@ public class AnnouncementActivity extends BaseActivity {
      * @param officeId
      */
     private void getAnnouncement(int page, String hospitalId, String officeId) {
-        // 检测院内权限
-        if (!OfficeFragment.checkPermission()) {
-            hospitalId = "";
-            officeId = "";
-        } else {
-            if (hospitalId == null) {
-                hospitalId = "";
-            }
-            if (officeId == null) {
-                officeId = "";
-            }
+//        // 检测院内权限
+//        if (!OfficeFragment.checkPermission()) {
+//            hospitalId = "";
+//            officeId = "";
+//        } else {
+//            if (hospitalId == null) {
+//                hospitalId = "";
+//            }
+//            if (officeId == null) {
+//                officeId = "";
+//            }
+//        }
+//
+//        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
+//                .addParams("pageNumber", String.valueOf(page))
+//                .addParams("HospitalId", hospitalId)
+//                .addParams("DepartmentId", officeId)
+//                .build()
+//                .execute(new FilterStringCallback() {
+//
+//                    @Override
+//                    protected void onFilterError(Call call, Exception e, int id) {
+//                        mRecyclerView.refreshComplete();
+//                        //从数据库中获取数据
+//                        mAnnouncements = DataSupport.findAll(Announcement.class);
+//                        if (mAnnouncements != null) {
+//                            setAnnouncements();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFilterResponse(String response, int id) {
+//                        mRecyclerView.refreshComplete();
+//                        AnnouncementsResult result = new Gson().fromJson(response, AnnouncementsResult.class);
+//                        if (result.getCode() == RESPONSE_SUCCESS) {
+//                            List<Announcement> announcements = result.getBody();
+//                            if (announcements == null || announcements
+//                                    .size() == 0) {
+//                                announcements = new ArrayList<>();
+//                                T.showShort(AnnouncementActivity.this, "没有更多数据了");
+//                            }
+//                            // 添加的公告集合中
+//                            updateAnnouncements(announcements);
+//                            if (mAnnouncements.size() > 0) {
+//                                //添加新数据到数据库
+//                                DataSupport.deleteAll(Announcement.class);
+//                                DataSupport.saveAll(result.getBody());
+//                            }
+//                        } else {
+//                            T.showShort(AnnouncementActivity.this, result.getMsg());
+//                        }
+//                    }
+//                });
+        mAnnouncements = DataSupport.findAll(Announcement.class);
+        if (mAnnouncements != null) {
+            setAnnouncements();
         }
-
-        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
-                .addParams("pageNumber", String.valueOf(page))
-                .addParams("HospitalId", hospitalId)
-                .addParams("DepartmentId", officeId)
-                .build()
-                .execute(new FilterStringCallback() {
-
-                    @Override
-                    protected void onFilterError(Call call, Exception e, int id) {
-                        mRecyclerView.refreshComplete();
-                        //从数据库中获取数据
-                        mAnnouncements = DataSupport.findAll(Announcement.class);
-                        if (mAnnouncements != null) {
-                            setAnnouncements();
-                        }
-                    }
-
-                    @Override
-                    public void onFilterResponse(String response, int id) {
-                        mRecyclerView.refreshComplete();
-                        AnnouncementsResult result = new Gson().fromJson(response, AnnouncementsResult.class);
-                        if (result.getCode() == RESPONSE_SUCCESS) {
-                            List<Announcement> announcements = result.getBody();
-                            if (announcements == null || announcements
-                                    .size() == 0) {
-                                announcements = new ArrayList<>();
-                                T.showShort(AnnouncementActivity.this, "没有更多数据了");
-                            }
-                            // 添加的公告集合中
-                            updateAnnouncements(announcements);
-                            if (mAnnouncements.size() > 0) {
-                                //添加新数据到数据库
-                                DataSupport.deleteAll(Announcement.class);
-                                DataSupport.saveAll(result.getBody());
-                            }
-                        } else {
-                            T.showShort(AnnouncementActivity.this, result.getMsg());
-                        }
-                    }
-                });
     }
 
     /**
@@ -184,7 +176,7 @@ public class AnnouncementActivity extends BaseActivity {
         public void convert(ViewHolder holder, final Announcement announcement) {
             holder.setText(R.id.tv_title, announcement.getTitle());
             holder.setText(R.id.tv_institution, announcement.getAgency());
-            holder.setText(R.id.tv_time, DateUtil.parseMysqlDateToString(announcement.getNoticeTime()));
+            holder.setText(R.id.tv_time, announcement.getNoticeTime());
             holder.getView(R.id.rl_announcement).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

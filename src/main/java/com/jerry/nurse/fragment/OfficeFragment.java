@@ -204,10 +204,7 @@ public class OfficeFragment extends BaseFragment {
             }
         }
 
-        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
-                .addParams("pageNumber", String.valueOf(page))
-                .addParams("HospitalId", hospitalId)
-                .addParams("DepartmentId", officeId)
+        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT + "1")
                 .build()
                 .execute(new FilterStringCallback() {
 
@@ -392,6 +389,7 @@ public class OfficeFragment extends BaseFragment {
 
     /**
      * 排班查看
+     *
      * @param view
      */
     @OnClick(R.id.ll_schedule_check)
