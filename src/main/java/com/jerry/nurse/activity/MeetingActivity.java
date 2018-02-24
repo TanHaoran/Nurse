@@ -116,18 +116,6 @@ public class MeetingActivity extends BaseActivity {
             return validate;
         }
 
-        if (TextUtils.isEmpty(mDuty)) {
-            validate = false;
-            T.showShort(this, "请选择职务");
-            return validate;
-        }
-
-        if (mRole == -1) {
-            validate = false;
-            T.showShort(this, "请选择职务");
-            return validate;
-        }
-
         if (TextUtils.isEmpty(mEditTextName.getText().toString())) {
             validate = false;
             T.showShort(this, "请填写姓名");
@@ -247,8 +235,8 @@ public class MeetingActivity extends BaseActivity {
         OkHttpUtils.get().url(ServiceConstant.MEETING_COMPLETE)
                 .addParams("registerId", registerId)
                 .addParams("hospitalId", hospitalId)
-                .addParams("duty", duty)
-                .addParams("role", String.valueOf(role))
+                .addParams("duty", "护士")
+                .addParams("role", "0")
                 .addParams("name", name)
                 .addParams("phone", cellphone)
                 .build()

@@ -14,7 +14,7 @@
         app:show_back="true"
         app:title_text="@string/announcement"/>
 
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_announcement"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

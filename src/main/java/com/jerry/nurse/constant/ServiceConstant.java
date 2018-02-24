@@ -33,7 +33,7 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://zhihu.buzzlysoft.com/";
+    public static final String MAIN_IP = "http://36.41.187.107:5558/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 
@@ -47,13 +47,13 @@ public class ServiceConstant {
     public static final String APK_ADDRESS = MAIN_IP + "APK/";
 
     // 服务协议
-    public static final String PROTOCOL_URL = "http://zhihu.buzzlysoft.com/agreement.html";
+    public static final String PROTOCOL_URL = MAIN_IP + "agreement.html";
 
     // 帮助
-    public static final String HELP_URL = "http://zhihu.buzzlysoft.com/Screenshots/help.html";
+    public static final String HELP_URL = MAIN_IP + "Screenshots/help.html";
 
     // 关于
-    public static final String ABOUT_URL = "http://zhihu.buzzlysoft.com/guanyu.html";
+    public static final String ABOUT_URL = MAIN_IP + "guanyu.html";
 
     /**
      * 获取验证码
@@ -211,7 +211,8 @@ public class ServiceConstant {
     /**
      * 获取公告的方法
      */
-    public static final String GET_ANNOUNCEMENT = IP + "GetNotice";
+    // public static final String GET_ANNOUNCEMENT = IP + "GetNotice";
+    public static final String GET_ANNOUNCEMENT = "http://36.41.187.107:9999/notify/";
 
     /**
      * 获取Banner的方法

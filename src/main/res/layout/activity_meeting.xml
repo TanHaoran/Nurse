@@ -51,11 +51,13 @@
 
             <View
                 style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/rl_duty"
-                style="@style/BusinessLineStyle">
+                style="@style/BusinessLineStyle"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
@@ -80,11 +82,13 @@
 
             <View
                 style="@style/DividerLineStyle"
-                android:layout_marginLeft="@dimen/line_paddingLeft"/>
+                android:layout_marginLeft="@dimen/line_paddingLeft"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/rl_role"
-                style="@style/BusinessLineStyle">
+                style="@style/BusinessLineStyle"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/PersonalInfoLineLeftTextStyle"
@@ -217,6 +221,18 @@
                 </android.support.design.widget.TextInputLayout>
 
 
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/BusinessLineStyle">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="信息请正确填写，一旦确定，不可更改！"
+                    android:textColor="@color/gray_textColor"
+                    android:textSize="@dimen/normal_textSize"/>
             </RelativeLayout>
 
 

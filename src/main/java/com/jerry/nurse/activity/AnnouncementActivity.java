@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.google.gson.Gson;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.constant.ServiceConstant;
 import com.jerry.nurse.fragment.OfficeFragment;
@@ -16,8 +17,6 @@ import com.jerry.nurse.model.AnnouncementsResult;
 import com.jerry.nurse.model.LoginInfo;
 import com.jerry.nurse.net.FilterStringCallback;
 import com.jerry.nurse.util.CommonAdapter;
-import com.jerry.nurse.util.DateUtil;
-import com.jerry.nurse.util.L;
 import com.jerry.nurse.util.RecyclerViewDecorationUtil;
 import com.jerry.nurse.util.T;
 import com.jerry.nurse.util.ViewHolder;
@@ -36,7 +35,7 @@ import static com.jerry.nurse.constant.ServiceConstant.RESPONSE_SUCCESS;
 public class AnnouncementActivity extends BaseActivity {
 
     @Bind(R.id.rv_announcement)
-    XRecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     private AnnouncementAdapter mAdapter;
 
@@ -65,28 +64,28 @@ public class AnnouncementActivity extends BaseActivity {
         mAnnouncements = new ArrayList<>();
         mAdapter = new AnnouncementAdapter(this, R.layout.item_announcement, mAnnouncements);
         mRecyclerView.setAdapter(mAdapter);
-        // 设置可以下拉加载更多
-        mRecyclerView.setLoadingMoreEnabled(false);
-        // 列表加载的监听
-        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-            /**
-             * 下拉刷新
-             */
-            @Override
-            public void onRefresh() {
-                L.i("下拉刷新");
-                getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
-            }
-
-            /**
-             * 加载更多
-             */
-            @Override
-            public void onLoadMore() {
-                L.i("加载更多");
-
-            }
-        });
+//        // 设置可以下拉加载更多
+//        mRecyclerView.setLoadingMoreEnabled(false);
+//        // 列表加载的监听
+//        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+//            /**
+//             * 下拉刷新
+//             */
+//            @Override
+//            public void onRefresh() {
+//                L.i("下拉刷新");
+//                getAnnouncement(++mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
+//            }
+//
+//            /**
+//             * 加载更多
+//             */
+//            @Override
+//            public void onLoadMore() {
+//                L.i("加载更多");
+//
+//            }
+//        });
 
         // 获取公告数据
         getAnnouncement(mCurrentPage, mLoginInfo.getHospitalId(), mLoginInfo.getDepartmentId());
@@ -113,16 +112,20 @@ public class AnnouncementActivity extends BaseActivity {
             }
         }
 
-        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
-                .addParams("pageNumber", String.valueOf(page))
-                .addParams("HospitalId", hospitalId)
-                .addParams("DepartmentId", officeId)
+        String url = ServiceConstant.GET_ANNOUNCEMENT + hospitalId + "/";
+        if (mLoginInfo != null && !TextUtils.isEmpty(mLoginInfo.getDepartmentId())) {
+            url += mLoginInfo.getDepartmentId();
+        } else {
+            url += "-1";
+        }
+
+        OkHttpUtils.get().url(url)
                 .build()
                 .execute(new FilterStringCallback() {
 
                     @Override
                     protected void onFilterError(Call call, Exception e, int id) {
-                        mRecyclerView.refreshComplete();
+//                        mRecyclerView.refreshComplete();
                         //从数据库中获取数据
                         mAnnouncements = DataSupport.findAll(Announcement.class);
                         if (mAnnouncements != null) {
@@ -132,7 +135,7 @@ public class AnnouncementActivity extends BaseActivity {
 
                     @Override
                     public void onFilterResponse(String response, int id) {
-                        mRecyclerView.refreshComplete();
+//                        mRecyclerView.refreshComplete();
                         AnnouncementsResult result = new Gson().fromJson(response, AnnouncementsResult.class);
                         if (result.getCode() == RESPONSE_SUCCESS) {
                             List<Announcement> announcements = result.getBody();
@@ -184,7 +187,7 @@ public class AnnouncementActivity extends BaseActivity {
         public void convert(ViewHolder holder, final Announcement announcement) {
             holder.setText(R.id.tv_title, announcement.getTitle());
             holder.setText(R.id.tv_institution, announcement.getAgency());
-            holder.setText(R.id.tv_time, DateUtil.parseMysqlDateToString(announcement.getNoticeTime()));
+            holder.setText(R.id.tv_time, announcement.getNoticeTime());
             holder.getView(R.id.rl_announcement).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -205,10 +205,14 @@ public class OfficeFragment extends BaseFragment {
             }
         }
 
-        OkHttpUtils.get().url(ServiceConstant.GET_ANNOUNCEMENT)
-                .addParams("pageNumber", String.valueOf(page))
-                .addParams("HospitalId", hospitalId)
-                .addParams("DepartmentId", officeId)
+        String url = ServiceConstant.GET_ANNOUNCEMENT + hospitalId + "/";
+        if (mInfo != null && !TextUtils.isEmpty(mInfo.getDepartmentId())) {
+            url += mInfo.getDepartmentId();
+        } else {
+            url += "-1";
+        }
+
+        OkHttpUtils.get().url(url)
                 .build()
                 .execute(new FilterStringCallback() {
 

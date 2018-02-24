@@ -210,7 +210,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/rl_schedule"
+        android:id="@+id/rl_exam"
         style="@style/BusinessLineStyle"
         android:visibility="gone">
 
@@ -235,10 +235,12 @@
         style="@style/DividerLineStyle"/>
 
     <View
+        android:visibility="gone"
         style="@style/DividerLineStyle"
         android:layout_marginTop="@dimen/block_marinTop"/>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rl_change"
         style="@style/BusinessLineStyle">
 
