@@ -416,11 +416,10 @@ public class SettingActivity extends BaseActivity {
      * @param webName
      */
     private void downloadApk(final String webName) {
-
         // 创建顶部通知框
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.topnew_icon);
-        builder.setContentTitle("智护下载");
+        builder.setContentTitle("燕尾帽下载");
         builder.setContentText("正在下载");
         final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(0x101, builder.build());
@@ -446,7 +445,8 @@ public class SettingActivity extends BaseActivity {
                                 if (!file.exists()) {
                                     L.i("文件不存在");
                                 }
-                                DownloadUtil.get().openFile(file);
+
+                                DownloadUtil.get().openFile(SettingActivity.this, file);
                             }
 
                             @Override
@@ -462,7 +462,7 @@ public class SettingActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onDownloadFailed() {
+                            public void onDownloadFailed(Call call, Exception e) {
                                 L.i("下载失败");
                             }
                         });

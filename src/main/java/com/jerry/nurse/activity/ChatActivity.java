@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -33,7 +34,6 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.jerry.nurse.R;
 import com.jerry.nurse.listener.OnPhotographFinishListener;
 import com.jerry.nurse.listener.OnSelectFromAlbumListener;
@@ -90,7 +90,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     private static final int REQUEST_GROUP_CHAT = 0x101;
 
     @Bind(R.id.rv_content)
-    XRecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     @Bind(R.id.ib_left)
     ImageButton mTypeButton;

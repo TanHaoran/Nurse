@@ -113,9 +113,8 @@
         <!-- 设置环信应用的AppKey -->
         <meta-data
             android:name="EASEMOB_APPKEY"
-            android:value="1119170720115073#swallowtail-cap-test"/>
-        <!-- android:value="1119170720115073#princess-test"/> -->
-        <!-- android:value="1119170720115073#testdev"/> -->
+            android:value="1119170720115073#swallowtailcap"/>
+            <!--android:value="1119170720115073#swallowtail-cap-test"/>-->
         <!-- 声明SDK所需的service SDK核心功能 -->
         <service
             android:name="com.hyphenate.chat.EMChatService"
@@ -476,6 +475,17 @@
         <activity android:name=".activity.Feedback3Activity"
                   android:screenOrientation="portrait">
         </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.jerry.nurse.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>

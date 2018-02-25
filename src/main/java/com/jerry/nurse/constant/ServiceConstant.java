@@ -33,7 +33,8 @@ public class ServiceConstant {
     // 已认证
     public static final int AUDIT_SUCCESS = 3;
 
-    public static final String MAIN_IP = "http://36.41.187.107:5558/";
+//    public static final String MAIN_IP = "http://36.41.187.107:5558/";
+    public static final String MAIN_IP = "http://36.41.187.107:5557/";
 
     public static final String EVENT_REPORT_IP = MAIN_IP;
 

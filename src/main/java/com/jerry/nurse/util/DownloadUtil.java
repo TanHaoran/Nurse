@@ -1,8 +1,10 @@
 package com.jerry.nurse.util;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +47,7 @@ public class DownloadUtil {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
-                listener.onDownloadFailed();
+                listener.onDownloadFailed(call, e);
             }
 
             @Override
@@ -55,8 +57,11 @@ public class DownloadUtil {
                 int len = 0;
                 FileOutputStream fos = null;
                 // 储存下载文件的目录
-                String savePath = ActivityCollector.getTopActivity()
-                        .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();
+                String savePath = ActivityCollector.getTopActivity().getExternalCacheDir().toString() + "/download";
+                File downloadDir = new File(savePath);
+                if (!downloadDir.exists()) {
+                    downloadDir.mkdir();
+                }
                 try {
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
@@ -74,7 +79,7 @@ public class DownloadUtil {
                     // 下载完成
                     listener.onDownloadSuccess(file);
                 } catch (Exception e) {
-                    listener.onDownloadFailed();
+                    listener.onDownloadFailed(call, e);
                 } finally {
                     try {
                         if (is != null)
@@ -96,14 +101,26 @@ public class DownloadUtil {
      *
      * @param file
      */
-    public void openFile(File file) {
-        L.i("自动打开文件", file.getName());
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file),
-                "application/vnd.android.package-archive");
-        ActivityCollector.getTopActivity().startActivity(intent);
+    public void openFile(Context context, File file) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri data;
+        // 判断版本大于等于7.0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            data = FileProvider.getUriForFile(context, "com.jerry.nurse.fileprovider", file);
+            // 给目标应用一个临时授权
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(data, "application/vnd.android.package-archive");
+            context.startActivity(intent);
+        } else {
+            data = Uri.fromFile(file);
+            L.i("自动打开文件", file.getName());
+            Intent intentAuto = new Intent();
+            intentAuto.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intentAuto.setAction(android.content.Intent.ACTION_VIEW);
+            intentAuto.setDataAndType(data,
+                    "application/vnd.android.package-archive");
+            ActivityCollector.getTopActivity().startActivity(intentAuto);
+        }
     }
 
     public interface OnDownloadListener {
@@ -120,6 +137,6 @@ public class DownloadUtil {
         /**
          * 下载失败
          */
-        void onDownloadFailed();
+        void onDownloadFailed(Call call, Exception e);
     }
 }
